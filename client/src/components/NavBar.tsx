@@ -22,7 +22,7 @@ function NavBar() {
 
   const content = (
     <>
-      <div className="sm:hidden block absolute  w-full left-0 right-0 bg-slate-800 transition h-[100%] top-0 text-white">
+      <div className="sm:hidden block absolute  w-full left-0 right-0 bg-slate-800 transition h-[21100%] z-10 top-0 text-white">
         <ul className="text-center text-xl  relative top-32 text-white flex flex-col gap-5 text-[30px]">
           {navigation.map((item) => (
             <Link spy={true} smooth={true} to="Home">
@@ -67,7 +67,7 @@ function NavBar() {
           </div>
 
           <button
-            className="block sm:hidden transtion absolute right-5 bg-none focus:outline-none focus:border-none"
+            className="block sm:hidden transtion absolute right-5 bg-none z-20 focus:outline-none focus:border-none"
             onClick={handleClick}
           >
             {click ? <AiOutlineClose /> : <CiMenuBurger />}
