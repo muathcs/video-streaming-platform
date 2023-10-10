@@ -3,11 +3,13 @@ import reactLogo from "./assets/react.svg";
 import viteLogo from "/vite.svg";
 import "./App.css";
 import NavBar from "./components/NavBar";
+import Celebs from "./components/Celebs";
 
 function App() {
   return (
-    <div className="border-2 border-black bg-black w-full h-full">
+    <div className="flex flex-col absolute left-0 w-full h-full bg-black">
       <NavBar />
+      <Celebs />
     </div>
   );
 }

@@ -38,9 +38,9 @@ function NavBar() {
 
   return (
     <>
-      <nav className="w-full absolute left-0 top-0 h-full  ">
+      <nav className="w-full relative left-0 top-0 h-22    ">
         <div className="h-full flex justify-between  text-white   py-4 border-black ">
-          <div className="sm:flex  items-start    font-normal hidden   w-full  px-0 sm:px-20  z-10 ">
+          <div className="sm:flex  items-start font-normal hidden   w-full  px-0 sm:px-20  z-10 ">
             <div className="w-1/2 ">
               <ul className="sm:flex hidden  text-[18px]  w-full justify-center gap-5   ">
                 {navigation.map((item) => (
