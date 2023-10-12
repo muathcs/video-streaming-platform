@@ -3,11 +3,11 @@ import bitmoji from "../assets/bitmoji.png";
 import celeb from "../assets/celeb.jpg";
 function CelebCard() {
   return (
-    <div className="shadow-xl  w-[15rem] h-[20rem] bg-black border rounded-t-xl rounded-md ">
-      <div className="h-[65%]  ">
-        <img src={celeb} className=" w-full h-[80%]   rounded-t-xl " />
+    <div className="shadow-xl  border  bg-slate-900 rounded-t-xl rounded-md mt-10 card-zoom">
+      <div className="h-[65%]  w-full overflow-hidden rounded-t-xl ">
+        <img src={celeb} className="  card-zoom-image   " />
       </div>
-      <div className=" h-[35%] text-left relative pl-3 pt-2">
+      <div className=" h-[35%] text-left left-0  relative pl-1 pt-2">
         <p>Name Here</p>
         <p className="">profession here</p>
         <p className="">Reviews</p>

@@ -2,90 +2,176 @@ import React, { useState } from "react";
 import { Fragment } from "react";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
 import { CiBurger, CiMenuBurger } from "react-icons/ci";
-import { FaTimes } from "react-icons/fa";
+import { FaBell, FaTimes } from "react-icons/fa";
 import { CiMenuFries } from "react-icons/ci";
 import { AiOutlineClose } from "react-icons/ai";
 import { Link } from "react-scroll";
 
 const navigation = [
-  { title: "Catogories" },
-  { title: "Home" },
-  { title: "How does it work" },
-  { title: "Celebs" },
-  { title: "About" },
+  { name: "Catogories", href: "#", current: true },
+  { name: "Home", href: "#", current: false },
+  { name: "How does it work", href: "#", current: false },
+  { name: "Celebs", href: "#", current: false },
+  { name: "About", href: "#", current: false },
 ];
+
+function classNames(...classes: any) {
+  return classes.filter(Boolean).join(" ");
+}
 
 function NavBar() {
   const [click, setClick] = useState(false);
   const [search, setSearch] = useState("");
   const handleClick = () => setClick(!click);
 
-  const content = (
-    <>
-      <div className="sm:hidden block absolute  w-full left-0 right-0 bg-slate-800 transition h-[21100%] z-10 top-0 text-white">
-        <ul className="text-center text-xl  relative top-32 text-white flex flex-col gap-5 text-[30px]">
-          {navigation.map((item) => (
-            <Link spy={true} smooth={true} to="Home">
-              <li className="text-white hover:cursor-pointer  hover:bg-gray-600 hover:rounded-full p-2 flex items-center justify-center">
-                {item.title}
-              </li>
-            </Link>
-          ))}
-        </ul>
-      </div>
-    </>
-  );
-
   return (
     <>
-      <nav className="w-full relative left-0 top-0 h-22    ">
-        <div className="h-full flex justify-between  text-white   py-4 border-black ">
-          <div className="sm:flex  items-start font-normal hidden   w-full  px-0 sm:px-20  z-10 ">
-            <div className="w-1/2 ">
-              <ul className="sm:flex hidden  text-[18px]  w-full justify-center gap-5   ">
-                {navigation.map((item) => (
-                  <Link spy={true} smooth={true} to="Home">
-                    <li className="hover:cursor-pointer hover:bg-gray-600 hover:rounded hove:bg-slate-400 text-white -full p-2 flex items-center justify-center    ">
-                      {item.title}
-                    </li>
-                  </Link>
-                ))}
-              </ul>
-            </div>
-            <div className=" flex justify-end w-1/2 ">
-              <input
-                placeholder="Search for celebd"
-                type="text"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                className="border-2  rounded-xl px-5 py-2 w-full  right-5 bg-white text-black focus:outline-none"
-              />
-            </div>
-          </div>
-          <div className=" w-full left-0 top-0 h-full absolute">
-            {click && content}
-          </div>
+      <Disclosure as="nav" className="bg-slate-900 text-[24px] z-10 ">
+        {({ open }) => (
+          <>
+            <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
+              <div className="relative flex h-16 items-center justify-between">
+                <div className="absolute inset-y-0 left-0 flex items-center sm:hidden">
+                  {/* Mobile menu button*/}
+                  <Disclosure.Button className="relative inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white">
+                    <span className="absolute -inset-0.5" />
+                    <span className="sr-only">Open main menu</span>
+                    {open ? (
+                      <FaTimes className="block h-6 w-6" aria-hidden="true" />
+                    ) : (
+                      <CiMenuBurger
+                        className="block h-6 w-6"
+                        aria-hidden="true"
+                      />
+                    )}
+                  </Disclosure.Button>
+                </div>
+                <div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
+                  <div className="flex flex-shrink-0 items-center">
+                    <h1 className="text-[24px] sm:block hidden">Cameo</h1>
+                  </div>
+                  <div className="hidden sm:ml-6 sm:block">
+                    <div className="flex space-x-4">
+                      {navigation.map((item) => (
+                        <a
+                          key={item.name}
+                          href={item.href}
+                          className={classNames(
+                            item.current
+                              ? "bg-slate-900 rounded-full text-white"
+                              : "text-white hover:bg-gray-700 hover:rounded-full focus:bg-gray-800 hover:text-white",
+                            "rounded-full px-3 py-2 text-sm font-medium text-[24px]"
+                          )}
+                          aria-current={item.current ? "page" : undefined}
+                        >
+                          {item.name}
+                        </a>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+                <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
+                  <button
+                    type="button"
+                    className="relative rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
+                  >
+                    <span className="absolute -inset-1.5" />
+                    <span className="sr-only">View notifications</span>
+                    <FaBell className="h-6 w-6" aria-hidden="true" />
+                  </button>
 
-          <button
-            className="block sm:hidden transtion absolute right-5 bg-none z-20 focus:outline-none focus:border-none"
-            onClick={handleClick}
-          >
-            {click ? <AiOutlineClose /> : <CiMenuBurger />}
-          </button>
-        </div>
-      </nav>
-      {/* <div>
-        <div className="w-full bg-red-400 h-[10%] absolute top-0 left-0 flex items-center gap-10">
-            <h1 className='font-bold relative left-5 text-[40px]'>LOGO</h1>
-            <ul className='flex flex-row gap-4 '>
-                <li className='hover:cursor-pointer hover:bg-gray-600 hover:rounded-full p-2 flex items-center justify-center'>catogories</li>
-                <li className='hover:cursor-pointer hover:bg-gray-600 hover:rounded-full p-2 flex items-center justify-center'>Home</li>
-                <li className='hover:cursor-pointer hover:bg-gray-600 hover:rounded-full p-2 flex items-center justify-center'>How it works</li>
-                <li className='hover:cursor-pointer hover:bg-gray-600 hover:rounded-full p-2 flex items-center justify-center'>About</li>
-            </ul>
-            <input placeholder='search for celeb ' className='rounded-xl px-5 py-2 w-2/5 absolute right-5 bg-white text-black focus:outline-none '/>
-        </div>
-    </div> */}
+                  {/* Profile dropdown */}
+                  <Menu as="div" className="relative ml-3">
+                    <div>
+                      <Menu.Button className="relative flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
+                        <span className="absolute -inset-1.5" />
+                        <span className="sr-only">Open user menu</span>
+                        <img
+                          className="h-8 w-8 rounded-full"
+                          src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                          alt=""
+                        />
+                      </Menu.Button>
+                    </div>
+                    <Transition
+                      as={Fragment}
+                      enter="transition ease-out duration-100"
+                      enterFrom="transform opacity-0 scale-95"
+                      enterTo="transform opacity-100 scale-100"
+                      leave="transition ease-in duration-75"
+                      leaveFrom="transform opacity-100 scale-100"
+                      leaveTo="transform opacity-0 scale-95"
+                    >
+                      <Menu.Items className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                        <Menu.Item>
+                          {({ active }) => (
+                            <a
+                              href="#"
+                              className={classNames(
+                                active ? "bg-gray-100" : "",
+                                "block px-4 py-2 text-sm text-gray-700"
+                              )}
+                            >
+                              Your Profile
+                            </a>
+                          )}
+                        </Menu.Item>
+                        <Menu.Item>
+                          {({ active }) => (
+                            <a
+                              href="#"
+                              className={classNames(
+                                active ? "bg-gray-100" : "",
+                                "block px-4 py-2 text-sm text-gray-700"
+                              )}
+                            >
+                              Settings
+                            </a>
+                          )}
+                        </Menu.Item>
+                        <Menu.Item>
+                          {({ active }) => (
+                            <a
+                              href="#"
+                              className={classNames(
+                                active ? "bg-gray-100" : "",
+                                "block px-4 py-2 text-sm text-gray-700"
+                              )}
+                            >
+                              Sign out
+                            </a>
+                          )}
+                        </Menu.Item>
+                      </Menu.Items>
+                    </Transition>
+                  </Menu>
+                </div>
+              </div>
+            </div>
+
+            <Disclosure.Panel className="sm:hidden">
+              <div className="space-y-1 px-2 pb-3 pt-2">
+                {navigation.map((item) => (
+                  <Disclosure.Button
+                    key={item.name}
+                    as="a"
+                    href={item.href}
+                    className={classNames(
+                      item.current
+                        ? "bg-gray-900 text-white"
+                        : "text-gray-300 hover:bg-gray-700 hover:text-white",
+                      "block rounded-md px-3 py-2 text-base font-medium"
+                    )}
+                    aria-current={item.current ? "page" : undefined}
+                  >
+                    {item.name}
+                  </Disclosure.Button>
+                ))}
+              </div>
+            </Disclosure.Panel>
+          </>
+        )}
+      </Disclosure>
     </>
   );
 }

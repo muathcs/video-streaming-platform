@@ -3,12 +3,10 @@ import CelebCard from "./CelebCard";
 
 function Celebs() {
   return (
-    <div className="w-full h-full  flex justify-center items-center ">
-      <div className="px-10 items-center w-full grid xl:grid-col-8 lg:grid-cols-6 md:grid-cols-3 justify-items-center ">
-        {[4, 1, 1, 2, 2, 1].map((item) => (
-          <CelebCard />
-        ))}
-      </div>
+    <div className="w-full h-full items-center pt-40 bg-slate-900 overflow-auto  grid xl:grid-col-6 lg:grid-cols-6   md:grid-cols-3 sm:grid-cols-2 justify-items-center">
+      {[4, 1, 1, 2, 2, 1, 2, 2, 2, 2, 2, 2, 2, , 2, 22].map((item) => (
+        <CelebCard />
+      ))}
     </div>
   );
 }
