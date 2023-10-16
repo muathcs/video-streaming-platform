@@ -42,11 +42,6 @@ a:hover {
 body {
   margin: 0;
   padding: 0;
-
-  display: flex;
-  /* place-items: center; */
-  justify-content: center;
-  min-width: 320px;
   min-height: 100vh;
   width: 100%;
   height: 100%;
@@ -54,7 +49,7 @@ body {
 
 #root {
   width: 100%;
-  height: 100vh;
+  height: 100%;
   padding: 0;
   margin: 0;
 }
