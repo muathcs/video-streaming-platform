@@ -16,7 +16,10 @@ CREATE TABLE Celeb (
     password Varchar(30),
     amount_charge INT,
     request_num INT,
-    Category Varchar(20)
+    Category Varchar(20),
+    reviews INT,
+    description Varchar(250),
+
 );
 
 CREATE TABLE Fan (

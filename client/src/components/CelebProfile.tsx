@@ -1,6 +1,19 @@
 import React from "react";
 import celeb from "../assets/celeb.jpg";
+import { useLocation } from "react-router-dom";
+
+type CelebCardProps = {
+  name: String;
+  category: String;
+  reviews: Number;
+  price: Number;
+  description: String;
+};
+
 function CelebProfile() {
+  const { state } = useLocation();
+  const { name, category, reviews, price, description } = state;
+
   return (
     <>
       <div className="h-full w-full relative flex flex-col bg-slate-800 overflow-auto ">
@@ -10,19 +23,17 @@ function CelebProfile() {
           </div>
           <div className="  flex flex-col pr-3">
             <p className="text-whtie text-left text-[24px] relative top-3 left-5 ">
-              Name: Celeb Name
+              Name: {name}
             </p>
             <p className="text-left text-[18px] relative top-3 left-5 text-gray-600">
-              Celeb professionality
+              {category}
             </p>
             <p className="text-whtie text-left text-[20px] relative top-3 left-5 text-black">
-              ⭐⭐⭐⭐⭐
+              {"⭐".repeat(reviews)}
             </p>
 
             <p className="text-whtie text-left text-[16px] md:w-1/2 md:text-[20px] relative top-3 left-5 text-gray-400 whitespace-pre-line">
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Illo
-              repellendus ratione autem inventore nostrum minima ducimus maxime,
-              labore ipsa maiores.
+              {description}
             </p>
           </div>
         </div>
