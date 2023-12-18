@@ -1,0 +1,22 @@
+// INSERT INTO Celeb (email, username, password, amount_charge, request_num, Category, reviews, description)
+// VALUES
+//   ('celeb1@example.com', 'omar gabsalibrahim', 'fakepassword1', 100, 10, 'Actor', 4, 'Versatile actor known for stellar performances in both TV and film.'),
+//   ('celeb2@example.com', 'layla gabshamad', 'fakepassword2', 150, 15, 'Singer', 5, 'Renowned vocalist with a soulful voice and multiple chart-topping hits.'),
+//   ('celeb3@example.com', 'ali gabsnasser', 'fakepassword3', 120, 12, 'Athlete', 3, 'Pro athlete dominating the sports scene with exceptional skills.'),
+//   ('celeb4@example.com', 'nadia gabssabri', 'fakepassword4', 90, 8, 'Model', 2, 'Fashion icon and runway sensation, gracing the covers of top magazines.'),
+//   ('celeb5@example.com', 'youssef gabsabbas', 'fakepassword5', 200, 18, 'TV Host', 4, 'Charming TV personality hosting popular shows and events.'),
+//   ('celeb6@example.com', 'sara gabshassan', 'fakepassword6', 180, 16, 'Musician', 5, 'Talented musician creating mesmerizing tunes across genres.'),
+//   ('celeb7@example.com', 'khalid gabsali', 'fakepassword7', 120, 14, 'Actor', 3, 'Versatile actor known for bringing characters to life on the big screen.'),
+//   ('celeb8@example.com', 'noura gabskarim', 'fakepassword8', 130, 11, 'Singer', 4, 'Soul-stirring vocalist with a fan base spanning the globe.'),
+//   ('celeb9@example.com', 'tariq gabssami', 'fakepassword9', 110, 9, 'Athlete', 3, 'Exceptional athlete breaking records and setting new standards.'),
+//   ('celeb10@example.com', 'rana gabsmansour', 'fakepassword10', 5, 7, 'Model', 2, 'Striking model known for elegance and style on the runway.'),
+//   ('celeb11@example.com', 'ahmed gabshassan', 'fakepassword11', 170, 14, 'Actor', 4, 'Acclaimed actor with a knack for portraying diverse characters.'),
+//   ('celeb12@example.com', 'maya gabsali', 'fakepassword12', 190, 20, 'TV Host', 5, 'Popular TV host captivating audiences with wit and charm.'),
+//   ('celeb13@example.com', 'amr gabskhalid', 'fakepassword13', 3, 6, 'Musician', 2, 'Innovative musician exploring new sounds and creating magic.'),
+//   ('celeb14@example.com', 'dana gabshassan', 'fakepassword14', 4, 12, 'Singer', 4, 'Dynamic singer known for powerful vocals and stage presence.'),
+//   ('celeb15@example.com', 'khaled gabsomar', 'fakepassword15', 110, 10, 'Athlete', 5, 'Dedicated athlete excelling in their chosen sports discipline.'),
+//   ('celeb16@example.com', 'lina gabskarim', 'fakepassword16', 150, 16, 'Model', 3, 'Fashion model gracing runways and fashion campaigns.'),
+//   ('celeb17@example.com', 'omar gabssami', 'fakepassword17', 4, 11, 'Actor', 2, 'Accomplished actor known for memorable roles and performances.'),
+//   ('celeb18@example.com', 'sara gabsnour', 'fakepassword18', 5, 10, 'TV Host', 4, 'Charismatic TV host engaging audiences with entertaining content.'),
+//   ('celeb19@example.com', 'ali gabssabry', 'fakepassword19', 3, 8, 'Musician', 3, 'Innovative musician pushing boundaries and creating unique sounds.'),
+//   ('celeb20@example.com', 'nada gabsabbas', 'fakepassword20', 180, 15, 'Singer', 5, 'Singer with a captivating voice and a growing fan base.');

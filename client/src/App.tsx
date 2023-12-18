@@ -9,9 +9,12 @@ import CelebProfile from "./components/CelebProfile";
 import Login from "./components/Login";
 import { useSelector } from "react-redux";
 import { RootState } from "./redux/store";
+import SignUp from "./components/signup";
 
 function App() {
-  const { signed } = useSelector((state: RootState) => state.signed);
+  // const { signed } = useSelector((state: RootState) => state.signed);
+
+  const signed = true;
   return (
     <>
       <div className="flex flex-col  absolute   w-full h-full p-0 m-0 ">
@@ -19,6 +22,7 @@ function App() {
         {/* <Celebs /> */}
         <Routes>
           <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<SignUp />} />
           {signed ? (
             <>
               <Route path="/" element={<Celebs />} />

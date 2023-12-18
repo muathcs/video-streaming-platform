@@ -6,6 +6,7 @@ CREATE TABLE UserInfo (
     password Varchar(30),
     celeb BOOLEAN,
     celebId INT REFERENCES Celeb(celebId),
+    imgKey Varchar(56)
 );
 
 

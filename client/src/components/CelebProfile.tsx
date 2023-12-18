@@ -1,6 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
 import celeb from "../assets/celeb.jpg";
-import { useLocation } from "react-router-dom";
+import { useLocation, useSearchParams } from "react-router-dom";
+import { bool } from "aws-sdk/clients/signer";
+import RequestForm from "./RequestForm";
 
 type CelebCardProps = {
   name: String;
@@ -11,12 +13,13 @@ type CelebCardProps = {
 };
 
 function CelebProfile() {
+  const [orderModal, setOrderModal] = useState<bool>(false);
   const { state } = useLocation();
   const { name, category, reviews, price, description } = state;
 
   return (
     <>
-      <div className="h-full w-full relative flex flex-col bg-slate-800 overflow-auto ">
+      <div className="h-full w-full relative flex flex-col bg-slate-800 overflow-auto    ">
         <div className="flex flex-col">
           <div className=" rounded-full overflow-hidden relative left-5 top-2 w-2/5 sm:w-1/5 md:w-1/4 lg:w-1/6 border-2 bg-green-300 ">
             <img src={celeb} />
@@ -50,10 +53,28 @@ function CelebProfile() {
         </div>
 
         <div className="relative top-20 pb-5">
-          <button className=" relative  w-1/2 md:w-1/5 rounded-md hover:bg-slate-700 bg-slate-500  text-white hover:border-none outline-none focus:outline-none border-none">
+          <button
+            onClick={(e) => setOrderModal(true)}
+            className=" relative  w-1/2 md:w-1/5 rounded-md hover:bg-slate-700 bg-slate-500  text-white hover:border-none outline-none focus:outline-none border-none"
+          >
             Book A Shoutout
           </button>
         </div>
+        {orderModal && (
+          <>
+            <div className="bg-black  h-full w-full sm:top-0 fixed flex justify-center items-center sm:bg-opacity-80  ">
+              <div className="w-full sm:w-3/4 xl:w-2/5 h-full sm:h-4/5  sm:pt-12 bg-black px-5 relative  border-2">
+                <div
+                  onClick={(e) => setOrderModal(false)}
+                  className="absolute  right-2 sm:right-5 top-0 sm:top-2 rounded-full  w-8 h-8 flex justify-center text-lg font-bold bg-red-500 cursor-pointer hover:bg-red-700 z-10"
+                >
+                  x
+                </div>
+                <RequestForm />
+              </div>
+            </div>
+          </>
+        )}
       </div>
     </>
   );

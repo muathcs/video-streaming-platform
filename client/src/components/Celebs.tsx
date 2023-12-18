@@ -15,21 +15,18 @@ function Celebs() {
   const [celebs, setCelebs] = useState<CelebCardProps[]>([]);
 
   async function getCelebs(e: any) {
-    console.log("herex", celebs);
     try {
       const response = await axios.get("http://localhost:3001/celebs");
 
       // save the response of celebs to the celebs array.
       const responseData: any = response.data;
       setCelebs(responseData);
-      console.log("celebs: ", celebs);
     } catch (error: any) {
       console.log("mssage:", error.message);
     }
   }
 
   useEffect(() => {
-    console.log("herebb");
     getCelebs("any for now");
   }, []);
 

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Fragment } from "react";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
 import { CiBurger, CiMenuBurger } from "react-icons/ci";
@@ -6,6 +6,8 @@ import { FaBell, FaTimes } from "react-icons/fa";
 import { CiMenuFries } from "react-icons/ci";
 import { AiOutlineClose } from "react-icons/ai";
 import { Link, useLocation } from "react-router-dom";
+import s3 from "../utilities/S3";
+import { Image } from "aws-sdk/clients/iotanalytics";
 
 const navigation = [
   { name: "Catogories", href: "#", current: true },
@@ -19,14 +21,47 @@ function classNames(...classes: any) {
   return classes.filter(Boolean).join(" ");
 }
 
+// retrieve profile image.
+
+// Assuming userID is a variable containing the user ID you want to retrieve the image for
+const userID = localStorage.getItem("userid");
+
+const params = {
+  Bucket: "cy-vide-stream-imgfiles", // Replace with your S3 bucket name
+  Key: `profile/user(${userID})`, // Adjust the key based on your folder structure and user ID
+};
+
 function NavBar() {
   const [click, setClick] = useState(false);
   const [search, setSearch] = useState("");
+  const [profileImg, setProfileImg] = useState<any>();
   const handleClick = () => setClick(!click);
+
+  useEffect(() => {
+    // Use the getObject method to retrieve the image
+    s3.getObject(params, (err, data) => {
+      if (err) {
+        console.error("Error retrieving image from S3:", err);
+      } else {
+        // 'data.Body' contains the image data
+        // console.log("Retrieved image from S3:", data.Body);
+        console.log("data: ", data.ContentType);
+
+        const imgBinary: any = data.Body;
+
+        // Convert binary data to a data URL
+        const base64Image = btoa(String.fromCharCode.apply(null, imgBinary));
+        const dataURL = `data:${data.ContentType};base64,${base64Image}`;
+
+        // Update the state with the data URL
+        setProfileImg(dataURL);
+      }
+    });
+  }, []);
 
   return (
     <>
-      <Disclosure as="nav" className="bg-[#121114]  text-[24px] z-10 ">
+      <Disclosure as="nav" className="bg-[#121114]  text-[24px] z-10 block ">
         {({ open }) => (
           <>
             <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
@@ -90,7 +125,7 @@ function NavBar() {
                         <span className="sr-only">Open user menu</span>
                         <img
                           className="h-8 w-8 rounded-full"
-                          src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                          src={profileImg}
                           alt=""
                         />
                       </Menu.Button>

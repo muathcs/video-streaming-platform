@@ -90,3 +90,11 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
+
+@layer utilities {
+  .placeholder-style::placeholder {
+    position: absolute;
+    padding: 0;
+    line-height: 1.5;
+  }
+}
