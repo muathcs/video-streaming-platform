@@ -3,6 +3,7 @@ import celeb from "../assets/celeb.jpg";
 import { useLocation, useSearchParams } from "react-router-dom";
 import { bool } from "aws-sdk/clients/signer";
 import RequestForm from "./RequestForm";
+import { stat } from "fs";
 
 type CelebCardProps = {
   name: String;
@@ -15,7 +16,9 @@ type CelebCardProps = {
 function CelebProfile() {
   const [orderModal, setOrderModal] = useState<bool>(false);
   const { state } = useLocation();
+
   const { name, category, reviews, price, description } = state;
+  console.log("state: ", useLocation());
 
   return (
     <>
@@ -62,8 +65,11 @@ function CelebProfile() {
         </div>
         {orderModal && (
           <>
-            <div className="bg-black  h-full w-full sm:top-0 fixed flex justify-center items-center sm:bg-opacity-80  ">
-              <div className="w-full sm:w-3/4 xl:w-2/5 h-full sm:h-4/5  sm:pt-12 bg-black px-5 relative  border-2">
+            <div className="bg-black   h-full w-full sm:top-0 fixed flex justify-center items-center sm:bg-opacity-80  ">
+              <div
+                className="w-full sm:w-3/4 xl:w-2/5 h-full sm:h-4/5  sm:pt-12 bg-slate-800 rounded-md  px-5 relative  
+              "
+              >
                 <div
                   onClick={(e) => setOrderModal(false)}
                   className="absolute  right-2 sm:right-5 top-0 sm:top-2 rounded-full  w-8 h-8 flex justify-center text-lg font-bold bg-red-500 cursor-pointer hover:bg-red-700 z-10"

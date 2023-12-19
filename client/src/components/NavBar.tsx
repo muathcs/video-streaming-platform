@@ -45,7 +45,6 @@ function NavBar() {
       } else {
         // 'data.Body' contains the image data
         // console.log("Retrieved image from S3:", data.Body);
-        console.log("data: ", data.ContentType);
 
         const imgBinary: any = data.Body;
 
@@ -55,9 +54,12 @@ function NavBar() {
 
         // Update the state with the data URL
         setProfileImg(dataURL);
+        console.log("success: ", data.ContentType);
       }
     });
   }, []);
+
+  function signOut() {}
 
   return (
     <>

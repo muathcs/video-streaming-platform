@@ -5,14 +5,17 @@ function RequestForm() {
   const [checkBox, setCheckBox] = useState(false);
 
   return (
-    <div className="bg-black h-full w-full relative ">
+    <div className="h-full w-full relative  ">
       <form>
         {/* <!-- Email input --> */}
         <div className="relative mb-6" data-te-input-wrapper-init>
           <label className="block text-sm font-medium mb-2 w-full sm:w-3/6 text-white text-left">
             Step 1: Type of video request
           </label>
-          <select data-te-select-init className="w-full h-10 rounded-md">
+          <select
+            data-te-select-init
+            className="w-full h-10 rounded-md bg-transparent border text-slate-800 cursor-pointer"
+          >
             <option>Select</option>
             <option value="1">Holiday</option>
             <option value="2">Birthday</option>

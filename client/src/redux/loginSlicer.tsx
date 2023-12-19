@@ -8,12 +8,13 @@ const initialState: signedState = {
   signed: false,
 };
 
+console.log("signed", initialState);
 export const signedReducer = createSlice({
   name: "signed",
   initialState,
   reducers: {
     setSigned: (state, action) => {
-      //   console.log("payload: ", action.payload);
+      console.log("payload: ", action.payload);
       state.signed = action.payload;
     },
   },
