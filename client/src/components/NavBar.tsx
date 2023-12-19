@@ -8,7 +8,7 @@ import { AiOutlineClose } from "react-icons/ai";
 import { Link, useLocation } from "react-router-dom";
 import s3 from "../utilities/S3";
 import { Image } from "aws-sdk/clients/iotanalytics";
-
+// testing here now 2:32
 const navigation = [
   { name: "Catogories", href: "#", current: true },
   { name: "Home", href: "#", current: false },
