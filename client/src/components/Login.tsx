@@ -11,9 +11,10 @@ function Login() {
   const [password, setPassWord] = useState<string>("");
   const emailRef = useRef<any>();
   const passwordRef = useRef<any>();
-  const { login, currentUser, token }: any = useAuth();
+  const { login, currentUser, token, resetPassword }: any = useAuth();
   const [loading, setLoading] = useState(false);
   const [successfull, setSuccessfull] = useState<string>("");
+  const [resetMessage, setResetMessage] = useState<string>("");
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
@@ -29,13 +30,14 @@ function Login() {
 
     try {
       setError("");
-      setSuccessfull("signed in succefully");
 
       setLoading(true);
       const userid = await login(
         emailRef.current.value,
         passwordRef.current.value
       );
+      setSuccessfull("signed in succefully");
+
       console.log("check: ", currentUser);
       console.log("current user id: ", userid);
       navigate("/");
@@ -47,6 +49,17 @@ function Login() {
     }
     setLoading(false);
     // setSuccessfull(false);
+  }
+
+  // reset password
+  function handleResetPassword() {
+    try {
+      setResetMessage("");
+      resetPassword(emailRef.current.value);
+      setResetMessage("We sent you a password reset email");
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   return (
@@ -74,6 +87,10 @@ function Login() {
               ) : successfull ? (
                 <p className="bg-green-200 border text-lg text-black border-green-600 w-full rounded-lg text-center sm:p-4 p-3 relative mb sm:top-2  left-1/2 transform -translate-x-1/2 -translate-y-1/2 ">
                   {successfull}
+                </p>
+              ) : resetMessage ? (
+                <p className="bg-green-200 border text-lg text-black border-green-600 w-full rounded-lg text-center sm:p-4 p-3 relative mb sm:top-2  left-1/2 transform -translate-x-1/2 -translate-y-1/2 ">
+                  {resetMessage}
                 </p>
               ) : null}
               <form onSubmit={handleSubmit}>
@@ -137,6 +154,7 @@ function Login() {
 
                   {/* <!-- Forgot password link --> */}
                   <a
+                    onClick={handleResetPassword}
                     href="#!"
                     className="text-primary transition duration-150 ease-in-out hover:text-primary-600 focus:text-primary-600 active:text-primary-700 dark:text-primary-400 dark:hover:text-primary-500 dark:focus:text-primary-500 dark:active:text-primary-600"
                   >

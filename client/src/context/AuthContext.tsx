@@ -2,7 +2,9 @@ import React, { useContext, useEffect, useState } from "react";
 import { auth } from "../auth/firebase";
 import {
   createUserWithEmailAndPassword,
+  sendPasswordResetEmail,
   signInWithEmailAndPassword,
+  updateProfile,
 } from "firebase/auth";
 
 const AuthContext = React.createContext("");
@@ -10,12 +12,17 @@ const AuthContext = React.createContext("");
 export function useAuth() {
   return useContext(AuthContext);
 }
+
 export function AuthProvider({ children }: { children: any }) {
   const [currentUser, setCurrentUser] = useState();
   const [token, setToken] = useState();
   const [loading, setLoading] = useState(true);
 
-  async function signup(email: any, password: any): Promise<string> {
+  async function signup(
+    email: any,
+    password: any,
+    username: string
+  ): Promise<string> {
     try {
       // Wait for createUserWithEmailAndPassword to complete
       const userCredential: any = await createUserWithEmailAndPassword(
@@ -23,6 +30,15 @@ export function AuthProvider({ children }: { children: any }) {
         email,
         password
       );
+      console.log("signup function: ", userCredential);
+
+      // After creating the user, get the user object
+      const user = userCredential.user;
+
+      await updateProfile(user, {
+        displayName: username,
+        photoURL: "http://localhost:3001:test/test/photo",
+      });
 
       // Obtain the user's UID
       const uid: string = userCredential.user.uid;
@@ -41,7 +57,20 @@ export function AuthProvider({ children }: { children: any }) {
   }
 
   function logout() {
-    return auth.signOut();
+    try {
+      return auth.signOut();
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  //reset password
+  async function resetPassword(email: string) {
+    try {
+      await sendPasswordResetEmail(auth, email);
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   useEffect(() => {
@@ -62,6 +91,7 @@ export function AuthProvider({ children }: { children: any }) {
 
   const value: any = {
     currentUser,
+    resetPassword,
     token,
     signup,
     login,

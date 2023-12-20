@@ -12,6 +12,7 @@ function SignUp() {
   const [email, setEmail] = useState<string>("");
   const [password, setPassWord] = useState<string>("");
   const [username, setUserName] = useState<string>("");
+  const userNameRef = useRef<any>();
   const [imgKey, setImgKey] = useState<number>();
   // Initialization for ES Users
   const dispatch = useDispatch();
@@ -43,10 +44,12 @@ function SignUp() {
       setLoading(true);
       const userid = await signup(
         emailRef.current.value,
-        passwordRef.current.value
+        passwordRef.current.value,
+        userNameRef.current.value
       );
       console.log("check: ", currentUser);
       console.log("current user id: ", userid);
+      handleUpload(userid);
       navigate("/");
 
       // handleUpload()
@@ -108,6 +111,8 @@ function SignUp() {
         console.log("Image uploaded successfully:");
 
         // Return the key from the successful upload
+
+        console.log("image url: ", data);
         return data.Key;
       } catch (error) {
         console.error("Error uploading image:", error);
@@ -149,7 +154,7 @@ function SignUp() {
                 <div className="relative mb-6" data-te-input-wrapper-init>
                   <input
                     type="text"
-                    value={username}
+                    ref={userNameRef}
                     onChange={(e) => setUserName(e.target.value)}
                     className="peer block min-h-[auto] w-full rounded border bg-transparent
                      px-3 py-[0.32rem] leading-[2.15] outline-none transition-all duration-200 
