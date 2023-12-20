@@ -19,7 +19,7 @@ function SignUp() {
 
   // start
   const emailRef = useRef<any>();
-  const passwordRef = useRef<any>("sffsd");
+  const passwordRef = useRef<any>();
   const passwordConfirmRef = useRef<any>();
   const { signup, currentUser }: any = useAuth();
   const [error, setError] = useState("");
@@ -47,6 +47,8 @@ function SignUp() {
       );
       console.log("check: ", currentUser);
       console.log("current user id: ", userid);
+      navigate("/");
+
       // handleUpload()
     } catch (error) {
       setSuccessfull("");

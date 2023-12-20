@@ -5,9 +5,10 @@ import { CiBurger, CiMenuBurger } from "react-icons/ci";
 import { FaBell, FaTimes } from "react-icons/fa";
 import { CiMenuFries } from "react-icons/ci";
 import { AiOutlineClose } from "react-icons/ai";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import s3 from "../utilities/S3";
 import { Image } from "aws-sdk/clients/iotanalytics";
+import { useAuth } from "../context/AuthContext";
 
 const navigation = [
   { name: "Catogories", href: "#", current: true },
@@ -36,6 +37,8 @@ function NavBar() {
   const [search, setSearch] = useState("");
   const [profileImg, setProfileImg] = useState<any>();
   const handleClick = () => setClick(!click);
+  const { logout }: any = useAuth();
+  const navigate = useNavigate();
 
   useEffect(() => {
     // Use the getObject method to retrieve the image
@@ -59,7 +62,15 @@ function NavBar() {
     });
   }, []);
 
-  function signOut() {}
+  // logout
+  async function handleLogout() {
+    try {
+      await logout();
+      navigate("/login");
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
   return (
     <>
@@ -171,6 +182,7 @@ function NavBar() {
                         <Menu.Item>
                           {({ active }) => (
                             <a
+                              onClick={handleLogout}
                               href="#"
                               className={classNames(
                                 active ? "bg-gray-100" : "",

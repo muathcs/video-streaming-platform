@@ -1,42 +1,52 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import axios from "../api/axios";
 import { useDispatch } from "react-redux";
 import { setSigned } from "../redux/loginSlicer";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 function Login() {
   const [rememberMe, setRememberMe] = useState<boolean>();
   const [email, setEmail] = useState<string>("");
   const [password, setPassWord] = useState<string>("");
-  // Initialization for ES Users
-  const dispatch = useDispatch();
+  const emailRef = useRef<any>();
+  const passwordRef = useRef<any>();
+  const { login, currentUser, token }: any = useAuth();
+  const [loading, setLoading] = useState(false);
+  const [successfull, setSuccessfull] = useState<string>("");
+  const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  // this functions sends the user inputted email and password, and sends them to the server,
-  // if a user exists with those inputs, then a success object is returned, if object is true,
-  // redux state is true, and user is allowed into the app. If not user stays out.
-  async function login(e: any) {
+  // Initialization for ES Users
+  const dispatch = useDispatch();
+
+  console.log("user: ", currentUser);
+  console.log("token user: ", token);
+
+  //login function
+  async function handleSubmit(e: any) {
     e.preventDefault();
-    console.log("email: ", email);
+
     try {
-      const response = await axios.get("http://localhost:3001/auth", {
-        params: {
-          email: email,
-          password: password,
-        },
-      });
+      setError("");
+      setSuccessfull("signed in succefully");
 
-      if (response.data.success) {
-        dispatch(setSigned(true)); //true
-
-        await localStorage.setItem("userid", response.data.userid); //add the user id to local storage
-        navigate("/");
-      } else {
-        dispatch(setSigned(false)); //false
-      }
-    } catch (error: any) {
-      console.log(error.message);
+      setLoading(true);
+      const userid = await login(
+        emailRef.current.value,
+        passwordRef.current.value
+      );
+      console.log("check: ", currentUser);
+      console.log("current user id: ", userid);
+      navigate("/");
+      // handleUpload()
+    } catch (error) {
+      setSuccessfull("");
+      setError("Wrong email or password");
+      console.log("failed to sign in", error);
     }
+    setLoading(false);
+    // setSuccessfull(false);
   }
 
   return (
@@ -56,12 +66,22 @@ function Login() {
 
             {/* <!-- Right column container with form --> */}
             <div className="md:w-8/12 lg:ml-6 lg:w-5/12">
-              <form>
+              <h1 className="text-[30px]  mb-10">Sign Up</h1>
+              {error ? (
+                <p className="bg-red-200 border text-black border-red-600 w-full rounded-lg text-center sm:p-4 p-3 relative mb sm:top-2  left-1/2 transform -translate-x-1/2 -translate-y-1/2 ">
+                  {error}
+                </p>
+              ) : successfull ? (
+                <p className="bg-green-200 border text-lg text-black border-green-600 w-full rounded-lg text-center sm:p-4 p-3 relative mb sm:top-2  left-1/2 transform -translate-x-1/2 -translate-y-1/2 ">
+                  {successfull}
+                </p>
+              ) : null}
+              <form onSubmit={handleSubmit}>
                 {/* <!-- Email input --> */}
                 <div className="relative mb-6" data-te-input-wrapper-init>
                   <input
-                    type="text"
-                    value={email}
+                    type="email"
+                    ref={emailRef}
                     onChange={(e) => setEmail(e.target.value)}
                     className="peer block min-h-[auto] w-full rounded border bg-transparent
                      px-3 py-[0.32rem] leading-[2.15] outline-none transition-all duration-200 
@@ -83,7 +103,7 @@ function Login() {
                 <div className="relative mb-6" data-te-input-wrapper-init>
                   <input
                     type="password"
-                    value={password}
+                    ref={passwordRef}
                     onChange={(e) => setPassWord(e.target.value)}
                     className="peer block min-h-[auto] w-full rounded border bg-transparent px-3 py-[0.32rem] leading-[2.15] outline-none transition-all duration-200 ease-linear focus:placeholder:opacity-100 data-[te-input-state-active]:placeholder:opacity-100 motion-reduce:transition-none dark:text-neutral-200 dark:placeholder:text-neutral-200 [&:not([data-te-input-placeholder-active])]:placeholder:opacity-0"
                     id="exampleFormControlInput33"
@@ -103,7 +123,6 @@ function Login() {
                     <input
                       className="relative  float-left -ml-[1.5rem] mr-[6px] mt-[0.15rem] h-[1.125rem] w-[1.125rem] appearance-none rounded-[0.25rem] border-[0.125rem] border-solid border-neutral-300 outline-none before:pointer-events-none before:absolute before:h-[0.875rem] before:w-[0.875rem] before:scale-0 before:rounded-full before:bg-transparent before:opacity-0 before:shadow-[0px_0px_0px_13px_transparent] before:content-[''] checked:border-primary checked:bg-primary checked:before:opacity-[0.16] checked:after:absolute checked:after:-mt-px checked:after:ml-[0.25rem] checked:after:block checked:after:h-[0.8125rem] checked:after:w-[0.375rem] checked:after:rotate-45 checked:after:border-[0.125rem] checked:after:border-l-0 checked:after:border-t-0 checked:after:border-solid checked:after:border-white checked:after:bg-transparent checked:after:content-[''] hover:cursor-pointer hover:before:opacity-[0.04] hover:before:shadow-[0px_0px_0px_13px_rgba(0,0,0,0.6)] focus:shadow-none focus:transition-[border-color_0.2s] focus:before:scale-100 focus:before:opacity-[0.12] focus:before:shadow-[0px_0px_0px_13px_rgba(0,0,0,0.6)] focus:before:transition-[box-shadow_0.2s,transform_0.2s] focus:after:absolute focus:after:z-[1] focus:after:block focus:after:h-[0.875rem] focus:after:w-[0.875rem] focus:after:rounded-[0.125rem] focus:after:content-[''] checked:focus:before:scale-100 checked:focus:before:shadow-[0px_0px_0px_13px_#3b71ca] checked:focus:before:transition-[box-shadow_0.2s,transform_0.2s] checked:focus:after:-mt-px checked:focus:after:ml-[0.25rem] checked:focus:after:h-[0.8125rem] checked:focus:after:w-[0.375rem] checked:focus:after:rotate-45 checked:focus:after:rounded-none checked:focus:after:border-[0.125rem] checked:focus:after:border-l-0 checked:focus:after:border-t-0 checked:focus:after:border-solid checked:focus:after:border-white checked:focus:after:bg-transparent dark:border-neutral-600 dark:checked:border-primary dark:checked:bg-primary dark:focus:before:shadow-[0px_0px_0px_13px_rgba(255,255,255,0.4)] dark:checked:focus:before:shadow-[0px_0px_0px_13px_#3b71ca]"
                       type="checkbox"
-                      value=""
                       id="exampleCheck3"
                       onClick={(e) => setRememberMe(!rememberMe)}
                       checked={rememberMe}
@@ -131,7 +150,6 @@ function Login() {
                   className="inline-block w-full bg-[#5e7dc2] hover:bg-[#5a7ac1] rounded bg-primary px-7 pb-2.5 pt-3 text-sm font-medium uppercase leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-primary-600 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:bg-primary-600 focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:bg-primary-700 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]"
                   data-te-ripple-init
                   data-te-ripple-color="light"
-                  onClick={(e) => login(e)}
                 >
                   Sign in
                 </button>

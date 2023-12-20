@@ -1,6 +1,9 @@
 import React, { useContext, useEffect, useState } from "react";
 import { auth } from "../auth/firebase";
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+} from "firebase/auth";
 
 const AuthContext = React.createContext("");
 
@@ -9,6 +12,7 @@ export function useAuth() {
 }
 export function AuthProvider({ children }: { children: any }) {
   const [currentUser, setCurrentUser] = useState();
+  const [token, setToken] = useState();
   const [loading, setLoading] = useState(true);
 
   async function signup(email: any, password: any): Promise<string> {
@@ -32,9 +36,24 @@ export function AuthProvider({ children }: { children: any }) {
     }
   }
 
+  function login(email: any, password: any) {
+    return signInWithEmailAndPassword(auth, email, password);
+  }
+
+  function logout() {
+    return auth.signOut();
+  }
+
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user: any) => {
       setCurrentUser(user);
+
+      if (user) {
+        user.getIdToken().then((token: any) => {
+          // 'token' contains the session token
+          setToken(token);
+        });
+      }
       setLoading(false);
     });
 
@@ -43,7 +62,10 @@ export function AuthProvider({ children }: { children: any }) {
 
   const value: any = {
     currentUser,
+    token,
     signup,
+    login,
+    logout,
   };
   return (
     <>
