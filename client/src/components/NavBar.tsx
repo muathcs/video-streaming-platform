@@ -5,10 +5,11 @@ import { CiBurger, CiMenuBurger } from "react-icons/ci";
 import { FaBell, FaTimes } from "react-icons/fa";
 import { CiMenuFries } from "react-icons/ci";
 import { AiOutlineClose } from "react-icons/ai";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import s3 from "../utilities/S3";
 import { Image } from "aws-sdk/clients/iotanalytics";
-// testing here now 2:32
+import { useAuth } from "../context/AuthContext";
+
 const navigation = [
   { name: "Catogories", href: "#", current: true },
   { name: "Home", href: "#", current: false },
@@ -36,7 +37,10 @@ function NavBar() {
   const [search, setSearch] = useState("");
   const [profileImg, setProfileImg] = useState<any>();
   const handleClick = () => setClick(!click);
+  const { logout, currentUser }: any = useAuth();
+  const navigate = useNavigate();
 
+  console.log("cuuser: ", currentUser);
   useEffect(() => {
     // Use the getObject method to retrieve the image
     s3.getObject(params, (err, data) => {
@@ -59,7 +63,15 @@ function NavBar() {
     });
   }, []);
 
-  function signOut() {}
+  // logout
+  async function handleLogout() {
+    try {
+      await logout();
+      navigate("/login");
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
   return (
     <>
@@ -127,7 +139,7 @@ function NavBar() {
                         <span className="sr-only">Open user menu</span>
                         <img
                           className="h-8 w-8 rounded-full"
-                          src={profileImg}
+                          src={currentUser.photoURL}
                           alt=""
                         />
                       </Menu.Button>
@@ -171,6 +183,7 @@ function NavBar() {
                         <Menu.Item>
                           {({ active }) => (
                             <a
+                              onClick={handleLogout}
                               href="#"
                               className={classNames(
                                 active ? "bg-gray-100" : "",

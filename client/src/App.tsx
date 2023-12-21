@@ -10,6 +10,7 @@ import Login from "./components/Login";
 import { useSelector } from "react-redux";
 import { RootState } from "./redux/store";
 import SignUp from "./components/signup";
+import PrivateRoute from "./components/privateRoute";
 
 function App() {
   // const { signed } = useSelector((state: RootState) => state.signed);
@@ -25,7 +26,7 @@ function App() {
           <Route path="/register" element={<SignUp />} />
           {signed ? (
             <>
-              <Route path="/" element={<Celebs />} />
+              <Route path="/" element={<PrivateRoute />} />
               <Route path="/profile" element={<CelebProfile />} />
             </>
           ) : (

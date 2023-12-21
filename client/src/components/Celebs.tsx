@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import CelebCard from "./CelebCard";
 import { CiGlass } from "react-icons/ci";
 import axios from "axios";
+import { useAuth } from "../context/AuthContext";
 
 type CelebCardProps = {
   username: any;
@@ -13,6 +14,8 @@ type CelebCardProps = {
 
 function Celebs() {
   const [celebs, setCelebs] = useState<CelebCardProps[]>([]);
+
+  const { currentUser }: any = useAuth();
 
   async function getCelebs(e: any) {
     try {
