@@ -27,6 +27,16 @@ function SignUp() {
   const [loading, setLoading] = useState(false);
   const [successfull, setSuccessfull] = useState<string>("");
 
+  // function createCeleb() {
+  //   //
+
+  //   try {
+  //     axios.post({mnmn})
+  //   } catch (error) {
+
+  //   }
+  // }
+
   // sign up function, also calls functin to upload image to s3.
   async function handleSubmit(e: any) {
     e.preventDefault();
@@ -92,6 +102,12 @@ function SignUp() {
     }
   };
 
+  const userChoice = useRef<any>();
+
+  function handleChoice(choice: string) {
+    userChoice.current = choice;
+  }
+
   return (
     <div className="">
       {/* <!-- TW Elements is free under AGPL, with commercial license required for specific uses. See more details: https://tw-elements.com/license/ and contact us for queries at tailwind@mdbootstrap.com -->  */}
@@ -119,6 +135,26 @@ function SignUp() {
                   {successfull}
                 </p>
               ) : null}
+
+              <div className="flex justify-center gap-5 mb-3">
+                <button
+                  onClick={(e) => handleChoice("celeb")}
+                  className={`p-5 w-32 ${
+                    userChoice.current === "celeb"
+                      ? "bg-black text-white"
+                      : "bg-red-300"
+                  }`}
+                >
+                  Celeb
+                </button>
+                <button
+                  onClick={(e) => handleChoice("fan")}
+                  className="bg-green-300 p-5 w-32"
+                >
+                  Fan
+                </button>
+              </div>
+
               <form onSubmit={handleSubmit}>
                 {/* <!-- username input --> */}
                 <div className="relative mb-6" data-te-input-wrapper-init>
