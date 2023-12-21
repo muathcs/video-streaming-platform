@@ -14,6 +14,7 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 app.use(bodyParser.json());
+const client = await pool.connect();
 
 // Specify your AWS region here
 const region = "eu-west-2";
@@ -40,16 +41,48 @@ const s3 = new S3Client({ region, credentials });
 
 app.get("/celebs", async (req, res) => {
   try {
-    const client = await pool.connect();
-
     const result = await pool.query("SELECT * FROM celeb");
-    client.release(); // Release the connection back to the pool
+    // client.release(); // Release the connection back to the pool
 
     const celebs = result.rows;
 
     res.send(celebs);
   } catch (error) {
     res.status(500).json({ error: error.message });
+  }
+});
+
+app.post("/createCeleb", async (req, res) => {
+  console.log("celeb", req.body);
+
+  const {
+    displayName,
+    username,
+    follower,
+    account,
+    category,
+    price,
+    email,
+    description,
+  } = req.body;
+
+  try {
+    const result = await pool.query(
+      "INSERT INTO celeb(displayName, username, followers, account, category, price, email, description) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)",
+      [
+        displayName,
+        username,
+        follower,
+        account,
+        category,
+        price,
+        email,
+        description,
+      ]
+    );
+    console.log(req.body);
+  } catch (error) {
+    console.log(error);
   }
 });
 

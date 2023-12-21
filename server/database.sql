@@ -1,27 +1,18 @@
-
-CREATE TABLE UserInfo (
-    userId SERIAL PRIMARY KEY,
-    email Varchar(60),
-    username Varchar(20),
-    password Varchar(30),
-    celeb BOOLEAN,
-    celebId INT REFERENCES Celeb(celebId),
-    imgKey Varchar(56)
-);
-
-
 CREATE TABLE Celeb (
     celebId SERIAL PRIMARY KEY,
-    email Varchar(60),
-    username Varchar(20),
-    password Varchar(30),
-    amount_charge INT,
+    displayName VARCHAR(60),
+    username VARCHAR(24),
+    followers INT,
+    account VARCHAR(30),
+    category VARCHAR(24),
+    price INT,
+    email VARCHAR(60),
+    description VARCHAR(250),
     request_num INT,
-    Category Varchar(20),
-    reviews INT,
-    description Varchar(250),
-
+    reviews INT
 );
+
+
 
 CREATE TABLE Fan (
     fanId SERIAL PRIMARY KEY,

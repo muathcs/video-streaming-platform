@@ -37,7 +37,7 @@ function CelebCard({
         />
       </div>
       <div className=" h-[35%] text-left left-1  relative pl-1 pt-2">
-        <p>{"ge"}</p>
+        <p>{name}</p>
         <p className="">{category}</p>
         <p className="">{reviews}</p>
         <p className="">£{price.toFixed(2)}</p>

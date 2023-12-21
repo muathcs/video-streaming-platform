@@ -34,9 +34,12 @@ function SignUp() {
     username: string,
     email: string,
     password: string,
-    passwordConfirmation: string
+    passwordConfirmation: string,
+    celeb: any
   ) {
     e.preventDefault();
+
+    console.log("celeb from actual function: ", celeb);
 
     //if password doesn't match.
     if (password !== passwordConfirmation) {
@@ -55,7 +58,16 @@ function SignUp() {
 
       await uploadProfilePic(imgUrl, userid);
 
-      navigate("/");
+      try {
+        const response = await axios.post(
+          "http://localhost:3001/createCeleb",
+          celeb
+        );
+
+        console.log("response: ", response);
+      } catch (error) {}
+
+      // navigate("/");
     } catch (error) {
       setSuccessfull("");
       console.log("failed to create an account", error);

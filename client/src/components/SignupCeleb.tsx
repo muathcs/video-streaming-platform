@@ -11,20 +11,12 @@ function SignupCeleb({
   handleFileChange: any;
 }) {
   const [rememberMe, setRememberMe] = useState<boolean>();
-  const [email, setEmail] = useState<string>("");
-  const [password, setPassWord] = useState<string>("");
-  const [username, setUserName] = useState<string>("");
   const userNameRef = useRef<any>();
-  const [imgKey, setImgKey] = useState<number>();
-  // Initialization for ES Users
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
 
   // start
   const emailRef = useRef<any>();
   const passwordRef = useRef<any>();
   const passwordConfirmRef = useRef<any>();
-  const { signup, currentUser, uploadProfilePic }: any = useAuth();
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [successfull, setSuccessfull] = useState<string>("");
@@ -33,6 +25,19 @@ function SignupCeleb({
 
   const inputStyle =
     "peer block min-h-[auto] w-full rounded border bg-transparent px-3 py-[0.32rem] leading-[2.15] outline-none transition-all duration-200 ease-linear focus:placeholder:opacity-100 data-[te-input-state-active]:placeholder:opacity-100 motion-reduce:transition-none dark:text-neutral-200 dark:placeholder:text-neutral-200  ";
+  const [celeb, setCeleb] = useState({});
+
+  async function createACeleb(e: any) {
+    const { name, value, innerText } = e.target;
+
+    setCeleb({
+      ...celeb,
+      [name !== undefined ? name : "remote"]:
+        value !== undefined ? value.toLowerCase() : innerText,
+    });
+
+    console.log("celeb:  ", celeb);
+  }
 
   return (
     <div>
@@ -43,7 +48,8 @@ function SignupCeleb({
             userNameRef.current.value,
             emailRef.current.value,
             passwordRef.current.value,
-            passwordConfirmRef.current.value
+            passwordConfirmRef.current.value,
+            celeb
           )
         }
       >
@@ -51,19 +57,21 @@ function SignupCeleb({
         <div className="relative mb-6" data-te-input-wrapper-init>
           <input
             type="text"
-            onChange={(e) => setUserName(e.target.value)}
+            name="displayName"
             className={inputStyle}
             placeholder="display Name"
+            onChange={(e) => createACeleb(e)}
           />
         </div>
         {/* <!-- username input --> */}
         <div className="relative mb-6" data-te-input-wrapper-init>
           <input
+            name="username"
             type="text"
             ref={userNameRef}
-            onChange={(e) => setUserName(e.target.value)}
             className={inputStyle}
             placeholder="username"
+            onChange={(e) => createACeleb(e)}
           />
         </div>
         {/* <!-- Password input --> */}
@@ -71,28 +79,18 @@ function SignupCeleb({
           <input
             type="password"
             ref={passwordRef}
-            onChange={(e) => setPassWord(e.target.value)}
             className={inputStyle}
             placeholder="Password"
           />
-          <label
-            htmlFor="exampleFormControlInput33"
-            className="pointer-events-none absolute left-3 top-0 mb-0 max-w-[90%] origin-[0_0] truncate pt-[0.37rem] leading-[2.15] text-neutral-500 transition-all duration-200 ease-out peer-focus:-translate-y-[1.15rem] peer-focus:scale-[0.8] peer-focus:text-primary peer-data-[te-input-state-active]:-translate-y-[1.15rem] peer-data-[te-input-state-active]:scale-[0.8] motion-reduce:transition-none dark:text-neutral-200 dark:peer-focus:text-primary"
-          ></label>
         </div>
         {/* <!-- confirm password --> */}
         <div className="relative mb-6" data-te-input-wrapper-init>
           <input
             type="password"
             ref={passwordConfirmRef}
-            onChange={(e) => setPassWord(e.target.value)}
             className={inputStyle}
             placeholder="Password confirmation"
           />
-          <label
-            htmlFor="exampleFormControlInput33"
-            className="pointer-events-none absolute left-3 top-0 mb-0 max-w-[90%] origin-[0_0] truncate pt-[0.37rem] leading-[2.15] text-neutral-500 transition-all duration-200 ease-out peer-focus:-translate-y-[1.15rem] peer-focus:scale-[0.8] peer-focus:text-primary peer-data-[te-input-state-active]:-translate-y-[1.15rem] peer-data-[te-input-state-active]:scale-[0.8] motion-reduce:transition-none dark:text-neutral-200 dark:peer-focus:text-primary"
-          ></label>
         </div>
 
         {/* <!-- Popular app input --> */}
@@ -160,10 +158,24 @@ function SignupCeleb({
         {mostPopularSocialMedia && (
           <div className="mb-6">
             <input
+              name="follower"
               type="text"
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={(e) => createACeleb(e)}
               className={inputStyle}
               placeholder={`how many followers do you have on ${mostPopularSocialMedia}`}
+            />
+          </div>
+        )}
+        {/* what is your @ */}
+        {mostPopularSocialMedia && (
+          <div className="mb-6">
+            <input
+              onChange={(e) => createACeleb(e)}
+              name="account"
+              type="text"
+              //   onChange={(e) => setEmail(e.target.value)}
+              className={inputStyle}
+              placeholder={`What is your @ on ${mostPopularSocialMedia}`}
             />
           </div>
         )}
@@ -174,6 +186,8 @@ function SignupCeleb({
             What category do you specialise in?
           </label>
           <select
+            onChange={(e) => createACeleb(e)}
+            name="category"
             data-te-select-init
             className="w-full h-10 pl-2 rounded-md bg-transparent  border text-black cursor-pointer"
           >
@@ -191,8 +205,9 @@ function SignupCeleb({
         {/* price */}
         <div className="mb-6">
           <input
+            name="price"
+            onChange={(e) => createACeleb(e)}
             type="text"
-            onChange={(e) => setEmail(e.target.value)}
             className={inputStyle}
             placeholder="$0.00"
           />
@@ -200,9 +215,10 @@ function SignupCeleb({
         {/* email  */}
         <div className="relative mb-6" data-te-input-wrapper-init>
           <input
+            name="email"
+            onChange={(e) => createACeleb(e)}
             type="text"
             ref={emailRef}
-            onChange={(e) => setEmail(e.target.value)}
             className={inputStyle}
             placeholder="email address"
           />
@@ -215,6 +231,8 @@ function SignupCeleb({
             Give a brief Description of yourself(this will go on your website)
           </div>
           <textarea
+            name="description"
+            onChange={(e) => createACeleb(e)}
             className=" block min-h-[auto] w-full rounded border my-2 bg-transparent
                      px-2 py-2  h-40 shadow-sm shadow-blue-400   outline-none placeholder-style  relative
                       "
