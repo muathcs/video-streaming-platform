@@ -52,8 +52,45 @@ app.get("/celebs", async (req, res) => {
   }
 });
 
+//is a celeb or not
+app.get("/status", async (req, res) => {
+  const uid = req.query.uid;
+
+  console.log("statusL:", req.query);
+
+  const result = await pool.query("SELECT * FROM celeb WHERE uid = $1", [uid]);
+
+  if (result.rows.length == 0) {
+    res.send(false);
+  } else {
+    res.send(true);
+  }
+});
+
+//post
+
+app.post("/createUser", async (req, res) => {
+  const { uid } = req.body;
+
+  const { username, email } = req.body.payLoad;
+
+  try {
+    const result = await pool.query(
+      "INSERT INTO fan(username, email, uid) VALUES ($1, $2, $3)",
+      [username, email, uid]
+    );
+    res.send("Sucess crated user");
+  } catch (error) {
+    console.log("error: ", error);
+  }
+  try {
+    console.log(first);
+  } catch (error) {}
+});
 app.post("/createCeleb", async (req, res) => {
   console.log("celeb", req.body);
+
+  const { uid } = req.body;
 
   const {
     displayName,
@@ -64,11 +101,13 @@ app.post("/createCeleb", async (req, res) => {
     price,
     email,
     description,
-  } = req.body;
+  } = req.body.payLoad;
+
+  console.log("uid: ", uid);
 
   try {
     const result = await pool.query(
-      "INSERT INTO celeb(displayName, username, followers, account, category, price, email, description) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)",
+      "INSERT INTO celeb(displayName, username, followers, account, category, price, email, description, uid) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)",
       [
         displayName,
         username,
@@ -78,11 +117,14 @@ app.post("/createCeleb", async (req, res) => {
         price,
         email,
         description,
+        uid,
       ]
     );
     console.log(req.body);
+    res.send("Thank you");
   } catch (error) {
     console.log(error);
+    res.send("Failed");
   }
 });
 

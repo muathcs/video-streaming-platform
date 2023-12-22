@@ -16,6 +16,7 @@ const navigation = [
   { name: "How does it work", href: "#", current: false },
   { name: "Celebs", href: "#", current: false },
   { name: "About", href: "#", current: false },
+  { name: "Dashboard", href: "#", current: false },
 ];
 
 function classNames(...classes: any) {
@@ -33,35 +34,8 @@ const params = {
 };
 
 function NavBar() {
-  const [click, setClick] = useState(false);
-  const [search, setSearch] = useState("");
-  const [profileImg, setProfileImg] = useState<any>();
-  const handleClick = () => setClick(!click);
-  const { logout, currentUser }: any = useAuth();
+  const { logout, currentUser, celeb }: any = useAuth();
   const navigate = useNavigate();
-
-  console.log("cuuser: ", currentUser);
-  useEffect(() => {
-    // Use the getObject method to retrieve the image
-    s3.getObject(params, (err, data) => {
-      if (err) {
-        console.error("Error retrieving image from S3:", err);
-      } else {
-        // 'data.Body' contains the image data
-        // console.log("Retrieved image from S3:", data.Body);
-
-        const imgBinary: any = data.Body;
-
-        // Convert binary data to a data URL
-        const base64Image = btoa(String.fromCharCode.apply(null, imgBinary));
-        const dataURL = `data:${data.ContentType};base64,${base64Image}`;
-
-        // Update the state with the data URL
-        setProfileImg(dataURL);
-        console.log("success: ", data.ContentType);
-      }
-    });
-  }, []);
 
   // logout
   async function handleLogout() {
@@ -72,6 +46,8 @@ function NavBar() {
       console.log(error);
     }
   }
+
+  console.log("isCeleb Nav: ", celeb);
 
   return (
     <>
@@ -115,7 +91,9 @@ function NavBar() {
                           )}
                           aria-current={item.current ? "page" : undefined}
                         >
-                          {item.name}
+                          {item.name == "Dashboard" && !celeb
+                            ? null
+                            : item.name}
                         </a>
                       ))}
                     </div>

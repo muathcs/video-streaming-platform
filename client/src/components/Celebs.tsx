@@ -22,7 +22,6 @@ function Celebs() {
     try {
       const response = await axios.get("http://localhost:3001/celebs");
 
-      console.log("clee:: ", response.data);
       // save the response of celebs to the celebs array.
       const responseData: any = response.data;
       setCelebs(responseData);
@@ -35,15 +34,18 @@ function Celebs() {
     getCelebs("any for now");
   }, []);
 
+  console.log("celebs: ", celebs);
+
   return (
-    <div className="w-full h-full  relative pt-40 px-40 bg-[#121114]   overflow-auto  grid xl:grid-col-6 lg:grid-cols-5   md:grid-cols-3 sm:grid-cols-2 sm:gap-x-52 md:gap-x-64 lg:gap-0 justify-items-center justify-center items-center">
+    <div className="w-full h-full  relative pt-40 px-40 bg-[#121114]  overflow-auto  grid xl:grid-col-6 lg:grid-cols-5   md:grid-cols-3 sm:grid-cols-2 sm:gap-x-52 md:gap-x-64 lg:gap-0 justify-items-center justify-center items-center">
       {celebs.map((item, index) => (
         <CelebCard
-          name={item.displayName}
+          name={item.displayname}
           category={item.category}
           reviews={item.reviews}
           price={item.price * 0.1}
           description={item.description}
+          photoURl={currentUser.photoURL}
           key={index}
         />
       ))}

@@ -35,11 +35,12 @@ function SignUp() {
     email: string,
     password: string,
     passwordConfirmation: string,
-    celeb: any
+    payLoad: any,
+    notCeleb: boolean
   ) {
     e.preventDefault();
 
-    console.log("celeb from actual function: ", celeb);
+    console.log("payLoad from actual function: ", payLoad);
 
     //if password doesn't match.
     if (password !== passwordConfirmation) {
@@ -56,16 +57,24 @@ function SignUp() {
 
       const imgUrl = await handleUpload(userid.uid);
 
+      console.log("current user: ", currentUser);
+
       await uploadProfilePic(imgUrl, userid);
 
+      const path = notCeleb
+        ? "http://localhost:3001/createUser"
+        : "http://localhost:3001/createCeleb";
+
       try {
-        const response = await axios.post(
-          "http://localhost:3001/createCeleb",
-          celeb
-        );
+        const response = await axios.post(path, {
+          payLoad,
+          uid: userid.uid,
+        });
 
         console.log("response: ", response);
-      } catch (error) {}
+      } catch (error) {
+        console.log("error: ", error);
+      }
 
       // navigate("/");
     } catch (error) {

@@ -9,9 +9,9 @@ CREATE TABLE Celeb (
     email VARCHAR(60),
     description VARCHAR(250),
     request_num INT,
-    reviews INT
+    reviews INT,
+    uid INT,
 );
-
 
 
 CREATE TABLE Fan (
@@ -21,6 +21,8 @@ CREATE TABLE Fan (
     total_spent INT,
     fav_categories VARCHAR(20),
     num_Of_Requests INT,
+    uid INT
+
 );
 
 CREATE TABLE Video (

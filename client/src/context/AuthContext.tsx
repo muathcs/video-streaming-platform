@@ -17,6 +17,7 @@ export function AuthProvider({ children }: { children: any }) {
   const [currentUser, setCurrentUser] = useState();
   const [token, setToken] = useState();
   const [loading, setLoading] = useState(true);
+  const [celeb, setCeleb] = useState(false);
 
   async function signup(
     email: any,
@@ -57,6 +58,13 @@ export function AuthProvider({ children }: { children: any }) {
 
   function login(email: any, password: any) {
     return signInWithEmailAndPassword(auth, email, password);
+  }
+
+  //is logged in celeb or user
+  function loggedInUserStatus(celeb: boolean) {
+    console.log("loggedInUserStatus: ", celeb);
+
+    setCeleb(celeb);
   }
 
   function logout() {
@@ -100,13 +108,14 @@ export function AuthProvider({ children }: { children: any }) {
     login,
     logout,
     uploadProfilePic,
+    celeb,
+    loggedInUserStatus,
   };
   return (
     <>
       <AuthContext.Provider value={value}>
         {!loading && children}
       </AuthContext.Provider>
-      ;
     </>
   );
 }

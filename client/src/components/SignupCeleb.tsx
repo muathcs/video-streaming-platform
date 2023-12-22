@@ -20,6 +20,7 @@ function SignupCeleb({
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [successfull, setSuccessfull] = useState<string>("");
+
   const [mostPopularSocialMedia, setMostPopularSocialMedia] =
     useState<string>();
 

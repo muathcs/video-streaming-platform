@@ -17,8 +17,8 @@ function CelebProfile() {
   const [orderModal, setOrderModal] = useState<bool>(false);
   const { state } = useLocation();
 
+  if (!state) return; // return if there is no state
   const { name, category, reviews, price, description } = state;
-  console.log("state: ", useLocation());
 
   return (
     <>

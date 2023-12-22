@@ -11,11 +11,7 @@ interface PrivateRouteProps {
 function PrivateRoute() {
   const { currentUser }: any = useAuth();
 
-  if (currentUser !== null) {
-    const isAuthenticated = currentUser;
-    return isAuthenticated ? <Celebs /> : null; // or loading indicator, etc...
-  }
-  return <Navigate to={"/login"} replace />;
+  return currentUser ? <Celebs /> : <Navigate to={"/login"} replace />;
 }
 
 export default PrivateRoute;

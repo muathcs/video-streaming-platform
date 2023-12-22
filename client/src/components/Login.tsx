@@ -11,7 +11,8 @@ function Login() {
   const [password, setPassWord] = useState<string>("");
   const emailRef = useRef<any>();
   const passwordRef = useRef<any>();
-  const { login, currentUser, token, resetPassword }: any = useAuth();
+  const { login, currentUser, token, resetPassword, loggedInUserStatus }: any =
+    useAuth();
   const [loading, setLoading] = useState(false);
   const [successfull, setSuccessfull] = useState<string>("");
   const [resetMessage, setResetMessage] = useState<string>("");
@@ -21,9 +22,6 @@ function Login() {
   // Initialization for ES Users
   const dispatch = useDispatch();
 
-  console.log("user: ", currentUser);
-  console.log("token user: ", token);
-
   //login function
   async function handleSubmit(e: any) {
     e.preventDefault();
@@ -32,14 +30,15 @@ function Login() {
       setError("");
 
       setLoading(true);
-      const userid = await login(
+      const userObj = await login(
         emailRef.current.value,
         passwordRef.current.value
       );
       setSuccessfull("signed in succefully");
 
-      console.log("check: ", currentUser);
-      console.log("current user id: ", userid);
+      await isACeleb(userObj.user.uid); //checking if the user is a celeb or a fan(to render different UIs);
+
+      console.log("current user id: ", userObj);
       navigate("/");
       // handleUpload()
     } catch (error) {
@@ -49,6 +48,24 @@ function Login() {
     }
     setLoading(false);
     // setSuccessfull(false);
+  }
+
+  async function isACeleb(uid: number) {
+    console.log("uidOBJ: ", uid);
+    try {
+      console.log("before axios");
+      const response = await axios.get("http://localhost:3001/status", {
+        params: { uid: uid },
+      });
+
+      console.log("after axios: ");
+      loggedInUserStatus(response.data);
+
+      console.log("response: ", response);
+    } catch (error) {
+      console.log("error: ", error);
+      console.error(error);
+    }
   }
 
   // reset password
