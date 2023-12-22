@@ -70,14 +70,14 @@ app.get("/status", async (req, res) => {
 //post
 
 app.post("/createUser", async (req, res) => {
-  const { uid } = req.body;
+  const { uid, imgurl } = req.body;
 
   const { username, email } = req.body.payLoad;
 
   try {
     const result = await pool.query(
-      "INSERT INTO fan(username, email, uid) VALUES ($1, $2, $3)",
-      [username, email, uid]
+      "INSERT INTO fan(username, email, uid, imgurl) VALUES ($1, $2, $3, $4)",
+      [username, email, uid, imgurl]
     );
     res.send("Sucess crated user");
   } catch (error) {
@@ -87,10 +87,11 @@ app.post("/createUser", async (req, res) => {
     console.log(first);
   } catch (error) {}
 });
+
 app.post("/createCeleb", async (req, res) => {
   console.log("celeb", req.body);
 
-  const { uid } = req.body;
+  const { uid, imgurl } = req.body;
 
   const {
     displayName,
@@ -107,7 +108,7 @@ app.post("/createCeleb", async (req, res) => {
 
   try {
     const result = await pool.query(
-      "INSERT INTO celeb(displayName, username, followers, account, category, price, email, description, uid) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)",
+      "INSERT INTO celeb(displayName, username, followers, account, category, price, email, description, uid, imgurl) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)",
       [
         displayName,
         username,
@@ -118,6 +119,7 @@ app.post("/createCeleb", async (req, res) => {
         email,
         description,
         uid,
+        imgurl,
       ]
     );
     console.log(req.body);

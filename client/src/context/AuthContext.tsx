@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useMemo, useState } from "react";
 import { auth } from "../auth/firebase";
 import {
   createUserWithEmailAndPassword,
@@ -17,6 +17,8 @@ export function AuthProvider({ children }: { children: any }) {
   const [currentUser, setCurrentUser] = useState();
   const [token, setToken] = useState();
   const [loading, setLoading] = useState(true);
+
+  console.log("celebchanging");
   const [celeb, setCeleb] = useState(false);
 
   async function signup(
@@ -65,6 +67,9 @@ export function AuthProvider({ children }: { children: any }) {
     console.log("loggedInUserStatus: ", celeb);
 
     setCeleb(celeb);
+
+    // Store celeb state in local storage
+    localStorage.setItem("celeb", JSON.stringify(celeb));
   }
 
   function logout() {
@@ -87,6 +92,8 @@ export function AuthProvider({ children }: { children: any }) {
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user: any) => {
       setCurrentUser(user);
+
+      console.log("on use Effect");
 
       if (user) {
         user.getIdToken().then((token: any) => {

@@ -11,8 +11,8 @@ CREATE TABLE Celeb (
     request_num INT,
     reviews INT,
     uid INT,
+    imgUrl Varchar(50)
 );
-
 
 CREATE TABLE Fan (
     fanId SERIAL PRIMARY KEY,
@@ -21,7 +21,9 @@ CREATE TABLE Fan (
     total_spent INT,
     fav_categories VARCHAR(20),
     num_Of_Requests INT,
-    uid INT
+    uid INT,
+    imgUrl Varchar(50)
+
 
 );
 

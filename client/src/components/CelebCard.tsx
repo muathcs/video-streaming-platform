@@ -27,11 +27,9 @@ function CelebCard({
   const handleCardClick = () => {
     // Pass information about the clicked celeb as state
     navigate("/profile", {
-      state: { name, category, reviews, price, description },
+      state: { name, category, reviews, price, description, photoURl },
     });
   };
-
-  console.log("name: ", name);
 
   return (
     <div className="shadow-xl  border  bg-[#121114]  rounded-t-xl rounded-md mt-10 card-zoom">
@@ -39,7 +37,7 @@ function CelebCard({
         <img
           onClick={handleCardClick}
           src={photoURl}
-          className="card-zoom-image"
+          className="card-zoom-image h-full"
         />
       </div>
       <div className=" h-[35%] text-left left-1  relative pl-1 pt-2">

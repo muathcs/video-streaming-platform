@@ -92,7 +92,7 @@ function NavBar() {
                           aria-current={item.current ? "page" : undefined}
                         >
                           {item.name == "Dashboard" && !celeb
-                            ? null
+                            ? undefined
                             : item.name}
                         </a>
                       ))}

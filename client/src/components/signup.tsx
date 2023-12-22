@@ -6,8 +6,8 @@ import AWS from "aws-sdk";
 import dotenv from "dotenv";
 import s3 from "../utilities/S3";
 import { useAuth } from "../context/AuthContext";
-import SignupCeleb from "./signupCeleb";
-import SignupUser from "./signupUser";
+import SignupCeleb from "./SignupCeleb";
+import SignupUser from "./SignupUser";
 
 function SignUp() {
   const [rememberMe, setRememberMe] = useState<boolean>();
@@ -69,6 +69,7 @@ function SignUp() {
         const response = await axios.post(path, {
           payLoad,
           uid: userid.uid,
+          imgurl: imgUrl,
         });
 
         console.log("response: ", response);

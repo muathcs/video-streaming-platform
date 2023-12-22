@@ -18,14 +18,15 @@ function CelebProfile() {
   const { state } = useLocation();
 
   if (!state) return; // return if there is no state
-  const { name, category, reviews, price, description } = state;
+  const { name, category, reviews, price, description, imgurl, photoURl } =
+    state;
 
   return (
     <>
       <div className="h-full w-full relative flex flex-col bg-slate-800 overflow-auto    ">
         <div className="flex flex-col">
-          <div className=" rounded-full overflow-hidden relative left-5 top-2 w-2/5 sm:w-1/5 md:w-1/4 lg:w-1/6 border-2 bg-green-300 ">
-            <img src={celeb} />
+          <div className=" rounded-full overflow-hidden relative left-5 top-2 w-2/5 sm:w-1/5 md:w-1/4 lg:w-[400px] lg:h-[400px] object-cover border-2 bg-green-300 ">
+            <img className="w-full h-full" src={photoURl} />
           </div>
           <div className="  flex flex-col pr-3">
             <p className="text-whtie text-left text-[24px] relative top-3 left-5 ">
