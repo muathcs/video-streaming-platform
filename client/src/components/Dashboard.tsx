@@ -40,6 +40,10 @@ function Dashboard() {
         Header: "message",
         accessor: "message",
       },
+      {
+        Header: "Reply",
+        accessor: "reply",
+      },
 
       {
         Header: "Completion",
@@ -74,17 +78,20 @@ function Dashboard() {
   return (
     <>
       <div className=" flex justify-center items-center overflow-hidden ">
-        <div className="container bg-gray-400 w-full h-[70%]  rounded-lg overflow-auto border-4 border-gray-500   ">
+        <div className="container bg-gray-400 w-full h-[70%]  rounded-lg overflow-auto border-4 border-gray-500    ">
           <table
             {...getTableProps()}
-            className=" w-full  top-0 relative border-separate border-spacing-0 "
+            className=" w-full  top-0 relative border-separate border-spacing-0  "
             // {...getTableProps()}
           >
             <thead>
               {headerGroups.map((headerGroup: any) => (
                 <tr {...headerGroup.getHeaderGroupProps()}>
                   {headerGroup.headers.map((column: any) => (
-                    <th {...column.getHeaderProps()}>
+                    <th
+                      className="pr-10 px-10  py-10 border border-gray-500"
+                      {...column.getHeaderProps()}
+                    >
                       {column.render("Header")}
                     </th>
                   ))}
@@ -94,7 +101,6 @@ function Dashboard() {
             <tbody className="bg-purple-400 w-full overflow-auto ">
               {requests.length != 0 &&
                 rows.map((row: any) => {
-                  console.log("requestS:: ", row);
                   prepareRow(row);
 
                   return (
@@ -104,6 +110,19 @@ function Dashboard() {
                           {...cell.getCellProps()}
                           className="border-2 border-gray-500 bg-gray-800 px-10  py-10"
                         >
+                          {cell.column.id == "universityx" ? (
+                            <>
+                              <input className=" w-4 h-4 " type="checkbox" />
+                            </>
+                          ) : cell.column.id == "reply" ? (
+                            <>
+                              <button className="py-3 px-5 bg-red-500 hover:bg-red-600 cursor-pointer rounded-md text-center table-cell align-middle">
+                                Reply
+                              </button>
+                            </>
+                          ) : (
+                            ""
+                          )}
                           {cell.render("Cell")}
                         </td>
                       ))}

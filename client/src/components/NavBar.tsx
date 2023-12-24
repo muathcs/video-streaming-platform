@@ -12,7 +12,7 @@ import { useAuth } from "../context/AuthContext";
 
 const navigation = [
   { name: "Catogories", href: "#", current: true },
-  { name: "Home", href: "#", current: false },
+  { name: "Home", href: "#", current: true },
   { name: "How does it work", href: "#", current: false },
   { name: "Celebs", href: "#", current: false },
   { name: "About", href: "#", current: false },
@@ -37,6 +37,15 @@ function NavBar() {
   const { logout, currentUser }: any = useAuth();
   const navigate = useNavigate();
   const celeb = localStorage.getItem("celeb");
+
+  const [navigation, setNavigation] = useState([
+    { name: "Catogories", href: "#", current: true },
+    { name: "Home", href: "#", current: true },
+    { name: "How does it work", href: "#", current: false },
+    { name: "Celebs", href: "#", current: false },
+    { name: "About", href: "#", current: false },
+    { name: "Dashboard", href: "/dashboard", current: false },
+  ]);
   // logout
   async function handleLogout() {
     try {
@@ -49,7 +58,7 @@ function NavBar() {
 
   return (
     <>
-      <Disclosure as="nav" className="bg-[#121114]  text-[24px] z-10 block ">
+      <Disclosure as="nav" className="bg-[#121114]  text-[24px] z-10 block  ">
         {({ open }) => (
           <>
             <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
@@ -71,21 +80,42 @@ function NavBar() {
                 </div>
                 <div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
                   <div className="flex flex-shrink-0 items-center">
-                    <h1 className="text-[24px] sm:block hidden">
-                      <Link to="/">Cameo</Link>
+                    <h1 className="text-[30px] sm:block hidden">
+                      <Link
+                        onClick={(e) => {
+                          const updatedNav = navigation.map((item) => ({
+                            ...item,
+                            current: false,
+                          }));
+
+                          setNavigation(updatedNav);
+                        }}
+                        to="/"
+                      >
+                        Cameo
+                      </Link>
                     </h1>
                   </div>
                   <div className="hidden sm:ml-6 sm:block">
                     <div className="flex space-x-4">
-                      {navigation.map((item) => (
+                      {navigation.map((item, index) => (
                         <Link
                           key={item.name}
                           to={item.href}
+                          onClick={(e) => {
+                            console.log(navigation[index]);
+                            const updatedNav = navigation.map((item, i) => ({
+                              ...item,
+                              current: i == index, //when a spec link is clicked, current becomes true
+                            }));
+
+                            setNavigation(updatedNav);
+                          }}
                           className={classNames(
                             item.current
-                              ? "bg-slate-900 rounded-full text-white"
+                              ? "bg-slate-300 rounded-full text-white"
                               : "text-white hover:bg-gray-700 hover:rounded-full focus:bg-gray-800 hover:text-white",
-                            "rounded-full px-3 py-2 text-sm font-medium text-[24px]"
+                            "rounded-full px-3 py-2 text-sm font-medium text-[21px]"
                           )}
                           aria-current={item.current ? "page" : undefined}
                         >
@@ -97,7 +127,7 @@ function NavBar() {
                     </div>
                   </div>
                 </div>
-                <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
+                <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0 sm:mt-3">
                   <button
                     type="button"
                     className="relative rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
@@ -108,13 +138,13 @@ function NavBar() {
                   </button>
 
                   {/* Profile dropdown */}
-                  <Menu as="div" className="relative ml-3">
+                  <Menu as="div" className="relative ml-3 ">
                     <div>
-                      <Menu.Button className="relative flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
+                      <Menu.Button className="relative  w-16 h-16 flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
                         <span className="absolute -inset-1.5" />
                         <span className="sr-only">Open user menu</span>
                         <img
-                          className="h-8 w-8 rounded-full"
+                          className="h-full w-full rounded-full"
                           src={currentUser && currentUser.photoURL}
                           alt=""
                         />

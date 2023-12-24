@@ -39,7 +39,7 @@ function CelebCard({
         <img
           onClick={handleCardClick}
           src={photoURl}
-          className="card-zoom-image h-full"
+          className="card-zoom-image h-full w-full"
         />
       </div>
       <div className=" h-[35%] text-left left-1  relative pl-1 pt-2">

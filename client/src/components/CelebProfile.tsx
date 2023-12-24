@@ -64,7 +64,7 @@ function CelebProfile() {
         <div className="relative top-20 pb-5">
           <button
             onClick={(e) => setOrderModal(true)}
-            className=" relative  w-1/2 md:w-1/5 rounded-md hover:bg-slate-700 bg-slate-500  text-white hover:border-none outline-none focus:outline-none border-none"
+            className=" relative  w-1/2 md:w-1/5 rounded-md hover:bg-slate-700 py-5 bg-slate-500  text-white hover:border-none outline-none focus:outline-none border-none"
           >
             Book A Shoutout
           </button>
