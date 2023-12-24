@@ -24,7 +24,6 @@ CREATE TABLE Fan (
     uid INT,
     imgUrl Varchar(50)
 
-
 );
 
 CREATE TABLE Video (
@@ -47,15 +46,16 @@ CREATE TABLE Message (
 
 CREATE TABLE Requests (
     requestId serial primary key,
-    requesterId int,
-    request_message Varchar(500),
-    creatorId INT,
-    requestStatus Varchar(10) //(pending, accepted, completed),
-    req_type Varchar(8), //(vid, message, audio),
-    status VARCHAR(12), // (fulfilled, pending, canceled, etc),
-    TimeStamp1 timestamp, (when has the req been made),
-    TimeStamp2 timestamp (when has the req been fuliffled)
+    requesterUid varchar(50), --fan
+    requesteeUid varchar(50), --celeb
+    price int,
+    message Varchar(500),
+    requestStatus Varchar(10), -- (pending, accepted, completed),
+    req_type Varchar(8), --(vid, message, audio),
+    TimeStamp1 timestamp, --(when has the req been made),
+    TimeStamp2 timestamp -- (when has the req been fuliffled)
 );
+
 
 
 

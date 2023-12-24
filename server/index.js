@@ -67,6 +67,24 @@ app.get("/status", async (req, res) => {
   }
 });
 
+app.get("/dashboard", async (req, res) => {
+  console.log("uid: ", req.query);
+  const uid = req.query.uid;
+
+  try {
+    const response = await pool.query(
+      "SELECT * from Requests WHERE celebUid = $1",
+      [uid]
+    );
+
+    const requests = response.rows;
+
+    res.send(requests);
+  } catch (error) {
+    console.log("/dasshboard", error);
+  }
+});
+
 //post
 
 app.post("/createUser", async (req, res) => {
@@ -86,6 +104,45 @@ app.post("/createUser", async (req, res) => {
   try {
     console.log(first);
   } catch (error) {}
+});
+
+//
+
+app.post("/request", async (req, res) => {
+  console.log(req.body);
+  let {
+    celebUid,
+    fanUid,
+    price,
+    message,
+    requestAction,
+    toSomeOneElse,
+    fromPerson,
+    toPerson,
+  } = req.body;
+  price = parseInt(price);
+  try {
+    const result = await pool.query(
+      "INSERT INTO Requests(celebUid, fanUid, price, message, requestStatus, req_type, TimeStamp1, requestAction, to_someone_else, FromPerson, ToPerson) Values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)",
+      [
+        celebUid,
+        fanUid,
+        price,
+        message,
+        "pending",
+        "message",
+        new Date(),
+        requestAction,
+        toSomeOneElse,
+        fromPerson,
+        toPerson,
+      ]
+    );
+
+    res.send("succesfully added a request");
+  } catch (error) {
+    console.log("/request", error.message);
+  }
 });
 
 app.post("/createCeleb", async (req, res) => {

@@ -12,6 +12,7 @@ type CelebCardProps = {
   price: number;
   description: string;
   imgurl: string;
+  uid: string;
 };
 
 function Celebs() {
@@ -45,6 +46,7 @@ function Celebs() {
           price={item.price * 0.1}
           description={item.description}
           photoURl={item.imgurl}
+          uid={item.uid}
           key={index}
         />
       ))}

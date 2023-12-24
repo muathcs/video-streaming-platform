@@ -4,6 +4,8 @@ import { useLocation, useSearchParams } from "react-router-dom";
 import { bool } from "aws-sdk/clients/signer";
 import RequestForm from "./RequestForm";
 import { stat } from "fs";
+import { useAuth } from "../context/AuthContext";
+import axios from "../api/axios";
 
 type CelebCardProps = {
   name: String;
@@ -16,14 +18,17 @@ type CelebCardProps = {
 function CelebProfile() {
   const [orderModal, setOrderModal] = useState<bool>(false);
   const { state } = useLocation();
+  const { currentUser }: any = useAuth();
 
   if (!state) return; // return if there is no state
-  const { name, category, reviews, price, description, imgurl, photoURl } =
-    state;
+  const { name, category, reviews, price, description, photoURl, uid } = state;
+
+  // console.log("state: ", state);
+  // console.log("current user: ", currentUser);
 
   return (
     <>
-      <div className="h-full w-full relative flex flex-col bg-slate-800 overflow-auto    ">
+      <div className="h-full w-full relative flex flex-col bg-[#121114]  overflow-auto    ">
         <div className="flex flex-col">
           <div className=" rounded-full overflow-hidden relative left-5 top-2 w-2/5 sm:w-1/5 md:w-1/4 lg:w-[400px] lg:h-[400px] object-cover border-2 bg-green-300 ">
             <img className="w-full h-full" src={photoURl} />
@@ -66,9 +71,9 @@ function CelebProfile() {
         </div>
         {orderModal && (
           <>
-            <div className="bg-black   h-full w-full sm:top-0 fixed flex justify-center items-center sm:bg-opacity-80  ">
+            <div className="bg-[#121114]    h-full w-full sm:top-0 fixed flex justify-center items-center sm:bg-opacity-60  ">
               <div
-                className="w-full sm:w-3/4 xl:w-2/5 h-full sm:h-4/5  sm:pt-12 bg-slate-800 rounded-md  px-5 relative  
+                className="w-full sm:w-3/4 xl:w-2/5 h-full sm:h-4/5  sm:pt-12 bg-[#121114] border-2 shadow-md shadow-blue-300  rounded-md  px-5 relative  
               "
               >
                 <div
@@ -77,7 +82,11 @@ function CelebProfile() {
                 >
                   x
                 </div>
-                <RequestForm />
+                <RequestForm
+                  celebUid={uid}
+                  fanUid={currentUser.uid}
+                  price={price}
+                />
               </div>
             </div>
           </>

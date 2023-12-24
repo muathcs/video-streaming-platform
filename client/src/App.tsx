@@ -11,6 +11,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "./redux/store";
 import SignUp from "./components/signup";
 import PrivateRoute from "./components/privateRoute";
+import Dashboard from "./components/Dashboard";
 
 function App() {
   // const { signed } = useSelector((state: RootState) => state.signed);
@@ -28,6 +29,7 @@ function App() {
             <>
               <Route path="/" element={<PrivateRoute />} />
               <Route path="/profile" element={<CelebProfile />} />
+              <Route path="/dashboard" element={<Dashboard />} />
             </>
           ) : (
             <Route path="/*" element={<Navigate to="/login" />} />

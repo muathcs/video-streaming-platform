@@ -11,6 +11,7 @@ type CelebCardProps = {
   price: any;
   description: String;
   photoURl: string;
+  uid: string;
 };
 
 function CelebCard({
@@ -20,6 +21,7 @@ function CelebCard({
   price,
   description,
   photoURl,
+  uid,
 }: CelebCardProps) {
   const navigate = useNavigate();
   const { currentUser }: any = useAuth();
@@ -27,7 +29,7 @@ function CelebCard({
   const handleCardClick = () => {
     // Pass information about the clicked celeb as state
     navigate("/profile", {
-      state: { name, category, reviews, price, description, photoURl },
+      state: { name, category, reviews, price, description, photoURl, uid },
     });
   };
 

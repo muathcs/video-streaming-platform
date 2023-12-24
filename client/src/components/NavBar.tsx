@@ -16,7 +16,7 @@ const navigation = [
   { name: "How does it work", href: "#", current: false },
   { name: "Celebs", href: "#", current: false },
   { name: "About", href: "#", current: false },
-  { name: "Dashboard", href: "#", current: false },
+  { name: "Dashboard", href: "/dashboard", current: false },
 ];
 
 function classNames(...classes: any) {
@@ -34,9 +34,9 @@ const params = {
 };
 
 function NavBar() {
-  const { logout, currentUser, celeb }: any = useAuth();
+  const { logout, currentUser }: any = useAuth();
   const navigate = useNavigate();
-
+  const celeb = localStorage.getItem("celeb");
   // logout
   async function handleLogout() {
     try {
@@ -46,8 +46,6 @@ function NavBar() {
       console.log(error);
     }
   }
-
-  console.log("isCeleb Nav: ", celeb);
 
   return (
     <>
@@ -80,9 +78,9 @@ function NavBar() {
                   <div className="hidden sm:ml-6 sm:block">
                     <div className="flex space-x-4">
                       {navigation.map((item) => (
-                        <a
+                        <Link
                           key={item.name}
-                          href={item.href}
+                          to={item.href}
                           className={classNames(
                             item.current
                               ? "bg-slate-900 rounded-full text-white"
@@ -91,10 +89,10 @@ function NavBar() {
                           )}
                           aria-current={item.current ? "page" : undefined}
                         >
-                          {item.name == "Dashboard" && !celeb
+                          {item.name === "Dashboard" && celeb == "false" //local storage returns strings, so !celeb won't work here.
                             ? undefined
                             : item.name}
-                        </a>
+                        </Link>
                       ))}
                     </div>
                   </div>

@@ -51,19 +51,14 @@ function Login() {
   }
 
   async function isACeleb(uid: number) {
-    console.log("uidOBJ: ", uid);
     try {
       console.log("before axios");
       const response = await axios.get("http://localhost:3001/status", {
         params: { uid: uid },
       });
 
-      console.log("after axios: ");
-      loggedInUserStatus(response.data);
-
-      console.log("response: ", response);
+      localStorage.setItem("celeb", JSON.stringify(response.data));
     } catch (error) {
-      console.log("error: ", error);
       console.error(error);
     }
   }

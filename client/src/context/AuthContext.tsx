@@ -18,7 +18,6 @@ export function AuthProvider({ children }: { children: any }) {
   const [token, setToken] = useState();
   const [loading, setLoading] = useState(true);
 
-  console.log("celebchanging");
   const [celeb, setCeleb] = useState(false);
 
   async function signup(
@@ -62,16 +61,6 @@ export function AuthProvider({ children }: { children: any }) {
     return signInWithEmailAndPassword(auth, email, password);
   }
 
-  //is logged in celeb or user
-  function loggedInUserStatus(celeb: boolean) {
-    console.log("loggedInUserStatus: ", celeb);
-
-    setCeleb(celeb);
-
-    // Store celeb state in local storage
-    localStorage.setItem("celeb", JSON.stringify(celeb));
-  }
-
   function logout() {
     try {
       return auth.signOut();
@@ -93,8 +82,6 @@ export function AuthProvider({ children }: { children: any }) {
     const unsubscribe = auth.onAuthStateChanged((user: any) => {
       setCurrentUser(user);
 
-      console.log("on use Effect");
-
       if (user) {
         user.getIdToken().then((token: any) => {
           // 'token' contains the session token
@@ -115,8 +102,6 @@ export function AuthProvider({ children }: { children: any }) {
     login,
     logout,
     uploadProfilePic,
-    celeb,
-    loggedInUserStatus,
   };
   return (
     <>
