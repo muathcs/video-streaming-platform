@@ -7,11 +7,10 @@ import Celebs from "./components/Celebs";
 import { Link, Navigate, Route, Routes, useLocation } from "react-router-dom";
 import CelebProfile from "./components/CelebProfile";
 import Login from "./components/Login";
-import { useSelector } from "react-redux";
-import { RootState } from "./redux/store";
 import SignUp from "./components/signup";
 import PrivateRoute from "./components/privateRoute";
 import Dashboard from "./components/Dashboard";
+import FanRequests from "./components/FanRequests";
 
 function App() {
   // const { signed } = useSelector((state: RootState) => state.signed);
@@ -30,6 +29,7 @@ function App() {
               <Route path="/" element={<PrivateRoute />} />
               <Route path="/profile" element={<CelebProfile />} />
               <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/requests" element={<FanRequests />} />
             </>
           ) : (
             <Route path="/*" element={<Navigate to="/login" />} />

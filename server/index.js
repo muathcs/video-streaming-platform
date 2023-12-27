@@ -85,6 +85,48 @@ app.get("/dashboard", async (req, res) => {
   }
 });
 
+app.get("/fanrequests", async (req, res) => {
+  const uid = req.query.uid;
+
+  try {
+    const response = await pool.query(
+      "SELECT message, req_type, requestAction, timestamp1, requeststatus, celebuid from Requests WHERE fanuid = $1",
+      [uid]
+    );
+
+    let reqAndCeleb = [];
+
+    for (const req of response.rows) {
+      try {
+        const celebNameAndPhoto = await pool.query(
+          "SELECT uid, displayName, imgUrl FROM celeb WHERE uid = $1 ",
+          [req.celebuid]
+        );
+
+        const combinedObject = {
+          request: req,
+          celeb: celebNameAndPhoto.rows[0],
+        };
+
+        reqAndCeleb.push(combinedObject);
+      } catch (error) {
+        console.log("/fanReq/map: ", error);
+      }
+    }
+
+    // Use Promise.all to wait for all promises to be resolved
+    await Promise.all(reqAndCeleb);
+
+    console.log("arraxxxxy: ", reqAndCeleb);
+
+    // const celebUidFromRequest = response.rows
+
+    res.send(reqAndCeleb);
+  } catch (error) {
+    console.log("/fanrequests: ", error);
+  }
+});
+
 //post
 
 app.post("/createUser", async (req, res) => {
@@ -146,8 +188,6 @@ app.post("/request", async (req, res) => {
 });
 
 app.post("/createCeleb", async (req, res) => {
-  console.log("celeb", req.body);
-
   const { uid, imgurl } = req.body;
 
   const {

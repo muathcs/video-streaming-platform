@@ -77,7 +77,7 @@ function Dashboard() {
 
   return (
     <>
-      <div className=" flex justify-center items-center overflow-hidden ">
+      <div className=" flex justify-center items-center overflow-hidden bg-[#121114] ">
         <div className="container bg-gray-400 w-full h-[70%]  rounded-lg overflow-auto border-4 border-gray-500    ">
           <table
             {...getTableProps()}

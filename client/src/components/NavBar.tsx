@@ -34,23 +34,42 @@ const params = {
 };
 
 function NavBar() {
-  const { logout, currentUser }: any = useAuth();
+  const { logout, currentUser, celeb }: any = useAuth();
   const navigate = useNavigate();
-  const celeb = localStorage.getItem("celeb");
+  // const celeb = localStorage.getItem("celeb");
+
+  console.log("celeb: ", celeb);
+
+  const path = celeb ? "dashboard" : celeb == undefined ? "" : "requests";
 
   const [navigation, setNavigation] = useState([
-    { name: "Catogories", href: "#", current: true },
-    { name: "Home", href: "#", current: true },
+    { name: "Catogories", href: "#", current: false },
+    { name: "Home", href: "#", current: false },
     { name: "How does it work", href: "#", current: false },
     { name: "Celebs", href: "#", current: false },
     { name: "About", href: "#", current: false },
-    { name: "Dashboard", href: "/dashboard", current: false },
+    { name: path, href: path, current: false },
   ]);
+
+  // useEffect(() => {
+  //   let newNav = [...navigation];
+
+  //   const location = celeb == "true" ? "dashboard" : "requests";
+  //   console.log("location: ", location);
+  //   newNav = [...newNav, { name: location, href: location, current: false }];
+
+  //   console.log("new: ", newNav);
+
+  //   setNavigation(newNav);
+  // }, [celeb]);
+
   // logout
   async function handleLogout() {
     try {
       await logout();
+
       navigate("/login");
+      location.reload();
     } catch (error) {
       console.log(error);
     }
@@ -119,9 +138,7 @@ function NavBar() {
                           )}
                           aria-current={item.current ? "page" : undefined}
                         >
-                          {item.name === "Dashboard" && celeb == "false" //local storage returns strings, so !celeb won't work here.
-                            ? undefined
-                            : item.name}
+                          {item.name}
                         </Link>
                       ))}
                     </div>

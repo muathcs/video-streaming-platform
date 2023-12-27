@@ -1,11 +1,17 @@
 import React, { useContext, useEffect, useMemo, useState } from "react";
+import firebase from "firebase/app";
 import { auth } from "../auth/firebase";
 import {
+  browserSessionPersistence,
   createUserWithEmailAndPassword,
+  inMemoryPersistence,
   sendPasswordResetEmail,
+  setPersistence,
+  signInWithCustomToken,
   signInWithEmailAndPassword,
   updateProfile,
 } from "firebase/auth";
+import axios from "../api/axios";
 
 const AuthContext = React.createContext("");
 
@@ -18,7 +24,7 @@ export function AuthProvider({ children }: { children: any }) {
   const [token, setToken] = useState();
   const [loading, setLoading] = useState(true);
 
-  const [celeb, setCeleb] = useState(false);
+  const [celeb, setCeleb] = useState();
 
   async function signup(
     email: any,
@@ -59,6 +65,7 @@ export function AuthProvider({ children }: { children: any }) {
 
   function login(email: any, password: any) {
     return signInWithEmailAndPassword(auth, email, password);
+    signInWithCustomToken;
   }
 
   function logout() {
@@ -79,17 +86,32 @@ export function AuthProvider({ children }: { children: any }) {
   }
 
   useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((user: any) => {
-      setCurrentUser(user);
+    const userStatus = async () => {};
 
-      if (user) {
-        user.getIdToken().then((token: any) => {
-          // 'token' contains the session token
-          setToken(token);
-        });
+    const unsubscribe = auth.onAuthStateChanged(
+      async (
+        user: any //this works
+      ) => {
+        setCurrentUser(user);
+
+        if (user) {
+          try {
+            const response = await axios.get("http://localhost:3001/status", {
+              params: { uid: user.uid },
+            });
+
+            setCeleb(response.data);
+          } catch (error) {
+            console.error(error);
+          }
+          user.getIdToken().then((token: any) => {
+            // 'token' contains the session token
+            setToken(token);
+          });
+        }
+        setLoading(false);
       }
-      setLoading(false);
-    });
+    );
 
     return unsubscribe;
   }, []);
@@ -102,6 +124,7 @@ export function AuthProvider({ children }: { children: any }) {
     login,
     logout,
     uploadProfilePic,
+    celeb,
   };
   return (
     <>

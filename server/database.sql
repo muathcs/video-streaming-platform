@@ -46,8 +46,8 @@ CREATE TABLE Message (
 
 CREATE TABLE Requests (
     requestId serial primary key,
-    requesterUid varchar(50), --fan
-    requesteeUid varchar(50), --celeb
+    celebuid varchar(50), --fan
+    fanuid varchar(50), --celeb
     price int,
     message Varchar(500),
     requestStatus Varchar(10), -- (pending, accepted, completed),
