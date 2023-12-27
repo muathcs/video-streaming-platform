@@ -56,8 +56,6 @@ app.get("/celebs", async (req, res) => {
 app.get("/status", async (req, res) => {
   const uid = req.query.uid;
 
-  console.log("statusL:", req.query);
-
   const result = await pool.query("SELECT * FROM celeb WHERE uid = $1", [uid]);
 
   if (result.rows.length == 0) {
@@ -68,7 +66,6 @@ app.get("/status", async (req, res) => {
 });
 
 app.get("/dashboard", async (req, res) => {
-  console.log("uid: ", req.query);
   const uid = req.query.uid;
 
   try {
@@ -117,14 +114,22 @@ app.get("/fanrequests", async (req, res) => {
     // Use Promise.all to wait for all promises to be resolved
     await Promise.all(reqAndCeleb);
 
-    console.log("arraxxxxy: ", reqAndCeleb);
-
     // const celebUidFromRequest = response.rows
 
     res.send(reqAndCeleb);
   } catch (error) {
     console.log("/fanrequests: ", error);
   }
+});
+
+app.get("/fulfill/:id", async (req, res) => {
+  const itemId = parseInt(req.params.id, 10); // Parse the id parameter as an integer
+
+  try {
+    const response = await pool.query("");
+  } catch (error) {}
+
+  console.log("reqid: ", itemId);
 });
 
 //post
@@ -144,14 +149,12 @@ app.post("/createUser", async (req, res) => {
     console.log("error: ", error);
   }
   try {
-    console.log(first);
   } catch (error) {}
 });
 
 //
 
 app.post("/request", async (req, res) => {
-  console.log(req.body);
   let {
     celebUid,
     fanUid,
@@ -201,8 +204,6 @@ app.post("/createCeleb", async (req, res) => {
     description,
   } = req.body.payLoad;
 
-  console.log("uid: ", uid);
-
   try {
     const result = await pool.query(
       "INSERT INTO celeb(displayName, username, followers, account, category, price, email, description, uid, imgurl) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)",
@@ -219,7 +220,6 @@ app.post("/createCeleb", async (req, res) => {
         imgurl,
       ]
     );
-    console.log(req.body);
     res.send("Thank you");
   } catch (error) {
     console.log(error);

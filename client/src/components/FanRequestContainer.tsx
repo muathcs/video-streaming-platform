@@ -1,6 +1,15 @@
 import React from "react";
 import { useAuth } from "../context/AuthContext";
 
+interface RequestProp {
+  message: string;
+  reqType: string;
+  requestaction: string;
+  timestamp1: string;
+  requeststatus: string;
+  celebName: string;
+  celebPhoto: string;
+}
 function FanRequestContainer({
   message,
   reqType,
@@ -9,7 +18,7 @@ function FanRequestContainer({
   requeststatus,
   celebName,
   celebPhoto,
-}) {
+}: RequestProp) {
   const { currentUser }: any = useAuth();
 
   return (

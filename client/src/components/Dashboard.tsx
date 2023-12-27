@@ -3,7 +3,7 @@ import axios from "../api/axios";
 import { useAuth } from "../context/AuthContext";
 import { useTable } from "react-table";
 import fakedata from "../assets/fakeData.json";
-
+import { useNavigate } from "react-router-dom";
 type fanRequests = {
   email: string;
   from: string;
@@ -14,8 +14,15 @@ type fanRequests = {
 };
 function Dashboard() {
   const { currentUser }: any = useAuth();
+  const navigate = useNavigate();
 
   const [requests, setRequests] = useState<fanRequests[]>([]);
+
+  function handleFulfillReq(row: any) {
+    const state = row.original;
+
+    navigate(`/fulfill/${row.original.requestid}`, { state });
+  }
 
   const data = React.useMemo(() => fakedata, []);
   const columns = React.useMemo(
@@ -116,7 +123,10 @@ function Dashboard() {
                             </>
                           ) : cell.column.id == "reply" ? (
                             <>
-                              <button className="py-3 px-5 bg-red-500 hover:bg-red-600 cursor-pointer rounded-md text-center table-cell align-middle">
+                              <button
+                                onClick={(e) => handleFulfillReq(row)}
+                                className="py-3 px-5 bg-red-500 hover:bg-red-600 cursor-pointer rounded-md text-center table-cell align-middle"
+                              >
                                 Reply
                               </button>
                             </>

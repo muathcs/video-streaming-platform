@@ -11,6 +11,7 @@ import SignUp from "./components/signup";
 import PrivateRoute from "./components/privateRoute";
 import Dashboard from "./components/Dashboard";
 import FanRequests from "./components/FanRequests";
+import FulfillRequest from "./components/FulfillRequest";
 
 function App() {
   // const { signed } = useSelector((state: RootState) => state.signed);
@@ -30,6 +31,7 @@ function App() {
               <Route path="/profile" element={<CelebProfile />} />
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/requests" element={<FanRequests />} />
+              <Route path="/fulfill/:requestId" element={<FulfillRequest />} />
             </>
           ) : (
             <Route path="/*" element={<Navigate to="/login" />} />
