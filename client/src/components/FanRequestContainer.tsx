@@ -9,6 +9,8 @@ interface RequestProp {
   requeststatus: string;
   celebName: string;
   celebPhoto: string;
+  celebmessage: string;
+  requestid: string;
 }
 function FanRequestContainer({
   message,
@@ -18,19 +20,24 @@ function FanRequestContainer({
   requeststatus,
   celebName,
   celebPhoto,
+  celebmessage,
+  requestid,
 }: RequestProp) {
   const { currentUser }: any = useAuth();
 
   return (
-    <div className=" h-full flex justify-center items-center ">
-      <div className=" cursor-pointer ">
-        <div className="flex p-5 flex-col items-center  bg-white border border-white rounded-lg  shadow md:flex-row md:max-w-xl hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700">
+    <div className=" cursor-pointer w-full flex justify-center items-center mt-10  ">
+      <div className="flex p-5 flex-col items-center   md:flex-row    md:w-1/2 rounded-lg shadow-sm shadow-red-500 border-4  border-gray-700 bg-gray-800 hover:bg-gray-700">
+        <div className=" w-1/3 h-1/4">
           <img
-            className="object-cover rounded-t-lg  md:rounded-none md:rounded-s-lg h-full"
+            className="rounded-lg border w-[250px] h-[250px]  object-fill border-gray-600 "
             src={currentUser && celebPhoto}
-            width={200}
             alt=""
           />
+        </div>
+        <div>
+          <p>message:{requestid}</p>
+          <p>message:{celebmessage}</p>
           <div className="flex flex-col justify-between p-4 leading-normal ">
             <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
               {celebName}

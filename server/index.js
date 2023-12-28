@@ -86,12 +86,18 @@ app.get("/fanrequests", async (req, res) => {
   const uid = req.query.uid;
 
   try {
+    // this queries all the requests that match the get query uid. Basically when a fan clicks there on there requests this retrieves them
     const response = await pool.query(
-      "SELECT message, req_type, requestAction, timestamp1, requeststatus, celebuid from Requests WHERE fanuid = $1",
+      "SELECT celebmessage, requestid, message, req_type, requestAction, timestamp1, requeststatus, celebuid from Requests WHERE fanuid = $1",
       [uid]
     );
 
+    //array that will be sent back to the response, it's made up of objects of the individual request + celeb info(photo, name)
     let reqAndCeleb = [];
+
+    // when the celeb clicks on there requests, I want the individual requests to have the image of the celeb they requested and there name.
+    // note: I chose not to add this info(celeb name/photo) to the request table, because it'll make it requests table messy. I have the celebuid
+    // on the requests table, and that's enough to get the celeb photo/name from the code below.
 
     for (const req of response.rows) {
       try {
@@ -122,11 +128,17 @@ app.get("/fanrequests", async (req, res) => {
   }
 });
 
-app.get("/fulfill/:id", async (req, res) => {
+app.put("/fulfill/:id", async (req, res) => {
   const itemId = parseInt(req.params.id, 10); // Parse the id parameter as an integer
 
+  const { celebMessage } = req.body;
+
+  console.log("body: ", celebMessage);
   try {
-    const response = await pool.query("");
+    const response = await pool.query(
+      "UPDATE requests SET requeststatus = $1, celebmessage = $2 WHERE requestid = $3 ",
+      ["fulfilled", celebMessage, itemId]
+    );
   } catch (error) {}
 
   console.log("reqid: ", itemId);

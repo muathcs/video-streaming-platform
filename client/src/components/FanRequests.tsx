@@ -11,6 +11,8 @@ type requestType = {
     requestAction: string;
     timestamp1: string;
     requeststatus: string;
+    celebmessage: string;
+    requestid: string;
   };
   celeb: {
     uid: string;
@@ -22,6 +24,8 @@ function FanRequests() {
   const { currentUser }: any = useAuth();
 
   const [requests, setRequests] = useState<requestType[]>([]);
+
+  console.log("req: ", requests[0]);
 
   useEffect(() => {
     const getRequests = async () => {
@@ -39,18 +43,22 @@ function FanRequests() {
   }, []);
   return (
     <>
-      {requests.map((req, index) => (
-        <FanRequestContainer
-          key={uuidv4()}
-          message={req.request.message}
-          reqType={req.request.req_type}
-          requestaction={req.request.requestAction}
-          timestamp1={req.request.timestamp1}
-          requeststatus={req.request.requeststatus}
-          celebName={req.celeb.displayname}
-          celebPhoto={req.celeb.imgurl}
-        />
-      ))}
+      <div className="  overflow-auto flex flex-col gap-2">
+        {requests.map((req, index) => (
+          <FanRequestContainer
+            key={uuidv4()}
+            message={req.request.message}
+            reqType={req.request.req_type}
+            requestaction={req.request.requestAction}
+            timestamp1={req.request.timestamp1}
+            requeststatus={req.request.requeststatus}
+            requestid={req.request.requestid}
+            celebmessage={req.request.celebmessage}
+            celebName={req.celeb.displayname}
+            celebPhoto={req.celeb.imgurl}
+          />
+        ))}
+      </div>
     </>
   );
 }
