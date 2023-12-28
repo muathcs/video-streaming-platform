@@ -70,8 +70,8 @@ app.get("/dashboard", async (req, res) => {
 
   try {
     const response = await pool.query(
-      "SELECT * from Requests WHERE celebUid = $1",
-      [uid]
+      "SELECT * from Requests WHERE requeststatus != $1 AND celebUid = $2",
+      ["fulfilled", uid]
     );
 
     const requests = response.rows;
