@@ -19,7 +19,7 @@ function App() {
   const signed = true;
   return (
     <>
-      <div className="flex flex-col  absolute   w-full h-full p-0 m-0 ">
+      <div className="flex flex-col  absolute   w-full h-full p-0 m-0 bg-gradient-to-r from-cyan-400 to-violet-600 ">
         <NavBar />
         {/* <Celebs /> */}
         <Routes>

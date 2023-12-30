@@ -34,7 +34,7 @@ function CelebCard({
   };
 
   return (
-    <div className="shadow-xl  border  bg-[#121114]  rounded-t-xl rounded-md mt-10 card-zoom">
+    <div className="shadow-xl  border text-black  rounded-t-xl rounded-md mt-10 card-zoom bg-gradient-to-r from-violet-200 to-pink-200">
       <div className="h-[65%]  w-full overflow-hidden rounded-t-xl ">
         <img
           onClick={handleCardClick}

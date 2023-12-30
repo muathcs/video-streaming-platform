@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from "react";
 import axios from "../api/axios";
 import { useAuth } from "../context/AuthContext";
-import { useTable } from "react-table";
+import { Column, useTable } from "react-table";
 import fakedata from "../assets/fakeData.json";
 import { useNavigate } from "react-router-dom";
+import { useGlobalDataFetch } from "../hooks/useGlobalDataFetch";
+import { CelebType } from "../TsTypes/types";
+import { useGlobalAxios } from "../hooks/useGlobalAxios";
 type fanRequests = {
   email: string;
   from: string;
@@ -15,8 +18,14 @@ type fanRequests = {
 function Dashboard() {
   const { currentUser }: any = useAuth();
   const navigate = useNavigate();
+  const requests: any = useGlobalDataFetch("dashboard", currentUser.uid);
+  const data = useGlobalAxios(
+    "get",
+    "http://localhost:3001/dashboard",
+    currentUser.uid
+  );
 
-  const [requests, setRequests] = useState<fanRequests[]>([]);
+  console.log("data: ", data);
 
   function handleFulfillReq(row: any) {
     const state = row.original;
@@ -24,8 +33,7 @@ function Dashboard() {
     navigate(`/fulfill/${row.original.requestid}`, { state });
   }
 
-  const data = React.useMemo(() => fakedata, []);
-  const columns = React.useMemo(
+  const columns: any = React.useMemo(
     () => [
       {
         Header: "From",
@@ -60,22 +68,6 @@ function Dashboard() {
     []
   );
 
-  useEffect(() => {
-    const fetchRequests = async () => {
-      try {
-        const response = await axios.get("http://localhost:3001/dashboard", {
-          params: { uid: currentUser.uid },
-        });
-
-        setRequests(response.data);
-      } catch (error) {
-        console.error("error: ", error);
-      }
-    };
-
-    fetchRequests();
-  }, []);
-
   const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
     useTable({
       columns,
@@ -84,7 +76,7 @@ function Dashboard() {
 
   return (
     <>
-      <div className=" flex justify-center items-center overflow-hidden bg-[#121114] ">
+      <div className=" flex justify-center items-center overflow-hidden bg-[#121114] h-full">
         <div className="container bg-gray-400 w-full h-[70%]  rounded-lg overflow-auto border-4 border-gray-500    ">
           <table
             {...getTableProps()}

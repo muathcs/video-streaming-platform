@@ -38,8 +38,6 @@ function NavBar() {
   const navigate = useNavigate();
   // const celeb = localStorage.getItem("celeb");
 
-  console.log("celeb: ", celeb);
-
   const path = celeb ? "dashboard" : celeb == undefined ? "" : "requests";
 
   const [navigation, setNavigation] = useState([
@@ -77,7 +75,10 @@ function NavBar() {
 
   return (
     <>
-      <Disclosure as="nav" className="bg-[#121114]  text-[24px] z-10 block  ">
+      <Disclosure
+        as="nav"
+        className=" text-[24px] sm:text-[316px] z-10 block  py-5   "
+      >
         {({ open }) => (
           <>
             <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
@@ -99,7 +100,7 @@ function NavBar() {
                 </div>
                 <div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
                   <div className="flex flex-shrink-0 items-center">
-                    <h1 className="text-[30px] sm:block hidden">
+                    <h1 className="text-[50px]   sm:block hidden">
                       <Link
                         onClick={(e) => {
                           const updatedNav = navigation.map((item) => ({
@@ -134,7 +135,7 @@ function NavBar() {
                             item.current
                               ? "bg-slate-300 rounded-full text-white"
                               : "text-white hover:bg-gray-700 hover:rounded-full focus:bg-gray-800 hover:text-white",
-                            "rounded-full px-3 py-2 text-sm font-medium text-[21px]"
+                            "rounded-full px-3 py-2 text-[20px] font-medium "
                           )}
                           aria-current={item.current ? "page" : undefined}
                         >

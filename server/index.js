@@ -66,7 +66,7 @@ app.get("/status", async (req, res) => {
 });
 
 app.get("/dashboard", async (req, res) => {
-  const uid = req.query.uid;
+  const uid = req.query.data;
 
   try {
     const response = await pool.query(
@@ -83,12 +83,12 @@ app.get("/dashboard", async (req, res) => {
 });
 
 app.get("/fanrequests", async (req, res) => {
-  const uid = req.query.uid;
+  const uid = req.query.data;
 
   try {
     // this queries all the requests that match the get query uid. Basically when a fan clicks there on there requests this retrieves them
     const response = await pool.query(
-      "SELECT celebmessage, requestid, message, req_type, requestAction, timestamp1, requeststatus, celebuid from Requests WHERE fanuid = $1",
+      "SELECT celebmessage, requestid, message, req_type, requestAction, timestamp1, requeststatus, celebuid from Requests WHERE fanuid = $1 ORDER BY requestid",
       [uid]
     );
 
@@ -167,6 +167,7 @@ app.post("/createUser", async (req, res) => {
 //
 
 app.post("/request", async (req, res) => {
+  console.log("here");
   let {
     celebUid,
     fanUid,
@@ -177,6 +178,9 @@ app.post("/request", async (req, res) => {
     fromPerson,
     toPerson,
   } = req.body;
+
+  console.log("action: ", requestAction);
+  console.log("toperson: ", toPerson);
   price = parseInt(price);
   try {
     const result = await pool.query(

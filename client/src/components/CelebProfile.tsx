@@ -18,22 +18,19 @@ type CelebCardProps = {
 function CelebProfile() {
   const [orderModal, setOrderModal] = useState<bool>(false);
   const { state } = useLocation();
-  const { currentUser }: any = useAuth();
+  const { currentUser, celeb }: any = useAuth();
 
   if (!state) return; // return if there is no state
   const { name, category, reviews, price, description, photoURl, uid } = state;
 
-  // console.log("state: ", state);
-  // console.log("current user: ", currentUser);
-
   return (
     <>
-      <div className="h-full w-full relative flex flex-col bg-[#121114]  overflow-auto    ">
+      <div className="h-full w-full relative flex flex-col bg-[#121114]       ">
         <div className="flex flex-col">
-          <div className=" rounded-full overflow-hidden relative left-5 top-2 w-2/5 sm:w-1/5 md:w-1/4 lg:w-[400px] lg:h-[400px] object-cover border-2 bg-green-300 ">
-            <img className="w-full h-full" src={photoURl} />
+          <div className=" rounded-full relative left-5 top-2 w-2/5 sm:w-1/5 md:w-1/4 lg:w-[400px] lg:h-[400px] object-cover border-2 bg-green-300 overflow-hidden ">
+            <img className="w-full h-full object-cover" src={photoURl} />
           </div>
-          <div className="  flex flex-col pr-3">
+          <div className="flex flex-col pr-3">
             <p className="text-whtie text-left text-[24px] relative top-3 left-5 ">
               Name: {name}
             </p>
@@ -62,12 +59,16 @@ function CelebProfile() {
         </div>
 
         <div className="relative top-20 pb-5">
-          <button
-            onClick={(e) => setOrderModal(true)}
-            className=" relative  w-1/2 md:w-1/5 rounded-md hover:bg-slate-700 py-5 bg-slate-500  text-white hover:border-none outline-none focus:outline-none border-none"
-          >
-            Book A Shoutout
-          </button>
+          {!celeb ? (
+            <button
+              onClick={(e) => setOrderModal(true)}
+              className=" relative  w-1/2 md:w-1/5 rounded-md hover:bg-slate-700 py-5 bg-slate-500  text-white hover:border-none outline-none focus:outline-none border-none"
+            >
+              Book A Shoutout
+            </button>
+          ) : (
+            ""
+          )}
         </div>
         {orderModal && (
           <>

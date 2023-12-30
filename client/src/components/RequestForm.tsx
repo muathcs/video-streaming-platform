@@ -1,5 +1,7 @@
 import React, { useContext, useState } from "react";
 import axios from "../api/axios";
+import { useGlobalPut } from "../hooks/useGlobaPut";
+import { useGlobalAxios } from "../hooks/useGlobalAxios";
 
 type RequestProps = {
   celebUid: string;
@@ -8,38 +10,26 @@ type RequestProps = {
 };
 
 function RequestForm({ celebUid, fanUid, price }: RequestProps) {
-  const [toSomeOneElse, setToSomeOneElse] = useState<boolean>(false);
+  const { data, loading, error } = useGlobalAxios("post", "yourDataEndpoint");
+
   const [checkBox, setCheckBox] = useState(false);
-  const [message, setMessage] = useState<string>("");
-  const [requestAction, setRequestActon] = useState<string>();
-  const [fromPerson, setFromPerson] = useState();
-  const [toPerson, setToPerson] = useState();
 
-  console.log("option", toSomeOneElse);
+  const [formData, setFormData] = useState({
+    toSomeOneElse: false,
+    checkBox: false,
+    message: "",
+    requestAction: "",
+    fromPerson: "",
+    toPerson: "",
+    celebUid,
+    fanUid,
+    price,
+  });
 
-  async function handleRequest(e: any) {
+  function handleRequest(e: any) {
     e.preventDefault();
-
-    const requestData = {
-      celebUid,
-      fanUid,
-      price,
-      message,
-      requestAction,
-      toSomeOneElse,
-      fromPerson,
-      toPerson,
-    };
-
-    try {
-      const response = await axios.post(
-        "http://localhost:3001/request",
-        requestData
-      );
-      console.log("req res: ", response);
-    } catch (error) {
-      console.error("Error in Request Form: ", error);
-    }
+    // sendData("request", formData);
+    data("request", formData);
   }
 
   return (
@@ -52,7 +42,11 @@ function RequestForm({ celebUid, fanUid, price }: RequestProps) {
               Step 1: Type of video request
             </label>
             <select
-              onClick={(e: any) => setRequestActon(e.target.value)}
+              // onClick={(e: any) => setRequestActon(e.target.value)}
+              onClick={(e: React.MouseEvent<HTMLElement>) => {
+                const target = e.target as HTMLSelectElement;
+                setFormData({ ...formData, message: target.value });
+              }}
               data-te-select-init
               className="w-full h-10 rounded-md bg-transparent border text-slate-800 cursor-pointer"
             >
@@ -77,7 +71,11 @@ function RequestForm({ celebUid, fanUid, price }: RequestProps) {
                   id="option1"
                   type="radio"
                   name="remote"
-                  onClick={(e) => setToSomeOneElse(true)}
+                  // onClick={(e) => setToSomeOneElse(true)}
+
+                  onClick={(e) =>
+                    setFormData({ ...formData, toSomeOneElse: true })
+                  }
                 />
 
                 <label
@@ -94,7 +92,9 @@ function RequestForm({ celebUid, fanUid, price }: RequestProps) {
                   id="option2"
                   type="radio"
                   name="remote"
-                  onClick={(e) => setToSomeOneElse(false)}
+                  onClick={(e) =>
+                    setFormData({ ...formData, toSomeOneElse: false })
+                  }
                 />
 
                 <label
@@ -110,11 +110,15 @@ function RequestForm({ celebUid, fanUid, price }: RequestProps) {
           {/* personal info */}
 
           <div className="relative " data-te-input-wrapper-init>
-            {toSomeOneElse && (
+            {formData.toSomeOneElse && (
               <>
                 <p className="text-left">From (first name): </p>
                 <input
-                  onChange={(e: any) => setFromPerson(e.target.value)}
+                  // onChange={(e: any) => setFromPerson(e.target.value)}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                    const target = e.target as HTMLInputElement;
+                    setFormData({ ...formData, fromPerson: target.value });
+                  }}
                   type="text"
                   className=" block min-h-[auto] w-full rounded border my-2 bg-transparent
             px-3 py-[0.32rem] leading-[2.5] outline-none 
@@ -125,7 +129,10 @@ function RequestForm({ celebUid, fanUid, price }: RequestProps) {
             )}
             <p className="text-left">To (first name): </p>
             <input
-              onChange={(e: any) => setToPerson(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                const target = e.target as HTMLInputElement;
+                setFormData({ ...formData, toPerson: target.value });
+              }}
               type="text"
               className=" block min-h-[auto] w-full rounded border my-2 bg-transparent
                      px-3 py-[0.32rem] leading-[2.5] outline-none 
@@ -139,7 +146,10 @@ function RequestForm({ celebUid, fanUid, price }: RequestProps) {
           <div className="">
             <div className="text-left">Step 3: Request details</div>
             <textarea
-              onChange={(e) => setMessage(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
+                const target = e.target as HTMLTextAreaElement;
+                setFormData({ ...formData, message: target.value });
+              }}
               className=" block min-h-[auto] w-full rounded border my-2 bg-transparent
                      px-2 py-2  h-40 shadow-sm shadow-blue-400   outline-none placeholder-style  relative
                       "

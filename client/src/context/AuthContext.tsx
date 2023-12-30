@@ -38,7 +38,6 @@ export function AuthProvider({ children }: { children: any }) {
         email,
         password
       );
-      console.log("signup function: ", userCredential);
 
       // Obtain the user's UID
       const uid: string = userCredential.user.uid;

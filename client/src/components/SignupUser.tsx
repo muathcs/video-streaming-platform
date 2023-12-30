@@ -37,8 +37,6 @@ function SignupUser({
       [name !== undefined ? name : "remote"]:
         value !== undefined ? value.toLowerCase() : innerText,
     });
-
-    console.log("celeb:  ", user);
   }
 
   return (
