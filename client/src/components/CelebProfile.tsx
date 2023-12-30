@@ -25,9 +25,9 @@ function CelebProfile() {
 
   return (
     <>
-      <div className="h-full w-full relative flex flex-col bg-[#121114]       ">
-        <div className="flex flex-col">
-          <div className=" rounded-full relative left-5 top-2 w-2/5 sm:w-1/5 md:w-1/4 lg:w-[400px] lg:h-[400px] object-cover border-2 bg-green-300 overflow-hidden ">
+      <div className="h-full  w-full relative  grid grid-rows-7  ">
+        <div className="flex flex-col  row-span-2 border-3 ">
+          <div className=" rounded-full relative left-5  w-2/5 sm:w-1/5 md:w-1/4 lg:w-[200px] lg:h-[200px] object-cover border-2 bg-green-300 overflow-hidden ">
             <img className="w-full h-full object-cover" src={photoURl} />
           </div>
           <div className="flex flex-col pr-3">
@@ -47,18 +47,18 @@ function CelebProfile() {
           </div>
         </div>
 
-        <div className=" flex flex-col pt-5 relative top-10 gap-10 h-full ">
-          <h1 className="text-whtie text-left text-[24px] relative left-5 md:left-6 underline font-bold  ">
+        <div className=" flex flex-col  relative  h-full  row-span-3  ">
+          <h1 className="text-whtie text-left text-[24px] bottom-5 relative left-5 md:left-6 underline font-bold  ">
             Video Display:
           </h1>
-          <div className="w-full h-[150%] px-5 flex gap-2">
+          <div className="w-full  px-5 flex gap-2">
             <div className="bg-red-400 h-[250px] w-3/4 border-2 rounded-xl"></div>
             <div className="bg-red-400 h-[250px] w-3/4 border-2 rounded-xl"></div>
             <div className="bg-red-400 h-[250px] w-3/4 border-2 rounded-xl"></div>
           </div>
         </div>
 
-        <div className="relative top-20 pb-5">
+        <div className="relative h-full e row-span-1">
           {!celeb ? (
             <button
               onClick={(e) => setOrderModal(true)}

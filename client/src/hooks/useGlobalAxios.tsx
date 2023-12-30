@@ -15,17 +15,17 @@ const initialState: State = {
   loading: true,
 };
 
+// I chose to use reducer to return different outcomes from the axios requests,
+// on succes, the user gets back the action payload which could be the data from the get request, or a function to put/post stuff to the database.
 function reducer(state: State, action: any): State {
   switch (action.type) {
-    case "post": // Include "post" case
-    case "get":
+    case "loading": // Include "post" case
       return { ...state, loading: true };
 
     case "success":
       console.log("again here");
       return { ...state, loading: false, data: action.payload };
-    case "get_error":
-    case "post_error": // Include "post_error" case
+    case "error":
       return { ...state, loading: false, error: action.payload };
     default:
       return state;
@@ -37,18 +37,22 @@ export function useGlobalAxios(
   dataToFetch: string,
   params?: unknown
 ) {
+  //useReducer returns a state with three item, data, loading, error. either loading or error will be true if data doesn't exist.
   const [state, dispatch] = useReducer(reducer, initialState);
 
+  //function to post to the data base.
   async function postData(dataToPost: string, params?: unknown) {
     try {
-      const response = await axios.post(dataToPost, params);
+      await axios.post(dataToPost, params);
     } catch (error) {
       console.error(error);
     }
   }
+
+  // function to put to the database.
   async function putData(dataToPost: string, params?: unknown) {
     try {
-      const response = await axios.put(dataToPost, params);
+      await axios.put(dataToPost, params);
     } catch (error) {
       console.error(error);
     }
@@ -56,7 +60,7 @@ export function useGlobalAxios(
 
   useEffect(() => {
     const fetchData = async () => {
-      dispatch({ type: method }); // Use the method directly as the action type
+      dispatch({ type: "loading" }); // Use the method directly as the action type
 
       try {
         let response;
@@ -69,7 +73,7 @@ export function useGlobalAxios(
 
         // if the request method is post or put, I return the postData function, if it's get, I return the fetched data .
         dispatch({
-          type: `success`,
+          type: "success",
           payload:
             method == "get"
               ? response?.data
@@ -83,12 +87,12 @@ export function useGlobalAxios(
         console.error(error);
 
         //sets error to true on the reducer function, and my componenet can destrcut this.
-        dispatch({ type: `${method}_error`, payload: error });
+        dispatch({ type: "error", payload: error });
       }
     };
 
     fetchData();
-  }, [method, dataToFetch, params]);
+  }, [dataToFetch]);
 
   return state;
 }
