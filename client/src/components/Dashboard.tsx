@@ -7,19 +7,11 @@ import { useNavigate } from "react-router-dom";
 import { useGlobalDataFetch } from "../hooks/useGlobalDataFetch";
 import { CelebType } from "../TsTypes/types";
 import { useGlobalAxios } from "../hooks/useGlobalAxios";
-type fanRequests = {
-  email: string;
-  from: string;
-  to: string;
-  type: string;
-  action: string;
-  message: string;
-};
+
 function Dashboard() {
   const { currentUser }: any = useAuth();
   const navigate = useNavigate();
-  const requests: any = useGlobalDataFetch("dashboard", currentUser.uid);
-  const data = useGlobalAxios(
+  const { data, loading, error } = useGlobalAxios(
     "get",
     "http://localhost:3001/dashboard",
     currentUser.uid
@@ -71,7 +63,7 @@ function Dashboard() {
   const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
     useTable({
       columns,
-      data: requests,
+      data: data || [], // if data is not loaded yet, [] prevents error
     });
 
   return (
@@ -98,7 +90,8 @@ function Dashboard() {
               ))}
             </thead>
             <tbody className="bg-purple-400 w-full overflow-auto ">
-              {requests.length != 0 &&
+              {data &&
+                data.length != 0 &&
                 rows.map((row: any) => {
                   prepareRow(row);
 

@@ -21,9 +21,7 @@ function reducer(state: State, action: any): State {
     case "get":
       return { ...state, loading: true };
 
-    case "get_success":
-    case "post_success":
-    case "put":
+    case "success":
       console.log("again here");
       return { ...state, loading: false, data: action.payload };
     case "get_error":
@@ -48,6 +46,13 @@ export function useGlobalAxios(
       console.error(error);
     }
   }
+  async function putData(dataToPost: string, params?: unknown) {
+    try {
+      const response = await axios.put(dataToPost, params);
+    } catch (error) {
+      console.error(error);
+    }
+  }
 
   useEffect(() => {
     const fetchData = async () => {
@@ -64,8 +69,15 @@ export function useGlobalAxios(
 
         // if the request method is post or put, I return the postData function, if it's get, I return the fetched data .
         dispatch({
-          type: `${method}_success`,
-          payload: method == "get" ? response?.data : postData,
+          type: `success`,
+          payload:
+            method == "get"
+              ? response?.data
+              : method == "post"
+              ? postData
+              : method == "put"
+              ? putData
+              : null,
         });
       } catch (error) {
         console.error(error);

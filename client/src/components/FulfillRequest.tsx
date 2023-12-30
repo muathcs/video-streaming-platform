@@ -3,6 +3,7 @@ import axios from "../api/axios";
 import { useLocation, useParams } from "react-router-dom";
 import { eventType } from "aws-sdk/clients/health";
 import { useGlobalPut } from "../hooks/useGlobaPut";
+import { useGlobalAxios } from "../hooks/useGlobalAxios";
 
 function FulfillRequest() {
   const [celebMessage, setCelebMessage] = useState<string>();
@@ -10,11 +11,24 @@ function FulfillRequest() {
 
   const { state } = useLocation();
 
-  async function fulfillRequest(e: React.MouseEvent<HTMLElement>) {
+  const {
+    data: fulfillRequest,
+    loading,
+    error,
+  } = useGlobalAxios("put", `puts`);
+
+  console.log("hereDatA: ", fulfillRequest);
+
+  async function handleFulfill(e: React.MouseEvent<HTMLElement>) {
     e.preventDefault();
 
     // console.log(putdata)
     console.log("message: ", state.requestid);
+
+    fulfillRequest(`http://localhost:3001/fulfill/${state.requestid}`, {
+      state: state,
+      celebMessage: celebMessage,
+    });
 
     try {
       const res = await axios.put(`/fulfill/${state.requestid}`, {
@@ -55,7 +69,7 @@ function FulfillRequest() {
         </div>
         <div className="">
           <button
-            onClick={fulfillRequest}
+            onClick={handleFulfill}
             className="px-12 py-4 m-2 bg-red-800 rounded-md hover:bg-red-900"
           >
             Fulfill
