@@ -72,9 +72,9 @@ function CelebProfile() {
         </div>
         {orderModal && (
           <>
-            <div className="bg-[#121114]    h-full w-full sm:top-0 fixed flex justify-center items-center sm:bg-opacity-60  ">
+            <div className="bg-[#121114]    h-full w-full sm:top-0 fixed  flex justify-center items-center sm:bg-opacity-60  ">
               <div
-                className="w-full sm:w-3/4 xl:w-2/5 h-full sm:h-4/5  sm:pt-12 bg-[#121114] border-2 shadow-md shadow-blue-300  rounded-md  px-5 relative  
+                className="w-full sm:w-3/4 xl:w-2/5 h-full sm:h-[83%] overflow-auto sm:pt-12 bg-[#121114] border-2 shadow-md shadow-blue-300  rounded-md  px-5  relative  
               "
               >
                 <div

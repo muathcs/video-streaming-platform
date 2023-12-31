@@ -23,7 +23,6 @@ function reducer(state: State, action: any): State {
       return { ...state, loading: true };
 
     case "success":
-      console.log("again here");
       return { ...state, loading: false, data: action.payload };
     case "error":
       return { ...state, loading: false, error: action.payload };
@@ -71,7 +70,7 @@ export function useGlobalAxios(
           });
         }
 
-        // if the request method is post or put, I return the postData function, if it's get, I return the fetched data .
+        // if the method is post or put, I return a function, if it's get, I return the fetched data.
         dispatch({
           type: "success",
           payload:

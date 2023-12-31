@@ -3,7 +3,7 @@ import { useAuth } from "../context/AuthContext";
 
 interface RequestProp {
   message: string;
-  reqType: string;
+  reqtype: string;
   requestaction: string;
   timestamp1: string;
   requeststatus: string;
@@ -14,7 +14,7 @@ interface RequestProp {
 }
 function FanRequestContainer({
   message,
-  reqType,
+  reqtype,
   requestaction,
   timestamp1,
   requeststatus,
@@ -24,6 +24,8 @@ function FanRequestContainer({
   requestid,
 }: RequestProp) {
   const { currentUser }: any = useAuth();
+
+  console.log("request Type: ", reqtype);
 
   return (
     <div className=" cursor-pointer w-full flex justify-center items-center mt-10  ">
@@ -38,6 +40,26 @@ function FanRequestContainer({
         <div>
           <p>message:{requestid}</p>
           <p>message:{celebmessage}</p>
+          {requeststatus == "fulfilled" && reqtype == "audio" ? (
+            <>
+              <audio src={celebmessage} controls className=" relative " />
+            </>
+          ) : reqtype == "video" ? (
+            <>
+              <video
+                className="recorded w-1/2   "
+                src={celebmessage}
+                controls
+              />
+            </>
+          ) : reqtype == "message" ? (
+            <>
+              <p>{message}</p>
+            </>
+          ) : (
+            <h1>Nothing</h1>
+          )}
+
           <div className="flex flex-col justify-between p-4 leading-normal ">
             <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
               {celebName}
@@ -45,7 +67,7 @@ function FanRequestContainer({
             <p className="mb-3 font-normal text-gray-700 dark:text-gray-400">
               {message}
             </p>
-            <p>{reqType}</p>
+            <p>{reqtype}</p>
             <p>data: {timestamp1}</p>
             <p>Status: {requeststatus}</p>
           </div>

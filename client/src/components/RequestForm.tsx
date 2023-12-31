@@ -10,7 +10,12 @@ type RequestProps = {
 };
 
 function RequestForm({ celebUid, fanUid, price }: RequestProps) {
-  const { data, loading, error } = useGlobalAxios("post", "yourDataEndpoint");
+  // post a new Request/
+  const {
+    data: sendRequest,
+    loading,
+    error,
+  } = useGlobalAxios("post", "yourDataEndpoint");
 
   const [checkBox, setCheckBox] = useState(false);
 
@@ -18,6 +23,7 @@ function RequestForm({ celebUid, fanUid, price }: RequestProps) {
     toSomeOneElse: false,
     checkBox: false,
     message: "",
+    reqType: "",
     requestAction: "",
     fromPerson: "",
     toPerson: "",
@@ -28,13 +34,16 @@ function RequestForm({ celebUid, fanUid, price }: RequestProps) {
 
   function handleRequest(e: any) {
     e.preventDefault();
+
     // sendData("request", formData);
-    data("request", formData);
+    sendRequest("request", formData);
   }
+
+  console.log("formData: ", formData);
 
   return (
     <>
-      <div className="h-full w-full relative  ">
+      <div className="h-full w-full relative   ">
         <form onSubmit={handleRequest}>
           {/* <!-- Email input --> */}
           <div className="relative mb-6" data-te-input-wrapper-init>
@@ -45,7 +54,7 @@ function RequestForm({ celebUid, fanUid, price }: RequestProps) {
               // onClick={(e: any) => setRequestActon(e.target.value)}
               onClick={(e: React.MouseEvent<HTMLElement>) => {
                 const target = e.target as HTMLSelectElement;
-                setFormData({ ...formData, message: target.value });
+                setFormData({ ...formData, requestAction: target.value });
               }}
               data-te-select-init
               className="w-full h-10 rounded-md bg-transparent border text-slate-800 cursor-pointer"
@@ -141,10 +150,75 @@ function RequestForm({ celebUid, fanUid, price }: RequestProps) {
             />
           </div>
 
+          {/* <!-- Request Type --> */}
+
+          <div className=" ">
+            <p className="text-left">Step 3: choose a request</p>
+            <div className="gap-4 text-center sm:grid-cols-3  flex justify-center items-center  my-2">
+              <div>
+                <input
+                  className="peer sr-only"
+                  id="option3"
+                  type="radio"
+                  name="remote"
+                  // onClick={(e) => setToSomeOneElse(true)}
+
+                  onClick={(e) =>
+                    setFormData({ ...formData, reqType: "message" })
+                  }
+                />
+
+                <label
+                  htmlFor="option3"
+                  className="block w-full rounded-lg border border-gray-200 py-3 px-8 cursor-pointer hover:bg-blue-700   peer-checked:border-black peer-checked:shadow-lg peer-checked:shadow-blue-400 peer-checked:bg-blue-800 peer-checked:text-white bg-blue-600 text-white"
+                >
+                  Message
+                </label>
+              </div>
+
+              <div>
+                <input
+                  className="peer sr-only"
+                  id="option4"
+                  type="radio"
+                  name="remote"
+                  onClick={(e) =>
+                    setFormData({ ...formData, reqType: "audio" })
+                  }
+                />
+
+                <label
+                  htmlFor="option4"
+                  className="block w-full rounded-lg border border-gray-200 py-3 px-8 cursor-pointer hover:bg-blue-700   peer-checked:border-black peer-checked:shadow-lg peer-checked:shadow-blue-400 peer-checked:bg-blue-800 peer-checked:text-white bg-blue-600 text-white"
+                >
+                  Audio
+                </label>
+              </div>
+              <div>
+                <input
+                  className="peer sr-only"
+                  id="option5"
+                  type="radio"
+                  name="remote"
+                  onClick={(e) =>
+                    setFormData({ ...formData, reqType: "video" })
+                  }
+                />
+
+                <label
+                  htmlFor="option5"
+                  className="block w-full rounded-lg border border-gray-200 py-3 px-8 cursor-pointer hover:bg-blue-700   peer-checked:border-black peer-checked:shadow-lg peer-checked:shadow-blue-400 peer-checked:bg-blue-800 peer-checked:text-white bg-blue-600 text-white"
+                >
+                  video
+                </label>
+              </div>
+            </div>
+          </div>
+
           {/* Message*/}
 
           <div className="">
-            <div className="text-left">Step 3: Request details</div>
+            <div className="text-left">Step 4: Request details</div>
             <textarea
               onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
                 const target = e.target as HTMLTextAreaElement;

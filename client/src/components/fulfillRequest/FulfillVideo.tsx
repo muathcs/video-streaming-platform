@@ -1,7 +1,15 @@
 import React, { useEffect, useReducer, useRef, useState } from "react";
+import { useS3Upload } from "../../hooks/useS3Upload";
 const mimeType = 'video/webm; codecs="opus,vp8"';
 
-function FulfillVideo() {
+interface FulfillRequestProps {
+  reRecord: number;
+  setCelebReply: React.Dispatch<React.SetStateAction<string | undefined>>;
+}
+
+function FulfillVideo({ reRecord, setCelebReply }: FulfillRequestProps) {
+  //custom hooks
+  const { uploadToS3 } = useS3Upload();
   const [permission, setPermission] = useState(true);
 
   const mediaRecorder = useRef<any>(null);
@@ -59,6 +67,8 @@ function FulfillVideo() {
   const startRecording = async () => {
     setRecordingStatus("recording");
 
+    console.log("here");
+
     const media = new MediaRecorder(stream, { mimeType });
 
     mediaRecorder.current = media;
@@ -68,39 +78,62 @@ function FulfillVideo() {
     let localVideoChunks: any = [];
 
     mediaRecorder.current.ondataavailable = (event: any) => {
+      console.log("undefined?: ", typeof event.data);
+      console.log("zero?: ", event.data.size);
       if (typeof event.data === "undefined") return;
       if (event.data.size === 0) return;
+
       localVideoChunks.push(event.data);
     };
-
     setVideoChunks(localVideoChunks);
   };
 
-  const stopRecording = () => {
+  const stopRecording = async () => {
     setPermission(false);
     setRecordingStatus("inactive");
     mediaRecorder.current.stop();
 
-    mediaRecorder.current.onstop = () => {
+    mediaRecorder.current.onstop = async () => {
       const videoBlob = new Blob(videoChunks, { type: mimeType });
       const videoUrl = URL.createObjectURL(videoBlob);
 
+      const key = `video/${Date.now()}.webm`;
+
+      const params = {
+        Bucket: "cy-vide-stream-imgfiles",
+        Key: key,
+        Body: videoBlob,
+        ContentType: mimeType,
+      };
+
       setRecordedVideo(videoUrl);
+
+      // Use the result from the hook, which is updated asynchronously
+      const s3url = await uploadToS3(params);
+
+      console.log("s3url: ", s3url);
+
+      setCelebReply(s3url);
+
+      setCelebReply(s3url);
 
       setVideoChunks([]);
     };
   };
 
+  useEffect(() => {
+    console.log("setting permission");
+    getCameraPermission();
+  }, [reRecord]);
+
   return (
-    <div>
-      <h2 className="">Video Recorder</h2>
+    <div className=" h-full">
       <main>
         <div className="video-controls">
           {permission && recordingStatus === "inactive" ? (
             <button
               className="px-12 py-4  bg-red-800 rounded-md hover:bg-red-900"
               onClick={(e) => {
-                getCameraPermission();
                 startRecording();
               }}
               type="button"
@@ -112,8 +145,7 @@ function FulfillVideo() {
             <button
               className="px-12 py-4  bg-red-800 rounded-md hover:bg-red-900"
               onClick={(e) => {
-                getCameraPermission();
-                startRecording();
+                stopRecording();
               }}
               type="button"
             >
@@ -122,12 +154,19 @@ function FulfillVideo() {
           ) : null}
         </div>
       </main>
+      <p className="text-lg relative top-3">
+        {recordingStatus == "recording" ? "recording..." : null}
+      </p>
 
       <div className="video-player flex justify-center ">
         {!recordedVideo ? (
-          <video ref={liveVideoFeed} autoPlay className="live-player"></video>
+          <video
+            ref={liveVideoFeed}
+            autoPlay
+            className="live-player  my-5"
+          ></video>
         ) : null}
-        {recordedVideo ? (
+        {/* {recordedVideo ? (
           <div className="  flex justify-center flex-col items-center">
             <video className="recorded   " src={recordedVideo} controls />
             <a
@@ -138,7 +177,7 @@ function FulfillVideo() {
               Download Recording
             </a>
           </div>
-        ) : null}
+        ) : null} */}
       </div>
     </div>
   );

@@ -70,7 +70,7 @@ app.get("/dashboard", async (req, res) => {
 
   try {
     const response = await pool.query(
-      "SELECT * from Requests WHERE requeststatus != $1 AND celebUid = $2",
+      "SELECT * from Requests WHERE reqstatus != $1 AND celebUid = $2",
       ["fulfilled", uid]
     );
 
@@ -88,7 +88,7 @@ app.get("/fanrequests", async (req, res) => {
   try {
     // this queries all the requests that match the get query uid. Basically when a fan clicks there on there requests this retrieves them
     const response = await pool.query(
-      "SELECT celebmessage, requestid, message, req_type, requestAction, timestamp1, requeststatus, celebuid from Requests WHERE fanuid = $1 ORDER BY requestid",
+      "SELECT celebmessage, requestid, message, reqtype, reqAction, timestamp1, reqstatus, celebuid from Requests WHERE fanuid = $1 ORDER BY requestid",
       [uid]
     );
 
@@ -129,17 +129,22 @@ app.get("/fanrequests", async (req, res) => {
 });
 
 app.put("/fulfill/:id", async (req, res) => {
+  console.log("here I am ");
   const itemId = parseInt(req.params.id, 10); // Parse the id parameter as an integer
 
-  const { celebMessage } = req.body;
+  const { celebReply } = req.body;
 
-  console.log("body: ", celebMessage);
+  console.log("celebReply: ", celebReply);
+
   try {
     const response = await pool.query(
-      "UPDATE requests SET requeststatus = $1, celebmessage = $2 WHERE requestid = $3 ",
-      ["fulfilled", celebMessage, itemId]
+      "UPDATE requests SET reqstatus = $1, celebmessage = $2 WHERE requestid = $3 ",
+      ["fulfilled", celebReply, itemId]
     );
-  } catch (error) {}
+    res.status(200);
+  } catch (error) {
+    console.log("/fulfill/:id > ", error);
+  }
 
   console.log("reqid: ", itemId);
 });
@@ -168,6 +173,7 @@ app.post("/createUser", async (req, res) => {
 
 app.post("/request", async (req, res) => {
   console.log("here");
+
   let {
     celebUid,
     fanUid,
@@ -175,6 +181,7 @@ app.post("/request", async (req, res) => {
     message,
     requestAction,
     toSomeOneElse,
+    reqType,
     fromPerson,
     toPerson,
   } = req.body;
@@ -184,14 +191,14 @@ app.post("/request", async (req, res) => {
   price = parseInt(price);
   try {
     const result = await pool.query(
-      "INSERT INTO Requests(celebUid, fanUid, price, message, requestStatus, req_type, TimeStamp1, requestAction, to_someone_else, FromPerson, ToPerson) Values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)",
+      "INSERT INTO Requests(celebUid, fanUid, price, message, reqstatus, reqtype, timeStamp1, reqaction, tosomeoneelse, fromperson, toperson) Values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)",
       [
         celebUid,
         fanUid,
         price,
         message,
         "pending",
-        "message",
+        reqType,
         new Date(),
         requestAction,
         toSomeOneElse,

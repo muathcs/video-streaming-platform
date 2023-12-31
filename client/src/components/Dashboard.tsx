@@ -17,14 +17,14 @@ function Dashboard() {
     currentUser.uid
   );
 
-  console.log("data: ", data);
-
+  // completes the request by the celeb to the fan.
   function handleFulfillReq(row: any) {
     const state = row.original;
 
     navigate(`/fulfill/${row.original.requestid}`, { state });
   }
 
+  //table data.
   const columns: any = React.useMemo(
     () => [
       {
@@ -37,11 +37,11 @@ function Dashboard() {
       },
       {
         Header: "Type",
-        accessor: "req_type",
+        accessor: "reqtype",
       },
       {
         Header: "Action",
-        accessor: "requestaction",
+        accessor: "reqaction",
       },
       {
         Header: "message",
@@ -60,6 +60,7 @@ function Dashboard() {
     []
   );
 
+  // gets table function from the useTable custom hook.
   const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
     useTable({
       columns,

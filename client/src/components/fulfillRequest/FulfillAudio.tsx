@@ -1,17 +1,26 @@
 import { errorMessage } from "aws-sdk/clients/datapipeline";
 import { Error } from "aws-sdk/clients/servicecatalog";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
+import s3 from "../../utilities/S3";
+import { useS3Upload } from "../../hooks/useS3Upload";
+interface FulfillRequestProps {
+  reRecord: number;
+  setCelebReply: React.Dispatch<React.SetStateAction<string | undefined>>;
+}
 
 /* your mimeType, e.g., 'audio/wav' */
 const mimeType = "audio/webm";
 
-function FulfillAudio() {
-  const [permission, setPermission] = useState(false);
+function FulfillAudio({ reRecord, setCelebReply }: FulfillRequestProps) {
+  const [permission, setPermission] = useState(true);
   const [stream, setStream] = useState<any>(null);
   const mediaRecorder = useRef<any>(null);
   const [recordingStatus, setRecordingStatus] = useState("inactive");
   const [audioChunks, setAudioChunks] = useState([]);
   const [audio, setAudio] = useState(null);
+
+  // custom hooks
+  const { uploadToS3, s3FileUrl }: any = useS3Upload();
 
   async function getMicrophonePermission() {
     if ("MediaRecorder" in window) {
@@ -48,31 +57,45 @@ function FulfillAudio() {
     setAudioChunks(localAudioChunks);
   };
 
-  const stopRecording = () => {
+  const stopRecording = async () => {
+    setPermission(false);
     setRecordingStatus("inactive");
     //stops the recording instance
     mediaRecorder.current.stop();
-    mediaRecorder.current.onstop = () => {
+    mediaRecorder.current.onstop = async () => {
       //creates a blob file from the audiochunks data
       const audioBlob = new Blob(audioChunks, { type: mimeType });
       //creates a playable URL from the blob file.
       const audioUrl: any = URL.createObjectURL(audioBlob);
+
+      const key = `audio/${Date.now()}.webm`;
+
+      const params = {
+        Bucket: "cy-vide-stream-imgfiles",
+        Key: key,
+        Body: audioBlob,
+        ContentType: mimeType,
+      };
+
+      // Use the result from the hook, which is updated asynchronously
+      const s3url = await uploadToS3(params);
+
+      console.log("s3url: ", s3url);
+
+      setCelebReply(s3url);
+
       setAudio(audioUrl);
       setAudioChunks([]);
     };
   };
+
+  // use effect to get the microphone permission on componenet mount, better than having a seperate button for permission.
+  useEffect(() => {
+    getMicrophonePermission();
+  }, [reRecord]);
   return (
     <>
       <div className="audio-controls">
-        {!permission ? (
-          <button
-            className="px-12 py-4 m-2 bg-red-800 rounded-md hover:bg-red-900"
-            onClick={getMicrophonePermission}
-            type="button"
-          >
-            Get Microphone
-          </button>
-        ) : null}
         {permission && recordingStatus === "inactive" ? (
           <button
             className="px-12 py-4 m-2 bg-red-800 rounded-md hover:bg-red-900"
@@ -83,27 +106,34 @@ function FulfillAudio() {
           </button>
         ) : null}
         {recordingStatus === "recording" ? (
-          <button
-            className="px-12 py-4 m-2 bg-red-800 rounded-md hover:bg-red-900"
-            onClick={stopRecording}
-            type="button"
-          >
-            Stop Recording
-          </button>
+          <>
+            <button
+              className="px-12 py-4 m-2 bg-red-800 rounded-md hover:bg-red-900"
+              onClick={stopRecording}
+              type="button"
+            >
+              Stop Recording
+            </button>
+            <p className="text-lg relative top-3">recording...</p>
+          </>
         ) : null}
       </div>
       {audio ? (
         <div className="audio-container mt-10 flex  flex-col justify-center items-center ">
           <audio src={audio} controls className=" relative " />
-          <a
+          {/* <a
             className="px-12 py-4 m-2 bg-red-800 rounded-md hover:bg-red-900 text-white"
             download
             href={audio}
           >
             Download Recording
-          </a>
+          </a> */}
         </div>
-      ) : null}
+      ) : (
+        <div className="audio-container mt-10 flex  flex-col justify-center items-center">
+          <audio controls className=" relative " />
+        </div>
+      )}
     </>
   );
 }

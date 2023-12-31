@@ -10,10 +10,10 @@ import { useGlobalAxios } from "../hooks/useGlobalAxios";
 type requestType = {
   request: {
     message: string;
-    req_type: string;
-    requestAction: string;
+    reqtype: string;
+    reqaction: string;
     timestamp1: string;
-    requeststatus: string;
+    reqstatus: string;
     celebmessage: string;
     requestid: string;
   };
@@ -45,10 +45,10 @@ function FanRequests() {
               <FanRequestContainer
                 key={uuidv4()}
                 message={req.request.message}
-                reqType={req.request.req_type}
-                requestaction={req.request.requestAction}
+                reqtype={req.request.reqtype}
+                requestaction={req.request.reqaction}
                 timestamp1={req.request.timestamp1}
-                requeststatus={req.request.requeststatus}
+                requeststatus={req.request.reqstatus}
                 requestid={req.request.requestid}
                 celebmessage={req.request.celebmessage}
                 celebName={req.celeb.displayname}

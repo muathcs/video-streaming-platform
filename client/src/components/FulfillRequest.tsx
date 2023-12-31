@@ -1,14 +1,19 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useReducer, useState } from "react";
 import axios from "../api/axios";
 import { useLocation, useParams } from "react-router-dom";
 import { eventType } from "aws-sdk/clients/health";
 import { useGlobalPut } from "../hooks/useGlobaPut";
 import { useGlobalAxios } from "../hooks/useGlobalAxios";
 import FulfillVideo from "./fulfillRequest/FulfillVideo";
-import FulfillAudio from "./fulfillRequest/fulfillAudio";
+import FulfillAudio from "./fulfillRequest/FulfillAudio";
+import FulfillMessage from "./fulfillRequest/FulfillMessage";
 
 function FulfillRequest() {
-  const [celebMessage, setCelebMessage] = useState<string>();
+  const [celebReply, setCelebReply] = useState<string>("");
+
+  //this reducer forces the fullfillVideo componenet to rerender when I press the record video button again.
+  const [reRecord, forceUpdate] = useReducer((x) => x + 1, 0);
+
   // const { requestId } = useParams();
 
   const { state } = useLocation();
@@ -22,18 +27,15 @@ function FulfillRequest() {
   async function handleFulfill(e: React.MouseEvent<HTMLElement>) {
     e.preventDefault();
 
-    // console.log(putdata)
-    console.log("message: ", state.requestid);
-
     fulfillRequest(`http://localhost:3001/fulfill/${state.requestid}`, {
       state: state,
-      celebMessage: celebMessage,
+      celebReply: celebReply,
     });
 
     try {
       const res = await axios.put(`/fulfill/${state.requestid}`, {
         state: state,
-        celebMessage: celebMessage,
+        celebReply: celebReply,
       });
     } catch (error) {
       console.error(error);
@@ -42,66 +44,91 @@ function FulfillRequest() {
 
   let [recordOption, setRecordOption] = useState("");
   const toggleRecordOption = (type: any) => {
-    return () => {
-      setRecordOption(type);
-    };
+    forceUpdate();
+    setRecordOption(type);
   };
 
+  useEffect(() => {
+    // Ensure that recordOption is reset when the component mounts
+    setRecordOption("");
+  }, []);
   return (
-    <div>
-      {/* <div className=" flex flex-col items-center gap-5 text-[20px] wotfard">
-        <div className="w-1/2 ">
-          <p className="border border-red-200 w-full shadow-lg p-10 mt-2 shadow-red-500 ">
-            From: Mimo{state.fromperson}
-          </p>
+    <div className=" flex flex-col items-center gap-5 text-[20px] wotfard">
+      <div className="w-1/2 ">
+        <p className="border border-red-200 w-full shadow-lg p-10 mt-2 shadow-red-500 ">
+          From: Mimo{state.fromperson}
+        </p>
+      </div>
+      <div className="w-1/2">
+        <p className="border border-red-200 w-full shadow-lg p-10 mt-2 shadow-red-500">
+          To: {state.toperson}
+        </p>
+      </div>
+      <div className="w-1/2">
+        <p className="border border-red-200 w-full shadow-lg p-10 mt-2 shadow-red-500">
+          Message: {state.message}
+        </p>
+      </div>
+      <div className="w-1/2">
+        <p className="border border-red-200 w-full shadow-lg p-10 mt-2 shadow-red-500">
+          Message: {state.reqtype}
+        </p>
+      </div>
+
+      <div className=" h-full  w-1/2  ">
+        <p>FulFill Fan's Request</p>
+        <div className="button-flex">
+          {state.reqtype === "video" ? (
+            <button
+              className="w-1/4 py-4 m-2 bg-red-800 rounded-md hover:bg-red-900"
+              onClick={(e) => {
+                forceUpdate();
+
+                toggleRecordOption("video");
+              }}
+            >
+              Record Video
+            </button>
+          ) : state.reqtype === "audio" ? (
+            <button
+              className=" py-4 w-1/4 m-2 bg-red-800 rounded-md hover:bg-red-900"
+              onClick={(e) => {
+                toggleRecordOption("audio");
+              }}
+            >
+              Record Audio
+            </button>
+          ) : state.reqtype === "message" ? (
+            <button
+              className="py-4 w-1/3 m-2 bg-red-800 rounded-md hover:bg-red-900"
+              onClick={(e) => {
+                toggleRecordOption("message");
+              }}
+            >
+              Reply with a message
+            </button>
+          ) : null}
         </div>
-        <div className="w-1/2">
-          <p className="border border-red-200 w-full shadow-lg p-10 mt-2 shadow-red-500">
-            To: {state.toperson}
-          </p>
+        <div>
+          {recordOption === "video" ? (
+            <FulfillVideo reRecord={reRecord} setCelebReply={setCelebReply} />
+          ) : recordOption === "audio" ? (
+            <FulfillAudio reRecord={reRecord} setCelebReply={setCelebReply} />
+          ) : recordOption === "message" ? (
+            <FulfillMessage
+              celebReply={celebReply}
+              setCelebReply={setCelebReply}
+            />
+          ) : null}
         </div>
-        <div className="w-1/2">
-          <p className="border border-red-200 w-full shadow-lg p-10 mt-2 shadow-red-500">
-            Message: {state.message}
-          </p>
-        </div>
-        <div className="w-1/2">
-          <div className="text-left">Step 3: Reply</div>
-          <textarea
-            onChange={(e) => setCelebMessage(e.target.value)}
-            className=" block min-h-[auto] w-full  rounded border my-2 bg-transparent
-                     px-2 py-2  h-40 shadow-lg shadow-red-400   outline-none placeholder-style  relative
-                      "
-            placeholder="I'm a huge fan of your incredible work. I have a special occasion coming up, and I was wondering if you could send a personalized shout-out or a few words of encouragement to make it even more memorable."
-          />
-        </div>
-        <div className="">
+
+        <div className="w-full">
           <button
             onClick={handleFulfill}
             className="px-12 py-4 m-2 bg-red-800 rounded-md hover:bg-red-900"
           >
             Fulfill
           </button>
-        </div> */}
-
-      <div>
-        <h1>React Media Recorder</h1>
-        <div className="button-flex">
-          <button
-            className="px-12 py-4 m-2 bg-red-800 rounded-md hover:bg-red-900"
-            onClick={toggleRecordOption("video")}
-          >
-            Record Video
-          </button>
-          <button
-            className="px-12 py-4 m-2 bg-red-800 rounded-md hover:bg-red-900"
-            onClick={toggleRecordOption("audio")}
-          >
-            Record Audio
-          </button>
-        </div>
-        <div>
-          {recordOption === "video" ? <FulfillVideo /> : <FulfillAudio />}
         </div>
       </div>
     </div>
