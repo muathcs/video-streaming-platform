@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext";
 
 interface RequestProp {
@@ -24,6 +24,27 @@ function FanRequestContainer({
   requestid,
 }: RequestProp) {
   const { currentUser }: any = useAuth();
+
+  function downloadVideo() {
+    console.log(celebmessage); //https://cy-vide-stream-imgfiles.s3.eu-west-2.amazonaws.com/video/1704031933382.webm
+    const url = window.URL.createObjectURL(
+      new Blob([celebmessage], { type: "video/webm" })
+    );
+
+    console.log(url); //  'blob:http://localhost:5173/603744a1-d0b2-4b1d-bed5-b84492efee08'
+
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", `${celebName}-Video2-${requestid}`);
+    document.body.appendChild(link);
+    // Start download
+    link.click();
+
+    // if (link.parentNode) link.parentNode.removeChild(link);
+
+    // Clean up and remove the link
+    //append the DOM
+  }
 
   console.log("request Type: ", reqtype);
 
@@ -51,6 +72,21 @@ function FanRequestContainer({
                 src={celebmessage}
                 controls
               />
+              {celebmessage}
+              <button
+                onClick={downloadVideo}
+                className="px-5 py-3 bg-blue-300 rounded-md relative top-10"
+              >
+                Download Video
+              </button>
+              {/* <a
+                className="px-5 py-3 bg-blue-300 rounded-md relative top-10"
+                download
+                type="application/octet-stream"
+                href={celebmessage}
+              >
+                Download video
+              </a> */}
             </>
           ) : reqtype == "message" ? (
             <>

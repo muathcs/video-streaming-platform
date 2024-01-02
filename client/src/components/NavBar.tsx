@@ -49,18 +49,6 @@ function NavBar() {
     { name: path, href: path, current: false },
   ]);
 
-  // useEffect(() => {
-  //   let newNav = [...navigation];
-
-  //   const location = celeb == "true" ? "dashboard" : "requests";
-  //   console.log("location: ", location);
-  //   newNav = [...newNav, { name: location, href: location, current: false }];
-
-  //   console.log("new: ", newNav);
-
-  //   setNavigation(newNav);
-  // }, [celeb]);
-
   // logout
   async function handleLogout() {
     try {
