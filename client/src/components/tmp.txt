@@ -1,0 +1,40 @@
+          {requeststatus == "fulfilled" && reqtype == "audio" ? (
+            <>
+              <audio src={celebmessage} controls className=" relative " />
+              <button
+                onClick={downloadVideo}
+                className="px-5 py-3 bg-blue-300 rounded-md relative top-10"
+              >
+                Download Video
+              </button>
+            </>
+          ) : reqtype == "video" ? (
+            <>
+              <video
+                className="recorded w-1/2   "
+                src={celebmessage}
+                controls
+              />
+              {celebmessage}
+              <button
+                onClick={downloadVideo}
+                className="px-5 py-3 bg-blue-300 rounded-md relative top-10"
+              >
+                Download Video
+              </button>
+              {/* <a
+                className="px-5 py-3 bg-blue-300 rounded-md relative top-10"
+                download
+                type="application/octet-stream"
+                href={celebmessage}
+              >
+                Download video
+              </a> */}
+            </>
+          ) : reqtype == "message" ? (
+            <>
+              <p>{message}</p>
+            </>
+          ) : (
+            <h1>Nothing</h1>
+          )}

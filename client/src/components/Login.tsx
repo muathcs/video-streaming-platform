@@ -19,9 +19,6 @@ function Login() {
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  // Initialization for ES Users
-  const dispatch = useDispatch();
-
   //login function
   async function handleSubmit(e: any) {
     e.preventDefault();
@@ -91,9 +88,14 @@ function Login() {
 
             {/* <!-- Right column container with form --> */}
             <div className="md:w-8/12 lg:ml-6 lg:w-5/12">
-              <h1 className="text-[30px]  mb-10">Sign Up</h1>
+              <h1 data-testid="sign-in-title" className="text-[30px]  mb-10">
+                Sign in
+              </h1>
               {error ? (
-                <p className="bg-red-200 border text-black border-red-600 w-full rounded-lg text-center sm:p-4 p-3 relative mb sm:top-2  left-1/2 transform -translate-x-1/2 -translate-y-1/2 ">
+                <p
+                  data-testid="error-message"
+                  className="bg-red-200 border text-black border-red-600 w-full rounded-lg text-center sm:p-4 p-3 relative mb sm:top-2  left-1/2 transform -translate-x-1/2 -translate-y-1/2 "
+                >
                   {error}
                 </p>
               ) : successfull ? (
@@ -105,12 +107,14 @@ function Login() {
                   {resetMessage}
                 </p>
               ) : null}
-              <form onSubmit={handleSubmit}>
+              <form data-testid="on-submit-login" onSubmit={handleSubmit}>
                 {/* <!-- Email input --> */}
                 <div className="relative mb-6" data-te-input-wrapper-init>
                   <input
                     type="email"
+                    data-testid="email-input"
                     ref={emailRef}
+                    value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     className="peer block min-h-[auto] w-full rounded border bg-transparent
                      px-3 py-[0.32rem] leading-[2.15] outline-none transition-all duration-200 
@@ -118,7 +122,6 @@ function Login() {
                       motion-reduce:transition-none dark:text-neutral-200 dark:placeholder:text-neutral-200 
                       [&:not([data-te-input-placeholder-active])]:placeholder:opacity-0"
                     id="exampleFormControlInput3"
-                    placeholder={email.length > 0 ? "Emailxx addressx" : ""}
                   />
                   <label
                     htmlFor="exampleFormControlInput3"
@@ -132,7 +135,9 @@ function Login() {
                 <div className="relative mb-6" data-te-input-wrapper-init>
                   <input
                     type="password"
+                    data-testid="password-input"
                     ref={passwordRef}
+                    value={password}
                     onChange={(e) => setPassWord(e.target.value)}
                     className="peer block min-h-[auto] w-full rounded border bg-transparent px-3 py-[0.32rem] leading-[2.15] outline-none transition-all duration-200 ease-linear focus:placeholder:opacity-100 data-[te-input-state-active]:placeholder:opacity-100 motion-reduce:transition-none dark:text-neutral-200 dark:placeholder:text-neutral-200 [&:not([data-te-input-placeholder-active])]:placeholder:opacity-0"
                     id="exampleFormControlInput33"
@@ -176,8 +181,12 @@ function Login() {
 
                 {/* <!-- Submit button --> */}
                 <button
+                  disabled={email && password ? false : true}
+                  role="Login-button"
                   type="submit"
-                  className="inline-block w-full bg-[#5e7dc2] hover:bg-[#5a7ac1] rounded bg-primary px-7 pb-2.5 pt-3 text-sm font-medium uppercase leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-primary-600 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:bg-primary-600 focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:bg-primary-700 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]"
+                  className={`inline-block w-full bg-[#5e7dc2] disabled:opacity-60 disabled:cursor-not-allowed
+                     hover:bg-[#5b82d4] cursor-pointer
+                   rounded bg-primary px-7 pb-2.5 pt-3 text-sm font-medium uppercase leading-normal text-white`}
                   data-te-ripple-init
                   data-te-ripple-color="light"
                 >

@@ -6,6 +6,7 @@ import { useSearchParams } from "react-router-dom";
 import { v4 as uuidv4 } from "uuid";
 import { useGlobalDataFetch } from "../hooks/useGlobalDataFetch";
 import { useGlobalAxios } from "../hooks/useGlobalAxios";
+import FulFilled from "./fulfillRequest/FulFilled";
 
 type requestType = {
   request: {
@@ -25,6 +26,7 @@ type requestType = {
 };
 function FanRequests() {
   const { currentUser }: any = useAuth();
+  const [viewFulfilled, setViewFulfilled] = useState<string | null>("");
 
   const { data, loading, error } = useGlobalAxios(
     "get",
@@ -40,21 +42,28 @@ function FanRequests() {
         <h1>Error</h1>
       ) : (
         <div className="  overflow-auto flex flex-col gap-2">
-          {data &&
-            data.map((req: requestType, index: number) => (
-              <FanRequestContainer
-                key={uuidv4()}
-                message={req.request.message}
-                reqtype={req.request.reqtype}
-                requestaction={req.request.reqaction}
-                timestamp1={req.request.timestamp1}
-                requeststatus={req.request.reqstatus}
-                requestid={req.request.requestid}
-                celebmessage={req.request.celebmessage}
-                celebName={req.celeb.displayname}
-                celebPhoto={req.celeb.imgurl}
-              />
-            ))}
+          <>
+            {data &&
+              data.map((req: requestType, index: number) => (
+                <>
+                  {!viewFulfilled ? (
+                    <FanRequestContainer
+                      request={req.request}
+                      celeb={req.celeb}
+                      setViewFulfilled={setViewFulfilled}
+                    />
+                  ) : (
+                    viewFulfilled === req.request.requestid && (
+                      <FulFilled
+                        request={req.request}
+                        celeb={req.celeb}
+                        setViewFulfilled={setViewFulfilled}
+                      />
+                    )
+                  )}
+                </>
+              ))}
+          </>
         </div>
       )}
     </>

@@ -1,11 +1,11 @@
 import React from "react";
 
 interface FulfillRequestProps {
-  celebReply: string;
-  setCelebReply: React.Dispatch<React.SetStateAction<string>>;
+  celebReply: string | undefined;
+  setCelebReply: React.Dispatch<React.SetStateAction<string | undefined>>;
 }
 
-function FulfillMessage({ celebReply, setCelebReply }: FulfillRequestProps) {
+function FulfillMessage({ setCelebReply }: FulfillRequestProps) {
   return (
     <div className="">
       <div className="text-left">Step 3: Reply</div>

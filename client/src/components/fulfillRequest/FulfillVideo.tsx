@@ -16,6 +16,7 @@ function FulfillVideo({ reRecord, setCelebReply }: FulfillRequestProps) {
 
   const liveVideoFeed = useRef<any>(null);
 
+  const recordedVideoRef = useRef<any>(null);
   const [recordingStatus, setRecordingStatus] = useState("inactive");
 
   const [stream, setStream] = useState<any>(null);
@@ -57,7 +58,7 @@ function FulfillVideo({ reRecord, setCelebReply }: FulfillRequestProps) {
         //set videostream to live feed player
         liveVideoFeed.current.srcObject = videoStream;
       } catch (err: any) {
-        alert(err.message);
+        console.error("custom hook error", err);
       }
     } else {
       alert("The MediaRecorder API is not supported in your browser.");
@@ -105,8 +106,7 @@ function FulfillVideo({ reRecord, setCelebReply }: FulfillRequestProps) {
         Body: videoBlob,
         ContentType: mimeType,
       };
-
-      setRecordedVideo(videoUrl);
+      setVideoChunks([]);
 
       // Use the result from the hook, which is updated asynchronously
       const s3url = await uploadToS3(params);
@@ -114,10 +114,7 @@ function FulfillVideo({ reRecord, setCelebReply }: FulfillRequestProps) {
       console.log("s3url: ", s3url);
 
       setCelebReply(s3url);
-
-      setCelebReply(s3url);
-
-      setVideoChunks([]);
+      setRecordedVideo(videoUrl);
     };
   };
 
@@ -160,12 +157,25 @@ function FulfillVideo({ reRecord, setCelebReply }: FulfillRequestProps) {
 
       <div className="video-player flex justify-center ">
         {!recordedVideo ? (
-          <video
-            ref={liveVideoFeed}
-            autoPlay
-            className="live-player  my-5"
-          ></video>
-        ) : null}
+          <>
+            <video
+              ref={liveVideoFeed}
+              autoPlay
+              className="live-player  my-5  rounded-md border border-gray-700 shadow-md shadow-red-50"
+            ></video>
+          </>
+        ) : (
+          <>
+            <div>
+              <p>Press Fulfill to send the video</p>
+              <video
+                src={recordedVideo}
+                controls
+                className="live-player  my-5 rounded-md border border-gray-700 shadow-md shadow-red-50 "
+              ></video>
+            </div>
+          </>
+        )}
         {/* {recordedVideo ? (
           <div className="  flex justify-center flex-col items-center">
             <video className="recorded   " src={recordedVideo} controls />

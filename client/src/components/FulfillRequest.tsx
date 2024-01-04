@@ -9,7 +9,7 @@ import FulfillAudio from "./fulfillRequest/FulfillAudio";
 import FulfillMessage from "./fulfillRequest/FulfillMessage";
 
 function FulfillRequest() {
-  const [celebReply, setCelebReply] = useState<string>("");
+  const [celebReply, setCelebReply] = useState<string | undefined>();
 
   //this reducer forces the fullfillVideo componenet to rerender when I press the record video button again.
   const [reRecord, forceUpdate] = useReducer((x) => x + 1, 0);
@@ -87,7 +87,7 @@ function FulfillRequest() {
                 toggleRecordOption("video");
               }}
             >
-              Record Video
+              Record Videoz
             </button>
           ) : state.reqtype === "audio" ? (
             <button
