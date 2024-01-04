@@ -45,15 +45,20 @@ CREATE TABLE Message (
 );
 
 CREATE TABLE Requests (
-    requestId serial primary key,
+    requestid serial primary key,
     celebuid varchar(50), --fan
     fanuid varchar(50), --celeb
     price int,
+    tosomeoneelse BOOLEAN,
+    reqaction char(16),
+    fromperson varchar(40),
+    toperson varchar(40),
     message Varchar(500),
-    requestStatus Varchar(10), -- (pending, accepted, completed),
-    req_type Varchar(8), --(vid, message, audio),
+    restatus Varchar(10), -- (pending, accepted, completed),
+    reqtype Varchar(8), --(vid, message, audio),
     TimeStamp1 timestamp, --(when has the req been made),
-    TimeStamp2 timestamp -- (when has the req been fuliffled)
+    TimeStamp2 timestamp, -- (when has the req been fuliffled)
+    celebmessage varchar(1200),
 );
 
 

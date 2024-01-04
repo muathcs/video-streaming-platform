@@ -2,6 +2,7 @@ import React, { useContext, useState } from "react";
 import axios from "../api/axios";
 import { useGlobalPut } from "../hooks/useGlobaPut";
 import { useGlobalAxios } from "../hooks/useGlobalAxios";
+import { useNavigate } from "react-router-dom";
 
 type RequestProps = {
   celebUid: string;
@@ -11,11 +12,13 @@ type RequestProps = {
 
 function RequestForm({ celebUid, fanUid, price }: RequestProps) {
   // post a new Request/
-  const {
-    data: sendRequest,
-    loading,
-    error,
-  } = useGlobalAxios("post", "yourDataEndpoint");
+  // const {
+  //   data: sendRequest,
+  //   loading,
+  //   error,
+  // } = useGlobalAxios("post", "yourDataEndpoint");
+
+  const navigate = useNavigate();
 
   const [checkBox, setCheckBox] = useState(false);
 
@@ -36,7 +39,8 @@ function RequestForm({ celebUid, fanUid, price }: RequestProps) {
     e.preventDefault();
 
     // sendData("request", formData);
-    sendRequest("request", formData);
+    // sendRequest("request", formData);
+    navigate("/payment");
   }
 
   console.log("formData: ", formData);
@@ -47,7 +51,7 @@ function RequestForm({ celebUid, fanUid, price }: RequestProps) {
         <form onSubmit={handleRequest}>
           {/* <!-- Email input --> */}
           <div className="relative mb-6" data-te-input-wrapper-init>
-            <label className="block text-sm font-medium mb-2 w-full sm:w-3/6 text-white text-left">
+            <label className="block text-sm font-medium mb-2 w-full sm:w-4/6 text-white text-left">
               Step 1: Type of video request
             </label>
             <select
