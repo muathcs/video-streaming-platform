@@ -3,7 +3,8 @@ import axios from "../api/axios";
 import { useGlobalPut } from "../hooks/useGlobaPut";
 import { useGlobalAxios } from "../hooks/useGlobalAxios";
 import { useNavigate } from "react-router-dom";
-
+import { FieldValues, useForm } from "react-hook-form";
+import { error } from "console";
 type RequestProps = {
   celebUid: string;
   fanUid: string;
@@ -11,59 +12,68 @@ type RequestProps = {
 };
 
 function RequestForm({ celebUid, fanUid, price }: RequestProps) {
-  // post a new Request/
-  // const {
-  //   data: sendRequest,
-  //   loading,
-  //   error,
-  // } = useGlobalAxios("post", "yourDataEndpoint");
-
   const navigate = useNavigate();
+  const {
+    // data: sendUserRequestForm,
+    // loading,
+    // error,
+  } = useGlobalAxios("post", "yourDataEndpoint");
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+    reset,
+    getValues,
+  } = useForm();
 
   const [checkBox, setCheckBox] = useState(false);
-
-  const [formData, setFormData] = useState({
-    toSomeOneElse: false,
-    checkBox: false,
-    message: "",
-    reqType: "",
-    requestAction: "",
-    fromPerson: "",
-    toPerson: "",
-    celebUid,
-    fanUid,
-    price,
-  });
+  const [toSomeoneElse, setToSomeoneElse] = useState(false);
 
   function handleRequest(e: any) {
     e.preventDefault();
 
-    // sendData("request", formData);
     // sendRequest("request", formData);
-    navigate("/payment");
   }
 
-  console.log("formData: ", formData);
+  async function onSubmit(data: FieldValues) {
+    // await new Promise((resolve) => setTimeout(resolve, 2000));
+
+    reset({
+      ...getValues(),
+      celebUid,
+      fanUid,
+      price,
+    });
+
+    // try {
+    //   sendUserRequestForm("request", getValues());
+    // } catch (error) {
+    //   console.error(error);
+    // }
+    navigate("/payment");
+
+    // reset();
+  }
 
   return (
     <>
       <div className="h-full w-full relative   ">
-        <form onSubmit={handleRequest}>
+        <form onSubmit={handleSubmit(onSubmit)}>
           {/* <!-- Email input --> */}
           <div className="relative mb-6" data-te-input-wrapper-init>
             <label className="block text-sm font-medium mb-2 w-full sm:w-4/6 text-white text-left">
               Step 1: Type of video request
             </label>
             <select
-              // onClick={(e: any) => setRequestActon(e.target.value)}
-              onClick={(e: React.MouseEvent<HTMLElement>) => {
-                const target = e.target as HTMLSelectElement;
-                setFormData({ ...formData, requestAction: target.value });
-              }}
+              {...register("requestAction", {
+                required: "choose a request event",
+              })}
+              name="requestAction"
               data-te-select-init
               className="w-full h-10 rounded-md bg-transparent border text-slate-800 cursor-pointer"
             >
-              <option>Select</option>
+              <option value="">Select</option>
               <option value="Holiday">Holiday</option>
               <option value="Birthday">Birthday</option>
               <option value="Pep Talk">Pep Talk</option>
@@ -72,7 +82,11 @@ function RequestForm({ celebUid, fanUid, price }: RequestProps) {
               <option value="Question">Question</option>
               <option value="Other">Other</option>
             </select>
+            {errors.requestAction && (
+              <p className="text-red-500">{`${errors.requestAction.message}`}</p>
+            )}
           </div>
+
           {/* <!-- for  who --> */}
 
           <div className=" ">
@@ -80,15 +94,13 @@ function RequestForm({ celebUid, fanUid, price }: RequestProps) {
             <div className="gap-4 text-center sm:grid-cols-3  flex justify-center items-center  my-2">
               <div>
                 <input
+                  {...register("toSomeOneElse")}
                   className="peer sr-only"
                   id="option1"
                   type="radio"
-                  name="remote"
-                  // onClick={(e) => setToSomeOneElse(true)}
-
-                  onClick={(e) =>
-                    setFormData({ ...formData, toSomeOneElse: true })
-                  }
+                  name="toSomeOneElse"
+                  onClick={(e) => setToSomeoneElse(true)}
+                  value="true"
                 />
 
                 <label
@@ -104,10 +116,9 @@ function RequestForm({ celebUid, fanUid, price }: RequestProps) {
                   className="peer sr-only"
                   id="option2"
                   type="radio"
-                  name="remote"
-                  onClick={(e) =>
-                    setFormData({ ...formData, toSomeOneElse: false })
-                  }
+                  value="false"
+                  onClick={(e) => setToSomeoneElse(false)}
+                  {...register("toSomeOneElse")}
                 />
 
                 <label
@@ -123,35 +134,40 @@ function RequestForm({ celebUid, fanUid, price }: RequestProps) {
           {/* personal info */}
 
           <div className="relative " data-te-input-wrapper-init>
-            {formData.toSomeOneElse && (
+            {toSomeoneElse && (
               <>
                 <p className="text-left">From (first name): </p>
                 <input
-                  // onChange={(e: any) => setFromPerson(e.target.value)}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                    const target = e.target as HTMLInputElement;
-                    setFormData({ ...formData, fromPerson: target.value });
-                  }}
+                  {...register("fromPerson", {
+                    required: "input name",
+                  })}
+                  name="fromPerson"
                   type="text"
-                  className=" block min-h-[auto] w-full rounded border my-2 bg-transparent
+                  className=" block min-h-[auto] w-full rounded border my-2 bg-transparent 
             px-3 py-[0.32rem] leading-[2.5] outline-none 
             "
                   placeholder="first name"
                 />
+                {errors.fromPerson && (
+                  <p className="text-red-500">{`${errors.fromPerson.message}`}</p>
+                )}
               </>
             )}
             <p className="text-left">To (first name): </p>
             <input
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                const target = e.target as HTMLInputElement;
-                setFormData({ ...formData, toPerson: target.value });
-              }}
+              {...register("toPerson", {
+                required: "Input name",
+              })}
+              name="toPerson"
               type="text"
               className=" block min-h-[auto] w-full rounded border my-2 bg-transparent
                      px-3 py-[0.32rem] leading-[2.5] outline-none 
                       "
               placeholder="first name"
             />
+            {errors.toPerson && (
+              <p className="text-red-500">{`${errors.toPerson.message}`}</p>
+            )}
           </div>
 
           {/* <!-- Request Type --> */}
@@ -164,12 +180,11 @@ function RequestForm({ celebUid, fanUid, price }: RequestProps) {
                   className="peer sr-only"
                   id="option3"
                   type="radio"
-                  name="remote"
-                  // onClick={(e) => setToSomeOneElse(true)}
-
-                  onClick={(e) =>
-                    setFormData({ ...formData, reqType: "message" })
-                  }
+                  {...register("reqType", {
+                    required: "choose request: Message, Audio or Video",
+                  })}
+                  name="reqType"
+                  value="message"
                 />
 
                 <label
@@ -185,10 +200,11 @@ function RequestForm({ celebUid, fanUid, price }: RequestProps) {
                   className="peer sr-only"
                   id="option4"
                   type="radio"
-                  name="remote"
-                  onClick={(e) =>
-                    setFormData({ ...formData, reqType: "audio" })
-                  }
+                  {...register("reqType", {
+                    required: "choose request: Message, Audio or Video",
+                  })}
+                  name="reqType"
+                  value="audio"
                 />
 
                 <label
@@ -203,10 +219,11 @@ function RequestForm({ celebUid, fanUid, price }: RequestProps) {
                   className="peer sr-only"
                   id="option5"
                   type="radio"
-                  name="remote"
-                  onClick={(e) =>
-                    setFormData({ ...formData, reqType: "video" })
-                  }
+                  {...register("reqType", {
+                    required: "choose request: Message, Audio or Video",
+                  })}
+                  name="reqType"
+                  value="video"
                 />
 
                 <label
@@ -217,6 +234,9 @@ function RequestForm({ celebUid, fanUid, price }: RequestProps) {
                 </label>
               </div>
             </div>
+            {errors.reqType && (
+              <p className="text-red-500">{`${errors.reqType.message}`}</p>
+            )}
           </div>
 
           {/* Message*/}
@@ -224,20 +244,27 @@ function RequestForm({ celebUid, fanUid, price }: RequestProps) {
           <div className="">
             <div className="text-left">Step 4: Request details</div>
             <textarea
-              onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
-                const target = e.target as HTMLTextAreaElement;
-                setFormData({ ...formData, message: target.value });
-              }}
+              {...register("message", {
+                required: "Write a message to the celeb",
+                maxLength: 350,
+              })}
+              name="message"
               className=" block min-h-[auto] w-full rounded border my-2 bg-transparent
                      px-2 py-2  h-40 shadow-sm shadow-blue-400   outline-none placeholder-style  relative
                       "
               placeholder="I'm a huge fan of your incredible work. I have a special occasion coming up, and I was wondering if you could send a personalized shout-out or a few words of encouragement to make it even more memorable."
             />
           </div>
+          {errors.message && (
+            <p className="text-red-500">{`${errors.message.message}`}</p>
+          )}
           {/* continue */}
 
           <div className="">
-            <button className="block w-full rounded-full my-8 border border-gray-200 py-3 px-8 cursor-pointer hover:bg-blue-700 bg-blue-600 text-white">
+            <button
+              disabled={isSubmitting}
+              className=" disabled:bg-red-500 block w-full rounded-full my-8 border border-gray-200 py-3 px-8 cursor-pointer hover:bg-blue-700 bg-blue-600 text-white"
+            >
               Continue
             </button>
           </div>

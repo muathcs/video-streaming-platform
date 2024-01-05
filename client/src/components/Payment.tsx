@@ -1,57 +1,73 @@
-import React from "react";
+import React, { useState } from "react";
 import { useFormik } from "formik";
 function Payment() {
-  const formik = useFormik({
-    initialValues: {
-      deliverySpeed: "",
-      paymentMethod: "",
-      mobileNumber: "",
-    },
-    onSubmit: (values) => {
-      console.log("on Submit", values);
-    },
-  });
+  const [delivery, setDelivery] = useState();
+
+  const divStyle =
+    "border-2  h-32 w-full rounded-md shadow-md peer-checked:shadow-blue-200 peer-checked:bg-blue-600  cursor-pointer flex items-center justify-between ";
+
   return (
     <>
-      <div className="w-full flex justify-center items-center  h-full">
-        <div className="h-[90%] w-2/4 relative  ">
-          <form onSubmit={formik.handleSubmit}>
+      <div className="w-full flex justify-center items-center h-full overflow-auto ">
+        <div className="h-full w-2/4 relative   ">
+          <form>
             {/* <!-- Email input --> */}
-            <div className="relative mb-6" data-te-input-wrapper-init>
-              <label className="block text-sm font-medium mb-2 w-full sm:w-4/6 text-white text-left">
-                Step 1: Type of video request
-              </label>
-              <select
-                // onClick={(e: any) => setRequestActon(e.target.value)}
-                //   onClick={(e: React.MouseEvent<HTMLElement>) => {
-                //     const target = e.target as HTMLSelectElement;
-                //     setFormData({ ...formData, requestAction: target.value });
-                //   }}
-                name="types"
-                value={formik.values.deliverySpeed}
-                onChange={formik.handleChange}
-                data-te-select-init
-                className="w-full h-10 rounded-md bg-transparent border text-slate-800 cursor-pointer"
-              >
-                <option>Select</option>
-                <option value="Holiday">Holiday</option>
-                <option value="Birthday">Birthday</option>
-                <option value="Pep Talk">Pep Talk</option>
-                <option value="Roast">Roast</option>
-                <option value="Advice">Advice</option>
-                <option value="Question">Question</option>
-                <option value="Other">Other</option>
-              </select>
-            </div>
-            {/* <!-- for  who --> */}
+            <div className="relative  mb-6" data-te-input-wrapper-init>
+              <div className="gap-4 text-center sm:grid-cols-3  flex flex-col justify-center items-center  my-2">
+                <p className="text-left w-full font-serif text-lg font-bold">
+                  Delivery Speed
+                </p>
+                <div className=" w-full">
+                  <input
+                    className="peer sr-only border-2 w-full"
+                    id="option1"
+                    type="radio"
+                    name="delivery"
+                    // onClick={(e) => setToSomeOneElse(true)}
 
-            <div className=" ">
-              <p className="text-left">Step 2: Who's this video for?</p>
-              <div className="gap-4 text-center sm:grid-cols-3  flex justify-center items-center  my-2">
-                <div>
+                    //   onClick={(e) =>
+                    //     setFormData({ ...formData, toSomeOneElse: true })
+                    //   }
+                  />
+
+                  <label htmlFor="option1" className={divStyle}>
+                    <div className="ml-5 ">
+                      <p className="text-left">Standard</p>
+                      <p>up to 7 days</p>
+                    </div>
+                    <p className="mr-5">Free</p>
+                  </label>
+                </div>
+
+                <div className="w-full">
                   <input
                     className="peer sr-only"
-                    id="option1"
+                    id="option2"
+                    type="radio"
+                    name="delivery"
+                  />
+
+                  <label htmlFor="option2" className={divStyle}>
+                    <div className="ml-5">
+                      <p className="text-left">24 hours</p>
+                      <p>up to 24 hours</p>
+                    </div>
+                    <p className="mr-5">£20</p>
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            {/* <!-- for  who --> */}
+            <div className="relative  mb-6 mt-10" data-te-input-wrapper-init>
+              <p className="text-left text-lg font-bold font-serif ">
+                Payment method
+              </p>
+              <div className="gap-4 text-center sm:grid-cols-3  flex flex-col justify-center items-center  my-2">
+                <div className=" w-full">
+                  <input
+                    className="peer sr-only border-2 w-full"
+                    id="option3"
                     type="radio"
                     name="remote"
                     // onClick={(e) => setToSomeOneElse(true)}
@@ -61,155 +77,44 @@ function Payment() {
                     //   }
                   />
 
-                  <label
-                    htmlFor="option1"
-                    className="block w-full rounded-lg border border-gray-200 py-3 px-8 cursor-pointer hover:bg-blue-700   peer-checked:border-black peer-checked:shadow-lg peer-checked:shadow-blue-400 peer-checked:bg-blue-800 peer-checked:text-white bg-blue-600 text-white"
-                  >
-                    Someone else
+                  <label htmlFor="option3" className={divStyle}>
+                    <p className="ml-5">Pay by Card</p>
                   </label>
                 </div>
 
-                <div>
-                  <input
-                    className="peer sr-only"
-                    id="option2"
-                    type="radio"
-                    name="remote"
-                    //   onClick={(e) =>
-                    //     setFormData({ ...formData, toSomeOneElse: false })
-                    //   }
-                  />
-
-                  <label
-                    htmlFor="option2"
-                    className="block w-full rounded-lg border border-gray-200 py-3 px-8 cursor-pointer hover:bg-blue-700   peer-checked:border-black peer-checked:shadow-lg peer-checked:shadow-blue-400 peer-checked:bg-blue-800 peer-checked:text-white bg-blue-600 text-white"
-                  >
-                    Myself
-                  </label>
-                </div>
-              </div>
-            </div>
-
-            {/* personal info */}
-
-            <div className="relative " data-te-input-wrapper-init>
-              <p className="text-left">To (first name): </p>
-              <input
-                //   onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                //     const target = e.target as HTMLInputElement;
-                //     setFormData({ ...formData, toPerson: target.value });
-                //   }}
-                type="text"
-                className=" block min-h-[auto] w-full rounded border my-2 bg-transparent
-                         px-3 py-[0.32rem] leading-[2.5] outline-none 
-                          "
-                placeholder="first name"
-              />
-            </div>
-
-            {/* <!-- Request Type --> */}
-
-            <div className=" ">
-              <p className="text-left">Step 3: choose a request</p>
-              <div className="gap-4 text-center sm:grid-cols-3  flex justify-center items-center  my-2">
-                <div>
-                  <input
-                    className="peer sr-only"
-                    id="option3"
-                    type="radio"
-                    name="remote"
-                    // onClick={(e) => setToSomeOneElse(true)}
-
-                    //   onClick={(e) =>
-                    //     setFormData({ ...formData, reqType: "message" })
-                    //   }
-                  />
-
-                  <label
-                    htmlFor="option3"
-                    className="block w-full rounded-lg border border-gray-200 py-3 px-8 cursor-pointer hover:bg-blue-700   peer-checked:border-black peer-checked:shadow-lg peer-checked:shadow-blue-400 peer-checked:bg-blue-800 peer-checked:text-white bg-blue-600 text-white"
-                  >
-                    Message
-                  </label>
-                </div>
-
-                <div>
+                <div className="w-full">
                   <input
                     className="peer sr-only"
                     id="option4"
                     type="radio"
                     name="remote"
-                    //   onClick={(e) =>
-                    //     setFormData({ ...formData, reqType: "audio" })
-                    //   }
                   />
 
-                  <label
-                    htmlFor="option4"
-                    className="block w-full rounded-lg border border-gray-200 py-3 px-8 cursor-pointer hover:bg-blue-700   peer-checked:border-black peer-checked:shadow-lg peer-checked:shadow-blue-400 peer-checked:bg-blue-800 peer-checked:text-white bg-blue-600 text-white"
-                  >
-                    Audio
+                  <label htmlFor="option4" className={divStyle}>
+                    <p className="text-left ml-5">Pay Pal</p>
                   </label>
                 </div>
-                <div>
+                <div className="w-full">
                   <input
                     className="peer sr-only"
                     id="option5"
                     type="radio"
                     name="remote"
-                    //   onClick={(e) =>
-                    //     setFormData({ ...formData, reqType: "video" })
-                    //   }
                   />
 
-                  <label
-                    htmlFor="option5"
-                    className="block w-full rounded-lg border border-gray-200 py-3 px-8 cursor-pointer hover:bg-blue-700   peer-checked:border-black peer-checked:shadow-lg peer-checked:shadow-blue-400 peer-checked:bg-blue-800 peer-checked:text-white bg-blue-600 text-white"
-                  >
-                    video
+                  <label htmlFor="option5" className={divStyle}>
+                    <p className="text-left ml-5">Stripe</p>
                   </label>
                 </div>
               </div>
             </div>
 
-            {/* Message*/}
-
-            <div className="">
-              <div className="text-left">Step 4: Request details</div>
-              <textarea
-                onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
-                  const target = e.target as HTMLTextAreaElement;
-                  // setFormData({ ...formData, message: target.value });
-                }}
-                className=" block min-h-[auto] w-full rounded border my-2 bg-transparent
-                         px-2 py-2  h-40 shadow-sm shadow-blue-400   outline-none placeholder-style  relative
-                          "
-                placeholder="I'm a huge fan of your incredible work. I have a special occasion coming up, and I was wondering if you could send a personalized shout-out or a few words of encouragement to make it even more memorable."
-              />
-            </div>
             {/* continue */}
 
-            <div className="">
+            <div className="pb-10">
               <button className="block w-full rounded-full my-8 border border-gray-200 py-3 px-8 cursor-pointer hover:bg-blue-700 bg-blue-600 text-white">
                 Continue
               </button>
-            </div>
-
-            {/* show vide */}
-            <div className=" relative flex items-center text-sm ">
-              <div className=" absolute flex">
-                <p
-                  // onClick={(e) => setCheckBox(!checkBox)}
-                  className="block w-[20px] bg-white rounded  mr-2 
-                    outline-none text-red-400 cursor-pointer  select-none h-[20px]
-                    "
-                >
-                  {/* {checkBox ? "✔️" : ""} */}
-                </p>
-                <p className="text-left sm:text-sm text-[12px]">
-                  Hide this video from David Howard Thornton's profile
-                </p>
-              </div>
             </div>
           </form>
         </div>

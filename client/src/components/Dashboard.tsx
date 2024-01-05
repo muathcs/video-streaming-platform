@@ -93,7 +93,7 @@ function Dashboard() {
             <tbody className="bg-purple-400 w-full overflow-auto ">
               {data &&
                 data.length != 0 &&
-                rows.map((row: any) => {
+                rows.reverse().map((row: any) => {
                   prepareRow(row);
 
                   return (

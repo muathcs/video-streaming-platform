@@ -53,6 +53,15 @@ body {
   height: 100vh;
 }
 
+.pay-select {
+  background: rgba(
+    18,
+    114,
+    232,
+    0.4
+  ); /* Fallback for older browsers without RGBA-support */
+}
+
 #root {
   padding: 0;
   margin: 0;
