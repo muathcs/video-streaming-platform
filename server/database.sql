@@ -62,8 +62,6 @@ CREATE TABLE Requests (
 );
 
 
-
-
 CREATE TABLE Transactions (
     transactionId serial primary key,
     payeeId INT //foreign key,

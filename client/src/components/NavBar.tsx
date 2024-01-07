@@ -9,7 +9,6 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import s3 from "../utilities/S3";
 import { Image } from "aws-sdk/clients/iotanalytics";
 import { useAuth } from "../context/AuthContext";
-
 const navigation = [
   { name: "Catogories", href: "#", current: true },
   { name: "Home", href: "#", current: true },

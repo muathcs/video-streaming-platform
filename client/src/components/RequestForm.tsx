@@ -51,7 +51,7 @@ function RequestForm({ celebUid, fanUid, price }: RequestProps) {
     // } catch (error) {
     //   console.error(error);
     // }
-    navigate("/payment");
+    navigate("/payment", getValues());
 
     // reset();
   }

@@ -5,6 +5,7 @@ import pool from "./db.js";
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 import dotenv from "dotenv";
 dotenv.config({ path: "../.env" });
+import stripe from "stripe";
 
 // import { dirname } from "path";
 // import path from "path";
@@ -15,6 +16,7 @@ app.use(express.json());
 app.use(cors());
 app.use(bodyParser.json());
 const client = await pool.connect();
+const stripeInstance = stripe(process.env.STRIPE_SECRET_KEY);
 
 // Specify your AWS region here
 const region = "eu-west-2";
@@ -38,6 +40,45 @@ const s3 = new S3Client({ region, credentials });
     })
   );
 })();
+
+app.use(express.static("public"));
+app.use(express.json());
+
+// Use the cors middleware
+app.use(cors());
+
+const calculateOrderAmount = (items) => {
+  // Replace this constant with a calculation of the order's amount
+  // Calculate the order total on the server to prevent
+  // people from directly manipulating the amount on the client
+  return 1400;
+};
+
+app.post("/create-payment-intent", async (req, res) => {
+  console.log("bodyZZ", req.body);
+  const { items } = req.body;
+
+  // Create a PaymentIntent with the order amount and currency
+  const paymentIntent = await stripeInstance.paymentIntents.create({
+    amount: calculateOrderAmount(items),
+    currency: "eur",
+
+    // In the latest version of the API, specifying the `automatic_payment_methods` parameter is optional because Stripe enables its functionality by default.
+    automatic_payment_methods: {
+      enabled: true,
+    },
+  });
+
+  res.send({
+    clientSecret: paymentIntent.client_secret,
+  });
+});
+
+app.get("/config", async (req, res) => {
+  res.send({
+    publishableKey: process.env.STRIPE_PUBLISHABLE_KEY,
+  });
+});
 
 app.get("/celebs", async (req, res) => {
   try {
@@ -70,8 +111,8 @@ app.get("/dashboard", async (req, res) => {
 
   try {
     const response = await pool.query(
-      "SELECT * from Requests WHERE reqstatus != $1 AND celebUid = $2",
-      ["fulfilled", uid]
+      "SELECT * from Requests WHERE reqstatus = $1 AND celebUid = $2 ORDER BY requestid DESC",
+      ["pending", uid]
     );
 
     const requests = response.rows;
@@ -172,18 +213,18 @@ app.post("/createUser", async (req, res) => {
 //
 
 app.post("/request", async (req, res) => {
-  console.log("here");
+  console.log("body: ", req.body);
 
   let {
     celebUid,
     fanUid,
     price,
-    message,
-    requestAction,
-    toSomeOneElse,
-    reqType,
-    fromPerson,
-    toPerson,
+    message, //
+    requestAction, //
+    toSomeOneElse, //
+    reqType, //
+    fromPerson, //
+    toPerson, //
   } = req.body;
 
   console.log("action: ", requestAction);
@@ -251,5 +292,5 @@ app.post("/createCeleb", async (req, res) => {
 });
 
 app.listen(3001, () => {
-  console.log("listing...");
+  console.log("listing on 3001...");
 });

@@ -20,7 +20,7 @@ function App() {
   const signed = true;
   return (
     <>
-      <div className="flex flex-col  absolute   w-full h-full  p-0 m-0 overflow-auto   from-[#121114] ">
+      <div className="flex flex-col  absolute   w-full h-full  p-0 m-0 overflow-auto bg-[#121114] ">
         <NavBar />
         {/* <Celebs /> */}
         <Routes>
