@@ -11,7 +11,6 @@ const stripePromise = loadStripe(
 function StripePaymentIntent() {
   const [clientSecret, setClientSecret] = useState("");
 
-  console.log("clirentScrexx: ", clientSecret);
   useEffect(() => {
     // Create PaymentIntent as soon as the page loads
 
@@ -23,7 +22,6 @@ function StripePaymentIntent() {
       })
         .then((res) => res.json())
         .then((data) => {
-          console.log("data: ", data.clientSecret);
           setClientSecret(data.clientSecret);
         });
     };

@@ -14,18 +14,18 @@ import React, { useContext, useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { RequestContext } from "../context/RequestContext";
 import { useGlobalAxios } from "../hooks/useGlobalAxios";
+import { useLocalStorage } from "../hooks/useLocalStorage";
 
 export default function StripeCheckoutForm() {
   const stripe = useStripe();
   const elements = useElements();
-
-  console.log("elements: ", stripe);
 
   const [message, setMessage] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
   // custom to hook to get, post and put.
   // data is the function.
+
   const {
     data: sendUserRequestForm,
     loading,
@@ -34,21 +34,14 @@ export default function StripeCheckoutForm() {
 
   const { request } = useContext(RequestContext);
 
-  console.log("request from here: ", request);
-
   useEffect(() => {
-    console.log("On Use Effect");
     if (!stripe) {
       return;
     }
 
-    console.log("current URL: ", window.location.href);
-
     const clientSecret = new URLSearchParams(window.location.search).get(
       "payment_intent_client_secret"
     );
-
-    console.log("client Secret: ", clientSecret);
 
     if (!clientSecret) {
       return;
@@ -58,7 +51,6 @@ export default function StripeCheckoutForm() {
       switch (paymentIntent?.status) {
         case "succeeded":
           setMessage("Payment succeeded!");
-          console.log("ahhahahahhahahahahhahahhahahahah");
           sendUserRequestForm("request", request);
           break;
         case "processing":
@@ -75,8 +67,6 @@ export default function StripeCheckoutForm() {
   }, [stripe]);
 
   const state = useLocation();
-
-  console.log("here: ", state);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     // We don't want to let default form submission happen here,
@@ -126,8 +116,6 @@ export default function StripeCheckoutForm() {
     },
     autoFocus: false,
   };
-
-  console.log("request from form: ", request);
 
   return (
     <form id="payment-form" onSubmit={handleSubmit}>

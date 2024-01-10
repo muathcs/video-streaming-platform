@@ -23,9 +23,12 @@ function RequestForm({ celebUid, fanUid, price }: RequestProps) {
 
   const { request, setRequest } = useContext(RequestContext);
 
-  const { value, setValue } = useLocalStorage("request", "va");
+  const [localStorageRequest, setLocalStorageRequest] = useLocalStorage(
+    "request",
+    ""
+  );
 
-  console.log("value: ", value, "setValudfssadfsadfasdfasdfasfde:", setValue);
+  console.log("value: ", localStorageRequest);
 
   const {
     register,
@@ -59,15 +62,19 @@ function RequestForm({ celebUid, fanUid, price }: RequestProps) {
     // } catch (error) {
     //   console.error(error);
     // }
-    const requestInfo = await getValues();
+    const requestInfo = getValues();
+    await setLocalStorageRequest(getValues());
 
     console.log("request,infofofo ", requestInfo);
-    setValue(requestInfo);
 
     setRequest(requestInfo);
     navigate("/payment", { state: requestInfo });
 
     reset();
+  }
+
+  async function testfuck() {
+    setLocalStorageRequest({ name: "xxx", age: 18 });
   }
 
   return (

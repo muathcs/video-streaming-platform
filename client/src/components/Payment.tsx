@@ -12,14 +12,7 @@ function Payment() {
   const [twentyFourHourDelivery, setTwentyFourHourDelivery] =
     useState<number>();
 
-  console.log(paymentChoice);
   const { state } = useLocation();
-
-  console.log("statE: ", state);
-  console.log("locaiton: ", useLocation());
-  const hadnleSubmit = () => {
-    console.log("submitting");
-  };
 
   const divStyle =
     " border-2 h-24 w-full rounded-xl  peer-checked:shadow-blue-200 peer-checked:border-blue-600  cursor-pointer flex items-center justify-between ";

@@ -64,7 +64,7 @@ function CelebProfile() {
               onClick={(e) => setOrderModal(true)}
               className=" relative  w-1/2 md:w-1/5 rounded-md hover:bg-slate-700 py-5 bg-slate-500  text-white hover:border-none outline-none focus:outline-none border-none"
             >
-              Book A Shoutout
+              Book A Shoutouta
             </button>
           ) : (
             ""

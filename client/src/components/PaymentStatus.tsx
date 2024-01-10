@@ -2,6 +2,8 @@ import React, { useState, useEffect, useContext } from "react";
 import { Elements, useStripe } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 import { RequestContext } from "../context/RequestContext";
+import { useLocalStorage } from "../hooks/useLocalStorage";
+import { useGlobalAxios } from "../hooks/useGlobalAxios";
 
 const PaymentStatus = () => {
   const stripe = useStripe();
@@ -10,7 +12,15 @@ const PaymentStatus = () => {
     "pk_test_51LJDOjGFwRQBDdF4mK0dnR99AbxVar1HyeMsbYUN4HDWWC44f29yhYiOCArdEv3T7yQ5JNZF1QbbmzUWXqjywMPQ00RtVGGAFq"
   );
 
-  const { request } = useContext(RequestContext);
+  const [request] = useLocalStorage("request");
+
+  const {
+    data: sendRequest,
+    loading,
+    error,
+  }: any = useGlobalAxios("post", "request");
+
+  console.log("formRequest: ", request);
 
   console.log("request: ", request);
 
@@ -39,6 +49,7 @@ const PaymentStatus = () => {
       switch (paymentIntent?.status) {
         case "succeeded":
           console.log("success");
+          sendRequest("request", request);
           setMessage("Success! Payment received.");
           break;
 
