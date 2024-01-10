@@ -5,6 +5,8 @@ import { useGlobalAxios } from "../hooks/useGlobalAxios";
 import { useNavigate } from "react-router-dom";
 import { FieldValues, useForm } from "react-hook-form";
 import { error } from "console";
+import { RequestContext } from "../context/RequestContext";
+import { useLocalStorage } from "../hooks/useLocalStorage";
 type RequestProps = {
   celebUid: string;
   fanUid: string;
@@ -13,11 +15,17 @@ type RequestProps = {
 
 function RequestForm({ celebUid, fanUid, price }: RequestProps) {
   const navigate = useNavigate();
-  const {
-    // data: sendUserRequestForm,
-    // loading,
-    // error,
-  } = useGlobalAxios("post", "yourDataEndpoint");
+  // const {
+  //   data: sendUserRequestForm,
+  //   loading,
+  //   error,
+  // } = useGlobalAxios("post", "yourDataEndpoint");
+
+  const { request, setRequest } = useContext(RequestContext);
+
+  const { value, setValue } = useLocalStorage("request", "va");
+
+  console.log("value: ", value, "setValudfssadfsadfasdfasdfasfde:", setValue);
 
   const {
     register,
@@ -51,9 +59,15 @@ function RequestForm({ celebUid, fanUid, price }: RequestProps) {
     // } catch (error) {
     //   console.error(error);
     // }
-    navigate("/payment", getValues());
+    const requestInfo = await getValues();
 
-    // reset();
+    console.log("request,infofofo ", requestInfo);
+    setValue(requestInfo);
+
+    setRequest(requestInfo);
+    navigate("/payment", { state: requestInfo });
+
+    reset();
   }
 
   return (

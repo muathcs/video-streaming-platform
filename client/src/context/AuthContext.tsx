@@ -12,6 +12,7 @@ import {
   updateProfile,
 } from "firebase/auth";
 import axios from "../api/axios";
+import { RequestContext } from "./RequestContext";
 
 const AuthContext = React.createContext("");
 
@@ -23,6 +24,8 @@ export function AuthProvider({ children }: { children: any }) {
   const [currentUser, setCurrentUser] = useState();
   const [token, setToken] = useState();
   const [loading, setLoading] = useState(true);
+
+  const [request, setRequest] = useState();
 
   const [celeb, setCeleb] = useState();
 
@@ -127,9 +130,11 @@ export function AuthProvider({ children }: { children: any }) {
   };
   return (
     <>
-      <AuthContext.Provider value={value}>
-        {!loading && children}
-      </AuthContext.Provider>
+      <RequestContext.Provider value={{ request, setRequest }}>
+        <AuthContext.Provider value={value}>
+          {!loading && children}
+        </AuthContext.Provider>
+      </RequestContext.Provider>
     </>
   );
 }

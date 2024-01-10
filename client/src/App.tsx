@@ -13,9 +13,15 @@ import Dashboard from "./components/Dashboard";
 import FanRequests from "./components/FanRequests";
 import FulfillRequest from "./components/FulfillRequest";
 import Payment from "./components/Payment";
+import PaymentStatus from "./components/PaymentStatus";
+import { Elements } from "@stripe/react-stripe-js";
+import { loadStripe } from "@stripe/stripe-js";
 
 function App() {
   // const { signed } = useSelector((state: RootState) => state.signed);
+  const stripePromise = loadStripe(
+    "pk_test_51LJDOjGFwRQBDdF4mK0dnR99AbxVar1HyeMsbYUN4HDWWC44f29yhYiOCArdEv3T7yQ5JNZF1QbbmzUWXqjywMPQ00RtVGGAFq"
+  );
 
   const signed = true;
   return (
@@ -34,6 +40,7 @@ function App() {
               <Route path="/requests" element={<FanRequests />} />
               <Route path="/payment" element={<Payment />} />
               <Route path="/fulfill/:requestId" element={<FulfillRequest />} />
+              <Route path="/success" element={<PaymentStatus />} />
             </>
           ) : (
             <Route path="/*" element={<Navigate to="/login" />} />

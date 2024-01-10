@@ -55,7 +55,6 @@ const calculateOrderAmount = (items) => {
 };
 
 app.post("/create-payment-intent", async (req, res) => {
-  console.log("bodyZZ", req.body);
   const { items } = req.body;
 
   // Create a PaymentIntent with the order amount and currency
@@ -65,9 +64,12 @@ app.post("/create-payment-intent", async (req, res) => {
 
     // In the latest version of the API, specifying the `automatic_payment_methods` parameter is optional because Stripe enables its functionality by default.
     automatic_payment_methods: {
-      enabled: true,
+      enabled: false,
     },
+    payment_method_types: ["card"],
   });
+
+  console.log("bodyZZ", paymentIntent);
 
   res.send({
     clientSecret: paymentIntent.client_secret,

@@ -10,24 +10,45 @@ import {
   CardNumberElement,
 } from "@stripe/react-stripe-js";
 import { Layout } from "@stripe/stripe-js";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
+import { RequestContext } from "../context/RequestContext";
+import { useGlobalAxios } from "../hooks/useGlobalAxios";
 
 export default function StripeCheckoutForm() {
   const stripe = useStripe();
   const elements = useElements();
 
+  console.log("elements: ", stripe);
+
   const [message, setMessage] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
+  // custom to hook to get, post and put.
+  // data is the function.
+  const {
+    data: sendUserRequestForm,
+    loading,
+    error,
+  } = useGlobalAxios("post", "yourDataEndpoint");
+
+  const { request } = useContext(RequestContext);
+
+  console.log("request from here: ", request);
+
   useEffect(() => {
+    console.log("On Use Effect");
     if (!stripe) {
       return;
     }
 
+    console.log("current URL: ", window.location.href);
+
     const clientSecret = new URLSearchParams(window.location.search).get(
       "payment_intent_client_secret"
     );
+
+    console.log("client Secret: ", clientSecret);
 
     if (!clientSecret) {
       return;
@@ -37,6 +58,8 @@ export default function StripeCheckoutForm() {
       switch (paymentIntent?.status) {
         case "succeeded":
           setMessage("Payment succeeded!");
+          console.log("ahhahahahhahahahahhahahhahahahah");
+          sendUserRequestForm("request", request);
           break;
         case "processing":
           setMessage("Your payment is processing.");
@@ -71,7 +94,7 @@ export default function StripeCheckoutForm() {
     const { error }: any = await stripe.confirmPayment({
       elements,
       confirmParams: {
-        return_url: "https://facebook.com",
+        return_url: "http://localhost:5173/success",
       },
     });
 
@@ -104,6 +127,8 @@ export default function StripeCheckoutForm() {
     autoFocus: false,
   };
 
+  console.log("request from form: ", request);
+
   return (
     <form id="payment-form" onSubmit={handleSubmit}>
       <PaymentElement id="payment-element" options={paymentElementOptions} />
@@ -112,15 +137,21 @@ export default function StripeCheckoutForm() {
       {/* <CardNumberElement options={paymentElementOptions} /> */}
       {/* <CardExpiryElement options={paymentElementOptions} /> */}
       {/* <CardCvcElement id="payment-element" options={paymentElementOptions} /> */}
-      <button
-        className="bg-red-400 rounded-lg py-4 px-10 mt-5 "
-        disabled={isLoading || !stripe || !elements}
-        id="submit"
-      >
-        <span className="" id="button-text">
-          {isLoading ? <div className="spinner" id="spinner"></div> : "Pay now"}
-        </span>
-      </button>
+      {!isLoading && stripe && elements && (
+        <button
+          disabled={isLoading || !stripe || !elements}
+          className="bg-blue-400 rounded-lg py-4 px-10 mt-5 "
+          id="submit"
+        >
+          <span className="" id="button-text">
+            {isLoading ? (
+              <div className="spinner" id="spinner"></div>
+            ) : (
+              "Pay now"
+            )}
+          </span>
+        </button>
+      )}
       {/* Show any error or success messages */}
       {message && <div id="payment-message">{message}</div>}
     </form>

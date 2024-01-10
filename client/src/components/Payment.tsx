@@ -7,8 +7,16 @@ function Payment() {
 
   const [paymentChoice, setPaymentChoice] = useState<string>("");
 
-  console.log(paymentChoice);
+  // instead of making this a boolean, just use number, and when the 24 hour delivery is false, set it to 0(null),
+  // when it's positive however, set it to 50% of the requests's price.
+  const [twentyFourHourDelivery, setTwentyFourHourDelivery] =
+    useState<number>();
 
+  console.log(paymentChoice);
+  const { state } = useLocation();
+
+  console.log("statE: ", state);
+  console.log("locaiton: ", useLocation());
   const hadnleSubmit = () => {
     console.log("submitting");
   };
@@ -19,10 +27,10 @@ function Payment() {
   return (
     <>
       <div className="w-full h-full   overflow-auto  ">
-        <div className="h-full w-full relative grid grid-cols-1 grid-rows-7 overflow-auto  mt-10 place-items-center gap-44">
+        <div className="h-full w-full relative grid grid-cols-1 grid-rows-8 overflow-auto  mt-10 place-items-center gap-44 ">
           {/* <!-- Email input --> */}
           <div
-            className="relative  mb-6  0 w-1/3 row-span-3 "
+            className="relative  mb-6  0 w-1/3 row-span-5  "
             data-te-input-wrapper-init
           >
             <div className="gap-4 text-center sm:grid-cols-3  flex flex-col justify-center items-center  my-2">
@@ -36,11 +44,8 @@ function Payment() {
                   id="option1"
                   type="radio"
                   name="delivery"
-                  // onClick={(e) => setToSomeOneElse(true)}
-
-                  //   onClick={(e) =>
-                  //     setFormData({ ...formData, toSomeOneElse: true })
-                  //   }
+                  onClick={(e) => setTwentyFourHourDelivery(0)}
+                  defaultChecked
                 />
 
                 <label htmlFor="option1" className={divStyle}>
@@ -58,6 +63,7 @@ function Payment() {
                   id="option2"
                   type="radio"
                   name="delivery"
+                  onClick={(e) => setTwentyFourHourDelivery(state.price * 0.5)}
                 />
 
                 <label htmlFor="option2" className={divStyle}>
@@ -73,7 +79,7 @@ function Payment() {
 
           {/* <!-- Payment method --> */}
           <div
-            className="relative  mb-6 mt-10 overflow-hidden w-1/3 row-span-3 max-h-[1510rem] "
+            className="relative  mb-6 mt-10 overflow-hidden w-1/3 row-span-3 h-[65rem]  "
             data-te-input-wrapper-init
           >
             <p className="text-left text-lg font-bold font-serif   ">
@@ -98,12 +104,6 @@ function Payment() {
                 <label htmlFor="option3" className={divStyle}>
                   <p className="ml-5">Pay by Card</p>
                 </label>
-
-                {paymentChoice == "card" ? (
-                  <div>
-                    <StripePaymentIntent />
-                  </div>
-                ) : null}
               </div>
 
               <div className="w-full">
@@ -130,6 +130,54 @@ function Payment() {
                 <label htmlFor="option5" className={divStyle}>
                   <p className="text-left ml-5">Stripe</p>
                 </label>
+              </div>
+
+              {/* //order detail
+              // personalise video <----> price
+              // Service Fee <-----> price
+              // Sales Tax <---> free
+              //Total ---> total */}
+
+              <div className=" text-left flex flex-col border-t mt-10 text-lg gap-2 border-gray-600">
+                <p>Order detail</p>
+                <div className=" flex justify-between px-3">
+                  <p>Personalised Video</p>
+                  <p>£{state.price}.00</p>
+                </div>
+                {twentyFourHourDelivery && (
+                  <div className=" flex justify-between px-3 ">
+                    <p>Expediate delivery Video</p>
+                    <p>£{state.price * 0.5}.00</p>
+                  </div>
+                )}
+                <span className="border-b  border-gray-600"></span>
+                <div className=" flex justify-between px-3">
+                  <p>Service Fee </p>
+                  <p>£23.00</p>
+                </div>
+                <div className=" flex justify-between px-3">
+                  <p>Sales Tax </p>
+                  <p>free</p>
+                </div>
+                <span className="border-b  border-gray-600"></span>
+                <div className=" flex justify-between px-3">
+                  <a className="text-white underline hover:text-white cursor-pointer">
+                    Add Promo Code
+                  </a>
+                </div>
+                <span className="border-b  border-gray-600"></span>
+                <div className=" flex justify-between px-3">
+                  <p>Total</p>
+                  <p>£{state.price + twentyFourHourDelivery}.00</p>
+                </div>
+              </div>
+
+              <div className=" p-5 h-76 ">
+                {paymentChoice == "card" ? (
+                  <div>
+                    <StripePaymentIntent />
+                  </div>
+                ) : null}
               </div>
             </div>
           </div>
