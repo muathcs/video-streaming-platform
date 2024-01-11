@@ -33,7 +33,7 @@ a:hover {
 }
 
 .card-zoom {
-  @apply relative flex flex-col items-start justify-center m-3 overflow-hidden shadow-xl w-[15rem] h-[20rem]  rounded-2xl;
+  @apply relative flex flex-col items-start justify-center m-3 overflow-hidden shadow-xl   rounded-2xl;
 }
 .card-zoom-image {
   @apply cursor-pointer overflow-hidden transition-all duration-500 rounded-t-xl  ease-in-out transform bg-center bg-cover;

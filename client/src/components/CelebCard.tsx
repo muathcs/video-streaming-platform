@@ -34,18 +34,18 @@ function CelebCard({
   };
 
   return (
-    <div className="shadow-xl  border text-black  rounded-t-xl rounded-md mt-10 card-zoom bg-slate-800 text-white">
-      <div className="h-[65%]  w-full overflow-hidden rounded-t-xl ">
+    <div className="shadow-xl     rounded-t-xl rounded-md card-zoom w-[20rem] h-[30rem]  text-white">
+      <div className="h-[85%]   w-full overflow-hidden rounded-t-xl ">
         <img
           onClick={handleCardClick}
           src={photoURl}
-          className="card-zoom-image h-full w-full"
+          className="card-zoom-image h-full w-full object-cover rounded-lg"
         />
       </div>
       <div className=" h-[35%] text-left left-1  relative pl-1 pt-2">
         <p>{name}</p>
-        <p className="">{category}</p>
-        <p className="">{reviews}</p>
+        <p className="text-gray-500">{category}</p>
+        <p className="">⭐⭐⭐⭐</p>
         <p className="">£{price.toFixed(2)}</p>
       </div>
     </div>

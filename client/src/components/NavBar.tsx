@@ -3,7 +3,7 @@ import { Fragment } from "react";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
 import { CiBurger, CiMenuBurger } from "react-icons/ci";
 import { FaBell, FaTimes } from "react-icons/fa";
-import { CiMenuFries } from "react-icons/ci";
+import { GiShoppingCart } from "react-icons/gi";
 import { AiOutlineClose } from "react-icons/ai";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import s3 from "../utilities/S3";
@@ -42,7 +42,7 @@ function NavBar() {
   const [navigation, setNavigation] = useState([
     { name: "Catogories", href: "#", current: false },
     { name: "Home", href: "#", current: false },
-    { name: "How does it work", href: "#", current: false },
+    { name: "How ", href: "#", current: false },
     { name: "Celebs", href: "#", current: false },
     { name: "About", href: "#", current: false },
     { name: path, href: path, current: false },
@@ -64,13 +64,13 @@ function NavBar() {
     <>
       <Disclosure
         as="nav"
-        className=" text-[24px] sm:text-[316px] z-10 block  py-5   "
+        className=" text-[24px] sm:text-[16px] z-10 block  py-5    "
       >
         {({ open }) => (
           <>
-            <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
-              <div className="relative flex h-16 items-center justify-between">
-                <div className="absolute inset-y-0 left-0 flex items-center sm:hidden">
+            <div className="mx-auto max-w-[100rem] px-2 sm:px-6   ">
+              <div className="relative flex h-16  items-center justify-between ">
+                <div className="absolute inset-y-0 left-0 flex items-center sm:hidden ">
                   {/* Mobile menu button*/}
                   <Disclosure.Button className="relative inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white">
                     <span className="absolute -inset-0.5" />
@@ -85,61 +85,71 @@ function NavBar() {
                     )}
                   </Disclosure.Button>
                 </div>
-                <div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
-                  <div className="flex flex-shrink-0 items-center">
-                    <h1 className="text-[50px]   sm:block hidden">
-                      <Link
-                        onClick={(e) => {
-                          const updatedNav = navigation.map((item) => ({
-                            ...item,
-                            current: false,
-                          }));
-
-                          setNavigation(updatedNav);
-                        }}
-                        to="/"
-                      >
-                        Cameo
-                      </Link>
-                    </h1>
-                  </div>
-                  <div className="hidden sm:ml-6 sm:block">
-                    <div className="flex space-x-4">
-                      {navigation.map((item, index) => (
+                <div className="flex items-center justify-center    w-full   ">
+                  <div className=" w-2/3 flex ">
+                    <div className="flex flex-shrink-0 items-center">
+                      <h1 className="text-[50px]  sm:block hidden text-white relative bottom-2">
                         <Link
-                          key={item.name}
-                          to={item.href}
+                          className="text-white "
                           onClick={(e) => {
-                            console.log(navigation[index]);
-                            const updatedNav = navigation.map((item, i) => ({
+                            const updatedNav = navigation.map((item) => ({
                               ...item,
-                              current: i == index, //when a spec link is clicked, current becomes true
+                              current: false,
                             }));
 
                             setNavigation(updatedNav);
                           }}
-                          className={classNames(
-                            item.current
-                              ? "bg-slate-300 rounded-full text-white"
-                              : "text-white hover:bg-gray-700 hover:rounded-full focus:bg-gray-800 hover:text-white",
-                            "rounded-full px-3 py-2 text-[20px] font-medium "
-                          )}
-                          aria-current={item.current ? "page" : undefined}
+                          to="/"
                         >
-                          {item.name}
+                          Cameo
                         </Link>
-                      ))}
+                      </h1>
                     </div>
+                    <div className="hidden sm:ml-6 sm:block ">
+                      <div className="flex space-x-4 mx-2">
+                        {navigation.map((item, index) => (
+                          <Link
+                            key={item.name}
+                            to={item.href}
+                            onClick={(e) => {
+                              console.log(navigation[index]);
+                              const updatedNav = navigation.map((item, i) => ({
+                                ...item,
+                                current: i == index, //when a spec link is clicked, current becomes true
+                              }));
+
+                              setNavigation(updatedNav);
+                            }}
+                            className={classNames(
+                              item.current
+                                ? "bg-slate-300 rounded-full text-white"
+                                : "text-white hover:bg-gray-700 hover:rounded-full focus:bg-gray-800 hover:text-white",
+                              "rounded-full px-3 py-3 text-[20px] font-medium "
+                            )}
+                            aria-current={item.current ? "page" : undefined}
+                          >
+                            {item.name}
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className=" w-full ">
+                    <input
+                      placeholder="Search"
+                      className="text-black py-2 rounded-full w-full border border-gray-500 bg-white px-5  "
+                    />
                   </div>
                 </div>
                 <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0 sm:mt-3">
                   <button
                     type="button"
-                    className="relative rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
+                    className="relative rounded-full  p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
                   >
                     <span className="absolute -inset-1.5" />
                     <span className="sr-only">View notifications</span>
-                    <FaBell className="h-6 w-6" aria-hidden="true" />
+                    <GiShoppingCart className="h-10 w-10" aria-hidden="true" />
                   </button>
 
                   {/* Profile dropdown */}
