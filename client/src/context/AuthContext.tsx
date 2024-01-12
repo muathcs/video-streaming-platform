@@ -11,8 +11,11 @@ import {
   signInWithEmailAndPassword,
   updateProfile,
 } from "firebase/auth";
+
 import axios from "../api/axios";
 import { RequestContext } from "./RequestContext";
+import { useGlobalAxios } from "../hooks/useGlobalAxios";
+import { User as FirebaseUser } from "firebase/auth";
 
 const AuthContext = React.createContext("");
 
@@ -21,13 +24,13 @@ export function useAuth() {
 }
 
 export function AuthProvider({ children }: { children: any }) {
-  const [currentUser, setCurrentUser] = useState();
+  const [currentUser, setCurrentUser] = useState<FirebaseUser>();
   const [token, setToken] = useState();
   const [loading, setLoading] = useState(true);
 
-  const [request, setRequest] = useState();
-
   const [celeb, setCeleb] = useState();
+
+  const [requests, setRequests] = useState();
 
   async function signup(
     email: any,
@@ -95,13 +98,17 @@ export function AuthProvider({ children }: { children: any }) {
         user: any //this works
       ) => {
         setCurrentUser(user);
-
         if (user) {
           try {
             const response = await axios.get("http://localhost:3001/status", {
               params: { uid: user.uid },
             });
 
+            const req = await axios.get("http://localhost:3001/dashboard", {
+              params: { data: user.uid },
+            });
+
+            setRequests(req.data);
             setCeleb(response.data);
           } catch (error) {
             console.error(error);
@@ -111,6 +118,7 @@ export function AuthProvider({ children }: { children: any }) {
             setToken(token);
           });
         }
+
         setLoading(false);
       }
     );
@@ -128,9 +136,14 @@ export function AuthProvider({ children }: { children: any }) {
     uploadProfilePic,
     celeb,
   };
+
+  // this is for the Request Context
+  const [request, setRequest] = useState();
+
+  const name = "muath";
   return (
     <>
-      <RequestContext.Provider value={{ request, setRequest }}>
+      <RequestContext.Provider value={{ request, setRequest, requests }}>
         <AuthContext.Provider value={value}>
           {!loading && children}
         </AuthContext.Provider>

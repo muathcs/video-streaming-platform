@@ -49,7 +49,7 @@ function Login() {
 
   async function isACeleb(uid: number) {
     try {
-      console.log("before axios");
+      ("before axios");
       const response = await axios.get("http://localhost:3001/status", {
         params: { uid: uid },
       });

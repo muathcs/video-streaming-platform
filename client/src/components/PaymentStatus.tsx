@@ -20,10 +20,6 @@ const PaymentStatus = () => {
     error,
   }: any = useGlobalAxios("post", "request");
 
-  console.log("formRequest: ", request);
-
-  console.log("request: ", request);
-
   useEffect(() => {
     if (!stripe) {
       return;
@@ -34,8 +30,6 @@ const PaymentStatus = () => {
     const clientSecret: any = new URLSearchParams(window.location.search).get(
       "payment_intent_client_secret"
     );
-
-    console.log("w'ere here");
 
     // Retrieve the PaymentIntent
     stripe.retrievePaymentIntent(clientSecret).then(({ paymentIntent }) => {
@@ -48,7 +42,6 @@ const PaymentStatus = () => {
       // [0]: https://stripe.com/docs/payments/payment-methods#payment-notification
       switch (paymentIntent?.status) {
         case "succeeded":
-          console.log("success");
           sendRequest("request", request);
           setMessage("Success! Payment received.");
           break;

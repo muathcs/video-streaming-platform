@@ -68,8 +68,6 @@ function FulfillVideo({ reRecord, setCelebReply }: FulfillRequestProps) {
   const startRecording = async () => {
     setRecordingStatus("recording");
 
-    console.log("here");
-
     const media = new MediaRecorder(stream, { mimeType });
 
     mediaRecorder.current = media;
@@ -79,8 +77,6 @@ function FulfillVideo({ reRecord, setCelebReply }: FulfillRequestProps) {
     let localVideoChunks: any = [];
 
     mediaRecorder.current.ondataavailable = (event: any) => {
-      console.log("undefined?: ", typeof event.data);
-      console.log("zero?: ", event.data.size);
       if (typeof event.data === "undefined") return;
       if (event.data.size === 0) return;
 
@@ -119,7 +115,6 @@ function FulfillVideo({ reRecord, setCelebReply }: FulfillRequestProps) {
   };
 
   useEffect(() => {
-    console.log("setting permission");
     getCameraPermission();
   }, [reRecord]);
 

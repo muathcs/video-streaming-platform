@@ -28,8 +28,6 @@ function RequestForm({ celebUid, fanUid, price }: RequestProps) {
     ""
   );
 
-  console.log("value: ", localStorageRequest);
-
   const {
     register,
     handleSubmit,
@@ -64,8 +62,6 @@ function RequestForm({ celebUid, fanUid, price }: RequestProps) {
     // }
     const requestInfo = getValues();
     await setLocalStorageRequest(getValues());
-
-    console.log("request,infofofo ", requestInfo);
 
     setRequest(requestInfo);
     navigate("/payment", { state: requestInfo });

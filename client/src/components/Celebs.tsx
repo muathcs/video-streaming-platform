@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import CelebCard from "./CelebCard";
 import { CiGlass } from "react-icons/ci";
 import axios from "axios";
@@ -7,12 +7,18 @@ import { useGlobalDataFetch } from "../hooks/useGlobalDataFetch";
 import { CelebType } from "../TsTypes/types";
 import { useGlobalAxios } from "../hooks/useGlobalAxios";
 import background from "../assets/background.jpg";
+import { RequestContext } from "../context/RequestContext";
+import { loadBundle } from "firebase/firestore";
+import { error } from "console";
 function Celebs() {
   const { data, loading, error } = useGlobalAxios(
     "get",
     "http://localhost:3001/celebs"
   );
 
+  const { requests } = useContext(RequestContext);
+
+  console.log("here", requests);
   return (
     <>
       <div>

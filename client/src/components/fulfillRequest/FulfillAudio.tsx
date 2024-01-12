@@ -80,8 +80,6 @@ function FulfillAudio({ reRecord, setCelebReply }: FulfillRequestProps) {
       // Use the result from the hook, which is updated asynchronously
       const s3url = await uploadToS3(params);
 
-      console.log("s3url: ", s3url);
-
       setCelebReply(s3url);
 
       setAudio(audioUrl);

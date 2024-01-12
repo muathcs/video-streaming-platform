@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Fragment } from "react";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
 import { CiBurger, CiMenuBurger } from "react-icons/ci";
@@ -9,6 +9,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import s3 from "../utilities/S3";
 import { Image } from "aws-sdk/clients/iotanalytics";
 import { useAuth } from "../context/AuthContext";
+import { RequestContext } from "../context/RequestContext";
 const navigation = [
   { name: "Catogories", href: "#", current: true },
   { name: "Home", href: "#", current: true },
@@ -59,6 +60,8 @@ function NavBar() {
       console.log(error);
     }
   }
+
+  const { requests } = useContext(RequestContext);
 
   return (
     <>
@@ -112,7 +115,6 @@ function NavBar() {
                             key={item.name}
                             to={item.href}
                             onClick={(e) => {
-                              console.log(navigation[index]);
                               const updatedNav = navigation.map((item, i) => ({
                                 ...item,
                                 current: i == index, //when a spec link is clicked, current becomes true
@@ -149,9 +151,14 @@ function NavBar() {
                   >
                     <span className="absolute -inset-1.5" />
                     <span className="sr-only">View notifications</span>
+
+                    {requests && celeb && (
+                      <span className="bg-red-600 font-bold text-lg text-center flex justify-center items-center absolute h-7 w-7 bottom-7 left-6 rounded-[50%] text-white">
+                        {requests?.length}
+                      </span>
+                    )}
                     <GiShoppingCart className="h-10 w-10" aria-hidden="true" />
                   </button>
-
                   {/* Profile dropdown */}
                   <Menu as="div" className="relative ml-3 ">
                     <div>

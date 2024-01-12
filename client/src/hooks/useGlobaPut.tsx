@@ -11,7 +11,7 @@ export function useGlobalPut() {
         params
       );
 
-      console.log("REs: ", response.data);
+      console.log("Response/dataToPost: ", response.data);
     } catch (error) {
       console.error(error);
     }

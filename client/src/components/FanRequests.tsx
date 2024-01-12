@@ -34,8 +34,6 @@ function FanRequests() {
     currentUser.uid
   );
 
-  console.log("data here: ", data);
-
   return (
     <>
       {loading ? (
