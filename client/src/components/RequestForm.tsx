@@ -21,8 +21,6 @@ function RequestForm({ celebUid, fanUid, price }: RequestProps) {
   //   error,
   // } = useGlobalAxios("post", "yourDataEndpoint");
 
-  const { request, setRequest } = useContext(RequestContext);
-
   const [localStorageRequest, setLocalStorageRequest] = useLocalStorage(
     "request",
     ""
@@ -55,22 +53,12 @@ function RequestForm({ celebUid, fanUid, price }: RequestProps) {
       price,
     });
 
-    // try {
-    //   sendUserRequestForm("request", getValues());
-    // } catch (error) {
-    //   console.error(error);
-    // }
-    const requestInfo = getValues();
+    const requestInfo = getValues(); // values from form
     await setLocalStorageRequest(getValues());
 
-    setRequest(requestInfo);
     navigate("/payment", { state: requestInfo });
 
     reset();
-  }
-
-  async function testfuck() {
-    setLocalStorageRequest({ name: "xxx", age: 18 });
   }
 
   return (

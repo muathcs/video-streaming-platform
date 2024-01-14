@@ -62,9 +62,9 @@ function FanRequestContainer({
   return (
     <div className=" cursor-pointer w-full flex justify-center items-center mt-10   ">
       <div className="relative flex p-5 flex-col items-center   md:flex-row    md:w-1/2 rounded-lg  shadow-sm shadow-red-500 border-4  border-gray-700 bg-gray-800 hover:bg-gray-700">
-        <div className=" w-1/3 h-[250px]  ">
+        <div className=" w-1/3 h-[350px]  ">
           <img
-            className="rounded-lg border w-full h-full  object-fill border-gray-600 "
+            className="rounded-lg border w-full h-full object-cover relative   border-gray-600 "
             src={currentUser && celebPhoto}
             alt=""
           />

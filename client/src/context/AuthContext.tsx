@@ -30,7 +30,7 @@ export function AuthProvider({ children }: { children: any }) {
 
   const [celeb, setCeleb] = useState();
 
-  const [requests, setRequests] = useState();
+  // const [requests, setRequests] = useState();
 
   async function signup(
     email: any,
@@ -104,9 +104,19 @@ export function AuthProvider({ children }: { children: any }) {
               params: { uid: user.uid },
             });
 
-            const req = await axios.get("http://localhost:3001/dashboard", {
-              params: { data: user.uid },
-            });
+            let req;
+
+            if (response.data) {
+              req = await axios.get("http://localhost:3001/dashboard", {
+                params: { data: user.uid },
+              });
+
+              console.log("inside: ", req.data);
+            } else {
+              req = await axios.get("http://localhost:3001/fanrequests", {
+                params: { data: user.uid },
+              });
+            }
 
             setRequests(req.data);
             setCeleb(response.data);
@@ -138,12 +148,16 @@ export function AuthProvider({ children }: { children: any }) {
   };
 
   // this is for the Request Context
-  const [request, setRequest] = useState();
+  const [requests, setRequests] = useState();
 
-  const name = "muath";
+  const requestValues: any = {
+    requests,
+    setRequests,
+    name: "muath",
+  };
   return (
     <>
-      <RequestContext.Provider value={{ request, setRequest, requests }}>
+      <RequestContext.Provider value={requestValues}>
         <AuthContext.Provider value={value}>
           {!loading && children}
         </AuthContext.Provider>

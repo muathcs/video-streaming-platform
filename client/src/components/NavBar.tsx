@@ -9,7 +9,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import s3 from "../utilities/S3";
 import { Image } from "aws-sdk/clients/iotanalytics";
 import { useAuth } from "../context/AuthContext";
-import { RequestContext } from "../context/RequestContext";
+import { RequestContext, useRequests } from "../context/RequestContext";
 const navigation = [
   { name: "Catogories", href: "#", current: true },
   { name: "Home", href: "#", current: true },
@@ -61,7 +61,9 @@ function NavBar() {
     }
   }
 
-  const { requests } = useContext(RequestContext);
+  const { requests } = useRequests();
+
+  console.log("req: ", requests);
 
   return (
     <>
@@ -152,7 +154,7 @@ function NavBar() {
                     <span className="absolute -inset-1.5" />
                     <span className="sr-only">View notifications</span>
 
-                    {requests && celeb && (
+                    {requests && (
                       <span className="bg-red-600 font-bold text-lg text-center flex justify-center items-center absolute h-7 w-7 bottom-7 left-6 rounded-[50%] text-white">
                         {requests?.length}
                       </span>

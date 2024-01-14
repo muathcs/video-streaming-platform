@@ -4,8 +4,11 @@ import { loadStripe } from "@stripe/stripe-js";
 import { RequestContext } from "../context/RequestContext";
 import { useLocalStorage } from "../hooks/useLocalStorage";
 import { useGlobalAxios } from "../hooks/useGlobalAxios";
+import { useNavigate } from "react-router-dom";
+import Success from "./Success";
 
 const PaymentStatus = () => {
+  const navigate = useNavigate();
   const stripe = useStripe();
   const [message, setMessage] = useState<string | null>(null);
   const stripePromise = loadStripe(
@@ -18,18 +21,24 @@ const PaymentStatus = () => {
     data: sendRequest,
     loading,
     error,
-  }: any = useGlobalAxios("post", "request");
+  }: any = useGlobalAxios("post", "request"); //
 
   useEffect(() => {
     if (!stripe) {
       return;
     }
 
+    console.log("req: ", window.location.search);
+
     // Retrieve the "payment_intent_client_secret" query parameter appended to
     // your return_url by Stripe.js
     const clientSecret: any = new URLSearchParams(window.location.search).get(
       "payment_intent_client_secret"
     );
+
+    if (!clientSecret) {
+      return;
+    }
 
     // Retrieve the PaymentIntent
     stripe.retrievePaymentIntent(clientSecret).then(({ paymentIntent }) => {
@@ -40,10 +49,13 @@ const PaymentStatus = () => {
       // confirmation, while others will first enter a `processing` state.
       //
       // [0]: https://stripe.com/docs/payments/payment-methods#payment-notification
+
       switch (paymentIntent?.status) {
         case "succeeded":
           sendRequest("request", request);
-          setMessage("Success! Payment received.");
+          console.log("here");
+          navigate("/success");
+          setMessage("success");
           break;
 
         case "processing":
@@ -65,7 +77,7 @@ const PaymentStatus = () => {
     });
   }, [stripe]);
 
-  return <>{message}</>;
+  return <>{message == "success" ? <Success /> : null}</>;
 };
 
 export default PaymentStatus;

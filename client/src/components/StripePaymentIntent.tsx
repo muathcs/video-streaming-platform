@@ -11,6 +11,8 @@ const stripePromise = loadStripe(
 function StripePaymentIntent() {
   const [clientSecret, setClientSecret] = useState("");
 
+  console.log("here");
+
   useEffect(() => {
     // Create PaymentIntent as soon as the page loads
 
@@ -28,6 +30,8 @@ function StripePaymentIntent() {
 
     sendRequest();
   }, []);
+
+  console.log("cls: ", clientSecret);
 
   const appearance = {
     theme: "night",
