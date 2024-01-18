@@ -83,11 +83,38 @@ app.get("/config", async (req, res) => {
 });
 
 app.get("/celebs", async (req, res) => {
+  //query celeb table by category
+  const { category } = req.params;
+
+  console.log("paramS: ", category);
   try {
     const result = await pool.query("SELECT * FROM celeb");
     // client.release(); // Release the connection back to the pool
 
     const celebs = result.rows;
+
+    console.log("celebs: ", celebs);
+
+    res.send(celebs);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.get("/celebs/:category", async (req, res) => {
+  //query celeb table by category
+  const { category } = req.params;
+
+  console.log("paramS: ", category);
+  try {
+    const result = await pool.query("SELECT * FROM celeb where category = $1", [
+      category,
+    ]);
+    // client.release(); // Release the connection back to the pool
+
+    const celebs = result.rows;
+
+    console.log("celebs: ", celebs);
 
     res.send(celebs);
   } catch (error) {

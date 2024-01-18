@@ -1,23 +1,41 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useGlobalAxios } from "../hooks/useGlobalAxios";
 import CelebCard from "./CelebCard";
+import axios from "../api/axios";
+import { CelebType } from "../TsTypes/types";
 
 function Category() {
   const { category } = useParams();
-  const { data, loading, error } = useGlobalAxios(
-    "get",
-    "http://localhost:3001/celebs"
-  );
-  console.log("id: ", category);
+
+  const [celebs, setCelebs] = useState<CelebType[]>([]);
+
+  const [error, setError] = useState();
+  const [loading, setLoading] = useState<boolean>(true);
 
   // get all the celebs that match the param
-  useEffect(() => {}, []);
+  useEffect(() => {
+    setLoading(true);
+    const fetchCelebs = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:3001/celebs/${category}`
+        );
+
+        setCelebs(response.data);
+        setLoading(false);
+      } catch (error) {
+        console.error("error: ", error);
+      }
+    };
+
+    fetchCelebs();
+  }, []);
   return (
     <div className="flex justify-center relative top-10 h-full  ">
       <div className="flex  relative top-10 h-full w-4/5   ">
         <div className=" w-[80%] relative">
-          <h1 className="text-left">Actors</h1>
+          <h1 className="text-left">{category}</h1>
           <div className=" h-full   ">
             {/* top section */}
             <div className=" h-1/6 flex justify-between ">
@@ -47,10 +65,10 @@ function Category() {
               {/* celebs */}
               {loading ? (
                 <h1>Loading</h1>
-              ) : error ? (
+              ) : !celebs ? (
                 <h1>Error</h1>
               ) : (
-                [...data, ...data, ...data, ...data, ...data, ...data]
+                [...celebs]
                   .reverse()
                   .map((item, index) => (
                     <CelebCard
