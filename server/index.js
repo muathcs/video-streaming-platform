@@ -82,6 +82,12 @@ app.get("/config", async (req, res) => {
   });
 });
 
+app.get("/testing", async (req, res) => {
+  console.log("working");
+
+  res.send("worked well");
+});
+
 app.get("/celebs", async (req, res) => {
   //query celeb table by category
   const { category } = req.params;
