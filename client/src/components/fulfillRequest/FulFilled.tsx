@@ -18,17 +18,8 @@ interface FanRequestContainerProp {
   setViewFulfilled: React.Dispatch<React.SetStateAction<string | null>>;
 }
 
-function FulFilled({
-  request,
-  celeb,
-  setViewFulfilled,
-}: FanRequestContainerProp) {
+function FulFilled({ request, celeb }: FanRequestContainerProp) {
   function downloadVideo() {
-    const data = request.celebmessage; // this logs a link to my S3, and I can view the vide.
-    const blob = new Blob([data], { type: "video/webm" });
-
-    const url = window.URL.createObjectURL(blob);
-    // setMsg(data);
     const link = document.createElement("a");
     link.href = request.celebmessage;
     link.target = "_blank";

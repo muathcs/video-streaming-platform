@@ -1,6 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
 import axios from "../api/axios";
-import { CelebType } from "../TsTypes/types";
 
 export function useGlobalPut() {
   const sendData = async (dataToPost: string, params?: unknown) => {

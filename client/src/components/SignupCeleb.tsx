@@ -1,7 +1,5 @@
-import React, { useRef, useState } from "react";
-import { useDispatch } from "react-redux";
-import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
+import { useRef, useState } from "react";
+import { Link } from "react-router-dom";
 
 function SignupCeleb({
   handleSubmit,
@@ -17,10 +15,7 @@ function SignupCeleb({
   const emailRef = useRef<any>();
   const passwordRef = useRef<any>();
   const passwordConfirmRef = useRef<any>();
-  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const [successfull, setSuccessfull] = useState<string>("");
-
   const [mostPopularSocialMedia, setMostPopularSocialMedia] =
     useState<string>();
 
@@ -29,6 +24,7 @@ function SignupCeleb({
   const [celeb, setCeleb] = useState({});
 
   async function createACeleb(e: any) {
+    setLoading(true);
     const { name, value, innerText } = e.target;
 
     setCeleb({
@@ -36,6 +32,8 @@ function SignupCeleb({
       [name !== undefined ? name : "remote"]:
         value !== undefined ? value.toLowerCase() : innerText,
     });
+
+    setLoading(false);
   }
 
   return (
@@ -102,7 +100,7 @@ function SignupCeleb({
         >
           <button
             type="button"
-            onClick={(e) => setMostPopularSocialMedia("tiktok")}
+            onClick={() => setMostPopularSocialMedia("tiktok")}
             className="w-28 border-2 border-white"
             style={{
               background: mostPopularSocialMedia == "tiktok" ? "grey" : "",
@@ -113,7 +111,7 @@ function SignupCeleb({
 
           <button
             type="button"
-            onClick={(e) => setMostPopularSocialMedia("twitter")}
+            onClick={() => setMostPopularSocialMedia("twitter")}
             className="w-28 border-2 border-white "
             style={{
               background: mostPopularSocialMedia == "twitter" ? "grey" : "",
@@ -123,7 +121,7 @@ function SignupCeleb({
           </button>
           <button
             type="button"
-            onClick={(e) => setMostPopularSocialMedia("facebook")}
+            onClick={() => setMostPopularSocialMedia("facebook")}
             className="w-28 border-2 border-white"
             style={{
               background: mostPopularSocialMedia == "facebook" ? "grey" : "",
@@ -133,7 +131,7 @@ function SignupCeleb({
           </button>
           <button
             type="button"
-            onClick={(e) => setMostPopularSocialMedia("snapchat")}
+            onClick={() => setMostPopularSocialMedia("snapchat")}
             className="w-28 border-2 border-white"
             style={{
               background: mostPopularSocialMedia == "snapchat" ? "grey" : "",
@@ -143,7 +141,7 @@ function SignupCeleb({
           </button>
           <button
             type="button"
-            onClick={(e) => setMostPopularSocialMedia("instagram")}
+            onClick={() => setMostPopularSocialMedia("instagram")}
             className="w-28 border-2 border-white"
             style={{
               background: mostPopularSocialMedia == "instagram" ? "grey" : "",

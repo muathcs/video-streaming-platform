@@ -1,7 +1,5 @@
-import React, { useRef, useState } from "react";
-import { useDispatch } from "react-redux";
-import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
+import { useRef, useState } from "react";
+import { Link } from "react-router-dom";
 
 function SignupUser({
   handleSubmit,
@@ -11,25 +9,18 @@ function SignupUser({
   handleFileChange: any;
 }) {
   const [rememberMe, setRememberMe] = useState<boolean>();
-  const [email, setEmail] = useState<string>("");
   const [password, setPassWord] = useState<string>("");
-  const [username, setUserName] = useState<string>("");
   const userNameRef = useRef<any>();
-  const [imgKey, setImgKey] = useState<number>();
-  // Initialization for ES Users
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
 
   // start
   const emailRef = useRef<any>();
   const passwordRef = useRef<any>();
   const passwordConfirmRef = useRef<any>();
-  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const [successfull, setSuccessfull] = useState<string>("");
   const [user, setUser] = useState({});
 
   async function createAUser(e: any) {
+    setLoading(true);
     const { name, value, innerText } = e.target;
 
     setUser({
@@ -37,6 +28,7 @@ function SignupUser({
       [name !== undefined ? name : "remote"]:
         value !== undefined ? value.toLowerCase() : innerText,
     });
+    setLoading(false);
   }
 
   return (

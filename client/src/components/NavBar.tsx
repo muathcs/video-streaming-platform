@@ -1,23 +1,12 @@
-import React, { useContext, useEffect, useState } from "react";
+import { useState } from "react";
 import { Fragment } from "react";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
-import { CiBurger, CiMenuBurger } from "react-icons/ci";
-import { FaBell, FaTimes } from "react-icons/fa";
+import { CiMenuBurger } from "react-icons/ci";
+import { FaTimes } from "react-icons/fa";
 import { GiShoppingCart } from "react-icons/gi";
-import { AiOutlineClose } from "react-icons/ai";
-import { Link, useLocation, useNavigate } from "react-router-dom";
-import s3 from "../utilities/S3";
-import { Image } from "aws-sdk/clients/iotanalytics";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import { RequestContext, useRequests } from "../context/RequestContext";
-const navigation = [
-  { name: "Catogories", href: "#", current: true },
-  { name: "Home", href: "#", current: true },
-  { name: "How does it work", href: "#", current: false },
-  { name: "Celebs", href: "#", current: false },
-  { name: "About", href: "#", current: false },
-  { name: "Dashboard", href: "/dashboard", current: false },
-];
+import { useRequests } from "../context/RequestContext";
 
 function classNames(...classes: any) {
   return classes.filter(Boolean).join(" ");
@@ -26,12 +15,6 @@ function classNames(...classes: any) {
 // retrieve profile image.
 
 // Assuming userID is a variable containing the user ID you want to retrieve the image for
-const userID = localStorage.getItem("userid");
-
-const params = {
-  Bucket: "cy-vide-stream-imgfiles", // Replace with your S3 bucket name
-  Key: `profile/user(${userID})`, // Adjust the key based on your folder structure and user ID
-};
 
 function NavBar() {
   const { logout, currentUser, celeb }: any = useAuth();
@@ -96,7 +79,7 @@ function NavBar() {
                       <h1 className="text-[50px]  sm:block hidden text-white relative bottom-2">
                         <Link
                           className="text-white "
-                          onClick={(e) => {
+                          onClick={() => {
                             const updatedNav = navigation.map((item) => ({
                               ...item,
                               current: false,
@@ -116,7 +99,7 @@ function NavBar() {
                           <Link
                             key={item.name}
                             to={item.href}
-                            onClick={(e) => {
+                            onClick={() => {
                               const updatedNav = navigation.map((item, i) => ({
                                 ...item,
                                 current: i == index, //when a spec link is clicked, current becomes true

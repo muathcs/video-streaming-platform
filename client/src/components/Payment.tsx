@@ -1,10 +1,7 @@
-import React, { useState } from "react";
-import { useFormik } from "formik";
+import { useState } from "react";
 import StripePaymentIntent from "./StripePaymentIntent";
 import { useLocation } from "react-router-dom";
 function Payment() {
-  const [delivery, setDelivery] = useState();
-
   const [paymentChoice, setPaymentChoice] = useState<string>("");
 
   // instead of making this a boolean, just use number, and when the 24 hour delivery is false, set it to 0(null),
@@ -37,7 +34,7 @@ function Payment() {
                   id="option1"
                   type="radio"
                   name="delivery"
-                  onClick={(e) => setTwentyFourHourDelivery(0)}
+                  onClick={() => setTwentyFourHourDelivery(0)}
                   defaultChecked
                 />
 
@@ -56,7 +53,7 @@ function Payment() {
                   id="option2"
                   type="radio"
                   name="delivery"
-                  onClick={(e) => setTwentyFourHourDelivery(state.price * 0.5)}
+                  onClick={() => setTwentyFourHourDelivery(state.price * 0.5)}
                 />
 
                 <label htmlFor="option2" className={divStyle}>
@@ -86,7 +83,7 @@ function Payment() {
                   id="option3"
                   type="radio"
                   name="remote"
-                  onClick={(e) => setPaymentChoice("card")}
+                  onClick={() => setPaymentChoice("card")}
                   // onClick={(e) => setToSomeOneElse(true)}
 
                   //   onClick={(e) =>
@@ -105,7 +102,7 @@ function Payment() {
                   id="option4"
                   type="radio"
                   name="remote"
-                  onClick={(e) => setPaymentChoice("PayPal")}
+                  onClick={() => setPaymentChoice("PayPal")}
                 />
 
                 <label htmlFor="option4" className={divStyle}>

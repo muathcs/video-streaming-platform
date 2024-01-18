@@ -1,7 +1,5 @@
-import React, { useState, useEffect, useContext } from "react";
-import { Elements, useStripe } from "@stripe/react-stripe-js";
-import { loadStripe } from "@stripe/stripe-js";
-import { RequestContext } from "../context/RequestContext";
+import { useState, useEffect } from "react";
+import { useStripe } from "@stripe/react-stripe-js";
 import { useLocalStorage } from "../hooks/useLocalStorage";
 import { useGlobalAxios } from "../hooks/useGlobalAxios";
 import { useNavigate } from "react-router-dom";
@@ -11,17 +9,10 @@ const PaymentStatus = () => {
   const navigate = useNavigate();
   const stripe = useStripe();
   const [message, setMessage] = useState<string | null>(null);
-  const stripePromise = loadStripe(
-    "pk_test_51LJDOjGFwRQBDdF4mK0dnR99AbxVar1HyeMsbYUN4HDWWC44f29yhYiOCArdEv3T7yQ5JNZF1QbbmzUWXqjywMPQ00RtVGGAFq"
-  );
 
   const [request] = useLocalStorage("request");
 
-  const {
-    data: sendRequest,
-    loading,
-    error,
-  }: any = useGlobalAxios("post", "request"); //
+  const { data: sendRequest }: any = useGlobalAxios("post", "request"); //
 
   useEffect(() => {
     if (!stripe) {

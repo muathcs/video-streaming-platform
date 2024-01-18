@@ -1,10 +1,6 @@
-import React, { useEffect, useState } from "react";
+import { useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import FanRequestContainer from "./FanRequestContainer";
-import axios from "../api/axios";
-import { useSearchParams } from "react-router-dom";
-import { v4 as uuidv4 } from "uuid";
-import { useGlobalDataFetch } from "../hooks/useGlobalDataFetch";
 import { useGlobalAxios } from "../hooks/useGlobalAxios";
 import FulFilled from "./fulfillRequest/FulFilled";
 
@@ -51,6 +47,7 @@ function FanRequests() {
                       request={req.request}
                       celeb={req.celeb}
                       setViewFulfilled={setViewFulfilled}
+                      key={index}
                     />
                   ) : (
                     viewFulfilled === req.request.requestid && (

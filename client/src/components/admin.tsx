@@ -1,8 +1,8 @@
-import React from "react";
 import Users from "./Users";
 import { Link } from "react-router-dom";
 
 function admin() {
+  console;
   return (
     <section>
       <h1>Admin Page</h1>

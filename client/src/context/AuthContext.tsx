@@ -1,12 +1,8 @@
-import React, { useContext, useEffect, useMemo, useState } from "react";
-import firebase from "firebase/app";
+import React, { useContext, useEffect, useState } from "react";
 import { auth } from "../auth/firebase";
 import {
-  browserSessionPersistence,
   createUserWithEmailAndPassword,
-  inMemoryPersistence,
   sendPasswordResetEmail,
-  setPersistence,
   signInWithCustomToken,
   signInWithEmailAndPassword,
   updateProfile,
@@ -14,7 +10,6 @@ import {
 
 import axios from "../api/axios";
 import { RequestContext } from "./RequestContext";
-import { useGlobalAxios } from "../hooks/useGlobalAxios";
 import { User as FirebaseUser } from "firebase/auth";
 
 const AuthContext = React.createContext("");
@@ -46,7 +41,6 @@ export function AuthProvider({ children }: { children: any }) {
       );
 
       // Obtain the user's UID
-      const uid: string = userCredential.user.uid;
       const user: any = userCredential.user;
 
       await updateProfile(user, {
@@ -91,8 +85,6 @@ export function AuthProvider({ children }: { children: any }) {
   }
 
   useEffect(() => {
-    const userStatus = async () => {};
-
     const unsubscribe = auth.onAuthStateChanged(
       async (
         user: any //this works

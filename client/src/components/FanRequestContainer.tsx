@@ -1,9 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { useAuth } from "../context/AuthContext";
-import { doc } from "firebase/firestore";
 import completePic from "../assets/complete.png";
 import { MdOutlinePendingActions } from "react-icons/md";
-import FulFilled from "./fulfillRequest/FulFilled";
 
 interface FanRequestContainerProp {
   request: {
@@ -30,34 +28,10 @@ function FanRequestContainer({
   celeb,
   setViewFulfilled,
 }: FanRequestContainerProp) {
-  const {
-    message,
-    reqtype,
-    reqaction,
-    timestamp1,
-    reqstatus,
-    celebmessage,
-    requestid,
-  } = request;
+  const { reqstatus, requestid } = request;
   const { displayname: celebName, imgurl: celebPhoto } = celeb;
 
   const { currentUser }: any = useAuth();
-
-  const [msg, setMsg] = useState("");
-
-  function downloadVideo() {
-    const data = celebmessage; // this logs a link to my S3, and I can view the vide.
-    const blob = new Blob([data], { type: "video/webm" });
-
-    const url = window.URL.createObjectURL(blob);
-    setMsg(data);
-    const link = document.createElement("a");
-    link.href = celebmessage;
-    link.target = "_blank";
-    document.body.appendChild(link);
-    link.setAttribute("download", `tesxtc`); //set file name
-    link.click();
-  }
 
   return (
     <div className=" cursor-pointer w-full flex justify-center items-center mt-10   ">
@@ -88,7 +62,7 @@ function FanRequestContainer({
                     className=" absolute bottom-32 right-5"
                   />
                   <button
-                    onClick={(e) => setViewFulfilled(requestid)}
+                    onClick={() => setViewFulfilled(requestid)}
                     className=" absolute bottom-5 right-2 px-10 py-3 bg-purple-500 rounded-lg hover:bg-purple-600"
                   >
                     View

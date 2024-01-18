@@ -1,8 +1,4 @@
-import React from "react";
-import bitmoji from "../assets/bitmoji.png";
-import celeb from "../assets/celeb.jpg";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
 
 type CelebCardProps = {
   name: any;
@@ -24,7 +20,6 @@ function CelebCard({
   uid,
 }: CelebCardProps) {
   const navigate = useNavigate();
-  const { currentUser }: any = useAuth();
 
   const handleCardClick = () => {
     // Pass information about the clicked celeb as state

@@ -1,4 +1,4 @@
-import React, { useEffect, useReducer, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useS3Upload } from "../../hooks/useS3Upload";
 const mimeType = 'video/webm; codecs="opus,vp8"';
 
@@ -16,7 +16,6 @@ function FulfillVideo({ reRecord, setCelebReply }: FulfillRequestProps) {
 
   const liveVideoFeed = useRef<any>(null);
 
-  const recordedVideoRef = useRef<any>(null);
   const [recordingStatus, setRecordingStatus] = useState("inactive");
 
   const [stream, setStream] = useState<any>(null);
@@ -125,7 +124,7 @@ function FulfillVideo({ reRecord, setCelebReply }: FulfillRequestProps) {
           {permission && recordingStatus === "inactive" ? (
             <button
               className="px-12 py-4  bg-red-800 rounded-md hover:bg-red-900"
-              onClick={(e) => {
+              onClick={() => {
                 startRecording();
               }}
               type="button"
@@ -136,7 +135,7 @@ function FulfillVideo({ reRecord, setCelebReply }: FulfillRequestProps) {
           {recordingStatus === "recording" ? (
             <button
               className="px-12 py-4  bg-red-800 rounded-md hover:bg-red-900"
-              onClick={(e) => {
+              onClick={() => {
                 stopRecording();
               }}
               type="button"

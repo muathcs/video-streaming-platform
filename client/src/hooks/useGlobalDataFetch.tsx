@@ -1,10 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "../api/axios";
-import { CelebType } from "../TsTypes/types";
 
-interface Data {
-  user: string;
-}
 export function useGlobalDataFetch(dataToFetch: string, params?: unknown) {
   const [fetchedData, setFetchedData] = useState<unknown[]>([]);
 

@@ -1,17 +1,13 @@
-import React, { useEffect, useState } from "react";
-import axios from "../api/axios";
+import React from "react";
 import { useAuth } from "../context/AuthContext";
-import { Column, useTable } from "react-table";
-import fakedata from "../assets/fakeData.json";
+import { useTable } from "react-table";
 import { useNavigate } from "react-router-dom";
-import { useGlobalDataFetch } from "../hooks/useGlobalDataFetch";
-import { CelebType } from "../TsTypes/types";
 import { useGlobalAxios } from "../hooks/useGlobalAxios";
 
 function Dashboard() {
   const { currentUser }: any = useAuth();
   const navigate = useNavigate();
-  const { data, loading, error } = useGlobalAxios(
+  const { data } = useGlobalAxios(
     "get",
     "http://localhost:3001/dashboard",
     currentUser.uid
@@ -61,11 +57,10 @@ function Dashboard() {
   );
 
   // gets table function from the useTable custom hook.
-  const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
-    useTable({
-      columns,
-      data: data || [], // if data is not loaded yet, [] prevents error
-    });
+  const { getTableProps, headerGroups, rows, prepareRow } = useTable({
+    columns,
+    data: data || [], // if data is not loaded yet, [] prevents error
+  });
 
   return (
     <>
@@ -110,7 +105,7 @@ function Dashboard() {
                           ) : cell.column.id == "reply" ? (
                             <>
                               <button
-                                onClick={(e) => handleFulfillReq(row)}
+                                onClick={() => handleFulfillReq(row)}
                                 className="py-3 px-5 bg-red-500 hover:bg-red-600 cursor-pointer rounded-md text-center table-cell align-middle"
                               >
                                 Reply

@@ -1,10 +1,6 @@
-import { useState } from "react";
-import reactLogo from "./assets/react.svg";
-import viteLogo from "/vite.svg";
 import "./App.css";
 import NavBar from "./components/NavBar";
-import Celebs from "./components/Celebs";
-import { Link, Navigate, Route, Routes, useLocation } from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router-dom";
 import CelebProfile from "./components/CelebProfile";
 import Login from "./components/Login";
 import SignUp from "./components/signup";
@@ -14,8 +10,6 @@ import FanRequests from "./components/FanRequests";
 import FulfillRequest from "./components/FulfillRequest";
 import Payment from "./components/Payment";
 import PaymentStatus from "./components/PaymentStatus";
-import { Elements } from "@stripe/react-stripe-js";
-import { loadStripe } from "@stripe/stripe-js";
 import Success from "./components/Success";
 import Category from "./components/Category";
 

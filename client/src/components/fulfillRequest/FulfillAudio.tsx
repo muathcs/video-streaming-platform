@@ -1,7 +1,4 @@
-import { errorMessage } from "aws-sdk/clients/datapipeline";
-import { Error } from "aws-sdk/clients/servicecatalog";
 import React, { useEffect, useRef, useState } from "react";
-import s3 from "../../utilities/S3";
 import { useS3Upload } from "../../hooks/useS3Upload";
 interface FulfillRequestProps {
   reRecord: number;
@@ -20,7 +17,7 @@ function FulfillAudio({ reRecord, setCelebReply }: FulfillRequestProps) {
   const [audio, setAudio] = useState(null);
 
   // custom hooks
-  const { uploadToS3, s3FileUrl }: any = useS3Upload();
+  const { uploadToS3 }: any = useS3Upload();
 
   async function getMicrophonePermission() {
     if ("MediaRecorder" in window) {

@@ -1,15 +1,8 @@
-import React, { useContext, useEffect, useState } from "react";
+import { useContext } from "react";
 import CelebCard from "./CelebCard";
-import { CiGlass } from "react-icons/ci";
-import axios from "axios";
-import { useAuth } from "../context/AuthContext";
-import { useGlobalDataFetch } from "../hooks/useGlobalDataFetch";
-import { CelebType } from "../TsTypes/types";
 import { useGlobalAxios } from "../hooks/useGlobalAxios";
 import background from "../assets/background.jpg";
 import { RequestContext } from "../context/RequestContext";
-import { loadBundle } from "firebase/firestore";
-import { error } from "console";
 import { useNavigate } from "react-router-dom";
 function Celebs() {
   const { data, loading, error } = useGlobalAxios(
@@ -130,9 +123,7 @@ function Celebs() {
               {shopByCategory.map((category) => (
                 <div className="flex flex-col  items-center justify-center hover:cursor-pointer hover:text-gray-400  ">
                   <div
-                    onClick={(e) =>
-                      navigate(`/browse/${category.categoryName}`)
-                    }
+                    onClick={() => navigate(`/browse/${category.categoryName}`)}
                     className="border-2 bg-red-300 rounded-[50%] w-52 h-52 overflow-hidden relative"
                   >
                     <img

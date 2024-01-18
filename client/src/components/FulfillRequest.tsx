@@ -1,8 +1,6 @@
 import React, { useEffect, useReducer, useState } from "react";
 import axios from "../api/axios";
-import { useLocation, useParams } from "react-router-dom";
-import { eventType } from "aws-sdk/clients/health";
-import { useGlobalPut } from "../hooks/useGlobaPut";
+import { useLocation } from "react-router-dom";
 import { useGlobalAxios } from "../hooks/useGlobalAxios";
 import FulfillVideo from "./fulfillRequest/FulfillVideo";
 import FulfillAudio from "./fulfillRequest/FulfillAudio";
@@ -18,11 +16,7 @@ function FulfillRequest() {
 
   const { state } = useLocation();
 
-  const {
-    data: fulfillRequest,
-    loading,
-    error,
-  } = useGlobalAxios("put", `puts`);
+  const { data: fulfillRequest } = useGlobalAxios("put", `puts`);
 
   async function handleFulfill(e: React.MouseEvent<HTMLElement>) {
     e.preventDefault();
@@ -33,7 +27,7 @@ function FulfillRequest() {
     });
 
     try {
-      const res = await axios.put(`/fulfill/${state.requestid}`, {
+      await axios.put(`/fulfill/${state.requestid}`, {
         state: state,
         celebReply: celebReply,
       });
@@ -81,7 +75,7 @@ function FulfillRequest() {
           {state.reqtype === "video" ? (
             <button
               className="w-1/4 py-4 m-2 bg-red-800 rounded-md hover:bg-red-900"
-              onClick={(e) => {
+              onClick={() => {
                 forceUpdate();
 
                 toggleRecordOption("video");
@@ -92,7 +86,7 @@ function FulfillRequest() {
           ) : state.reqtype === "audio" ? (
             <button
               className=" py-4 w-1/4 m-2 bg-red-800 rounded-md hover:bg-red-900"
-              onClick={(e) => {
+              onClick={() => {
                 toggleRecordOption("audio");
               }}
             >
@@ -101,7 +95,7 @@ function FulfillRequest() {
           ) : state.reqtype === "message" ? (
             <button
               className="py-4 w-1/3 m-2 bg-red-800 rounded-md hover:bg-red-900"
-              onClick={(e) => {
+              onClick={() => {
                 toggleRecordOption("message");
               }}
             >

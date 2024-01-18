@@ -1,12 +1,9 @@
 // import { describe, it, expect } from "vitest";
-import ErrorMessage from "../components/ErrorMessage";
 import Login from "../components/Login";
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import { render, screen, fireEvent } from "@testing-library/react";
 
 import "@testing-library/jest-dom";
-import { BrowserRouter, Route } from "react-router-dom";
-import { Provider } from "react-redux";
-import { store } from "../redux/store";
+import { BrowserRouter } from "react-router-dom";
 
 describe("Auth page", () => {
   it("should render without any errors", () => {

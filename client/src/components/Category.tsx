@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { useGlobalAxios } from "../hooks/useGlobalAxios";
 import CelebCard from "./CelebCard";
 import axios from "../api/axios";
 import { CelebType } from "../TsTypes/types";
@@ -10,7 +9,6 @@ function Category() {
 
   const [celebs, setCelebs] = useState<CelebType[]>([]);
 
-  const [error, setError] = useState();
   const [loading, setLoading] = useState<boolean>(true);
 
   // get all the celebs that match the param

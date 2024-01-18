@@ -1,11 +1,6 @@
-import React, { useContext, useState } from "react";
-import axios from "../api/axios";
-import { useGlobalPut } from "../hooks/useGlobaPut";
-import { useGlobalAxios } from "../hooks/useGlobalAxios";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { FieldValues, useForm } from "react-hook-form";
-import { error } from "console";
-import { RequestContext } from "../context/RequestContext";
+import { useForm } from "react-hook-form";
 import { useLocalStorage } from "../hooks/useLocalStorage";
 type RequestProps = {
   celebUid: string;
@@ -37,13 +32,7 @@ function RequestForm({ celebUid, fanUid, price }: RequestProps) {
   const [checkBox, setCheckBox] = useState(false);
   const [toSomeoneElse, setToSomeoneElse] = useState(false);
 
-  function handleRequest(e: any) {
-    e.preventDefault();
-
-    // sendRequest("request", formData);
-  }
-
-  async function onSubmit(data: FieldValues) {
+  async function onSubmit() {
     // await new Promise((resolve) => setTimeout(resolve, 2000));
 
     reset({
@@ -55,6 +44,7 @@ function RequestForm({ celebUid, fanUid, price }: RequestProps) {
 
     const requestInfo = getValues(); // values from form
     await setLocalStorageRequest(getValues());
+    console.log(localStorageRequest);
 
     navigate("/payment", { state: requestInfo });
 
@@ -104,7 +94,7 @@ function RequestForm({ celebUid, fanUid, price }: RequestProps) {
                   id="option1"
                   type="radio"
                   name="toSomeOneElse"
-                  onClick={(e) => setToSomeoneElse(true)}
+                  onClick={() => setToSomeoneElse(true)}
                   value="true"
                 />
 
@@ -122,7 +112,7 @@ function RequestForm({ celebUid, fanUid, price }: RequestProps) {
                   id="option2"
                   type="radio"
                   value="false"
-                  onClick={(e) => setToSomeoneElse(false)}
+                  onClick={() => setToSomeoneElse(false)}
                   {...register("toSomeOneElse")}
                 />
 
@@ -278,7 +268,7 @@ function RequestForm({ celebUid, fanUid, price }: RequestProps) {
           <div className=" relative flex items-center text-sm ">
             <div className=" absolute flex">
               <p
-                onClick={(e) => setCheckBox(!checkBox)}
+                onClick={() => setCheckBox(!checkBox)}
                 className="block w-[20px] bg-white rounded  mr-2 
                 outline-none text-red-400 cursor-pointer  select-none h-[20px]
                 "

@@ -1,32 +1,16 @@
-import React, { useRef, useState } from "react";
+import { useRef, useState } from "react";
 import axios from "../api/axios";
-import { useDispatch } from "react-redux";
-import { Link, useNavigate } from "react-router-dom";
-import AWS from "aws-sdk";
-import dotenv from "dotenv";
 import s3 from "../utilities/S3";
 import { useAuth } from "../context/AuthContext";
 import SignupCeleb from "./SignupCeleb";
 import SignupUser from "./SignupUser";
 
 function SignUp() {
-  const [rememberMe, setRememberMe] = useState<boolean>();
-  const [email, setEmail] = useState<string>("");
-  const [password, setPassWord] = useState<string>("");
-  const [username, setUserName] = useState<string>("");
-  const userNameRef = useRef<any>();
-  const [imgKey, setImgKey] = useState<number>();
-  // Initialization for ES Users
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
-
   // start
-  const emailRef = useRef<any>();
-  const passwordRef = useRef<any>();
-  const passwordConfirmRef = useRef<any>();
   const { signup, currentUser, uploadProfilePic }: any = useAuth();
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  console.log(loading);
   const [successfull, setSuccessfull] = useState<string>("");
 
   async function handleSubmit(
@@ -63,7 +47,8 @@ function SignUp() {
 
       const path = notCeleb
         ? "http://localhost:3001/createUser"
-        : "http://localhost:3001/createCeleb";
+        : // : "http://localhost:3001/createCeleb";
+          "https://video-streaming-zrdw.onrender.com/createCeleb";
 
       try {
         const response = await axios.post(path, {
@@ -155,7 +140,7 @@ function SignUp() {
 
               <div className="flex justify-center gap-5 mb-3">
                 <button
-                  onClick={(e) => {
+                  onClick={() => {
                     setSelected("celeb");
                     handleChoice("celeb");
                   }}
@@ -168,7 +153,7 @@ function SignUp() {
                   Celeb
                 </button>
                 <button
-                  onClick={(e) => {
+                  onClick={() => {
                     setSelected("fan");
                     handleChoice("fan");
                   }}

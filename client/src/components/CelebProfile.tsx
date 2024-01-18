@@ -1,19 +1,8 @@
-import React, { useState } from "react";
-import celeb from "../assets/celeb.jpg";
-import { useLocation, useSearchParams } from "react-router-dom";
+import { useState } from "react";
+import { useLocation } from "react-router-dom";
 import { bool } from "aws-sdk/clients/signer";
 import RequestForm from "./RequestForm";
-import { stat } from "fs";
 import { useAuth } from "../context/AuthContext";
-import axios from "../api/axios";
-
-type CelebCardProps = {
-  name: String;
-  category: String;
-  reviews: Number;
-  price: Number;
-  description: String;
-};
 
 function CelebProfile() {
   const [orderModal, setOrderModal] = useState<bool>(false);
@@ -61,7 +50,7 @@ function CelebProfile() {
         <div className="relative h-full e row-span-1">
           {!celeb ? (
             <button
-              onClick={(e) => setOrderModal(true)}
+              onClick={() => setOrderModal(true)}
               className=" relative  w-1/2 md:w-1/5 rounded-md hover:bg-slate-700 py-5 bg-slate-500  text-white hover:border-none outline-none focus:outline-none border-none"
             >
               Book A Shoutouta
@@ -78,7 +67,7 @@ function CelebProfile() {
               "
               >
                 <div
-                  onClick={(e) => setOrderModal(false)}
+                  onClick={() => setOrderModal(false)}
                   className="absolute  right-2 sm:right-5 top-0 sm:top-2 rounded-full  w-8 h-8 flex justify-center text-lg font-bold bg-red-500 cursor-pointer hover:bg-red-700 z-10"
                 >
                   x

@@ -1,20 +1,11 @@
 import {
-  ElementsConsumer,
   PaymentElement,
   useStripe,
   useElements,
-  CardElement,
-  AddressElement,
-  CardCvcElement,
-  CardExpiryElement,
-  CardNumberElement,
 } from "@stripe/react-stripe-js";
-import { Layout } from "@stripe/stripe-js";
 import React, { useContext, useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
 import { RequestContext } from "../context/RequestContext";
 import { useGlobalAxios } from "../hooks/useGlobalAxios";
-import { useLocalStorage } from "../hooks/useLocalStorage";
 
 export default function StripeCheckoutForm() {
   const stripe = useStripe();
@@ -26,11 +17,10 @@ export default function StripeCheckoutForm() {
   // custom to hook to get, post and put.
   // data is the function.
 
-  const {
-    data: sendUserRequestForm,
-    loading,
-    error,
-  } = useGlobalAxios("post", "yourDataEndpoint");
+  const { data: sendUserRequestForm } = useGlobalAxios(
+    "post",
+    "yourDataEndpoint"
+  );
 
   const { request } = useContext(RequestContext);
 
@@ -65,8 +55,6 @@ export default function StripeCheckoutForm() {
       }
     });
   }, [stripe]);
-
-  const state = useLocation();
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     // We don't want to let default form submission happen here,
