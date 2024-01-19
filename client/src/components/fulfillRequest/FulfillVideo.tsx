@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
-import { useS3Upload } from "../../hooks/useS3Upload";
 const mimeType = 'video/webm; codecs="opus,vp8"';
+import s3 from "../../utilities/S3";
 
 interface FulfillRequestProps {
   reRecord: number;
@@ -9,7 +9,7 @@ interface FulfillRequestProps {
 
 function FulfillVideo({ reRecord, setCelebReply }: FulfillRequestProps) {
   //custom hooks
-  const { uploadToS3, s3FileUrl } = useS3Upload();
+  // const { uploadToS3, s3FileUrl } = useS3Upload();
   const [permission, setPermission] = useState(true);
 
   const mediaRecorder = useRef<any>(null);
@@ -85,12 +85,12 @@ function FulfillVideo({ reRecord, setCelebReply }: FulfillRequestProps) {
     setVideoChunks(localVideoChunks);
   };
 
-  useEffect(() => {
-    if (s3FileUrl) {
-      setCelebReply(s3FileUrl);
-      console.log("File uploaded successfully. S3 URL:", s3FileUrl);
-    }
-  }, [s3FileUrl]);
+  // useEffect(() => {
+  //   if (s3FileUrl) {
+  //     setCelebReply(s3FileUrl);
+  //     console.log("File uploaded successfully. S3 URL:", s3FileUrl);
+  //   }
+  // }, [s3FileUrl]);
 
   const stopRecording = async () => {
     setPermission(false);
@@ -112,9 +112,13 @@ function FulfillVideo({ reRecord, setCelebReply }: FulfillRequestProps) {
       setVideoChunks([]);
 
       // Use the result from the hook, which is updated asynchronously
-      await uploadToS3(params);
+      // await uploadToS3(params);
 
-      console.log("s3url: ", s3FileUrl);
+      const upload = await s3.upload(params).promise();
+      console.log("upload url:: ", upload);
+      setCelebReply(upload.Location);
+
+      // console.log("s3url: ", s3FileUrl);
 
       setRecordedVideo(videoUrl);
     };
