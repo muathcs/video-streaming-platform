@@ -9,7 +9,7 @@ interface FulfillRequestProps {
 
 function FulfillVideo({ reRecord, setCelebReply }: FulfillRequestProps) {
   //custom hooks
-  const { uploadToS3 } = useS3Upload();
+  const { uploadToS3, s3FileUrl } = useS3Upload();
   const [permission, setPermission] = useState(true);
 
   const mediaRecorder = useRef<any>(null);
@@ -85,6 +85,13 @@ function FulfillVideo({ reRecord, setCelebReply }: FulfillRequestProps) {
     setVideoChunks(localVideoChunks);
   };
 
+  useEffect(() => {
+    if (s3FileUrl) {
+      setCelebReply(s3FileUrl);
+      console.log("File uploaded successfully. S3 URL:", s3FileUrl);
+    }
+  }, [s3FileUrl]);
+
   const stopRecording = async () => {
     setPermission(false);
     setRecordingStatus("inactive");
@@ -105,11 +112,10 @@ function FulfillVideo({ reRecord, setCelebReply }: FulfillRequestProps) {
       setVideoChunks([]);
 
       // Use the result from the hook, which is updated asynchronously
-      const s3url = await uploadToS3(params);
+      await uploadToS3(params);
 
-      console.log("s3url: ", s3url);
+      console.log("s3url: ", s3FileUrl);
 
-      setCelebReply(s3url);
       setRecordedVideo(videoUrl);
     };
   };
