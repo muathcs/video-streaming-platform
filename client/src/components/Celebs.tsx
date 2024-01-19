@@ -59,7 +59,7 @@ function Celebs() {
   console.log("here", requests);
   return (
     <>
-      <h1>hello</h1>
+      <h1>hello World</h1>
     </>
   );
 }
