@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { useS3Upload } from "../../hooks/useS3Upload";
+// import { useS3Upload } from "../../hooks/useS3Upload";
 interface FulfillRequestProps {
   reRecord: number;
   setCelebReply: React.Dispatch<React.SetStateAction<string | undefined>>;
@@ -17,9 +17,11 @@ function FulfillAudio({ reRecord, setCelebReply }: FulfillRequestProps) {
   const [audio, setAudio] = useState(null);
 
   // custom hooks
-  const { uploadToS3 }: any = useS3Upload();
+  // const { uploadToS3 }: any = useS3Upload();
 
   async function getMicrophonePermission() {
+    console.log(setCelebReply);
+    console.log(audioChunks);
     if ("MediaRecorder" in window) {
       try {
         const streamData = await navigator.mediaDevices.getUserMedia({
@@ -61,25 +63,26 @@ function FulfillAudio({ reRecord, setCelebReply }: FulfillRequestProps) {
     mediaRecorder.current.stop();
     mediaRecorder.current.onstop = async () => {
       //creates a blob file from the audiochunks data
-      const audioBlob = new Blob(audioChunks, { type: mimeType });
+      // const audioBlob = new Blob(audioChunks, { type: mimeType });
       //creates a playable URL from the blob file.
-      const audioUrl: any = URL.createObjectURL(audioBlob);
+      // const audioUrl: any = URL.createObjectURL(audioBlob);
 
-      const key = `audio/${Date.now()}.webm`;
+      // const key = `audio/${Date.now()}.webm`;
 
-      const params = {
-        Bucket: "cy-vide-stream-imgfiles",
-        Key: key,
-        Body: audioBlob,
-        ContentType: mimeType,
-      };
+      // const params = {
+      //   Bucket: "cy-vide-stream-imgfiles",
+      //   Key: key,
+      //   Body: audioBlob,
+      //   ContentType: mimeType,
+      // };
 
       // Use the result from the hook, which is updated asynchronously
-      const s3url = await uploadToS3(params);
+      // const s3url = await uploadToS3(params);
 
-      setCelebReply(s3url);
+      // setCelebReply(s3url);
 
-      setAudio(audioUrl);
+      // setAudio(audioUrl);
+      setAudio(null);
       setAudioChunks([]);
     };
   };

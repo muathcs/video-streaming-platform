@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
 import axios from "../api/axios";
-import s3 from "../utilities/S3";
+// import s3 from "../utilities/S3";
 import { useAuth } from "../context/AuthContext";
 import SignupCeleb from "./SignupCeleb";
 import SignupUser from "./SignupUser";
@@ -78,22 +78,24 @@ function SignUp() {
   };
 
   const handleUpload = async (key: number) => {
+    console.log(key);
     if (selectedFile) {
-      const params = {
-        Bucket: "cy-vide-stream-imgfiles", // Replace with your S3 bucket name
-        Key: `profile/user(${key})`, // add user ID to the image to be able to retreive it. //change first name to profile(if it's profile) + folder. e.f profile/profile+usID+extension+timestamp
-        Body: selectedFile,
-        ContentType: selectedFile.type,
-      };
+      // const params = {
+      //   Bucket: "cy-vide-stream-imgfiles", // Replace with your S3 bucket name
+      //   Key: `profile/user(${key})`, // add user ID to the image to be able to retreive it. //change first name to profile(if it's profile) + folder. e.f profile/profile+usID+extension+timestamp
+      //   Body: selectedFile,
+      //   ContentType: selectedFile.type,
+      // };
 
       try {
-        const data = await s3.upload(params).promise();
+        // const data = await s3.upload(params).promise();
         console.log("Image uploaded successfully:");
 
         // Return the key from the successful upload
 
-        console.log("image url: ", data);
-        return data.Location;
+        // console.log("image url: ", data);
+        // return data.Location;
+        return "hello";
       } catch (error) {
         console.error("Error uploading image:", error);
       }

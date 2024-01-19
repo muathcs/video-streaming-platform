@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { useS3Upload } from "../../hooks/useS3Upload";
+// import { useS3Upload } from "../../hooks/useS3Upload";
 const mimeType = 'video/webm; codecs="opus,vp8"';
 
 interface FulfillRequestProps {
@@ -9,7 +9,7 @@ interface FulfillRequestProps {
 
 function FulfillVideo({ reRecord, setCelebReply }: FulfillRequestProps) {
   //custom hooks
-  const { uploadToS3 } = useS3Upload();
+  // const { uploadToS3 } = useS3Upload();
   const [permission, setPermission] = useState(true);
 
   const mediaRecorder = useRef<any>(null);
@@ -93,22 +93,23 @@ function FulfillVideo({ reRecord, setCelebReply }: FulfillRequestProps) {
       const videoBlob = new Blob(videoChunks, { type: mimeType });
       const videoUrl = URL.createObjectURL(videoBlob);
 
-      const key = `video/${Date.now()}.webm`;
+      // const key = `video/${Date.now()}.webm`;
 
-      const params = {
-        Bucket: "cy-vide-stream-imgfiles",
-        Key: key,
-        Body: videoBlob,
-        ContentType: mimeType,
-      };
+      // const params = {
+      //   Bucket: "cy-vide-stream-imgfiles",
+      //   Key: key,
+      //   Body: videoBlob,
+      //   ContentType: mimeType,
+      // };
       setVideoChunks([]);
 
       // Use the result from the hook, which is updated asynchronously
-      const s3url = await uploadToS3(params);
+      // const s3url = await uploadToS3(params);
 
-      console.log("s3url: ", s3url);
+      // console.log("s3url: ", s3url);
 
-      setCelebReply(s3url);
+      // setCelebReply(s3url);
+      setCelebReply("he");
       setRecordedVideo(videoUrl);
     };
   };
