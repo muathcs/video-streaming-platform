@@ -38,7 +38,7 @@ function NavBar() {
       await logout();
 
       navigate("/login");
-      location.reload();
+      // location.reload();
     } catch (error) {
       console.log(error);
     }
