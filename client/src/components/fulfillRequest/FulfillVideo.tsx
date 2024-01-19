@@ -114,6 +114,7 @@ function FulfillVideo({ reRecord, setCelebReply }: FulfillRequestProps) {
 
       // Use the result from the hook, which is updated asynchronously
 
+      console.log("before upload: ", s3);
       const upload = await s3.upload(params).promise();
       console.log("upload url:: ", upload);
       setCelebReply(upload.Location);
