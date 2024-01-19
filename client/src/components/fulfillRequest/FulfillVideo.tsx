@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 const mimeType = 'video/webm; codecs="opus,vp8"';
-// import s3 from "../../utilities/S3";
+import s3 from "../../utilities/S3";
 
 interface FulfillRequestProps {
   reRecord: number;
@@ -102,22 +102,21 @@ function FulfillVideo({ reRecord, setCelebReply }: FulfillRequestProps) {
       const videoBlob = new Blob(videoChunks, { type: mimeType });
       const videoUrl = URL.createObjectURL(videoBlob);
 
-      // const key = `video/${Date.now()}.webm`;
+      const key = `video/${Date.now()}.webm`;
 
-      // const params = {
-      //   Bucket: "cy-vide-stream-imgfiles",
-      //   Key: key,
-      //   Body: videoBlob,
-      //   ContentType: mimeType,
-      // };
+      const params = {
+        Bucket: "cy-vide-stream-imgfiles",
+        Key: key,
+        Body: videoBlob,
+        ContentType: mimeType,
+      };
       setVideoChunks([]);
 
       // Use the result from the hook, which is updated asynchronously
-      // await uploadToS3(params);
 
-      // const upload = await s3.upload(params).promise();
-      // console.log("upload url:: ", upload);
-      // setCelebReply(upload.Location);
+      const upload = await s3.upload(params).promise();
+      console.log("upload url:: ", upload);
+      setCelebReply(upload.Location);
 
       // console.log("s3url: ", s3FileUrl);
 
