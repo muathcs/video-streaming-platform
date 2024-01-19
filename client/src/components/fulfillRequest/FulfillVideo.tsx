@@ -16,6 +16,7 @@ function FulfillVideo({ reRecord, setCelebReply }: FulfillRequestProps) {
 
   const liveVideoFeed = useRef<any>(null);
 
+  // const recordedVideoRef = useRef<any>(null);
   const [recordingStatus, setRecordingStatus] = useState("inactive");
 
   const [stream, setStream] = useState<any>(null);
