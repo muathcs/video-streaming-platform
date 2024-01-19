@@ -3,7 +3,7 @@ import { useContext } from "react";
 // import { useGlobalAxios } from "../hooks/useGlobalAxios";
 // import background from "../assets/background.jpg";
 import { RequestContext } from "../context/RequestContext";
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
 function Celebs() {
   // const { data, loading, error } = useGlobalAxios(
   //   "get",
