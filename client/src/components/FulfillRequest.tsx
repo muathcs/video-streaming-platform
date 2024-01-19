@@ -1,13 +1,19 @@
 import React, { useEffect, useReducer, useState } from "react";
 import axios from "../api/axios";
 import { useLocation } from "react-router-dom";
-import { useGlobalAxios } from "../hooks/useGlobalAxios";
 import FulfillVideo from "./fulfillRequest/FulfillVideo";
 import FulfillAudio from "./fulfillRequest/FulfillAudio";
 import FulfillMessage from "./fulfillRequest/FulfillMessage";
 
+// type CelebReplyType = {
+//   Bucket: string;
+//   Key: string;
+//   Body: Blob;
+//   ContentType: string;
+// };
 function FulfillRequest() {
-  const [celebReply, setCelebReply] = useState<string | undefined>();
+  // prettier-ignore
+  const [celebReply, setCelebReply] = useState<any | undefined | string>();
 
   //this reducer forces the fullfillVideo componenet to rerender when I press the record video button again.
   const [reRecord, forceUpdate] = useReducer((x) => x + 1, 0);
@@ -16,21 +22,31 @@ function FulfillRequest() {
 
   const { state } = useLocation();
 
-  const { data: fulfillRequest } = useGlobalAxios("put", `puts`);
-
   async function handleFulfill(e: React.MouseEvent<HTMLElement>) {
     e.preventDefault();
 
-    fulfillRequest(`http://localhost:3001/fulfill/${state.requestid}`, {
-      state: state,
-      celebReply: celebReply,
-    });
+    console.log("celeb reply before send: ", celebReply?.get("videoFile"));
+
+    let blob;
+
+    if (celebReply && typeof celebReply !== "string") {
+      blob = celebReply.Body; // TypeScript now knows celebReply is of type CelebReplyType
+      console.log("this: ", blob);
+      // Do something with body
+    } else {
+      // Handle the case when celebReply is a string
+    }
+
+    // sendPutRequest(`http://localhost:3001/fulfill/${state.requestid}`, {
+    //   state,
+    //   celebReply: celebReply,
+    //   blob: blob,
+    // });
+
+    celebReply.append("state", JSON.stringify(state));
 
     try {
-      await axios.put(`/fulfill/${state.requestid}`, {
-        state: state,
-        celebReply: celebReply,
-      });
+      await axios.put(`/fulfill/${state.requestid}`, celebReply);
     } catch (error) {
       console.error(error);
     }

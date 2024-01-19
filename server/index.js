@@ -2,44 +2,71 @@ import express from "express";
 import cors from "cors";
 import bodyParser from "body-parser";
 import pool from "./db.js";
-import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
+
 import dotenv from "dotenv";
 dotenv.config({ path: "../.env" });
 import stripe from "stripe";
+// import s3 from "./s3.js";
+import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
+import multer from "multer";
+
+// const s3 = new S3({
+//   credentials: {
+//     accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+//     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+//   },
+
+//   // Replace with your AWS region
+//   region: "eu-west-2",
+// });
 
 // import { dirname } from "path";
 // import path from "path";
 // import { fileURLToPath } from "url";
 
 const app = express();
+
+// middleware
 app.use(express.json());
 app.use(cors());
 app.use(bodyParser.json());
+
 const client = await pool.connect();
 const stripeInstance = stripe(process.env.STRIPE_SECRET_KEY);
 
+const storage = multer.memoryStorage();
+const upload = multer({ storage: storage });
+
 // Specify your AWS region here
-const region = "eu-west-2";
-const credentials = {
-  accessKeyId: "AKIAQ24MTJ6NCLEQSH4W",
-  secretAccessKey: "M0H2EtwKmVFdX209kqEk1GHczAoSLe5K3Rg5Qs4N",
-};
+// const region = "eu-west-2";
+// const credentials = {
+//   accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+//   secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+// };
 // const credentials = {
 //   accessKeyId: process.env.AWS_ACCESS_KEY_ID,
 //   secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
 // };
 
-const s3 = new S3Client({ region, credentials });
+// const s3 = new S3Client({ region, credentials });
 
-(async () => {
-  await s3.send(
-    new PutObjectCommand({
-      Body: "hello world",
-      Bucket: "cy-vide-stream-imgfiles",
-      Key: "my-file.txt",
-    })
-  );
-})();
+// (async () => {
+//   await s3.send(
+//     new PutObjectCommand({
+//       Body: "hello world",
+//       Bucket: "cy-vide-stream-imgfiles",
+//       Key: "my-file.txt",
+//     })
+//   );
+// })();
+
+const s3 = new S3Client({
+  credentials: {
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+  },
+  region: "eu-west-2", // Replace with your AWS region
+});
 
 app.use(express.static("public"));
 app.use(express.json());
@@ -204,18 +231,39 @@ app.get("/fanrequests", async (req, res) => {
   }
 });
 
-app.put("/fulfill/:id", async (req, res) => {
-  console.log("here I am ");
+app.put("/fulfill/:id", upload.single("videoFile"), async (req, res) => {
+  console.log("here/fii: ", req.file);
+  const state = JSON.parse(req.body.state);
+  console.log("here/fii2x: ", state);
+  // console.log("here/fulfull: ", req.body);
+
   const itemId = parseInt(req.params.id, 10); // Parse the id parameter as an integer
 
-  const { celebReply } = req.body;
+  try {
+    if (state.reqtype == "video" || reqtype == "audio") {
+      const key = `video/${Date.now()}.webm`;
 
-  console.log("celebReply: ", celebReply);
+      // console.log("celebREply: ", celebReply);
+      const params = {
+        Bucket: "cy-vide-stream-imgfiles",
+        Key: key,
+        Body: req.file.buffer,
+        ContentType: req.file.mimetype,
+      };
+
+      const command = new PutObjectCommand(params);
+      const upload = await s3.send(command);
+    }
+  } catch (error) {
+    console.log(error);
+  }
+
+  console.log("linkUp: ", upload);
 
   try {
     const response = await pool.query(
       "UPDATE requests SET reqstatus = $1, celebmessage = $2 WHERE requestid = $3 ",
-      ["fulfilled", celebReply, itemId]
+      ["fulfilled", upload, itemId]
     );
     res.status(200);
   } catch (error) {
@@ -246,6 +294,11 @@ app.post("/createUser", async (req, res) => {
 });
 
 //
+
+app.put("/test", upload.single("videoFile"), async (req, res) => {
+  // console.log("file:", req.file);
+  // console.log("test:", req.body);
+});
 
 app.post("/request", async (req, res) => {
   console.log("body: ", req.body);

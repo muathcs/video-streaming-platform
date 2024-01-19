@@ -1,10 +1,16 @@
 import React, { useEffect, useRef, useState } from "react";
 const mimeType = 'video/webm; codecs="opus,vp8"';
-import s3 from "../../utilities/S3";
+import axios from "../../api/axios";
 
+// type CelebReplyType = {
+//   Bucket: string;
+//   Key: string;
+//   Body: any;
+//   ContentType: string;
+// };
 interface FulfillRequestProps {
   reRecord: number;
-  setCelebReply: React.Dispatch<React.SetStateAction<string | undefined>>;
+  setCelebReply: React.Dispatch<React.SetStateAction<FormData | any | string>>;
 }
 
 function FulfillVideo({ reRecord, setCelebReply }: FulfillRequestProps) {
@@ -100,26 +106,24 @@ function FulfillVideo({ reRecord, setCelebReply }: FulfillRequestProps) {
 
     mediaRecorder.current.onstop = async () => {
       const videoBlob = new Blob(videoChunks, { type: mimeType });
+
       const videoUrl = URL.createObjectURL(videoBlob);
 
-      const key = `video/${Date.now()}.webm`;
+      // Create a FormData object to send the Blob as a file
+      const formData = new FormData();
 
-      const params = {
-        Bucket: "cy-vide-stream-imgfiles",
-        Key: key,
-        Body: videoBlob,
-        ContentType: mimeType,
-      };
+      formData.append("videoFile", videoBlob, "videoFileName.mp4");
+
+      console.log("here", formData.get("videoFile"));
+
+      setCelebReply(formData);
+      try {
+        await axios.put("/test", formData);
+      } catch (error) {
+        console.log("error: ", error);
+      }
+
       setVideoChunks([]);
-
-      // Use the result from the hook, which is updated asynchronously
-
-      console.log("before upload: ", s3);
-      const upload = await s3.upload(params).promise();
-      console.log("upload url:: ", upload);
-      setCelebReply(upload.Location);
-
-      // console.log("s3url: ", s3FileUrl);
 
       setRecordedVideo(videoUrl);
     };

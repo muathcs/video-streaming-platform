@@ -1,8 +1,11 @@
 import React, { useEffect, useRef, useState } from "react";
+import CelebReplyType from "../../TsTypes/CelebReplyType";
 // import { useS3Upload } from "../../hooks/useS3Upload";
 interface FulfillRequestProps {
   reRecord: number;
-  setCelebReply: React.Dispatch<React.SetStateAction<string | undefined>>;
+  setCelebReply: React.Dispatch<
+    React.SetStateAction<CelebReplyType | undefined | string>
+  >;
 }
 
 /* your mimeType, e.g., 'audio/wav' */
