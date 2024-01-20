@@ -18,11 +18,48 @@ import sharp from "sharp";
 import s3, { uploadFile } from "./s3.js";
 
 const app = express();
-app.use(
-  cors({
-    origin: "https://video-streaming-client.onrender.com",
-  })
-);
+
+const corsOptions = {
+  origin: "https://video-streaming-client.onrender.com",
+
+  methods: "GET,HEAD,PUT,OPTIONS,POST,DELETE",
+
+  allowedHeaders: [
+    "Access-Control-Allow-Headers",
+
+    "Origin",
+
+    "X-Requested-With",
+
+    "Content-Type",
+
+    "Accept",
+
+    "Authorization",
+
+    "token",
+
+    "Access-Control-Request-Method",
+
+    "Access-Control-Request-Headers",
+
+    "Access-Control-Allow-Credentials",
+  ],
+
+  credentials: true,
+
+  preflightContinue: false,
+
+  optionsSuccessStatus: 204,
+};
+
+app.use(cors(corsOptions));
+
+// app.use(
+//   cors({
+//     origin: "https://video-streaming-client.onrender.com",
+//   })
+// );
 const PORT = process.env.PORT || 3001;
 // middleware
 app.use(express.json());
