@@ -6,10 +6,17 @@ import dotenv from "dotenv";
 dotenv.config({ path: "../.env" });
 import stripe from "stripe";
 // import s3 from "./s3.js";
-import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
+import {
+  S3Client,
+  PutObjectCommand,
+  GetObjectCommand,
+} from "@aws-sdk/client-s3";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+
 import multer from "multer";
 import crypto from "crypto";
 import sharp from "sharp";
+import s3, { uploadFile } from "./s3.js";
 
 const app = express();
 
@@ -25,16 +32,9 @@ const upload = multer({ storage: storage });
 const client = await pool.connect();
 const stripeInstance = stripe(process.env.STRIPE_SECRET_KEY);
 
-const s3 = new S3Client({
-  credentials: {
-    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-  },
-  region: process.env.AWS_REGION,
-});
-
 // random image key generator for s3 storage
 const randomImageName = () => crypto.randomBytes(32).toString("hex");
+
 app.post("/create-payment-intent", async (req, res) => {
   const { items } = req.body;
 
@@ -78,7 +78,7 @@ app.get("/celebs", async (req, res) => {
 
     const celebs = result.rows;
 
-    console.log("celebs: ", celebs);
+    // console.log("celebs: ", celebs);
 
     res.send(celebs);
   } catch (error) {
@@ -99,7 +99,7 @@ app.get("/celebs/:category", async (req, res) => {
 
     const celebs = result.rows;
 
-    console.log("celebs: ", celebs);
+    // console.log("celebs: ", celebs);
 
     res.send(celebs);
   } catch (error) {
@@ -147,6 +147,21 @@ app.get("/fanrequests", async (req, res) => {
       [uid]
     );
 
+    // console.log(response.rows);
+
+    // for (const post of response.rows) {
+    //   const getObjectParams = {
+    //     Bucket: process.env.S3_BUCKET,
+    //     Key: "https://cy-vide-stream-imgfiles.s3.eu-west-2.amazonaws.com/video/1705718843372-ff3ee63d6be0490373ea383f93fedc7652c6bf1aa6f35fc010aadd2d85825c53.webm",
+    //   };
+
+    //   const command = new GetObjectCommand(getObjectParams);
+    //   const url = await getSignedUrl(s3, command, { expiresIn: 3600 });
+    //   console.log("here");
+
+    //   console.log("URL: ", url);
+    // }
+
     //array that will be sent back to the response, it's made up of objects of the individual request + celeb info(photo, name)
     let reqAndCeleb = [];
 
@@ -155,6 +170,7 @@ app.get("/fanrequests", async (req, res) => {
     // on the requests table, and that's enough to get the celeb photo/name from the code below.
 
     for (const req of response.rows) {
+      console.log("here");
       try {
         const celebNameAndPhoto = await pool.query(
           "SELECT uid, displayName, imgUrl FROM celeb WHERE uid = $1 ",
@@ -194,11 +210,12 @@ app.put("/fulfill/:id", upload.single("videoFile"), async (req, res) => {
   //   .resize({ height: 1920, width: 1080, fit: "contained" })
   //   .toBuffer();
 
+  // if this if false, it means the we're sending an message text, instead of a audio, or video.
   if (!req.body.state) {
     try {
       const { celebReply } = req.body;
 
-      console.log("celeb", celebReply);
+      // console.log("celeb", celebReply);
       const response = await pool.query(
         "UPDATE requests SET reqstatus = $1, celebmessage = $2 WHERE requestid = $3 ",
         ["fulfilled", celebReply, itemId]
@@ -213,6 +230,7 @@ app.put("/fulfill/:id", upload.single("videoFile"), async (req, res) => {
 
   try {
     if (state.reqtype == "video" || state.reqtype == "audio") {
+      const file = req.file; // we get this file, because we're sending a form data.
       const key = `video/${Date.now()}-${randomImageName()}.webm`;
 
       // console.log("celebREply: ", celebReply);
@@ -223,14 +241,17 @@ app.put("/fulfill/:id", upload.single("videoFile"), async (req, res) => {
         ContentType: req.file.mimetype,
       };
 
-      const command = new PutObjectCommand(params);
-      const upload = await s3.send(command);
+      const sender = await uploadFile(file.buffer, key, file.mimetype);
 
-      // Construct the URL of the uploaded video
+      console.log("sender: ", sender);
+      // const command = new PutObjectCommand(params);
+      // const upload = await s3.send(command);
+
+      // // Construct the URL of the uploaded video
       const videoUrl = `https://${process.env.S3_BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com/${key}`;
 
-      console.log("here", videoUrl);
-      console.log("id: ", itemId);
+      // console.log("here", videoUrl);
+      // console.log("id: ", itemId);
       const response = await pool.query(
         "UPDATE requests SET reqstatus = $1, celebmessage = $2 WHERE requestid = $3 ",
         ["fulfilled", videoUrl, itemId]
@@ -313,6 +334,8 @@ app.post("/request", async (req, res) => {
   }
 });
 
+// this path is reached, if someone signs up as a celeb
+// a different path createuser if user signs up as normal user not a celeb
 app.post("/createCeleb", async (req, res) => {
   const { uid, imgurl } = req.body;
 

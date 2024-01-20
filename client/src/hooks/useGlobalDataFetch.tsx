@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "../api/axios";
+import { apiUrl } from "../utilities/fetchPath";
 
 export function useGlobalDataFetch(dataToFetch: string, params?: unknown) {
   const [fetchedData, setFetchedData] = useState<unknown[]>([]);
@@ -7,12 +8,9 @@ export function useGlobalDataFetch(dataToFetch: string, params?: unknown) {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(
-          `http://localhost:3001/${dataToFetch}`,
-          {
-            params: { data: params },
-          }
-        );
+        const response = await axios.get(`${apiUrl}/${dataToFetch}`, {
+          params: { data: params },
+        });
 
         setFetchedData(response.data);
       } catch (error) {

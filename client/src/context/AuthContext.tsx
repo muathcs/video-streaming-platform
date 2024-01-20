@@ -11,6 +11,7 @@ import {
 import axios from "../api/axios";
 import { RequestContext } from "./RequestContext";
 import { User as FirebaseUser } from "firebase/auth";
+import { apiUrl } from "../utilities/fetchPath";
 
 const AuthContext = React.createContext("");
 
@@ -92,20 +93,20 @@ export function AuthProvider({ children }: { children: any }) {
         setCurrentUser(user);
         if (user) {
           try {
-            const response = await axios.get("http://localhost:3001/status", {
+            const response = await axios.get(`${apiUrl}/status`, {
               params: { uid: user.uid },
             });
 
             let req;
 
             if (response.data) {
-              req = await axios.get("http://localhost:3001/dashboard", {
+              req = await axios.get(`${apiUrl}/dashboard`, {
                 params: { data: user.uid },
               });
 
               console.log("inside: ", req.data);
             } else {
-              req = await axios.get("http://localhost:3001/fanrequests", {
+              req = await axios.get(`${apiUrl}/fanrequests`, {
                 params: { data: user.uid },
               });
             }

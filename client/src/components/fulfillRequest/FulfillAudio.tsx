@@ -77,11 +77,6 @@ function FulfillAudio({ reRecord, setCelebReply }: FulfillRequestProps) {
       console.log("here", formData.get("videoFile"));
 
       setCelebReply(formData);
-      try {
-        await axios.put("/test", formData);
-      } catch (error) {
-        console.log("error: ", error);
-      }
 
       setAudio(null);
       setAudioChunks([]);

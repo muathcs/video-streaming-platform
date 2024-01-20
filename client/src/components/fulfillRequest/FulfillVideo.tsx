@@ -117,11 +117,6 @@ function FulfillVideo({ reRecord, setCelebReply }: FulfillRequestProps) {
       console.log("here", formData.get("videoFile"));
 
       setCelebReply(formData);
-      try {
-        await axios.put("/test", formData);
-      } catch (error) {
-        console.log("error: ", error);
-      }
 
       setVideoChunks([]);
 
