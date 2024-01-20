@@ -93,7 +93,6 @@ export function AuthProvider({ children }: { children: any }) {
         setCurrentUser(user);
         if (user) {
           try {
-            await axios.get(`${apiUrl}`);
             const response = await axios.get(`${apiUrl}/status`, {
               params: { uid: user.uid },
             });
