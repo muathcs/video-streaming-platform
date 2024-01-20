@@ -2,6 +2,7 @@ import { useRef, useState } from "react";
 import axios from "../api/axios";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { apiUrl } from "../utilities/fetchPath";
 
 function Login() {
   const [rememberMe, setRememberMe] = useState<boolean>();
@@ -49,7 +50,7 @@ function Login() {
   async function isACeleb(uid: number) {
     try {
       ("before axios");
-      const response = await axios.get("http://localhost:3001/status", {
+      const response = await axios.get(`${apiUrl}/status`, {
         params: { uid: uid },
       });
 

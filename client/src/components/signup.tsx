@@ -4,6 +4,7 @@ import axios from "../api/axios";
 import { useAuth } from "../context/AuthContext";
 import SignupCeleb from "./SignupCeleb";
 import SignupUser from "./SignupUser";
+import { apiUrl } from "../utilities/fetchPath";
 
 function SignUp() {
   // start
@@ -46,9 +47,9 @@ function SignUp() {
       await uploadProfilePic(imgUrl, userid);
 
       const path = notCeleb
-        ? "http://localhost:3001/createUser"
+        ? `${apiUrl}/createUser`
         : // : "http://localhost:3001/createCeleb";
-          "https://video-streaming-zrdw.onrender.com/createCeleb";
+          `${apiUrl}/createCeleb`;
 
       try {
         const response = await axios.post(path, {

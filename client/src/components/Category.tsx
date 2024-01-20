@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import CelebCard from "./CelebCard";
 import axios from "../api/axios";
 import { CelebType } from "../TsTypes/types";
-
+import { apiUrl } from "../utilities/fetchPath";
 function Category() {
   const { category } = useParams();
 
@@ -16,9 +16,7 @@ function Category() {
     setLoading(true);
     const fetchCelebs = async () => {
       try {
-        const response = await axios.get(
-          `http://localhost:3001/celebs/${category}`
-        );
+        const response = await axios.get(`${apiUrl}/${category}`);
 
         setCelebs(response.data);
         setLoading(false);
