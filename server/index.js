@@ -2,27 +2,14 @@ import express from "express";
 import cors from "cors";
 import bodyParser from "body-parser";
 import pool from "./db.js";
-
 import dotenv from "dotenv";
 dotenv.config({ path: "../.env" });
 import stripe from "stripe";
 // import s3 from "./s3.js";
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 import multer from "multer";
-
-// const s3 = new S3({
-//   credentials: {
-//     accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-//     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-//   },
-
-//   // Replace with your AWS region
-//   region: "eu-west-2",
-// });
-
-// import { dirname } from "path";
-// import path from "path";
-// import { fileURLToPath } from "url";
+import crypto from "crypto";
+import sharp from "sharp";
 
 const app = express();
 
@@ -30,63 +17,30 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 app.use(bodyParser.json());
-
-const client = await pool.connect();
-const stripeInstance = stripe(process.env.STRIPE_SECRET_KEY);
-
+app.use(express.static("public"));
+// multer middleware
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
-// Specify your AWS region here
-// const region = "eu-west-2";
-// const credentials = {
-//   accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-//   secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-// };
-// const credentials = {
-//   accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-//   secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-// };
-
-// const s3 = new S3Client({ region, credentials });
-
-// (async () => {
-//   await s3.send(
-//     new PutObjectCommand({
-//       Body: "hello world",
-//       Bucket: "cy-vide-stream-imgfiles",
-//       Key: "my-file.txt",
-//     })
-//   );
-// })();
+const client = await pool.connect();
+const stripeInstance = stripe(process.env.STRIPE_SECRET_KEY);
 
 const s3 = new S3Client({
   credentials: {
     accessKeyId: process.env.AWS_ACCESS_KEY_ID,
     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
   },
-  region: "eu-west-2", // Replace with your AWS region
+  region: process.env.AWS_REGION,
 });
 
-app.use(express.static("public"));
-app.use(express.json());
-
-// Use the cors middleware
-app.use(cors());
-
-const calculateOrderAmount = (items) => {
-  // Replace this constant with a calculation of the order's amount
-  // Calculate the order total on the server to prevent
-  // people from directly manipulating the amount on the client
-  return 1400;
-};
-
+// random image key generator for s3 storage
+const randomImageName = () => crypto.randomBytes(32).toString("hex");
 app.post("/create-payment-intent", async (req, res) => {
   const { items } = req.body;
 
   // Create a PaymentIntent with the order amount and currency
   const paymentIntent = await stripeInstance.paymentIntents.create({
-    amount: calculateOrderAmount(items),
+    amount: 1400,
     currency: "eur",
 
     // In the latest version of the API, specifying the `automatic_payment_methods` parameter is optional because Stripe enables its functionality by default.
@@ -95,8 +49,6 @@ app.post("/create-payment-intent", async (req, res) => {
     },
     payment_method_types: ["card"],
   });
-
-  console.log("bodyZZ", paymentIntent);
 
   res.send({
     clientSecret: paymentIntent.client_secret,
@@ -232,20 +184,40 @@ app.get("/fanrequests", async (req, res) => {
 });
 
 app.put("/fulfill/:id", upload.single("videoFile"), async (req, res) => {
-  console.log("here/fii: ", req.file);
-  const state = JSON.parse(req.body.state);
-  console.log("here/fii2x: ", state);
   // console.log("here/fulfull: ", req.body);
 
   const itemId = parseInt(req.params.id, 10); // Parse the id parameter as an integer
+  console.log("body", req.body);
+
+  // resize image
+  // const buffer = await sharp(req.file.buffer)
+  //   .resize({ height: 1920, width: 1080, fit: "contained" })
+  //   .toBuffer();
+
+  if (!req.body.state) {
+    try {
+      const { celebReply } = req.body;
+
+      console.log("celeb", celebReply);
+      const response = await pool.query(
+        "UPDATE requests SET reqstatus = $1, celebmessage = $2 WHERE requestid = $3 ",
+        ["fulfilled", celebReply, itemId]
+      );
+      res.status(200);
+      return res.status(200).send("Message Updated successful");
+    } catch (error) {
+      console.log("error/put/fulfill/message: ", error);
+    }
+  }
+  const state = JSON.parse(req.body.state);
 
   try {
-    if (state.reqtype == "video" || reqtype == "audio") {
-      const key = `video/${Date.now()}.webm`;
+    if (state.reqtype == "video" || state.reqtype == "audio") {
+      const key = `video/${Date.now()}-${randomImageName()}.webm`;
 
       // console.log("celebREply: ", celebReply);
       const params = {
-        Bucket: "cy-vide-stream-imgfiles",
+        Bucket: process.env.S3_BUCKET,
         Key: key,
         Body: req.file.buffer,
         ContentType: req.file.mimetype,
@@ -253,23 +225,22 @@ app.put("/fulfill/:id", upload.single("videoFile"), async (req, res) => {
 
       const command = new PutObjectCommand(params);
       const upload = await s3.send(command);
+
+      // Construct the URL of the uploaded video
+      const videoUrl = `https://${process.env.S3_BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com/${key}`;
+
+      console.log("here", videoUrl);
+      console.log("id: ", itemId);
+      const response = await pool.query(
+        "UPDATE requests SET reqstatus = $1, celebmessage = $2 WHERE requestid = $3 ",
+        ["fulfilled", videoUrl, itemId]
+      );
+
+      res.status(200);
     }
   } catch (error) {
     console.log(error);
   }
-
-  console.log("linkUp: ", upload);
-
-  try {
-    const response = await pool.query(
-      "UPDATE requests SET reqstatus = $1, celebmessage = $2 WHERE requestid = $3 ",
-      ["fulfilled", upload, itemId]
-    );
-    res.status(200);
-  } catch (error) {
-    console.log("/fulfill/:id > ", error);
-  }
-
   console.log("reqid: ", itemId);
 });
 

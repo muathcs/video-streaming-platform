@@ -1,11 +1,9 @@
 import React, { useEffect, useRef, useState } from "react";
-import CelebReplyType from "../../TsTypes/CelebReplyType";
+import axios from "../../api/axios";
 // import { useS3Upload } from "../../hooks/useS3Upload";
 interface FulfillRequestProps {
   reRecord: number;
-  setCelebReply: React.Dispatch<
-    React.SetStateAction<CelebReplyType | undefined | string>
-  >;
+  setCelebReply: React.Dispatch<React.SetStateAction<FormData | string>>;
 }
 
 /* your mimeType, e.g., 'audio/wav' */
@@ -66,25 +64,25 @@ function FulfillAudio({ reRecord, setCelebReply }: FulfillRequestProps) {
     mediaRecorder.current.stop();
     mediaRecorder.current.onstop = async () => {
       //creates a blob file from the audiochunks data
-      // const audioBlob = new Blob(audioChunks, { type: mimeType });
+      const audioBlob = new Blob(audioChunks, { type: mimeType });
       //creates a playable URL from the blob file.
       // const audioUrl: any = URL.createObjectURL(audioBlob);
 
       // const key = `audio/${Date.now()}.webm`;
 
-      // const params = {
-      //   Bucket: "cy-vide-stream-imgfiles",
-      //   Key: key,
-      //   Body: audioBlob,
-      //   ContentType: mimeType,
-      // };
+      const formData = new FormData();
 
-      // Use the result from the hook, which is updated asynchronously
-      // const s3url = await uploadToS3(params);
+      formData.append("videoFile", audioBlob, "videoFileName.mp4");
 
-      // setCelebReply(s3url);
+      console.log("here", formData.get("videoFile"));
 
-      // setAudio(audioUrl);
+      setCelebReply(formData);
+      try {
+        await axios.put("/test", formData);
+      } catch (error) {
+        console.log("error: ", error);
+      }
+
       setAudio(null);
       setAudioChunks([]);
     };

@@ -10,7 +10,7 @@ import axios from "../../api/axios";
 // };
 interface FulfillRequestProps {
   reRecord: number;
-  setCelebReply: React.Dispatch<React.SetStateAction<FormData | any | string>>;
+  setCelebReply: React.Dispatch<React.SetStateAction<FormData | string>>;
 }
 
 function FulfillVideo({ reRecord, setCelebReply }: FulfillRequestProps) {

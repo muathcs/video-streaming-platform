@@ -33,7 +33,7 @@ function reducer(state: State, action: any): State {
 
 export function useGlobalAxios(
   method: HttpMethod,
-  dataToFetch: string,
+  dataToFetch?: string,
   params?: unknown
 ) {
   //useReducer returns a state with three item, data, loading, error. either loading or error will be true if data doesn't exist.
@@ -64,7 +64,7 @@ export function useGlobalAxios(
       try {
         let response;
 
-        if (method === "get") {
+        if (dataToFetch && method === "get") {
           response = await axios.get(dataToFetch, {
             params: { data: params },
           });
