@@ -1,5 +1,4 @@
 import React, { useEffect, useRef, useState } from "react";
-import axios from "../../api/axios";
 // import { useS3Upload } from "../../hooks/useS3Upload";
 interface FulfillRequestProps {
   reRecord: number;

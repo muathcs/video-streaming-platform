@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
 const mimeType = 'video/webm; codecs="opus,vp8"';
-import axios from "../../api/axios";
 
 // type CelebReplyType = {
 //   Bucket: string;
