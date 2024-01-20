@@ -24,8 +24,6 @@ app.use(express.json());
 app.use(
   cors({
     origin: "https://video-streaming-client.onrender.com",
-    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-    credentials: true,
   })
 );
 
