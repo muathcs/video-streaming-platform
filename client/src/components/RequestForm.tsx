@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useLocalStorage } from "../hooks/useLocalStorage";
-import { useGlobalAxios } from "../hooks/useGlobalAxios";
+import { useNavigate } from "react-router-dom";
 type RequestProps = {
   celebUid: string;
   fanUid: string;
@@ -15,7 +15,9 @@ function RequestForm({ celebUid, fanUid, price }: RequestProps) {
   //   error,
   // } = useGlobalAxios("post", "yourDataEndpoint");
 
-  const { data: postData }: any = useGlobalAxios("post", "request"); //
+  // const { data: postData }: any = useGlobalAxios("post", "request"); //
+
+  const navigate = useNavigate();
 
   const [localStorageRequest, setLocalStorageRequest] = useLocalStorage(
     "request",
@@ -47,8 +49,8 @@ function RequestForm({ celebUid, fanUid, price }: RequestProps) {
     await setLocalStorageRequest(getValues());
     console.log(localStorageRequest);
 
-    // navigate("/payment", { state: requestInfo });
-    postData("request", requestInfo);
+    navigate("/payment", { state: requestInfo });
+    // postData("request", requestInfo);
     // navigate("/success");
 
     reset();

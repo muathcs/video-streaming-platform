@@ -1,55 +1,46 @@
 import React, { useEffect, useReducer, useState } from "react";
-import axios from "../api/axios";
 import { useLocation } from "react-router-dom";
 import FulfillVideo from "./fulfillRequest/FulfillVideo";
 import FulfillAudio from "./fulfillRequest/FulfillAudio";
 import FulfillMessage from "./fulfillRequest/FulfillMessage";
+import { useGlobalAxios } from "../hooks/useGlobalAxios";
 
-// type CelebReplyType = {
-//   Bucket: string;
-//   Key: string;
-//   Body: Blob;
-//   ContentType: string;
-// };
 function FulfillRequest() {
   // prettier-ignore
-  const [celebReply, setCelebReply] = useState<any | undefined | string>();
+  const [celebReply, setCelebReply] = useState<FormData | string>("");
 
   //this reducer forces the fullfillVideo componenet to rerender when I press the record video button again.
   const [reRecord, forceUpdate] = useReducer((x) => x + 1, 0);
+  const { data: putData } = useGlobalAxios("put");
 
   // const { requestId } = useParams();
 
+  //Coming from Dashboard.tsx navigate("/fulfill")
+  // the useLocation returns a state with an object holding the information for the user request.
   const { state } = useLocation();
 
   async function handleFulfill(e: React.MouseEvent<HTMLElement>) {
     e.preventDefault();
 
-    console.log("celeb reply before send: ", celebReply?.get("videoFile"));
+    // set the state to the formData, in the server, the req.file will hold the first state
+    // we set to our fd, the req.body will hold everything else in the fd, in this case that'll only be the state.
+    celebReply instanceof FormData &&
+      celebReply.append("state", JSON.stringify(state));
 
-    let blob;
+    console.log(celebReply);
 
-    if (celebReply && typeof celebReply !== "string") {
-      blob = celebReply.Body; // TypeScript now knows celebReply is of type CelebReplyType
-      console.log("this: ", blob);
-      // Do something with body
+    // Now formDataEntries is an array of key-value pairs
+    console.log("statE: ", state);
+
+    if (state.reqtype == "message") {
+      console.log("here msg");
+      putData(`/fulfill/${state.requestid}`, { celebReply });
     } else {
-      // Handle the case when celebReply is a string
+      putData(`/fulfill/${state.requestid}`, celebReply);
     }
 
-    // sendPutRequest(`http://localhost:3001/fulfill/${state.requestid}`, {
-    //   state,
-    //   celebReply: celebReply,
-    //   blob: blob,
-    // });
-
-    celebReply.append("state", JSON.stringify(state));
-
-    try {
-      await axios.put(`/fulfill/${state.requestid}`, celebReply);
-    } catch (error) {
-      console.error(error);
-    }
+    // Delete the "state" entry to reset the FormData object
+    celebReply instanceof FormData && celebReply.delete("state");
   }
 
   let [recordOption, setRecordOption] = useState("");

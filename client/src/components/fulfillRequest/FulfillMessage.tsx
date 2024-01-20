@@ -1,11 +1,8 @@
 import React from "react";
-import CelebReplyType from "../../TsTypes/CelebReplyType";
 
 interface FulfillRequestProps {
-  celebReply: CelebReplyType | string | undefined;
-  setCelebReply: React.Dispatch<
-    React.SetStateAction<CelebReplyType | undefined | string>
-  >;
+  celebReply: FormData | string;
+  setCelebReply: React.Dispatch<React.SetStateAction<FormData | string>>;
 }
 
 function FulfillMessage({ setCelebReply }: FulfillRequestProps) {
