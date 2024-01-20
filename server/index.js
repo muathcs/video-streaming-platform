@@ -12,17 +12,26 @@ import {
   GetObjectCommand,
 } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
-
 import multer from "multer";
 import crypto from "crypto";
 import sharp from "sharp";
 import s3, { uploadFile } from "./s3.js";
 
+app.use(
+  cors({
+    origin: "https://video-streaming-client.onrender.com",
+  })
+);
+
 const app = express();
 
 // middleware
 app.use(express.json());
-app.use(cors());
+app.use(
+  cors({
+    origin: "https://video-streaming-client.onrender.com",
+  })
+);
 app.use(bodyParser.json());
 app.use(express.static("public"));
 // multer middleware
