@@ -18,14 +18,17 @@ import sharp from "sharp";
 import s3, { uploadFile } from "./s3.js";
 
 const app = express();
-
+const PORT = process.env.PORT || 3001;
 // middleware
 app.use(express.json());
 app.use(
   cors({
     origin: "https://video-streaming-client.onrender.com",
+    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+    credentials: true,
   })
 );
+
 app.use(bodyParser.json());
 app.use(express.static("public"));
 // multer middleware
@@ -376,6 +379,6 @@ app.post("/createCeleb", async (req, res) => {
   }
 });
 
-app.listen(3001, () => {
+app.listen(PORT, () => {
   console.log("listing on 3001...");
 });
