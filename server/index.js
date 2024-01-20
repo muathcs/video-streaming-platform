@@ -17,12 +17,6 @@ import crypto from "crypto";
 import sharp from "sharp";
 import s3, { uploadFile } from "./s3.js";
 
-app.use(
-  cors({
-    origin: "https://video-streaming-client.onrender.com",
-  })
-);
-
 const app = express();
 
 // middleware
