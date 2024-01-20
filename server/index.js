@@ -387,5 +387,5 @@ app.post("/createCeleb", async (req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log("listing on 3001...");
+  console.log("listing on...", PORT);
 });

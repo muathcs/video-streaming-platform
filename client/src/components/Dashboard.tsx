@@ -3,13 +3,14 @@ import { useAuth } from "../context/AuthContext";
 import { useTable } from "react-table";
 import { useNavigate } from "react-router-dom";
 import { useGlobalAxios } from "../hooks/useGlobalAxios";
+import { apiUrl } from "../utilities/fetchPath";
 
 function Dashboard() {
   const { currentUser }: any = useAuth();
   const navigate = useNavigate();
   const { data } = useGlobalAxios(
     "get",
-    "http://localhost:3001/dashboard",
+    `${apiUrl}/dashboard`,
     currentUser.uid
   );
 
