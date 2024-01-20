@@ -18,26 +18,20 @@ import sharp from "sharp";
 import s3, { uploadFile } from "./s3.js";
 
 const app = express();
+app.use(
+  cors({
+    origin: "https://video-streaming-client.onrender.com",
+  })
+);
 const PORT = process.env.PORT || 3001;
 // middleware
 app.use(express.json());
 
 // app.use(
 //   cors({
-//     origin: [
-//       "http://localhost:5173",
-//       "https://video-streaming-client.onrender.com",
-//       "http://localhost:5173",
-//     ],
-//     credentials: true,
+//     origin: "*",
 //   })
 // );
-
-app.use(
-  cors({
-    origin: "*",
-  })
-);
 
 // app.use(corse());
 
