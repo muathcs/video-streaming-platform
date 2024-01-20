@@ -1,7 +1,7 @@
-GET http://localhost:3001/status
-Content-Type: application/json
+# GET http://localhost:3001/status
+# Content-Type: application/json
 
 
-{
-    "uid":"EOIDzcjfAhclq97HyuAbYAf1qGf2"
-}
+# {
+#     "uid":"EOIDzcjfAhclq97HyuAbYAf1qGf2"
+# }

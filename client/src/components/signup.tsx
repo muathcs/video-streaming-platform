@@ -5,14 +5,19 @@ import { useAuth } from "../context/AuthContext";
 import SignupCeleb from "./SignupCeleb";
 import SignupUser from "./SignupUser";
 import { apiUrl } from "../utilities/fetchPath";
-
+// import { useGlobalAxios } from "../hooks/useGlobalAxios";
+import { AWS_LINK } from "../utilities/awsLink";
 function SignUp() {
   // start
-  const { signup, currentUser, uploadProfilePic }: any = useAuth();
+  const { signup, uploadProfilePic }: any = useAuth();
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   console.log(loading);
   const [successfull, setSuccessfull] = useState<string>("");
+  // const { data: sendpostrequest } = useGlobalAxios("post");
+  const [selectedFile, setSelectedFile] = useState<File>();
+
+  // const { data: sendPutRequest } = useGlobalAxios("put");
 
   async function handleSubmit(
     e: any,
@@ -25,7 +30,7 @@ function SignUp() {
   ) {
     e.preventDefault();
 
-    console.log("payLoad from actual function: ", payLoad);
+    console.log("payLoad from actual function: ", passwordConfirmation);
 
     //if password doesn't match.
     if (password !== passwordConfirmation) {
@@ -40,27 +45,29 @@ function SignUp() {
       setLoading(true);
       const userid = await signup(email, password, username);
 
-      const imgUrl = await handleUpload(userid.uid);
+      const imgUrl: string = await handleUpload(userid.uid);
 
-      console.log("current user: ", currentUser);
+      const fireBaseUrlLink = AWS_LINK + imgUrl; // this link adds the AWS S3 Storage to the img url
 
-      await uploadProfilePic(imgUrl, userid);
+      await uploadProfilePic(fireBaseUrlLink, userid);
 
-      const path = notCeleb
-        ? `${apiUrl}/createUser`
-        : // : "http://localhost:3001/createCeleb";
-          `${apiUrl}/createCeleb`;
+      const path = notCeleb ? `${apiUrl}/createUser` : `${apiUrl}/createCeleb`; // if the celeb is being created, create a celeb on the server and vice versa.
+
+      let fd;
+
+      if (selectedFile) {
+        fd = new FormData();
+        fd.append("file", selectedFile);
+        // Append other parameters
+        fd.append("payLoad", JSON.stringify(payLoad));
+        fd.append("uid", userid.uid);
+        fd.append("imgurl", imgUrl);
+      }
 
       try {
-        const response = await axios.post(path, {
-          payLoad,
-          uid: userid.uid,
-          imgurl: imgUrl,
-        });
-
-        console.log("response: ", response);
+        await axios.post(path, fd);
       } catch (error) {
-        console.log("error: ", error);
+        console.error("error: ", error);
       }
 
       // navigate("/");
@@ -72,36 +79,21 @@ function SignUp() {
     // setSuccessfull(false);
   }
 
-  const [selectedFile, setSelectedFile] = useState<File>();
-
   const handleFileChange = (e: any) => {
     setSelectedFile(e.target.files[0]);
+
+    console.log("on file change", e.target.files[0]);
   };
 
   const handleUpload = async (key: number) => {
     console.log(key);
     if (selectedFile) {
-      // const params = {
-      //   Bucket: "cy-vide-stream-imgfiles", // Replace with your S3 bucket name
-      //   Key: `profile/user(${key})`, // add user ID to the image to be able to retreive it. //change first name to profile(if it's profile) + folder. e.f profile/profile+usID+extension+timestamp
-      //   Body: selectedFile,
-      //   ContentType: selectedFile.type,
-      // };
+      const imgURL = `profile/user(${key})`; // img link, the will be sent to S3, with the useruid being the unique identifier. check path /createuser or /createceleb on server.
 
-      try {
-        // const data = await s3.upload(params).promise();
-        console.log("Image uploaded successfully:");
-
-        // Return the key from the successful upload
-
-        // console.log("image url: ", data);
-        // return data.Location;
-        return "hello";
-      } catch (error) {
-        console.error("Error uploading image:", error);
-      }
+      return imgURL;
     } else {
       console.warn("No file selected for upload.");
+      return "";
     }
   };
 

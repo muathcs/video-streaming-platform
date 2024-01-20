@@ -12,7 +12,6 @@ import {
   GetObjectCommand,
 } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
-
 import multer from "multer";
 import crypto from "crypto";
 import sharp from "sharp";
@@ -20,9 +19,79 @@ import s3, { uploadFile } from "./s3.js";
 
 const app = express();
 
+// Set middleware of CORS
+// app.use((req, res, next) => {
+//   res.setHeader(
+//     "Access-Control-Allow-Origin",
+//     "https://video-streaming-client.onrender.com"
+//   );
+//   res.setHeader(
+//     "Access-Control-Allow-Methods",
+//     "GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS,CONNECT,TRACE"
+//   );
+//   res.setHeader(
+//     "Access-Control-Allow-Headers",
+//     "Content-Type, Authorization, X-Content-Type-Options, Accept, X-Requested-With, Origin, Access-Control-Request-Method, Access-Control-Request-Headers"
+//   );
+//   res.setHeader("Access-Control-Allow-Credentials", true);
+//   res.setHeader("Access-Control-Allow-Private-Network", true);
+//   //  Firefox caps this at 24 hours (86400 seconds). Chromium (starting in v76) caps at 2 hours (7200 seconds). The default value is 5 seconds.
+//   res.setHeader("Access-Control-Max-Age", 7200);
+
+//   next();
+// });
+// app.use(
+//   cors({
+//     origin: "https://video-streaming-client.onrender.com",
+//   })
+// );
+const PORT = process.env.PORT || 3001;
 // middleware
 app.use(express.json());
-app.use(cors());
+
+// app.use(
+//   cors({
+//     origin: "https://video-streaming-client.onrender.com",
+//   })
+// );
+
+// app.use(corse());
+
+// app.use((req, res, next) => {
+//   res.header(
+//     "Access-Control-Allow-Origin",
+//     "https://video-streaming-client.onrender.com"
+//   );
+//   res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+//   res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
+//   res.header("Access-Control-Allow-Credentials", true);
+
+//   console.log("Request received:", req.method, req.url);
+
+//   next();
+// });
+
+app.use(function (req, res, next) {
+  const allowedOrigins = [
+    "https://video-streaming-client.onrender.com",
+    "http://localhost:5173",
+  ];
+  const origin = req.headers.origin;
+
+  if (allowedOrigins.includes(origin)) {
+    res.setHeader("Access-Control-Allow-Origin", origin);
+  }
+
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept, Authorization"
+  );
+  res.header("Access-Control-Allow-Credentials", true); // Corrected typo here
+  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, UPDATE");
+
+  next();
+});
+
 app.use(bodyParser.json());
 app.use(express.static("public"));
 // multer middleware
@@ -55,14 +124,14 @@ app.post("/create-payment-intent", async (req, res) => {
   });
 });
 
-app.get("/config", async (req, res) => {
+app.get("/config", upload.single("file"), async (req, res) => {
   res.send({
     publishableKey: process.env.STRIPE_PUBLISHABLE_KEY,
   });
 });
 
-app.get("/testing", async (req, res) => {
-  console.log("working");
+app.post("/testing", upload.single("file"), async (req, res) => {
+  console.log("body: ", req.file);
 
   res.send("worked well");
 });
@@ -267,23 +336,47 @@ app.put("/fulfill/:id", upload.single("videoFile"), async (req, res) => {
 
 //post
 
-app.post("/createUser", async (req, res) => {
+async function uploadProfileImgToS3(req, res, next) {
   const { uid, imgurl } = req.body;
 
-  const { username, email } = req.body.payLoad;
+  const file = req.file;
 
+  // console.log("from middleware file: ", req.file);
+  // console.log("from middleware: body", req.file);
   try {
-    const result = await pool.query(
-      "INSERT INTO fan(username, email, uid, imgurl) VALUES ($1, $2, $3, $4)",
-      [username, email, uid, imgurl]
-    );
-    res.send("Sucess crated user");
+    const uploadProf = await uploadFile(file.buffer, imgurl, file.mimetype);
+
+    next();
   } catch (error) {
-    console.log("error: ", error);
+    console.log("error ploadprofiletos3 middleware");
+    res.send("unable to upload profile picture to s3 storage");
   }
-  try {
-  } catch (error) {}
-});
+}
+
+app.post(
+  "/createUser",
+  upload.single("file"),
+  uploadProfileImgToS3,
+  async (req, res) => {
+    const { uid, imgurl, payLoad } = req.body;
+    const payLoadParsed = JSON.parse(payLoad);
+    const { username, email } = payLoadParsed;
+
+    console.log("payload: ", req.body);
+
+    try {
+      const result = await pool.query(
+        "INSERT INTO fan(username, email, uid, imgurl) VALUES ($1, $2, $3, $4)",
+        [username, email, uid, imgurl]
+      );
+      res.send("Sucess crated user");
+    } catch (error) {
+      console.log("error: ", error);
+    }
+    try {
+    } catch (error) {}
+  }
+);
 
 //
 
@@ -373,6 +466,8 @@ app.post("/createCeleb", async (req, res) => {
   }
 });
 
-app.listen(3001, () => {
-  console.log("listing on 3001...");
+app.listen(PORT, () => {
+  console.log("listing on...", PORT);
 });
+
+// custom middleware functions

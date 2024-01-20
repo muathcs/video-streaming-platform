@@ -44,6 +44,8 @@ function NavBar() {
     }
   }
 
+  console.log("current: ", currentUser);
+
   const { requests } = useRequests();
 
   console.log("req: ", requests);

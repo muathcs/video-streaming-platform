@@ -4,47 +4,38 @@ import { useGlobalAxios } from "../hooks/useGlobalAxios";
 import background from "../assets/background.jpg";
 import { RequestContext } from "../context/RequestContext";
 import { useNavigate } from "react-router-dom";
+import { apiUrl } from "../utilities/fetchPath";
 function Celebs() {
-  const { data, loading, error } = useGlobalAxios(
-    "get",
-    "http://localhost:3001/celebs"
-  );
+  const { data, loading, error } = useGlobalAxios("get", `${apiUrl}/celebs`);
 
   const shopByCategory = [
     {
       categoryName: "Actors",
-      // img: "https://cy-vide-stream-imgfiles.s3.eu-west-2.amazonaws.com/categories/idris.jpg",
-      img: "hello",
+      img: "https://cy-vide-stream-imgfiles.s3.eu-west-2.amazonaws.com/categories/idris.jpg",
     },
     {
       categoryName: "Footballers",
-      // img: "https://cy-vide-stream-imgfiles.s3.eu-west-2.amazonaws.com/categories/son.jpeg",
-      img: "hello",
+      img: "https://cy-vide-stream-imgfiles.s3.eu-west-2.amazonaws.com/categories/son.jpeg",
     },
     {
       categoryName: "Comedians",
-      // img: "https://cy-vide-stream-imgfiles.s3.eu-west-2.amazonaws.com/categories/jack-whitehall.jpg",
-      img: "hello",
+      img: "https://cy-vide-stream-imgfiles.s3.eu-west-2.amazonaws.com/categories/jack-whitehall.jpg",
     },
     {
       categoryName: "Kids",
-      // img: "https://cy-vide-stream-imgfiles.s3.eu-west-2.amazonaws.com/categories/sponge-bob.png",
-      img: "hello",
+      img: "https://cy-vide-stream-imgfiles.s3.eu-west-2.amazonaws.com/categories/sponge-bob.png",
     },
     {
       categoryName: "Athletes",
-      // img: "https://cy-vide-stream-imgfiles.s3.eu-west-2.amazonaws.com/categories/mo-farah.jpg",
-      img: "hello",
+      img: "https://cy-vide-stream-imgfiles.s3.eu-west-2.amazonaws.com/categories/mo-farah.jpg",
     },
     {
       categoryName: "Reality TV",
-      // img: "https://cy-vide-stream-imgfiles.s3.eu-west-2.amazonaws.com/categories/jeremy.jpg",
-      img: "hello",
+      img: "https://cy-vide-stream-imgfiles.s3.eu-west-2.amazonaws.com/categories/jeremy.jpg",
     },
     {
       categoryName: "Business",
-      // img: "https://cy-vide-stream-imgfiles.s3.eu-west-2.amazonaws.com/categories/peter.jpg",
-      img: "hello",
+      img: "https://cy-vide-stream-imgfiles.s3.eu-west-2.amazonaws.com/categories/peter.jpg",
     },
     {
       categoryName: "View All",
