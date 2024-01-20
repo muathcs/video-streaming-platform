@@ -26,7 +26,7 @@ app.use(
   cors({
     origin: [
       "http://localhost:3000",
-      "https://video-streaming-client.onrender.com/",
+      "https://video-streaming-client.onrender.com",
       "http://localhost:5173",
     ],
     credentials: true,
