@@ -40,9 +40,9 @@ export function useGlobalAxios(
   const [state, dispatch] = useReducer(reducer, initialState);
 
   //function to post to the data base.
-  async function postData(dataToPost: string, params?: unknown) {
+  async function postData(path: string, params?: unknown) {
     try {
-      await axios.post(dataToPost, params);
+      await axios.post(path, params);
     } catch (error) {
       console.error(error);
     }

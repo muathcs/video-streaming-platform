@@ -20,12 +20,15 @@ const s3Client = new S3Client({
 });
 
 export function uploadFile(fileBuffer, fileName, mimetype) {
+  console.log(fileName);
   const uploadParams = {
     Bucket: bucketName,
     Body: fileBuffer,
     Key: fileName,
     ContentType: mimetype,
   };
+
+  console.log("image upload succefully");
 
   return s3Client.send(new PutObjectCommand(uploadParams));
 }
