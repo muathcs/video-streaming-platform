@@ -21,7 +21,10 @@ const app = express();
 
 // Set middleware of CORS
 app.use((req, res, next) => {
-  res.setHeader("Access-Control-Allow-Origin", "https://your-frontend.com");
+  res.setHeader(
+    "Access-Control-Allow-Origin",
+    "https://video-streaming-client.onrender.com"
+  );
   res.setHeader(
     "Access-Control-Allow-Methods",
     "GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS,CONNECT,TRACE"
