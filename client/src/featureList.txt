@@ -1,0 +1,18 @@
+
+
+
+-> Change category to Actor instead of actors
+-> Celeb request fulfilment page
+-> sign up/in notification popup 
+-> videos playing on celeb profile
+-> users ability to review a request both through stars/comments
+-> improve DashBoard table
+
+
+
+// Major features
+
+-> AI prediction model
+-> Notifcation system
+-> Live streaming
+-> Live chat

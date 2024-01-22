@@ -30,7 +30,7 @@ function Celebs() {
       img: "https://cy-vide-stream-imgfiles.s3.eu-west-2.amazonaws.com/categories/mo-farah.jpg",
     },
     {
-      categoryName: "Reality TV",
+      categoryName: "Reality-TV",
       img: "https://cy-vide-stream-imgfiles.s3.eu-west-2.amazonaws.com/categories/jeremy.jpg",
     },
     {
@@ -50,8 +50,8 @@ function Celebs() {
   console.log("here", requests);
   return (
     <>
-      <div className=" flex flex-col  items-center">
-        <div className="h-[24%]   py-4 w-full flex justify-center flex-col items-center gap-10 ">
+      <div className=" flex flex-col  items-center ">
+        <div className="h-[845px]    py-4 w-full flex justify-center flex-col items-center gap-10 ">
           {/* first iamge */}
           <div className="w-3/4  h-2/3 rounded-lg overflow-hidden relative">
             <img src={background} className="w-full" alt="Background" />
@@ -112,7 +112,7 @@ function Celebs() {
 
         {/* Shop By Category */}
 
-        <div className=" h-[15%] w-3/4 flex justify-center  px-10 ">
+        <div className=" h-[450px]  w-3/4 flex justify-center  px-10 ">
           <div className="w-full flex flex-col">
             <p className="text-left text-[26px] font-serif relative  h-1/6  flex items-end mb-2">
               Shop By Category
@@ -139,7 +139,7 @@ function Celebs() {
         </div>
 
         {/* celebs */}
-        <div className="w-3/4   relative px-20 justify-items-center overflow-auto  grid  lg:grid-cols-3 xl:grid-cols-4   md:grid-cols-3 sm:grid-cols-2 sm:gap-x-52 md:gap-x-64 lg:gap-30  ">
+        <div className="w-3/4   relative px-20 justify-items-center   grid  lg:grid-cols-3 xl:grid-cols-4   md:grid-cols-3 sm:grid-cols-2 sm:gap-x-52 md:gap-x-64 lg:gap-30  ">
           {loading ? (
             <h1>Loading</h1>
           ) : error ? (

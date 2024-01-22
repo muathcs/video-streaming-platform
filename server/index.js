@@ -159,7 +159,7 @@ app.get("/celebs/:category", async (req, res) => {
   //query celeb table by category
   const { category } = req.params;
 
-  console.log("paramS: ", category);
+  console.log("paramSx: ", req.body);
   try {
     const result = await pool.query("SELECT * FROM celeb where category = $1", [
       category,
