@@ -1,7 +1,41 @@
+import { useEffect } from "react";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 const Success = () => {
+  const notify = () => {
+    toast.success("Success", {
+      position: "top-right",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "light",
+    });
+  };
+
+  useEffect(() => {
+    console.log("here");
+    notify(); // Show the toast when loading is true
+  }, []);
   console.log("messagexx:");
   return (
     <>
+      <ToastContainer
+        position="top-center"
+        autoClose={false}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+        style={{ width: "500px", height: "5100px", marginTop: 100 }}
+      />
       <div className="mt-10 text-[24px]">
         <h1>Thank You!</h1>
         <p className="">

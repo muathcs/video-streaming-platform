@@ -20,8 +20,6 @@ function FulfillAudio({ reRecord, setCelebReply }: FulfillRequestProps) {
   // const { uploadToS3 }: any = useS3Upload();
 
   async function getMicrophonePermission() {
-    console.log(setCelebReply);
-    console.log(audioChunks);
     if ("MediaRecorder" in window) {
       try {
         const streamData = await navigator.mediaDevices.getUserMedia({
@@ -65,7 +63,7 @@ function FulfillAudio({ reRecord, setCelebReply }: FulfillRequestProps) {
       //creates a blob file from the audiochunks data
       const audioBlob = new Blob(audioChunks, { type: mimeType });
       //creates a playable URL from the blob file.
-      // const audioUrl: any = URL.createObjectURL(audioBlob);
+      const audioUrl: any = URL.createObjectURL(audioBlob);
 
       // const key = `audio/${Date.now()}.webm`;
 
@@ -77,7 +75,7 @@ function FulfillAudio({ reRecord, setCelebReply }: FulfillRequestProps) {
 
       setCelebReply(formData);
 
-      setAudio(null);
+      setAudio(audioUrl);
       setAudioChunks([]);
     };
   };

@@ -19,78 +19,19 @@ import s3, { uploadFile } from "./s3.js";
 
 const app = express();
 
-// Set middleware of CORS
-// app.use((req, res, next) => {
-//   res.setHeader(
-//     "Access-Control-Allow-Origin",
-//     "https://video-streaming-client.onrender.com"
-//   );
-//   res.setHeader(
-//     "Access-Control-Allow-Methods",
-//     "GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS,CONNECT,TRACE"
-//   );
-//   res.setHeader(
-//     "Access-Control-Allow-Headers",
-//     "Content-Type, Authorization, X-Content-Type-Options, Accept, X-Requested-With, Origin, Access-Control-Request-Method, Access-Control-Request-Headers"
-//   );
-//   res.setHeader("Access-Control-Allow-Credentials", true);
-//   res.setHeader("Access-Control-Allow-Private-Network", true);
-//   //  Firefox caps this at 24 hours (86400 seconds). Chromium (starting in v76) caps at 2 hours (7200 seconds). The default value is 5 seconds.
-//   res.setHeader("Access-Control-Max-Age", 7200);
-
-//   next();
-// });
-// app.use(
-//   cors({
-//     origin: "https://video-streaming-client.onrender.com",
-//   })
-// );
 const PORT = process.env.PORT || 3001;
-// middleware
 app.use(express.json());
 
-// app.use(
-//   cors({
-//     origin: "https://video-streaming-client.onrender.com",
-//   })
-// );
-
-// app.use(corse());
-
-// app.use((req, res, next) => {
-//   res.header(
-//     "Access-Control-Allow-Origin",
-//     "https://video-streaming-client.onrender.com"
-//   );
-//   res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-//   res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
-//   res.header("Access-Control-Allow-Credentials", true);
-
-//   console.log("Request received:", req.method, req.url);
-
-//   next();
-// });
-
-app.use(function (req, res, next) {
-  const allowedOrigins = [
-    "https://video-streaming-client.onrender.com",
-    "http://localhost:5173",
-  ];
-  const origin = req.headers.origin;
-
-  if (allowedOrigins.includes(origin)) {
-    res.setHeader("Access-Control-Allow-Origin", origin);
-  }
-
-  res.header(
-    "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content-Type, Accept, Authorization"
-  );
-  res.header("Access-Control-Allow-Credentials", true); // Corrected typo here
-  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, UPDATE");
-
-  next();
-});
+app.use(
+  cors({
+    origin: ["https://vid-stream-cl.onrender.com", "http://localhost:5173"],
+    credentials: true,
+    methods: "GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS,CONNECT,TRACE",
+    allowedHeaders:
+      "Origin, X-Requested-With, Content-Type, Accept, Authorization",
+    maxAge: 7200,
+  })
+);
 
 app.use(bodyParser.json());
 app.use(express.static("public"));
@@ -105,52 +46,57 @@ const stripeInstance = stripe(process.env.STRIPE_SECRET_KEY);
 const randomImageName = () => crypto.randomBytes(32).toString("hex");
 
 app.post("/create-payment-intent", async (req, res) => {
-  const { items } = req.body;
+  try {
+    const { items } = req.body;
 
-  // Create a PaymentIntent with the order amount and currency
-  const paymentIntent = await stripeInstance.paymentIntents.create({
-    amount: 1400,
-    currency: "eur",
+    // Create a PaymentIntent with the order amount and currency
+    const paymentIntent = await stripeInstance.paymentIntents.create({
+      amount: 1400,
+      currency: "eur",
 
-    // In the latest version of the API, specifying the `automatic_payment_methods` parameter is optional because Stripe enables its functionality by default.
-    automatic_payment_methods: {
-      enabled: false,
-    },
-    payment_method_types: ["card"],
-  });
+      // In the latest version of the API, specifying the `automatic_payment_methods` parameter is optional because Stripe enables its functionality by default.
+      automatic_payment_methods: {
+        enabled: false,
+      },
+      payment_method_types: ["card"],
+    });
 
-  res.send({
-    clientSecret: paymentIntent.client_secret,
-  });
+    res.send({
+      clientSecret: paymentIntent.client_secret,
+    });
+  } catch (error) {
+    console.log("/create-stripe: ", error);
+  }
 });
 
-app.get("/config", upload.single("file"), async (req, res) => {
-  res.send({
-    publishableKey: process.env.STRIPE_PUBLISHABLE_KEY,
-  });
-});
+// app.get("/config", upload.single("file"), async (req, res) => {
+//   res.send({
+//     publishableKey: process.env.STRIPE_PUBLISHABLE_KEY,
+//   });
+// });
 
-app.post("/testing", upload.single("file"), async (req, res) => {
-  console.log("body: ", req.file);
-
-  res.send("worked well");
+app.get("/testing", async (req, res) => {
+  try {
+    console.log("on testing route");
+    res.send("worked well, got your response, testing route");
+  } catch (error) {
+    console.log("/testing: ", error);
+  }
 });
 
 app.get("/celebs", async (req, res) => {
   //query celeb table by category
   const { category } = req.params;
 
-  console.log("paramS: ", category);
   try {
     const result = await pool.query("SELECT * FROM celeb");
     // client.release(); // Release the connection back to the pool
 
     const celebs = result.rows;
 
-    // console.log("celebs: ", celebs);
-
     res.send(celebs);
   } catch (error) {
+    console.log("error/celebs: ", error);
     res.status(500).json({ error: error.message });
   }
 });
@@ -159,7 +105,6 @@ app.get("/celebs/:category", async (req, res) => {
   //query celeb table by category
   const { category } = req.params;
 
-  console.log("paramS: ", category);
   try {
     const result = await pool.query("SELECT * FROM celeb where category = $1", [
       category,
@@ -168,10 +113,9 @@ app.get("/celebs/:category", async (req, res) => {
 
     const celebs = result.rows;
 
-    // console.log("celebs: ", celebs);
-
     res.send(celebs);
   } catch (error) {
+    console.log("error/celeb/cat: ", error);
     res.status(500).json({ error: error.message });
   }
 });
@@ -239,7 +183,6 @@ app.get("/fanrequests", async (req, res) => {
     // on the requests table, and that's enough to get the celeb photo/name from the code below.
 
     for (const req of response.rows) {
-      console.log("here");
       try {
         const celebNameAndPhoto = await pool.query(
           "SELECT uid, displayName, imgUrl FROM celeb WHERE uid = $1 ",
@@ -272,7 +215,6 @@ app.put("/fulfill/:id", upload.single("videoFile"), async (req, res) => {
   // console.log("here/fulfull: ", req.body);
 
   const itemId = parseInt(req.params.id, 10); // Parse the id parameter as an integer
-  console.log("body", req.body);
 
   // resize image
   // const buffer = await sharp(req.file.buffer)
@@ -371,10 +313,12 @@ app.post(
       );
       res.send("Sucess crated user");
     } catch (error) {
-      console.log("error: ", error);
+      console.log("error/cr/user: ", error);
     }
     try {
-    } catch (error) {}
+    } catch (error) {
+      console.log("error/createUser: ", error);
+    }
   }
 );
 
@@ -386,8 +330,6 @@ app.put("/test", upload.single("videoFile"), async (req, res) => {
 });
 
 app.post("/request", async (req, res) => {
-  console.log("body: ", req.body);
-
   let {
     celebUid,
     fanUid,

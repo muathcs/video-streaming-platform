@@ -1,6 +1,8 @@
 import { useState } from "react";
 import StripePaymentIntent from "./StripePaymentIntent";
 import { useLocation } from "react-router-dom";
+import "react-toastify/dist/ReactToastify.css";
+
 function Payment() {
   const [paymentChoice, setPaymentChoice] = useState<string>("");
 
@@ -17,13 +19,13 @@ function Payment() {
   return (
     <>
       <div className="w-full h-full   overflow-auto  ">
-        <div className="h-full w-full relative grid grid-cols-1 grid-rows-8 overflow-auto  mt-10 place-items-center gap-44 ">
+        <div className="h-full w-full relative grid grid-cols-1   grid-rows-6 overflow-auto   justify-items-center  ">
           {/* <!-- Email input --> */}
           <div
-            className="relative  mb-6  0 w-1/3 row-span-5  "
+            className="relative    0 w-1/3 row-span-3  flex  "
             data-te-input-wrapper-init
           >
-            <div className="gap-4 text-center sm:grid-cols-3  flex flex-col justify-center items-center  my-2">
+            <div className="gap-4 text-center sm:grid-cols-3  flex flex-col justify-center items-center  w-full my-2">
               <p className="text-left w-full font-serif text-lg font-bold">
                 Delivery Speed
               </p>
@@ -69,7 +71,7 @@ function Payment() {
 
           {/* <!-- Payment method --> */}
           <div
-            className="relative  mb-6 mt-10 overflow-hidden w-1/3 row-span-3 h-[65rem]  "
+            className="relative  mb-6  overflow-hidden w-1/3 row-span-3 h-[65rem]   "
             data-te-input-wrapper-init
           >
             <p className="text-left text-lg font-bold font-serif   ">

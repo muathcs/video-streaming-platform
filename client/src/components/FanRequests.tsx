@@ -1,8 +1,6 @@
-import { useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import FanRequestContainer from "./FanRequestContainer";
 import { useGlobalAxios } from "../hooks/useGlobalAxios";
-import FulFilled from "./fulfillRequest/FulFilled";
 
 type requestType = {
   request: {
@@ -22,7 +20,6 @@ type requestType = {
 };
 function FanRequests() {
   const { currentUser }: any = useAuth();
-  const [viewFulfilled, setViewFulfilled] = useState<string | null>("");
 
   const { data, loading, error } = useGlobalAxios(
     "get",
@@ -42,22 +39,14 @@ function FanRequests() {
             {data &&
               data.map((req: requestType, index: number) => (
                 <>
-                  {!viewFulfilled ? (
+                  {/* FanRequestContainer holds the requests, the FulFilled contianer holds the viewed requests.   */}
+                  <>
                     <FanRequestContainer
                       request={req.request}
                       celeb={req.celeb}
-                      setViewFulfilled={setViewFulfilled}
                       key={index}
                     />
-                  ) : (
-                    viewFulfilled === req.request.requestid && (
-                      <FulFilled
-                        request={req.request}
-                        celeb={req.celeb}
-                        setViewFulfilled={setViewFulfilled}
-                      />
-                    )
-                  )}
+                  </>
                 </>
               ))}
           </>

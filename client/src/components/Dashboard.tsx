@@ -65,8 +65,8 @@ function Dashboard() {
 
   return (
     <>
-      <div className=" flex justify-center items-center overflow-hidden bg-[#121114] h-full">
-        <div className="container bg-gray-400 w-full h-[70%]  rounded-lg overflow-auto border-4 border-gray-500    ">
+      <div className=" flex justify-center items-center overflow-hidden bg-[#121114]  h-full">
+        <div className="container bg-[#26242a] w-full h-[70%]  rounded-lg overflow-auto border border-gray-200    ">
           <table
             {...getTableProps()}
             className=" w-full  top-0 relative border-separate border-spacing-0  "
@@ -97,7 +97,7 @@ function Dashboard() {
                       {row.cells.map((cell: any) => (
                         <td
                           {...cell.getCellProps()}
-                          className="border-2 border-gray-500 bg-gray-800 px-10  py-10"
+                          className="border-2 border-gray-500 bg-[#121114]  px-10  py-10"
                         >
                           {cell.column.id == "universityx" ? (
                             <>
@@ -107,7 +107,7 @@ function Dashboard() {
                             <>
                               <button
                                 onClick={() => handleFulfillReq(row)}
-                                className="py-3 px-5 bg-red-500 hover:bg-red-600 cursor-pointer rounded-md text-center table-cell align-middle"
+                                className="py-3 px-10 bg-blue-500 hover:bg-blue-600 cursor-pointer rounded-md text-center table-cell align-middle"
                               >
                                 Reply
                               </button>

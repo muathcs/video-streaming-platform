@@ -74,8 +74,8 @@ function Login() {
   return (
     <div>
       {/* <!-- TW Elements is free under AGPL, with commercial license required for specific uses. See more details: https://tw-elements.com/license/ and contact us for queries at tailwind@mdbootstrap.com -->  */}
-      <section className="h-screen bg-[#121114] ">
-        <div className="container h-full px-6 py-24">
+      <section className="h-screen bg-[#121114] flex justify-center">
+        <div className="container h-full px-6 py-24 ">
           <div className="g-6 flex h-full flex-wrap items-center justify-center lg:justify-between">
             {/* <!-- Left column container with background--> */}
             <div className="mb-12 md:mb-0 md:w-8/12 lg:w-6/12">

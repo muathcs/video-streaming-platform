@@ -4,8 +4,11 @@ import CelebCard from "./CelebCard";
 import axios from "../api/axios";
 import { CelebType } from "../TsTypes/types";
 import { apiUrl } from "../utilities/fetchPath";
+// import { GiCardKingClubs } from "react-icons/gi";
 function Category() {
   const { category } = useParams();
+
+  console.log("cat: ", category);
 
   const [celebs, setCelebs] = useState<CelebType[]>([]);
 
@@ -16,7 +19,7 @@ function Category() {
     setLoading(true);
     const fetchCelebs = async () => {
       try {
-        const response = await axios.get(`${apiUrl}/${category}`);
+        const response = await axios.get(`${apiUrl}/celebs/${category}`);
 
         setCelebs(response.data);
         setLoading(false);
@@ -25,11 +28,14 @@ function Category() {
       }
     };
 
-    fetchCelebs();
+    return () => {
+      fetchCelebs();
+    };
   }, []);
+
   return (
     <div className="flex justify-center relative top-10 h-full  ">
-      <div className="flex  relative top-10 h-full w-4/5   ">
+      <div className="flex  relative top-10 h-full w-4/5">
         <div className=" w-[80%] relative">
           <h1 className="text-left">{category}</h1>
           <div className=" h-full   ">
@@ -82,7 +88,7 @@ function Category() {
             </div>
           </div>
         </div>
-        <div className="border-2   w-[20%]">hello</div>
+        <div className="border-2 border-purple-500   w-[20%]">Filter</div>
       </div>
     </div>
   );

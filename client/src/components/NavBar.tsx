@@ -25,8 +25,7 @@ function NavBar() {
 
   const [navigation, setNavigation] = useState([
     { name: "Catogories", href: "#", current: false },
-    { name: "Home", href: "#", current: false },
-    { name: "How ", href: "#", current: false },
+    { name: "How ", href: "/about", current: false },
     { name: "Celebs", href: "#", current: false },
     { name: "About", href: "#", current: false },
     { name: path, href: path, current: false },
@@ -153,7 +152,7 @@ function NavBar() {
                         <span className="absolute -inset-1.5" />
                         <span className="sr-only">Open user menu</span>
                         <img
-                          className="h-full w-full rounded-full"
+                          className="h-full w-full rounded-full object-cover"
                           src={currentUser && currentUser.photoURL}
                           alt=""
                         />

@@ -58,7 +58,7 @@ function RequestForm({ celebUid, fanUid, price }: RequestProps) {
 
   return (
     <>
-      <div className="h-full w-full relative   ">
+      <div className="h-full w-full relative text-white bg-[#121114]   ">
         <form onSubmit={handleSubmit(onSubmit)}>
           {/* <!-- Email input --> */}
           <div className="relative mb-6" data-te-input-wrapper-init>
@@ -260,10 +260,10 @@ function RequestForm({ celebUid, fanUid, price }: RequestProps) {
           )}
           {/* continue */}
 
-          <div className="">
+          <div className=" flex justify-center">
             <button
               disabled={isSubmitting}
-              className=" disabled:bg-red-500 block w-full rounded-full my-8 border border-gray-200 py-3 px-8 cursor-pointer hover:bg-blue-700 bg-blue-600 text-white"
+              className=" disabled:bg-red-500 block w-1/2  rounded-full my-8 border border-gray-200 py-3 px-8 cursor-pointer hover:bg-blue-700 bg-blue-600 text-white"
             >
               Continue
             </button>
