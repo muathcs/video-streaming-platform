@@ -1,11 +1,8 @@
-import { useContext } from "react";
 import CelebCard from "./CelebCard";
 import { useGlobalAxios } from "../hooks/useGlobalAxios";
 import background from "../assets/background.jpg";
-import { RequestContext } from "../context/RequestContext";
 import { useNavigate } from "react-router-dom";
 import { apiUrl } from "../utilities/fetchPath";
-import axios from "../api/axios";
 function Celebs() {
   const { data, loading, error } = useGlobalAxios("get", `${apiUrl}/celebs`);
 
@@ -43,8 +40,6 @@ function Celebs() {
       img: "",
     },
   ];
-
-  const { requests } = useContext(RequestContext);
 
   const navigate = useNavigate();
 

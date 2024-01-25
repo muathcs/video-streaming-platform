@@ -2,8 +2,6 @@ import { useEffect } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useLocation } from "react-router-dom";
-import { useLocalStorage } from "../hooks/useLocalStorage";
-import { useAuth } from "../context/AuthContext";
 
 // if we reach the success page, it means a request has been sent to the celeb, so we can also create a notificaiton here to notify the celeb of the request that was made to them.
 

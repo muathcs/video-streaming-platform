@@ -1,6 +1,6 @@
 import "./App.css";
 import NavBar from "./components/NavBar";
-import { Navigate, Route, Routes } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 import CelebProfile from "./components/CelebProfile";
 import Login from "./components/Login";
 import SignUp from "./components/signup";

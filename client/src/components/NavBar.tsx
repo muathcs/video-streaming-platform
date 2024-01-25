@@ -1,4 +1,4 @@
-import { useState, useEffect, Fragment, useMemo } from "react";
+import { useState, useEffect, Fragment } from "react";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
 import { CiMenuBurger } from "react-icons/ci";
 import { FaTimes } from "react-icons/fa";

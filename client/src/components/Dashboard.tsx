@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { useTable } from "react-table";
 import { useNavigate } from "react-router-dom";
-import { useGlobalAxios } from "../hooks/useGlobalAxios";
 import { apiUrl } from "../utilities/fetchPath";
 import axios from "../api/axios";
 import { notification } from "../TsTypes/types";

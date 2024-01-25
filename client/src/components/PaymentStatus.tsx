@@ -2,20 +2,15 @@ import { useState, useEffect } from "react";
 import { useStripe } from "@stripe/react-stripe-js";
 import { useLocalStorage } from "../hooks/useLocalStorage";
 import { useGlobalAxios } from "../hooks/useGlobalAxios";
-import { useNavigate } from "react-router-dom";
 import Success from "./Success";
 import { apiUrl } from "../utilities/fetchPath";
-import { useAuth } from "../context/AuthContext";
 const PaymentStatus = () => {
-  const navigate = useNavigate();
   const stripe = useStripe();
   const [message, setMessage] = useState<string | null>(null);
 
   const [request] = useLocalStorage("request");
-  const { currentUser }: any = useAuth();
 
   const { data: sendPostRequest } = useGlobalAxios("post");
-  const [senderId, setSenderId] = useState();
 
   function createNotification() {
     console.log("made a request");

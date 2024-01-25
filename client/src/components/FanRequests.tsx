@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import FanRequestContainer from "./FanRequestContainer";
-import { useGlobalAxios } from "../hooks/useGlobalAxios";
 import { RequestType } from "../TsTypes/types";
 import { CelebType } from "../TsTypes/types";
 import { apiUrl } from "../utilities/fetchPath";
@@ -51,7 +50,7 @@ function FanRequests() {
         <div className="  overflow-auto flex flex-col gap-2">
           <>
             {celebReplies &&
-              celebReplies.map((req: fanRequestType, index: number) => (
+              celebReplies.map((req: fanRequestType) => (
                 <>
                   {/* FanRequestContainer holds the requests, the FulFilled contianer holds the viewed requests.   */}
                   <>
