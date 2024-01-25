@@ -17,7 +17,8 @@ export type notification = {
   sender_uid: string;
 };
 
-export type Request = {
+// types.ts
+export type RequestType = {
   message: string;
   reqtype: string;
   reqaction: string;
