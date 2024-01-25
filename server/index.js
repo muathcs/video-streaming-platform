@@ -135,7 +135,6 @@ app.get("/status", async (req, res) => {
 
 app.get("/dashboard", async (req, res) => {
   const uid = req.query.data;
-
   try {
     const response = await pool.query(
       "SELECT * from Requests WHERE reqstatus = $1 AND celebUid = $2 ORDER BY requestid DESC",
@@ -151,7 +150,7 @@ app.get("/dashboard", async (req, res) => {
 });
 
 app.get("/fanrequests", async (req, res) => {
-  const uid = req.query.data;
+  const { uid } = req.query;
 
   try {
     // this queries all the requests that match the get query uid. Basically when a fan clicks there on there requests this retrieves them
@@ -159,8 +158,6 @@ app.get("/fanrequests", async (req, res) => {
       "SELECT celebmessage, requestid, message, reqtype, reqAction, timestamp1, reqstatus, celebuid from Requests WHERE fanuid = $1 ORDER BY requestid",
       [uid]
     );
-
-    // console.log(response.rows);
 
     // for (const post of response.rows) {
     //   const getObjectParams = {
@@ -170,9 +167,7 @@ app.get("/fanrequests", async (req, res) => {
 
     //   const command = new GetObjectCommand(getObjectParams);
     //   const url = await getSignedUrl(s3, command, { expiresIn: 3600 });
-    //   console.log("here");
 
-    //   console.log("URL: ", url);
     // }
 
     //array that will be sent back to the response, it's made up of objects of the individual request + celeb info(photo, name)
@@ -212,8 +207,6 @@ app.get("/fanrequests", async (req, res) => {
 });
 
 app.put("/fulfill/:id", upload.single("videoFile"), async (req, res) => {
-  // console.log("here/fulfull: ", req.body);
-
   const itemId = parseInt(req.params.id, 10); // Parse the id parameter as an integer
 
   // resize image
@@ -226,7 +219,6 @@ app.put("/fulfill/:id", upload.single("videoFile"), async (req, res) => {
     try {
       const { celebReply } = req.body;
 
-      // console.log("celeb", celebReply);
       const response = await pool.query(
         "UPDATE requests SET reqstatus = $1, celebmessage = $2 WHERE requestid = $3 ",
         ["fulfilled", celebReply, itemId]
@@ -244,7 +236,6 @@ app.put("/fulfill/:id", upload.single("videoFile"), async (req, res) => {
       const file = req.file; // we get this file, because we're sending a form data.
       const key = `video/${Date.now()}-${randomImageName()}.webm`;
 
-      // console.log("celebREply: ", celebReply);
       const params = {
         Bucket: process.env.S3_BUCKET,
         Key: key,
@@ -254,14 +245,12 @@ app.put("/fulfill/:id", upload.single("videoFile"), async (req, res) => {
 
       const sender = await uploadFile(file.buffer, key, file.mimetype);
 
-      console.log("sender: ", sender);
       // const command = new PutObjectCommand(params);
       // const upload = await s3.send(command);
 
       // // Construct the URL of the uploaded video
       const videoUrl = `https://${process.env.S3_BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com/${key}`;
 
-      // console.log("here", videoUrl);
       // console.log("id: ", itemId);
       const response = await pool.query(
         "UPDATE requests SET reqstatus = $1, celebmessage = $2 WHERE requestid = $3 ",
@@ -283,8 +272,6 @@ async function uploadProfileImgToS3(req, res, next) {
 
   const file = req.file;
 
-  // console.log("from middleware file: ", req.file);
-  // console.log("from middleware: body", req.file);
   try {
     const uploadProf = await uploadFile(file.buffer, imgurl, file.mimetype);
 
@@ -304,8 +291,6 @@ app.post(
     const payLoadParsed = JSON.parse(payLoad);
     const { username, email } = payLoadParsed;
 
-    console.log("payload: ", req.body);
-
     try {
       const result = await pool.query(
         "INSERT INTO fan(username, email, uid, imgurl) VALUES ($1, $2, $3, $4)",
@@ -322,12 +307,62 @@ app.post(
   }
 );
 
+// notification
+app.post("/notification", async (req, res) => {
+  const { intended_uid, sender_uid, message } = req.body;
+
+  console.log(
+    "intend: ",
+    intended_uid,
+    "sender_uid: ",
+    sender_uid,
+    "message: ",
+    message
+  );
+
+  try {
+    const response = await pool.query(
+      "INSERT INTO notification(intended_uid,sender_uid, message) VALUES ($1, $2, $3)",
+      [intended_uid, sender_uid, message]
+    );
+
+    res.status(200).send({ message: "notification has been made" });
+  } catch (error) {
+    console.log("error/notification: ", error);
+  }
+});
+
+app.get("/notification", async (req, res) => {
+  const { data: uid } = req.query;
+  console.log("this: ", uid);
+  try {
+    const response = await pool.query(
+      "SELECT * FROM notification WHERE intended_uid = $1",
+      [uid]
+    );
+
+    return res.send(response.rows);
+  } catch (error) {
+    console.log("get/notification: ", error);
+    res.status(404).send({ message: error.message });
+  }
+});
+
+app.put("/notification", async (req, res) => {
+  const { uid } = req.body;
+  console.log("body: ", uid);
+  try {
+    const response = pool.query(
+      "UPDATE notification SET is_read = true WHERE intended_uid = $1 ",
+      [uid]
+    );
+  } catch (error) {
+    res.status(401).send({ message: "could not update notification table" });
+  }
+});
 //
 
-app.put("/test", upload.single("videoFile"), async (req, res) => {
-  // console.log("file:", req.file);
-  // console.log("test:", req.body);
-});
+app.put("/test", upload.single("videoFile"), async (req, res) => {});
 
 app.post("/request", async (req, res) => {
   let {

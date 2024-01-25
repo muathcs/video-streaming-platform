@@ -42,7 +42,9 @@ export function useGlobalAxios(
   //function to post to the data base.
   async function postData(path: string, params?: unknown) {
     try {
-      await axios.post(path, params);
+      const response = await axios.post(path, params);
+
+      console.log("post req response: ", response);
     } catch (error) {
       console.error(error);
     }
@@ -66,7 +68,7 @@ export function useGlobalAxios(
 
         if (dataToFetch && method === "get") {
           response = await axios.get(dataToFetch, {
-            params: { data: params },
+            params: { uid: params },
           });
         }
 

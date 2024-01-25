@@ -5,6 +5,7 @@ import FulfillAudio from "./fulfillRequest/FulfillAudio";
 import FulfillMessage from "./fulfillRequest/FulfillMessage";
 import { useGlobalAxios } from "../hooks/useGlobalAxios";
 import { ToastContainer, toast } from "react-toastify";
+import { apiUrl } from "../utilities/fetchPath";
 
 function FulfillRequest() {
   // prettier-ignore
@@ -12,7 +13,8 @@ function FulfillRequest() {
 
   //this reducer forces the fullfillVideo componenet to rerender when I press the record video button again.
   const [reRecord, forceUpdate] = useReducer((x) => x + 1, 0);
-  const { data: putData, error } = useGlobalAxios("put");
+  const { data: sendPutRequest, error } = useGlobalAxios("put");
+  const { data: sendPostRequest } = useGlobalAxios("post");
 
   // const { requestId } = useParams();
 
@@ -31,19 +33,27 @@ function FulfillRequest() {
     // Now formDataEntries is an array of key-value pairs
     // console.log("statE: ", state);
 
+    console.log("d: ", state);
+
     if (state.reqtype == "message") {
-      putData(`/fulfill/${state.requestid}`, { celebReply });
+      sendPutRequest(`/fulfill/${state.requestid}`, { celebReply });
       if (!error) {
         notify(); //pop up notification
       }
     } else {
-      putData(`/fulfill/${state.requestid}`, celebReply);
+      sendPutRequest(`/fulfill/${state.requestid}`, celebReply);
       console.log("celebReply: ", celebReply);
 
       if (!error) {
         notify(); //pop up notification
       }
     }
+
+    sendPostRequest(`${apiUrl}/notification`, {
+      intended_uid: state.fanuid,
+      sender_uid: state.celebuid,
+      message: "Your request has been fulfilled",
+    });
 
     // Delete the "state" entry to reset the FormData object
     celebReply instanceof FormData && celebReply.delete("state");

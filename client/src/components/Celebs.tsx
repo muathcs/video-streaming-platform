@@ -7,13 +7,6 @@ import { useNavigate } from "react-router-dom";
 import { apiUrl } from "../utilities/fetchPath";
 import axios from "../api/axios";
 function Celebs() {
-  try {
-    axios.get(`${apiUrl}/testing`);
-
-    console.log("here");
-  } catch (error) {
-    console.error("failed", error);
-  }
   const { data, loading, error } = useGlobalAxios("get", `${apiUrl}/celebs`);
 
   const shopByCategory = [
@@ -55,7 +48,6 @@ function Celebs() {
 
   const navigate = useNavigate();
 
-  console.log("here", requests);
   return (
     <>
       <div className=" flex flex-col  items-center ">
@@ -127,7 +119,10 @@ function Celebs() {
             </p>
             <div className=" h-4/6   gap-0 grid  sm:grid-cols-5 md:grid-cols-7 lg:grid-cols-8">
               {shopByCategory.map((category) => (
-                <div className="flex flex-col  items-center justify-center hover:cursor-pointer hover:text-gray-400  ">
+                <div
+                  key={category.categoryName}
+                  className="flex flex-col  items-center justify-center hover:cursor-pointer hover:text-gray-400  "
+                >
                   <div
                     onClick={() => navigate(`/browse/${category.categoryName}`)}
                     className="border-2 bg-red-300 rounded-[50%] w-52 h-52 overflow-hidden relative"

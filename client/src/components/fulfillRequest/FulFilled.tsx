@@ -13,7 +13,6 @@ function FulFilled() {
 
     // Rest of your code
   } else {
-    console.log("here return");
     return;
     <Navigate to={"/login"} />;
   }

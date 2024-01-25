@@ -4,13 +4,27 @@ import { useLocalStorage } from "../hooks/useLocalStorage";
 import { useGlobalAxios } from "../hooks/useGlobalAxios";
 import { useNavigate } from "react-router-dom";
 import Success from "./Success";
-
+import { apiUrl } from "../utilities/fetchPath";
+import { useAuth } from "../context/AuthContext";
 const PaymentStatus = () => {
   const navigate = useNavigate();
   const stripe = useStripe();
   const [message, setMessage] = useState<string | null>(null);
 
   const [request] = useLocalStorage("request");
+  const { currentUser }: any = useAuth();
+
+  const { data: sendPostRequest } = useGlobalAxios("post");
+  const [senderId, setSenderId] = useState();
+
+  function createNotification() {
+    console.log("made a request");
+    sendPostRequest(`${apiUrl}/notification`, {
+      intended_uid: request.celebUid,
+      sender_uid: request.fanUid,
+      message: "user has made a request",
+    });
+  }
 
   const { data: sendRequest }: any = useGlobalAxios("post", "request"); //
 
@@ -44,8 +58,9 @@ const PaymentStatus = () => {
       switch (paymentIntent?.status) {
         case "succeeded":
           sendRequest("request", request);
-          console.log("here");
-          navigate("/success");
+          console.log("sucess", request);
+          createNotification();
+          // navigate("/success", request); // we will send the request to the success page, where we will create a notification for the celeb
           setMessage("success");
           break;
 

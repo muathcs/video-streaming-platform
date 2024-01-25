@@ -45,6 +45,16 @@ CREATE TABLE Message (
     read_status BOOLEAN
 );
 
+
+CREATE TABLE notification (
+  notificationId SERIAL PRIMARY KEY,
+  intended_uid VARHCHAR(50  ), -- person who will see the request, not the one making it.
+  sender_uid VARCHAR(50), -- person who is sending the notification. 
+  message TEXT,
+  is_read BOOLEAN DEFAULT false,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+)
+
 CREATE TABLE Requests (
     requestid serial primary key,
     celebuid varchar(50), --fan
@@ -55,7 +65,7 @@ CREATE TABLE Requests (
     fromperson varchar(40),
     toperson varchar(40),
     message Varchar(500),
-    restatus Varchar(10), -- (pending, accepted, completed),
+    reqstatus Varchar(10), -- (pending, accepted, completed),
     reqtype Varchar(8), --(vid, message, audio),
     TimeStamp1 timestamp, --(when has the req been made),
     TimeStamp2 timestamp, -- (when has the req been fuliffled)

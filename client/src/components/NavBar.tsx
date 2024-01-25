@@ -1,5 +1,4 @@
-import { useState } from "react";
-import { Fragment } from "react";
+import { useState, useEffect, Fragment, useMemo } from "react";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
 import { CiMenuBurger } from "react-icons/ci";
 import { FaTimes } from "react-icons/fa";
@@ -7,6 +6,12 @@ import { GiShoppingCart } from "react-icons/gi";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { useRequests } from "../context/RequestContext";
+import axios from "../api/axios";
+import { apiUrl } from "../utilities/fetchPath";
+import { ImNotification } from "react-icons/im";
+import { notification } from "../TsTypes/types";
+import { useGlobalAxios } from "../hooks/useGlobalAxios";
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
 
 function classNames(...classes: any) {
   return classes.filter(Boolean).join(" ");
@@ -18,8 +23,71 @@ function classNames(...classes: any) {
 
 function NavBar() {
   const { logout, currentUser, celeb }: any = useAuth();
+  const [notifications, setNotifications] = useState<notification[]>();
+  const [unread, setUnread] = useState<number>(0);
+  const [loading, setLoading] = useState<boolean>(false);
+
+  const { data: putRequest } = useGlobalAxios("put");
   const navigate = useNavigate();
+
+  useEffect(() => {
+    setLoading(true);
+    console.log("mounting");
+    const getNotification = async () => {
+      try {
+        const response = await axios.get(`${apiUrl}/notification`, {
+          params: { data: currentUser.uid },
+        });
+
+        console.log("this: ", response.data);
+
+        setNotifications(response.data);
+
+        const totalUnreadNotifications: number = response.data.reduce(
+          (total: number, notification: notification) => {
+            return !notification.is_read ? total + 1 : total;
+          },
+          0
+        );
+
+        // to prevent flickering only set unread if there are unread notification in the database.
+        if (totalUnreadNotifications != unread) {
+          setUnread(totalUnreadNotifications);
+        }
+        setLoading(false);
+
+        // console.log("response", response.data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    getNotification();
+
+    return () => {
+      console.log("unmounting");
+    };
+  }, []);
+
   // const celeb = localStorage.getItem("celeb");
+
+  // this function will run when a user opens the notification tab, and will set all the notifications the user read to is_read = true
+  function readNotifications() {
+    console.log("beofre: ", notifications);
+    setNotifications((notifications) => {
+      return (
+        notifications?.map((notification) => ({
+          ...notification,
+          is_read: true,
+        })) ?? []
+      );
+    });
+
+    putRequest(`${apiUrl}/notification`, { uid: currentUser.uid });
+
+    setUnread(0);
+    console.log("beofre: ", notifications);
+  }
 
   const path = celeb ? "dashboard" : celeb == undefined ? "" : "requests";
 
@@ -43,11 +111,7 @@ function NavBar() {
     }
   }
 
-  console.log("current: ", currentUser);
-
   const { requests } = useRequests();
-
-  console.log("req: ", requests);
 
   return (
     <>
@@ -74,6 +138,7 @@ function NavBar() {
                     )}
                   </Disclosure.Button>
                 </div>
+
                 <div className="flex items-center justify-center    w-full   ">
                   <div className=" w-2/3 flex ">
                     <div className="flex flex-shrink-0 items-center">
@@ -131,20 +196,70 @@ function NavBar() {
                   </div>
                 </div>
                 <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0 sm:mt-3">
-                  <button
-                    type="button"
-                    className="relative rounded-full  p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
-                  >
-                    <span className="absolute -inset-1.5" />
-                    <span className="sr-only">View notifications</span>
+                  <Menu as="div" className="relative inline-block text-left">
+                    <div>
+                      <Menu.Button className="inline-flex w-full justify-center rounded-md px-4 py-2 text-sm font-medium text-white hover:bg-black/30 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75">
+                        <p
+                          onClick={readNotifications}
+                          className="relative rounded-full  p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
+                        >
+                          <span className="absolute -inset-1.5" />
+                          <span className="sr-only">View notifications</span>
 
-                    {requests && (
-                      <span className="bg-red-600 font-bold text-lg text-center flex justify-center items-center absolute h-7 w-7 bottom-7 left-6 rounded-[50%] text-white">
-                        {requests?.length}
-                      </span>
-                    )}
-                    <GiShoppingCart className="h-10 w-10" aria-hidden="true" />
-                  </button>
+                          {requests && (
+                            <>
+                              {unread ? (
+                                <span className="bg-red-600 font-bold text-lg text-center flex justify-center items-center absolute h-7 w-7 bottom-7 left-6 rounded-[50%] text-white">
+                                  {loading ? (
+                                    <AiOutlineLoading3Quarters />
+                                  ) : (
+                                    unread
+                                  )}
+                                </span>
+                              ) : (
+                                ""
+                              )}
+                            </>
+                          )}
+                          <GiShoppingCart
+                            className="h-10 w-10"
+                            aria-hidden="true"
+                          />
+                        </p>
+                      </Menu.Button>
+                    </div>
+                    <Transition
+                      as={Fragment}
+                      enter="transition ease-out duration-100"
+                      enterFrom="transform opacity-0 scale-95"
+                      enterTo="transform opacity-100 scale-100"
+                      leave="transition ease-in duration-75"
+                      leaveFrom="transform opacity-100 scale-100"
+                      leaveTo="transform opacity-0 scale-95"
+                    >
+                      <Menu.Items className="absolute right-0 mt-2 w-96 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none">
+                        <div className="px-1 py-1 ">
+                          {notifications?.map((notification: notification) => (
+                            <Menu.Item key={notification.notificationid}>
+                              {({ active }) => (
+                                <p
+                                  className={`${
+                                    active
+                                      ? "bg-red-500 text-white"
+                                      : "text-gray-900"
+                                  } group flex w-full items-center rounded-md px-2 py-4 border border-gray-300 bg-gray-100 text-lg my-2 `}
+                                >
+                                  <ImNotification className="text-blue-500 mr-2 relative top-1" />
+                                  {notification.message}
+                                </p>
+                              )}
+                            </Menu.Item>
+                          ))}
+                        </div>
+                      </Menu.Items>
+                    </Transition>
+                  </Menu>
+
                   {/* Profile dropdown */}
                   <Menu as="div" className="relative ml-3 ">
                     <div>

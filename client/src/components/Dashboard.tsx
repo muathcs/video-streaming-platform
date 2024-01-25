@@ -1,18 +1,33 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { useTable } from "react-table";
 import { useNavigate } from "react-router-dom";
 import { useGlobalAxios } from "../hooks/useGlobalAxios";
 import { apiUrl } from "../utilities/fetchPath";
+import axios from "../api/axios";
+import { notification } from "../TsTypes/types";
 
 function Dashboard() {
   const { currentUser }: any = useAuth();
   const navigate = useNavigate();
-  const { data } = useGlobalAxios(
-    "get",
-    `${apiUrl}/dashboard`,
-    currentUser.uid
-  );
+  const [data, setData] = useState<notification[]>();
+  useEffect(() => {
+    const getRequests = async () => {
+      try {
+        const response = await axios.get(`${apiUrl}/dashboard`, {
+          params: { data: currentUser.uid },
+        });
+
+        console.log("res: ", response);
+        setData(response.data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    getRequests();
+  }, []);
+
+  console.log("data: ", currentUser.uid);
 
   // completes the request by the celeb to the fan.
   function handleFulfillReq(row: any) {
