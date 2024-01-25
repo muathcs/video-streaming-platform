@@ -35,6 +35,7 @@ function App() {
           <Route path="/about" element={<HowTo />} />
           <Route path="/request/fulfilled" element={<FulFilled />} />
           <Route path="/browse/:category" element={<Category />} />
+          <Route path="/*" element={<PrivateRoute />} />
         </Routes>
       </div>
     </>
