@@ -45,15 +45,15 @@ CREATE TABLE Message (
     read_status BOOLEAN
 );
 
-
 CREATE TABLE notification (
   notificationId SERIAL PRIMARY KEY,
-  intended_uid VARHCHAR(50  ), -- person who will see the request, not the one making it.
+  intended_uid VARCHAR(50  ), -- person who will see the request, not the one making it.
   sender_uid VARCHAR(50), -- person who is sending the notification. 
   message TEXT,
   is_read BOOLEAN DEFAULT false,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 )
+
 
 CREATE TABLE Requests (
     requestid serial primary key,

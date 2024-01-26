@@ -111,38 +111,45 @@ function NavBar() {
     }
   }
 
+  console.log("notis: ", notifications?.length == 0);
+
   const { requests } = useRequests();
 
   return (
     <>
       <Disclosure
         as="nav"
-        className=" text-[24px] sm:text-[16px] z-10 block  py-5    "
+        className=" text-[24px] sm:text-[16px] z-10 block  sm:py-5 py-2 h-[100rem]    "
       >
         {({ open }) => (
           <>
-            <div className="mx-auto max-w-[100rem] px-2 sm:px-6   ">
-              <div className="relative flex h-16  items-center justify-between ">
-                <div className="absolute inset-y-0 left-0 flex items-center sm:hidden ">
-                  {/* Mobile menu button*/}
-                  <Disclosure.Button className="relative inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white">
-                    <span className="absolute -inset-0.5" />
-                    <span className="sr-only">Open main menu</span>
-                    {open ? (
-                      <FaTimes className="block h-6 w-6" aria-hidden="true" />
-                    ) : (
-                      <CiMenuBurger
-                        className="block h-6 w-6"
-                        aria-hidden="true"
-                      />
-                    )}
-                  </Disclosure.Button>
-                </div>
-
-                <div className="flex items-center justify-center    w-full   ">
-                  <div className=" w-2/3 flex ">
-                    <div className="flex flex-shrink-0 items-center">
-                      <h1 className="text-[50px]  sm:block hidden text-white relative bottom-2">
+            <div className="mx-auto max-w-[100rem] px-2 sm:px-6   h-[8rem]     ">
+              {/* notifications, profile image and search bar.  */}
+              <div className="relative flex flex-col lg:flex-row  h-full gap-2    ">
+                {/* Mobile menu button, profile and notifications*/}
+                <div className="relative lg:absolute  h-1/2  w-full  ">
+                  {/* mobile menu button */}
+                  <div className=" w-1/2  ">
+                    <div className="absolute inset-y-0 left-0 flex items-center lg:hidden   ">
+                      <Disclosure.Button className="relative inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white">
+                        <span className="absolute -inset-0.5 " />
+                        <span className="sr-only">Open main menu</span>
+                        {open ? (
+                          <FaTimes
+                            className="block h-6 w-6"
+                            aria-hidden="true"
+                          />
+                        ) : (
+                          <CiMenuBurger
+                            className="block h-6 w-6"
+                            aria-hidden="true"
+                          />
+                        )}
+                      </Disclosure.Button>
+                    </div>
+                    {/* big screen cameo button  */}
+                    <div className="items-center justify-center   lg:flex  hidden  lg:h-[4rem] relative border-2  ">
+                      <h1 className="text-[3rem]   text-white relative  border-2 flex-grow">
                         <Link
                           className="text-white "
                           onClick={() => {
@@ -158,174 +165,191 @@ function NavBar() {
                           Cameo
                         </Link>
                       </h1>
-                    </div>
-                    <div className="hidden sm:ml-6 sm:block ">
-                      <div className="flex space-x-4 mx-2">
-                        {navigation.map((item, index) => (
-                          <Link
-                            key={item.name}
-                            to={item.href}
-                            onClick={() => {
-                              const updatedNav = navigation.map((item, i) => ({
-                                ...item,
-                                current: i == index, //when a spec link is clicked, current becomes true
-                              }));
+                      <div className="hidden  lg:flex   border-2 w-3/4   ">
+                        <div className="flex flex-shrink space-x-4 mx-2 w-full ">
+                          {navigation.map((item, index) => (
+                            <Link
+                              key={item.name}
+                              to={item.href}
+                              onClick={() => {
+                                const updatedNav = navigation.map(
+                                  (item, i) => ({
+                                    ...item,
+                                    current: i == index, //when a spec link is clicked, current becomes true
+                                  })
+                                );
 
-                              setNavigation(updatedNav);
-                            }}
-                            className={classNames(
-                              item.current
-                                ? "bg-slate-300 rounded-full text-white"
-                                : "text-white hover:bg-gray-700 hover:rounded-full focus:bg-gray-800 hover:text-white",
-                              "rounded-full px-3 py-3 text-[20px] font-medium "
-                            )}
-                            aria-current={item.current ? "page" : undefined}
-                          >
-                            {item.name}
-                          </Link>
-                        ))}
+                                setNavigation(updatedNav);
+                              }}
+                              className={classNames(
+                                item.current
+                                  ? "bg-slate-300 rounded-full text-white"
+                                  : "text-white hover:bg-gray-700 hover:rounded-full focus:bg-gray-800 hover:text-white ",
+                                "rounded-full px-3 py-3 text-[20px] font-medium "
+                              )}
+                              aria-current={item.current ? "page" : undefined}
+                            >
+                              {item.name}
+                            </Link>
+                          ))}
+                        </div>
                       </div>
                     </div>
                   </div>
 
-                  <div className=" w-full ">
-                    <input
-                      placeholder="Search"
-                      className="text-black py-2 rounded-full w-full border border-gray-500 bg-white px-5  "
-                    />
+                  {/* notification and profile buttons */}
+                  <div className="absolute inset-y-0  right-0 flex items-center pr-2 ">
+                    <Menu as="div" className="relative inline-block text-left">
+                      <div>
+                        <Menu.Button className=" inline-flex w-full justify-center rounded-md px-4 py-2 text-sm font-medium text-white hover:bg-black/30 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75">
+                          <p
+                            onClick={readNotifications}
+                            className="relative rounded-full   p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
+                          >
+                            <span className="absolute -inset-1.5 " />
+                            <span className="sr-only ">View notifications</span>
+
+                            {requests && (
+                              <>
+                                {unread ? (
+                                  <span className="bg-red-600 font-bold text-lg text-center flex justify-center items-center absolute h-7 w-7 bottom-7 left-6 rounded-[50%] text-white">
+                                    {loading ? (
+                                      <AiOutlineLoading3Quarters />
+                                    ) : (
+                                      unread
+                                    )}
+                                  </span>
+                                ) : (
+                                  ""
+                                )}
+                              </>
+                            )}
+                            <GiShoppingCart
+                              className="h-10 w-10"
+                              aria-hidden="true"
+                            />
+                          </p>
+                        </Menu.Button>
+                      </div>
+                      <Transition
+                        as={Fragment}
+                        enter="transition ease-out duration-100"
+                        enterFrom="transform opacity-0 scale-95"
+                        enterTo="transform opacity-100 scale-100"
+                        leave="transition ease-in duration-75"
+                        leaveFrom="transform opacity-100 scale-100"
+                        leaveTo="transform opacity-0 scale-95"
+                      >
+                        <Menu.Items className="absolute right-0 mt-2 w-96 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none">
+                          <div className="px-1 py-5">
+                            {notifications?.length == 0 ? (
+                              <Menu.Item>
+                                <p className="text-black flex">
+                                  <ImNotification className="text-red-500 mr-2 relative top-1" />
+                                  You don't have any notifications
+                                </p>
+                              </Menu.Item>
+                            ) : (
+                              notifications?.map(
+                                (notification: notification) => (
+                                  <Menu.Item key={notification.notificationid}>
+                                    {({ active }) => (
+                                      <p
+                                        className={`${
+                                          active
+                                            ? "bg-red-500 text-white"
+                                            : "text-gray-900"
+                                        } group flex w-full items-center rounded-md px-2 py-4 border border-gray-300 bg-gray-100 text-lg my-2 `}
+                                      >
+                                        <ImNotification className="text-green-500 mr-2 relative top-1" />
+                                        {notification.message}
+                                      </p>
+                                    )}
+                                  </Menu.Item>
+                                )
+                              )
+                            )}
+                          </div>
+                        </Menu.Items>
+                      </Transition>
+                    </Menu>
+
+                    {/* Profile dropdown */}
+                    <Menu as="div" className="relative ml-3 ">
+                      <div>
+                        <Menu.Button className="relative  w-16 h-16 flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
+                          <span className="absolute -inset-1.5" />
+                          <span className="sr-only">Open user menu</span>
+                          <img
+                            className="h-full w-full rounded-full object-cover"
+                            src={currentUser && currentUser.photoURL}
+                            alt=""
+                          />
+                        </Menu.Button>
+                      </div>
+                      <Transition
+                        as={Fragment}
+                        enter="transition ease-out duration-100"
+                        enterFrom="transform opacity-0 scale-95"
+                        enterTo="transform opacity-100 scale-100"
+                        leave="transition ease-in duration-75"
+                        leaveFrom="transform opacity-100 scale-100"
+                        leaveTo="transform opacity-0 scale-95"
+                      >
+                        <Menu.Items className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                          <Menu.Item>
+                            {({ active }) => (
+                              <a
+                                href="#"
+                                className={classNames(
+                                  active ? "bg-gray-100" : "",
+                                  "block px-4 py-2 text-sm text-gray-700"
+                                )}
+                              >
+                                Your Profile
+                              </a>
+                            )}
+                          </Menu.Item>
+                          <Menu.Item>
+                            {({ active }) => (
+                              <a
+                                href="#"
+                                className={classNames(
+                                  active ? "bg-gray-100" : "",
+                                  "block px-4 py-2 text-sm text-gray-700"
+                                )}
+                              >
+                                Settings
+                              </a>
+                            )}
+                          </Menu.Item>
+                          <Menu.Item>
+                            {({ active }) => (
+                              <a
+                                onClick={handleLogout}
+                                href="#"
+                                className={classNames(
+                                  active ? "bg-gray-100" : "",
+                                  "block px-4 py-2 text-sm text-gray-700"
+                                )}
+                              >
+                                Sign out
+                              </a>
+                            )}
+                          </Menu.Item>
+                        </Menu.Items>
+                      </Transition>
+                    </Menu>
                   </div>
                 </div>
-                <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0 sm:mt-3">
-                  <Menu as="div" className="relative inline-block text-left">
-                    <div>
-                      <Menu.Button className="inline-flex w-full justify-center rounded-md px-4 py-2 text-sm font-medium text-white hover:bg-black/30 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75">
-                        <p
-                          onClick={readNotifications}
-                          className="relative rounded-full  p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
-                        >
-                          <span className="absolute -inset-1.5" />
-                          <span className="sr-only">View notifications</span>
+                {/* close here */}
 
-                          {requests && (
-                            <>
-                              {unread ? (
-                                <span className="bg-red-600 font-bold text-lg text-center flex justify-center items-center absolute h-7 w-7 bottom-7 left-6 rounded-[50%] text-white">
-                                  {loading ? (
-                                    <AiOutlineLoading3Quarters />
-                                  ) : (
-                                    unread
-                                  )}
-                                </span>
-                              ) : (
-                                ""
-                              )}
-                            </>
-                          )}
-                          <GiShoppingCart
-                            className="h-10 w-10"
-                            aria-hidden="true"
-                          />
-                        </p>
-                      </Menu.Button>
-                    </div>
-                    <Transition
-                      as={Fragment}
-                      enter="transition ease-out duration-100"
-                      enterFrom="transform opacity-0 scale-95"
-                      enterTo="transform opacity-100 scale-100"
-                      leave="transition ease-in duration-75"
-                      leaveFrom="transform opacity-100 scale-100"
-                      leaveTo="transform opacity-0 scale-95"
-                    >
-                      <Menu.Items className="absolute right-0 mt-2 w-96 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none">
-                        <div className="px-1 py-1 ">
-                          {notifications?.map((notification: notification) => (
-                            <Menu.Item key={notification.notificationid}>
-                              {({ active }) => (
-                                <p
-                                  className={`${
-                                    active
-                                      ? "bg-red-500 text-white"
-                                      : "text-gray-900"
-                                  } group flex w-full items-center rounded-md px-2 py-4 border border-gray-300 bg-gray-100 text-lg my-2 `}
-                                >
-                                  <ImNotification className="text-blue-500 mr-2 relative top-1" />
-                                  {notification.message}
-                                </p>
-                              )}
-                            </Menu.Item>
-                          ))}
-                        </div>
-                      </Menu.Items>
-                    </Transition>
-                  </Menu>
-
-                  {/* Profile dropdown */}
-                  <Menu as="div" className="relative ml-3 ">
-                    <div>
-                      <Menu.Button className="relative  w-16 h-16 flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
-                        <span className="absolute -inset-1.5" />
-                        <span className="sr-only">Open user menu</span>
-                        <img
-                          className="h-full w-full rounded-full object-cover"
-                          src={currentUser && currentUser.photoURL}
-                          alt=""
-                        />
-                      </Menu.Button>
-                    </div>
-                    <Transition
-                      as={Fragment}
-                      enter="transition ease-out duration-100"
-                      enterFrom="transform opacity-0 scale-95"
-                      enterTo="transform opacity-100 scale-100"
-                      leave="transition ease-in duration-75"
-                      leaveFrom="transform opacity-100 scale-100"
-                      leaveTo="transform opacity-0 scale-95"
-                    >
-                      <Menu.Items className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-                        <Menu.Item>
-                          {({ active }) => (
-                            <a
-                              href="#"
-                              className={classNames(
-                                active ? "bg-gray-100" : "",
-                                "block px-4 py-2 text-sm text-gray-700"
-                              )}
-                            >
-                              Your Profile
-                            </a>
-                          )}
-                        </Menu.Item>
-                        <Menu.Item>
-                          {({ active }) => (
-                            <a
-                              href="#"
-                              className={classNames(
-                                active ? "bg-gray-100" : "",
-                                "block px-4 py-2 text-sm text-gray-700"
-                              )}
-                            >
-                              Settings
-                            </a>
-                          )}
-                        </Menu.Item>
-                        <Menu.Item>
-                          {({ active }) => (
-                            <a
-                              onClick={handleLogout}
-                              href="#"
-                              className={classNames(
-                                active ? "bg-gray-100" : "",
-                                "block px-4 py-2 text-sm text-gray-700"
-                              )}
-                            >
-                              Sign out
-                            </a>
-                          )}
-                        </Menu.Item>
-                      </Menu.Items>
-                    </Transition>
-                  </Menu>
+                {/* search bar */}
+                <div className="h-1/3  lg:relative left-[50%] lg:w-[35%] xl:w-[39%]  right-[20rem]  lg:h-[4rem] lg:flex items-center  ">
+                  <input
+                    placeholder="Search"
+                    className="text-black py-1  sm:py-2  rounded-full w-full border border-gray-500 bg-white px-5   "
+                  />
                 </div>
               </div>
             </div>

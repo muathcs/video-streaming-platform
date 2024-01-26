@@ -1,256 +1,281 @@
-// import axios from "axios";
-// import hashsum from "hashsum";
-// import crypto from "crypto";
-// import open from "open";
-// import { getAllUserUIDs } from "./fireBaseAdmin.js";
-// import pool from "./db.js";
-// import { celebrityNames } from "./celebName.js";
-// //main function
-// async function getCelebImages(celebName, uidIndex) {
-//   const celebId = await getCelebIdByName(celebName);
-//   //   console.log("id: ", celebId);
-//   try {
-//     // Query Wikidata for information about the celebrity
-//     const response = await axios.get(`https://www.wikidata.org/w/api.php`, {
-//       params: {
-//         action: "wbgetentities",
-//         format: "json",
-//         ids: celebId,
-//         props: "claims",
-//       },
-//     });
+import axios from "axios";
+import hashsum from "hashsum";
+import crypto from "crypto";
+import open from "open";
+import { getAllUserUIDs } from "./fireBaseAdmin.js";
+import pool from "./db.js";
+import { celebrityNames } from "./celebName.js";
+import { createFirebaseUser } from "./fireBaseAdmin.js";
+import { updatePhotoUrl } from "./fireBaseAdmin.js";
+//main function
+async function getCelebImages(celebName) {
+  const celebId = await getCelebIdByName(celebName);
+  //   console.log("id: ", celebId);
+  try {
+    // Query Wikidata for information about the celebrity
+    const response = await axios.get(`https://www.wikidata.org/w/api.php`, {
+      params: {
+        action: "wbgetentities",
+        format: "json",
+        ids: celebId,
+        props: "claims",
+      },
+    });
 
-//     const entities = response.data.entities;
+    const entities = response.data.entities;
 
-//     const entityId = Object.keys(entities)[0];
-//     // console.log("entityId: ", entityId);
+    const entityId = Object.keys(entities)[0];
+    // console.log("entityId: ", entityId);
 
-//     if (!entityId) {
-//       console.error("Celeb not found on Wikidata");
-//       return;
-//     }
+    if (!entityId) {
+      console.error("Celeb not found on Wikidata");
+      return;
+    }
 
-//     // Extract image information
-//     // Extract image information
-//     const claims = entities[entityId].claims;
-//     const imageValue = claims.P18[0].mainsnak.datavalue.value;
-//     const imageUrl = `https://commons.wikimedia.org/wiki/File:${imageValue}`;
+    // Extract image information
+    // Extract image information
+    const claims = entities[entityId].claims;
+    const imageValue = claims.P18[0].mainsnak.datavalue.value;
+    const imageUrl = `https://commons.wikimedia.org/wiki/File:${imageValue}`;
 
-//     // Example usage with the place ID 'Q819170'
-//     // const placeId = "Q819170";
-//     // const placeId = "Q" + placeofBirth["numeric-id"];
+    // Example usage with the place ID 'Q819170'
+    // const placeId = "Q819170";
+    // const placeId = "Q" + placeofBirth["numeric-id"];
 
-//     // Replace spaces with underscores
-//     const formattedImageValue = imageValue.replace(/\s/g, "_");
+    // Replace spaces with underscores
+    const formattedImageValue = imageValue.replace(/\s/g, "_");
 
-//     const imgMD5Hash = getMD5Hash(formattedImageValue);
-//     //prettier-ignore
-//     const imgFileUrl = `https://upload.wikimedia.org/wikipedia/commons/${imgMD5Hash[0]}/${imgMD5Hash[0]+imgMD5Hash[1]}/${formattedImageValue}`;
+    const imgMD5Hash = getMD5Hash(formattedImageValue);
+    //prettier-ignore
+    const imgFileUrl = `https://upload.wikimedia.org/wikipedia/commons/${imgMD5Hash[0]}/${imgMD5Hash[0]+imgMD5Hash[1]}/${formattedImageValue}`;
 
-//     // open(imgFileUrl);
+    // open(imgFileUrl);
 
-//     const celebCategory = await getOccupation(celebId);
-//     const celebDescription = await getEntityDescription(celebId);
-//     const celebName = await getEntityName(celebId);
+    const celebCategory = await getOccupation(celebId);
+    const celebDescription = await getEntityDescription(celebId);
+    const celebName = await getEntityName(celebId);
 
-//     const talentInfo = {
-//       name: celebName,
-//       category: categoryDict[celebCategory],
-//       email: celebName + "@gmail.com",
-//       description: celebDescription,
-//       reviews: 5,
-//       price: Math.floor(Math.random() * (250 - 20 + 1)) + 20,
-//       imgUrl: imgFileUrl,
-//       uid: a[uidIndex],
-//     };
+    // create a firebase user
+    const email = celebName.replace(/\s+/g, "-").toLowerCase() + "@gmail.com";
 
-//     try {
-//       const result = await pool.query(
-//         "INSERT INTO celeb(displayName, username, category, price, email, description, uid, imgurl) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)",
-//         [
-//           talentInfo.name,
-//           talentInfo.name,
-//           talentInfo.category,
-//           talentInfo.price,
-//           talentInfo.email,
-//           talentInfo.description,
-//           talentInfo.uid,
-//           talentInfo.imgUrl,
-//         ]
-//       );
-//       console.log("succefull");
-//     } catch (error) {
-//       console.log("error: ", error);
-//     }
+    const password = "123456";
+    const fireBaseUser = await createFirebaseUser(email, password); // creates login and password for user on firebase.
+    updatePhotoUrl(fireBaseUser.uid, imgFileUrl);
 
-//     console.log(talentInfo);
+    console.log("firebaseuser: ", fireBaseUser);
 
-//     // console.log("url: ", imageValue);
-//   } catch (error) {
-//     console.error("Error querying Wikidata:", error.message);
-//   }
-// }
+    // create a celeb row in the db.
+    const talentInfo = {
+      name: celebName,
+      category: categoryDict[celebCategory],
+      email: email,
+      description: celebDescription,
+      reviews: 5,
+      price: Math.floor(Math.random() * (250 - 20 + 1)) + 20,
+      imgUrl: imgFileUrl,
+      uid: fireBaseUser.uid,
+    };
 
-// function getMD5Hash(imgValue) {
-//   let hash = crypto.createHash("md5").update(imgValue).digest("hex");
-//   return hash;
-// }
+    try {
+      const result = await pool.query(
+        "INSERT INTO celeb(displayName, username, category, price, email, description, uid, imgurl) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)",
+        [
+          talentInfo.name,
+          talentInfo.name,
+          talentInfo.category,
+          talentInfo.price,
+          talentInfo.email,
+          talentInfo.description,
+          talentInfo.uid,
+          talentInfo.imgUrl,
+        ]
+      );
 
-// async function getCelebIdByName(celebName) {
-//   try {
-//     // Query Wikidata for the celebrity by name
-//     const response = await axios.get("https://www.wikidata.org/w/api.php", {
-//       params: {
-//         action: "wbsearchentities",
-//         format: "json",
-//         search: celebName,
-//         language: "en", // Set the language for search results
-//       },
-//     });
+      //   await pool.end();
+      return;
+    } catch (error) {}
 
-//     // Check if there are search results
-//     if (response.data.search.length > 0) {
-//       // Extract the Wikidata ID of the first search result
-//       const celebId = response.data.search[0].id;
-//       //   console.log(`Wikidata ID for ${celebName}: ${celebId}`);
-//       return celebId;
-//     } else {
-//       console.error(`No results found for ${celebName}`);
-//     }
-//   } catch (error) {
-//     console.error("Error querying Wikidataxx:", error.message);
-//   }
-// }
+    // console.log("url: ", imageValue);
+  } catch (error) {
+    console.error("Error querying Wikidata:", error.message);
+  }
+}
 
-// async function getOccupation(entityId) {
-//   try {
-//     const response = await axios.get("https://www.wikidata.org/w/api.php", {
-//       params: {
-//         action: "wbgetentities",
-//         format: "json",
-//         ids: entityId,
-//         props: "claims",
-//       },
-//     });
+function getMD5Hash(imgValue) {
+  let hash = crypto.createHash("md5").update(imgValue).digest("hex");
+  return hash;
+}
 
-//     const claims = response.data.entities[entityId].claims;
-//     if (claims.P106 && claims.P106[0].mainsnak.datavalue.value.id) {
-//       const occupationId = claims.P106[0].mainsnak.datavalue.value.id;
-//       const occupationLabel = await getEntityLabel(occupationId);
+async function getCelebIdByName(celebName) {
+  try {
+    // Query Wikidata for the celebrity by name
+    const response = await axios.get("https://www.wikidata.org/w/api.php", {
+      params: {
+        action: "wbsearchentities",
+        format: "json",
+        search: celebName,
+        language: "en", // Set the language for search results
+      },
+    });
 
-//       return occupationLabel;
-//     } else {
-//       return "Occupation not found";
-//     }
-//   } catch (error) {
-//     console.error("Error querying Wikidata:", error.message);
-//   }
-// }
+    // Check if there are search results
+    if (response.data.search.length > 0) {
+      // Extract the Wikidata ID of the first search result
+      const celebId = response.data.search[0].id;
+      //   console.log(`Wikidata ID for ${celebName}: ${celebId}`);
+      return celebId;
+    } else {
+      console.error(`No results found for ${celebName}`);
+    }
+  } catch (error) {
+    console.error("Error querying Wikidataxx:", error.message);
+  }
+}
 
-// async function getEntityLabel(entityId) {
-//   try {
-//     const response = await axios.get("https://www.wikidata.org/w/api.php", {
-//       params: {
-//         action: "wbgetentities",
-//         format: "json",
-//         ids: entityId,
-//         props: "labels",
-//       },
-//     });
+async function getOccupation(entityId) {
+  try {
+    const response = await axios.get("https://www.wikidata.org/w/api.php", {
+      params: {
+        action: "wbgetentities",
+        format: "json",
+        ids: entityId,
+        props: "claims",
+      },
+    });
 
-//     return response.data.entities[entityId].labels.en.value;
-//   } catch (error) {
-//     console.error("Error querying Wikidata:", error.message);
-//   }
-// }
+    const claims = response.data.entities[entityId].claims;
+    if (claims.P106 && claims.P106[0].mainsnak.datavalue.value.id) {
+      const occupationId = claims.P106[0].mainsnak.datavalue.value.id;
+      const occupationLabel = await getEntityLabel(occupationId);
 
-// async function getEntityDescription(entityId) {
-//   try {
-//     const response = await axios.get("https://www.wikidata.org/w/api.php", {
-//       params: {
-//         action: "wbgetentities",
-//         format: "json",
-//         ids: entityId,
-//         props: "descriptions",
-//       },
-//     });
+      return occupationLabel;
+    } else {
+      return "Occupation not found";
+    }
+  } catch (error) {
+    console.error("Error querying Wikidata:", error.message);
+  }
+}
 
-//     const descriptions = response.data.entities[entityId].descriptions;
+async function getEntityLabel(entityId) {
+  try {
+    const response = await axios.get("https://www.wikidata.org/w/api.php", {
+      params: {
+        action: "wbgetentities",
+        format: "json",
+        ids: entityId,
+        props: "labels",
+      },
+    });
 
-//     if (descriptions && descriptions.en && descriptions.en.value) {
-//       console.log(descriptions.en.value);
-//       return descriptions.en.value;
-//     } else {
-//       return "Description not found";
-//     }
-//   } catch (error) {
-//     console.error("Error querying Wikidata:", error.message);
-//   }
-// }
+    return response.data.entities[entityId].labels.en.value;
+  } catch (error) {
+    console.error("Error querying Wikidata:", error.message);
+  }
+}
 
-// async function getEntityName(entityId) {
-//   try {
-//     const response = await axios.get("https://www.wikidata.org/w/api.php", {
-//       params: {
-//         action: "wbgetentities",
-//         format: "json",
-//         ids: entityId,
-//         props: "labels",
-//       },
-//     });
+async function getEntityDescription(entityId) {
+  try {
+    const response = await axios.get("https://www.wikidata.org/w/api.php", {
+      params: {
+        action: "wbgetentities",
+        format: "json",
+        ids: entityId,
+        props: "descriptions",
+      },
+    });
 
-//     const labels = response.data.entities[entityId].labels;
-//     if (labels && labels.en && labels.en.value) {
-//       return labels.en.value;
-//     } else {
-//       return "Name not found";
-//     }
-//   } catch (error) {
-//     console.error("Error querying Wikidata:", error.message);
-//   }
-// }
+    const descriptions = response.data.entities[entityId].descriptions;
 
-// // Example usage
-// const celebName = "dick"; // Example ID for Barack Obama
+    if (descriptions && descriptions.en && descriptions.en.value) {
+      console.log(descriptions.en.value);
+      return descriptions.en.value;
+    } else {
+      return "Description not found";
+    }
+  } catch (error) {
+    console.error("Error querying Wikidata:", error.message);
+  }
+}
 
-// const categoryDict = {
-//   "association football player": "Footballers",
-//   "film actor": "actors",
-//   entrepreneur: "business",
-//   politcian: "business",
-//   YouTuber: "reality-tv",
-//   boxer: "athletes",
-//   "athletics competitor": "athletes",
-//   "singer-songwriter": "actors",
-//   singer: "actors",
-//   songwrite: "actors",
-//   programmer: "business",
-//   comedian: "comedians",
-//   "tennis player": "athletes",
-//   "television presenter": "reality tv",
-//   "television actor": "actors",
-//   actor: "actors",
-//   "stage actor": "actors",
-//   screenwriter: "actors",
-//   model: "reality-tv",
-//   "basketball player": "athletes",
-//   "professional wrestler": "athletes",
-//   "artistic gymnast": "athletes",
-//   "film producer": "actors",
-//   investor: "business",
-//   socialite: "reality-tv",
-//   "film director": "actors",
-//   "fashion designer": "reality-tv",
-// };
+async function getEntityName(entityId) {
+  try {
+    const response = await axios.get("https://www.wikidata.org/w/api.php", {
+      params: {
+        action: "wbgetentities",
+        format: "json",
+        ids: entityId,
+        props: "labels",
+      },
+    });
 
-// // console.log(name);
-// // getCelebImages(celebName);
-// const a = await getAllUserUIDs();
+    const labels = response.data.entities[entityId].labels;
+    if (labels && labels.en && labels.en.value) {
+      return labels.en.value;
+    } else {
+      return "Name not found";
+    }
+  } catch (error) {
+    console.error("Error querying Wikidata:", error.message);
+  }
+}
 
-// console.log(a.length);
+// Example usage
+const celebName = "dick"; // Example ID for Barack Obama
 
-// for (let i = 0; i < celebrityNames.length; i++) {
-//   getCelebImages(celebrityNames[i], i);
-// }
+const categoryDict = {
+  "association football player": "Footballers",
+  "film actor": "actors",
+  entrepreneur: "business",
+  politcian: "business",
+  YouTuber: "reality-tv",
+  boxer: "athletes",
+  "athletics competitor": "athletes",
+  "singer-songwriter": "actors",
+  singer: "actors",
+  songwrite: "actors",
+  programmer: "business",
+  comedian: "comedians",
+  "tennis player": "athletes",
+  "television presenter": "reality tv",
+  "television actor": "actors",
+  actor: "actors",
+  "stage actor": "actors",
+  screenwriter: "actors",
+  model: "reality-tv",
+  "basketball player": "athletes",
+  "professional wrestler": "athletes",
+  "artistic gymnast": "athletes",
+  "film producer": "actors",
+  investor: "business",
+  socialite: "reality-tv",
+  "film director": "actors",
+  "fashion designer": "reality-tv",
+};
 
-// // console.dir(a, { maxArrayLength: null });
+// console.log(name);
+// getCelebImages(celebName);
+const a = await getAllUserUIDs();
+
+console.log(a.length);
+
+// export const cnames = [
+//   "Robert Downey Jr.",
+//   "Jennifer Aniston",
+//   "Chris Hemsworth",
+//   "Jim Carrey",
+//   "Will Ferrell",
+//   "Dave Chappelle",
+//   "Lionel Messi",
+//   "Cristiano Ronaldo",
+//   "Serena Williams",
+//   "Usain Bolt",
+//   "Elon Musk",
+//   "Oprah Winfrey",
+// ];
+for (let i = 0; i < celebrityNames.length; i++) {
+  getCelebImages(celebrityNames[i], i);
+}
+
+// getCelebImages("Ricky Gervais");
+// console.dir(a, { maxArrayLength: null });

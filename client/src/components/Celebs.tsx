@@ -45,10 +45,10 @@ function Celebs() {
 
   return (
     <>
-      <div className=" flex flex-col  items-center ">
-        <div className="h-[845px]    py-4 w-full flex justify-center flex-col items-center gap-10 ">
+      <div className=" flex flex-col  items-center border-2 border-green-300 ">
+        <div className="h-[845px] py-4 w-full  flex justify-center flex-col items-center gap-10 border-2 border-yellow-300 ">
           {/* first iamge */}
-          <div className="w-3/4  h-2/3 rounded-lg overflow-hidden relative">
+          <div className="w-3/4  h-2/3 rounded-lg overflow-hidden relative ">
             <img src={background} className="w-full" alt="Background" />
             <p className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white text-2xl font-bold">
               Personalised Videos from your favourite Celebs
@@ -107,7 +107,7 @@ function Celebs() {
 
         {/* Shop By Category */}
 
-        <div className=" h-[450px]  w-3/4 flex justify-center  px-10 ">
+        <div className=" h-[450px]  w-3/4 flex justify-center  px-10 border-2 ">
           <div className="w-full flex flex-col">
             <p className="text-left text-[26px] font-serif relative  h-1/6  flex items-end mb-2">
               Shop By Category
