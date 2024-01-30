@@ -1,7 +1,7 @@
 import { useEffect, useReducer } from "react";
 import axios from "../api/axios";
 
-type HttpMethod = "get" | "post" | "put";
+type HttpMethod = "get" | "post" | "put" | "getnow";
 
 interface State {
   data: any;
@@ -59,6 +59,12 @@ export function useGlobalAxios(
     }
   }
 
+  async function getData(dataToGet: string, params?: unknown) {
+    try {
+      await axios.get(dataToGet, { params: { params } });
+    } catch (error) {}
+  }
+
   useEffect(() => {
     const fetchData = async () => {
       dispatch({ type: "loading" }); // Use the method directly as the action type
@@ -78,6 +84,8 @@ export function useGlobalAxios(
           payload:
             method == "get"
               ? response?.data
+              : method == "getnow"
+              ? getData
               : method == "post"
               ? postData
               : method == "put"

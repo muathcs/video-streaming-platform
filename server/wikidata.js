@@ -273,9 +273,10 @@ console.log(a.length);
 //   "Elon Musk",
 //   "Oprah Winfrey",
 // ];
-for (let i = 0; i < celebrityNames.length; i++) {
-  getCelebImages(celebrityNames[i], i);
-}
+// for (let i = 0; i < celebrityNames.length; i++) {
+//   getCelebImages(celebrityNames[i], i);
+// }
 
+getCelebImages("Tom Cruise");
 // getCelebImages("Ricky Gervais");
 // console.dir(a, { maxArrayLength: null });

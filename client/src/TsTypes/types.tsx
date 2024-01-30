@@ -1,13 +1,20 @@
-export interface CelebType {
-  displayname: string;
-  username: string;
+export type CelebType = {
+  account: null;
   category: string;
-  reviews: number;
-  price: number;
+  celebid: number;
   description: string;
+  displayname: string;
+  document: string;
+  document_with_idx: string;
+  email: string;
+  followers: number;
   imgurl: string;
+  price: number;
+  request_num: number;
+  reviews: number;
   uid: string;
-}
+  username: string;
+};
 
 export type notification = {
   notificationid: number;
@@ -27,3 +34,5 @@ export type RequestType = {
   celebmessage: string;
   requestid: string;
 };
+
+// celeb t

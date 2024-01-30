@@ -3,14 +3,20 @@ import { useLocation } from "react-router-dom";
 import { bool } from "aws-sdk/clients/signer";
 import RequestForm from "./RequestForm";
 import { useAuth } from "../context/AuthContext";
+import { CelebType } from "../TsTypes/types";
 
+type StateType = {
+  celeb: CelebType;
+  // other properties in the state
+};
 function CelebProfile() {
   const [orderModal, setOrderModal] = useState<bool>(false);
   const { state } = useLocation();
   const { currentUser, celeb }: any = useAuth();
 
   if (!state) return; // return if there is no state
-  const { name, category, reviews, price, description, photoURl, uid } = state;
+  const { celeb: celebInfo }: StateType = state;
+  console.log("info: ", celebInfo);
 
   return (
     <>
@@ -18,21 +24,24 @@ function CelebProfile() {
         {/* celeb pic and description */}
         <div className="flex flex-col   h-[30rem]  pb-20 ">
           <div className=" rounded-full relative left-5  w-2/5 sm:w-1/5  md:w-1/4 lg:w-[300px]  lg:h-[300px] object-cover border-4 bg-green-300 overflow-hidden ">
-            <img className="w-full h-full object-cover" src={photoURl} />
+            <img
+              className="w-full h-full object-cover"
+              src={celebInfo.imgurl}
+            />
           </div>
           <div className="flex flex-col pr-3">
             <p className="text-whtie text-left text-[24px] relative top-3 left-5  ">
-              Name: {name}
+              Name: {celebInfo.displayname}
             </p>
             <p className="text-left text-[18px] relative top-3 left-5 text-gray-600">
-              {category}
+              {celebInfo.category}
             </p>
             <p className="text-whtie text-left text-[20px] relative top-3 left-5 text-black">
-              {"⭐".repeat(reviews)}
+              {"⭐".repeat(celebInfo.reviews + 5)}
             </p>
 
             <p className="text-whtie text-left text-[16px] md:w-1/2 md:text-[20px] relative top-3 left-5 text-gray-400 whitespace-pre-line">
-              {description}
+              {celebInfo.description}
             </p>
           </div>
         </div>
@@ -74,9 +83,9 @@ function CelebProfile() {
                   x
                 </div>
                 <RequestForm
-                  celebUid={uid}
+                  celebUid={celebInfo.uid}
                   fanUid={currentUser.uid}
-                  price={price}
+                  price={celebInfo.price}
                 />
               </div>
             </div>

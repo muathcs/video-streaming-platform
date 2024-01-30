@@ -43,11 +43,11 @@ function FanRequests() {
   return (
     <>
       {0 ? (
-        <h1>Loading</h1>
+        <h1 className="">Loading</h1>
       ) : 0 ? (
         <h1>Error</h1>
       ) : (
-        <div className="  overflow-auto flex flex-col gap-2">
+        <div className="  overflow-auto flex flex-col gap-2 border h-full">
           <>
             {celebReplies &&
               celebReplies.map((req: fanRequestType) => (

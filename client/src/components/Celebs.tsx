@@ -3,8 +3,13 @@ import { useGlobalAxios } from "../hooks/useGlobalAxios";
 import background from "../assets/background.jpg";
 import { useNavigate } from "react-router-dom";
 import { apiUrl } from "../utilities/fetchPath";
+import { useEffect, useState } from "react";
+import axios from "../api/axios";
+import { CelebType } from "../TsTypes/types";
 function Celebs() {
-  const { data, loading, error } = useGlobalAxios("get", `${apiUrl}/celebs`);
+  // const { data: getData, loading, error } = useGlobalAxios("getnow");
+
+  const [celebs, setCelebs] = useState<CelebType[]>([]);
 
   const shopByCategory = [
     {
@@ -41,12 +46,46 @@ function Celebs() {
     },
   ];
 
+  // fetches celeb on mount
+  useEffect(() => {
+    const getCelebs = async () => {
+      try {
+        const response = await axios.get(`${apiUrl}/celebs`);
+
+        console.log("res: ", response);
+        setCelebs(response.data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    getCelebs();
+  }, []);
+
   const navigate = useNavigate();
+
+  // console.log("data: ", data);
+
+  const amountOfCelebPerPage = 30;
+  const [currentPage, setCurrentPage] = useState(1);
+  const startIndex = (currentPage - 1) * amountOfCelebPerPage; // 30 is the amount of celebs we want to show per page
+  const endIndex = startIndex + amountOfCelebPerPage;
+  const celebsToShow = celebs.slice(startIndex, endIndex);
+
+  const handleNextPage = () => {
+    // window.scrollTo({ top: 10, behavior: "smooth" });
+    // document.querySelector("body")?.scrollTo(0, 0);
+    // window.scrollTo(0, 0);
+    document
+      .getElementById("pagex")
+      ?.scrollTo({ top: 880, behavior: "smooth" });
+    setCurrentPage((prevPage) => prevPage + 1);
+  };
 
   return (
     <>
-      <div className=" flex flex-col  items-center border-2 border-green-300 ">
-        <div className="h-[845px] py-4 w-full  flex justify-center flex-col items-center gap-10 border-2 border-yellow-300 ">
+      <div id="pagex" className=" flex flex-col  items-center gap-10   ">
+        <div className="h-[845px] py-4 w-full  flex justify-center flex-col items-center gap-10  ">
           {/* first iamge */}
           <div className="w-3/4  h-2/3 rounded-lg overflow-hidden relative ">
             <img src={background} className="w-full" alt="Background" />
@@ -107,7 +146,7 @@ function Celebs() {
 
         {/* Shop By Category */}
 
-        <div className=" h-[450px]  w-3/4 flex justify-center  px-10 border-2 ">
+        <div className=" h-[450px]  w-3/4 flex justify-center  px-10 ">
           <div className="w-full flex flex-col">
             <p className="text-left text-[26px] font-serif relative  h-1/6  flex items-end mb-2">
               Shop By Category
@@ -138,27 +177,22 @@ function Celebs() {
 
         {/* celebs */}
         <div className="w-3/4   relative px-20 justify-items-center   grid  lg:grid-cols-3 xl:grid-cols-4   md:grid-cols-3 sm:grid-cols-2 sm:gap-x-52 md:gap-x-64 lg:gap-30  ">
-          {loading ? (
+          {0 ? (
             <h1>Loading</h1>
-          ) : error ? (
+          ) : 0 ? (
             <h1>Error</h1>
           ) : (
-            [...data]
+            [...celebsToShow]
               .reverse()
-              .map((item, index) => (
-                <CelebCard
-                  name={item.displayname}
-                  category={item.category}
-                  reviews={item.reviews}
-                  price={item.price * 0.1}
-                  description={item.description}
-                  photoURl={item.imgurl}
-                  uid={item.uid}
-                  key={index}
-                />
-              ))
+              .map((celeb, index) => <CelebCard celeb={celeb} key={index} />)
           )}
         </div>
+        <button
+          className="bg-gray-800 px-10 py-5 rounded-md relative bottom-10"
+          onClick={handleNextPage}
+        >
+          Next Page
+        </button>
       </div>
     </>
   );

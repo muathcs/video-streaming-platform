@@ -103,7 +103,11 @@ app.get("/celebs", async (req, res) => {
 
 app.get("/celebs/:category", async (req, res) => {
   //query celeb table by category
-  const { category } = req.params;
+  let { category } = req.params;
+
+  category = category.toLocaleLowerCase(); // to match db
+
+  console.log("cat: ", category);
 
   try {
     const result = await pool.query("SELECT * FROM celeb where category = $1", [
@@ -111,6 +115,7 @@ app.get("/celebs/:category", async (req, res) => {
     ]);
     // client.release(); // Release the connection back to the pool
 
+    console.log("res: ", result.rows);
     const celebs = result.rows;
 
     res.send(celebs);
@@ -360,7 +365,31 @@ app.put("/notification", async (req, res) => {
     res.status(401).send({ message: "could not update notification table" });
   }
 });
-//
+
+// search
+
+app.get("/search", async (req, res) => {
+  const { name } = req.query;
+  console.log("name: ", name);
+
+  if (!name) return;
+  try {
+    // const response = await pool.query(
+    //   "select displayname, uid from celeb where document_with_idx @@ to_tsquery($1) order by ts_rank(document_with_idx, plainto_tsquery($1))",
+    //   [name]
+    const response = await pool.query(
+      "SELECT *, ts_rank(document, to_tsquery('simple', $1 || ':*')) AS rank FROM celeb WHERE document @@ to_tsquery('simple', $1 || ':*') ORDER BY CASE WHEN lower(substring(displayname from 1 for 1)) = lower($1) THEN 1 ELSE 2 END, CASE WHEN lower(substring(displayname from 1 for 1)) = lower($1) THEN substring(displayname from 3) END, rank DESC",
+      [name]
+    );
+
+    res.status(201).send(response.rows);
+
+    // console.log("response: ", response.rows);
+  } catch (error) {
+    console.log("/search: ", error);
+    res.status(401).send();
+  }
+});
 
 app.put("/test", upload.single("videoFile"), async (req, res) => {});
 

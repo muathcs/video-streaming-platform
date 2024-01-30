@@ -1,5 +1,5 @@
-import { useState, useEffect, Fragment } from "react";
-import { Disclosure, Menu, Transition } from "@headlessui/react";
+import { useState, useEffect, Fragment, useRef } from "react";
+import { Combobox, Disclosure, Menu, Transition } from "@headlessui/react";
 import { CiMenuBurger } from "react-icons/ci";
 import { FaTimes } from "react-icons/fa";
 import { GiShoppingCart } from "react-icons/gi";
@@ -12,6 +12,7 @@ import { ImNotification } from "react-icons/im";
 import { notification } from "../TsTypes/types";
 import { useGlobalAxios } from "../hooks/useGlobalAxios";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
+import { CiSearch } from "react-icons/ci";
 
 function classNames(...classes: any) {
   return classes.filter(Boolean).join(" ");
@@ -26,6 +27,10 @@ function NavBar() {
   const [notifications, setNotifications] = useState<notification[]>();
   const [unread, setUnread] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(false);
+  const [searchCelebVal, setSearchCelebVal] = useState<string>("");
+  const [celebsSuggestion, setCelebsSuggestion] = useState<string[]>([]);
+  const optionsRef = useRef<HTMLParagraphElement | null>(null);
+  const [penOptions, setOpenOptions] = useState<Boolean>(false);
 
   const { data: putRequest } = useGlobalAxios("put");
   const navigate = useNavigate();
@@ -111,15 +116,29 @@ function NavBar() {
     }
   }
 
-  console.log("notis: ", notifications?.length == 0);
-
   const { requests } = useRequests();
+
+  async function searchCeleb(keysSearch: string) {
+    console.log("val: ", searchCelebVal);
+
+    try {
+      const response = await axios.get(`${apiUrl}/search`, {
+        params: { name: keysSearch },
+      });
+
+      console.log("res: ", response.data);
+      setCelebsSuggestion(response.data);
+    } catch (error) {
+      console.error(error);
+    }
+    console.log("he");
+  }
 
   return (
     <>
       <Disclosure
         as="nav"
-        className=" text-[24px] sm:text-[16px] z-10 block  sm:py-5 py-2 h-[100rem]    "
+        className=" text-[24px]  sm:text-[16px] z-10 block  sm:py-5 py-2 h-[20%]  lg:h-[10%]    "
       >
         {({ open }) => (
           <>
@@ -148,8 +167,8 @@ function NavBar() {
                       </Disclosure.Button>
                     </div>
                     {/* big screen cameo button  */}
-                    <div className="items-center justify-center   lg:flex  hidden  lg:h-[4rem] relative border-2  ">
-                      <h1 className="text-[3rem]   text-white relative  border-2 flex-grow">
+                    <div className="items-center justify-center   lg:flex  hidden  lg:h-[4rem] relative   ">
+                      <h1 className="text-[3rem]   text-white relative   flex-grow">
                         <Link
                           className="text-white "
                           onClick={() => {
@@ -165,7 +184,7 @@ function NavBar() {
                           Cameo
                         </Link>
                       </h1>
-                      <div className="hidden  lg:flex   border-2 w-3/4   ">
+                      <div className="hidden  lg:flex    w-3/4   ">
                         <div className="flex flex-shrink space-x-4 mx-2 w-full ">
                           {navigation.map((item, index) => (
                             <Link
@@ -345,11 +364,154 @@ function NavBar() {
                 {/* close here */}
 
                 {/* search bar */}
-                <div className="h-1/3  lg:relative left-[50%] lg:w-[35%] xl:w-[39%]  right-[20rem]  lg:h-[4rem] lg:flex items-center  ">
-                  <input
-                    placeholder="Search"
-                    className="text-black py-1  sm:py-2  rounded-full w-full border border-gray-500 bg-white px-5   "
-                  />
+
+                <div className="h-1/3  lg:relative left-[50%] lg:w-[35%] xl:w-[39%]  right-[20rem]  lg:h-[4rem] lg:flex items-center">
+                  <Menu
+                    as="div"
+                    className="relative inline-block text-left  w-full"
+                  >
+                    {/* combox start */}
+
+                    <div className="top-16 w-full ">
+                      <Combobox>
+                        <div
+                          onClick={() => setOpenOptions(true)}
+                          onBlur={() => setOpenOptions(false)}
+                        >
+                          <p
+                            // onClick={() => searchCeleb()}
+                            className="absolute  z-10 text-black text-[22px] mt-1 sm:mt-2 lg:mt-2 right-7 flex items-center hover:text-gray-700 cursor-pointer"
+                          >
+                            <CiSearch />
+                          </p>
+                          <input
+                            onClick={() => {
+                              // searchCeleb(searchCelebVal);
+                              console.log("ref: ", celebsSuggestion);
+
+                              if (!searchCelebVal) {
+                                setCelebsSuggestion([]);
+                              }
+                              optionsRef.current?.click();
+                            }}
+                            className="text-black py-1  sm:py-2  rounded-full w-full border border-gray-500 bg-white px-5"
+                            value={searchCelebVal}
+                            onChange={(e) => {
+                              setSearchCelebVal((prevSearchCelebVal) => {
+                                const newValue = e.target.value;
+                                searchCeleb(newValue); // pass the updated value to your function
+                                return newValue; // return the new value to update the state
+                              });
+                            }}
+                          />
+                          <Combobox.Button className="hidden">
+                            <p ref={optionsRef} aria-hidden="true" />
+                          </Combobox.Button>
+                          {celebsSuggestion.length != 0 ? (
+                            <Transition
+                              as={Fragment}
+                              leave="transition ease-in duration-100"
+                              leaveFrom="opacity-100"
+                              leaveTo="opacity-0"
+                              // afterLeave={() => setQuery("")}
+                            >
+                              {/* <div ref={optionsRef}>
+
+                          </div> */}
+                              <Combobox.Options
+                                data-headlessui-state="open"
+                                className="absolute mt-1 max-h-60 w-full overflow-auto rounded-md  text-black  py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm"
+                              >
+                                {celebsSuggestion.map((celeb: any) => (
+                                  <Combobox.Option
+                                    onClick={(
+                                      e: React.MouseEvent<
+                                        HTMLElement,
+                                        MouseEvent
+                                      >
+                                    ) => {
+                                      const target = e.target as HTMLElement;
+                                      console.log(
+                                        "value: ",
+                                        target.innerText,
+                                        celeb
+                                      );
+
+                                      navigate("/profile", {
+                                        state: { celeb },
+                                      });
+                                    }}
+                                    key={celeb.id}
+                                    className={({ active }) =>
+                                      `relative cursor-pointer select-none py-2 pl-10 pr-4  text-black    ${
+                                        active
+                                          ? "bg-purple-600 text-black "
+                                          : "text-gray-900 bg-white"
+                                      }`
+                                    }
+                                    value={celeb}
+                                  >
+                                    {({ selected, active }) => (
+                                      <>
+                                        <span
+                                          className={`block truncate  ${
+                                            selected
+                                              ? "font-medium"
+                                              : "font-normal"
+                                          }`}
+                                        >
+                                          {celeb.displayname}
+                                        </span>
+                                        {selected ? (
+                                          <span
+                                            className={`absolute inset-y-0 left-0 flex items-center pl-3 ${
+                                              active
+                                                ? "text-white"
+                                                : "text-teal-600"
+                                            }`}
+                                          >
+                                            {/* <CheckIcon className="h-5 w-5" aria-hidden="true" /> */}
+                                          </span>
+                                        ) : null}
+                                      </>
+                                    )}
+                                  </Combobox.Option>
+                                ))}
+                              </Combobox.Options>
+                            </Transition>
+                          ) : null}
+                        </div>
+                      </Combobox>
+                    </div>
+
+                    <Menu.Items className="absolute right-0 mt-2 w-96 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none">
+                      {notifications?.length != 0 ? (
+                        <Menu.Item>
+                          <p className="text-black flex">
+                            <ImNotification className="text-red-500 mr-2 relative top-1" />
+                            You don't have any notifications
+                          </p>
+                        </Menu.Item>
+                      ) : (
+                        notifications?.map((notification: notification) => (
+                          <Menu.Item key={notification.notificationid}>
+                            {({ active }) => (
+                              <p
+                                className={`${
+                                  active
+                                    ? "bg-red-500 text-white"
+                                    : "text-gray-900"
+                                } group flex w-full items-center rounded-md px-2 py-4 border border-gray-300 bg-gray-100 text-lg my-2 `}
+                              >
+                                <ImNotification className="text-green-500 mr-2 relative top-1" />
+                                {notification.message}
+                              </p>
+                            )}
+                          </Menu.Item>
+                        ))
+                      )}
+                    </Menu.Items>
+                  </Menu>
                 </div>
               </div>
             </div>
