@@ -3,41 +3,51 @@ import { useLocation } from "react-router-dom";
 import { bool } from "aws-sdk/clients/signer";
 import RequestForm from "./RequestForm";
 import { useAuth } from "../context/AuthContext";
+import { CelebType } from "../TsTypes/types";
 
+type StateType = {
+  celeb: CelebType;
+  // other properties in the state
+};
 function CelebProfile() {
   const [orderModal, setOrderModal] = useState<bool>(false);
   const { state } = useLocation();
   const { currentUser, celeb }: any = useAuth();
 
   if (!state) return; // return if there is no state
-  const { name, category, reviews, price, description, photoURl, uid } = state;
+  const { celeb: celebInfo }: StateType = state;
+  console.log("info: ", celebInfo);
 
   return (
     <>
-      <div className="h-full  w-full relative  grid grid-rows-7  ">
-        <div className="flex flex-col  row-span-2 border-3 ">
-          <div className=" rounded-full relative left-5  w-2/5 sm:w-1/5 md:w-1/4 lg:w-[200px] lg:h-[200px] object-cover border-2 bg-green-300 overflow-hidden ">
-            <img className="w-full h-full object-cover" src={photoURl} />
+      <div className="h-full  w-full relative flex flex-col text-white text-lg">
+        {/* celeb pic and description */}
+        <div className="flex flex-col   h-[30rem]  pb-20 ">
+          <div className=" rounded-full relative left-5  w-2/5 sm:w-1/5  md:w-1/4 lg:w-[300px]  lg:h-[300px] object-cover border-4 bg-green-300 overflow-hidden ">
+            <img
+              className="w-full h-full object-cover"
+              src={celebInfo.imgurl}
+            />
           </div>
           <div className="flex flex-col pr-3">
-            <p className="text-whtie text-left text-[24px] relative top-3 left-5 ">
-              Name: {name}
+            <p className="text-whtie text-left text-[24px] relative top-3 left-5  ">
+              Name: {celebInfo.displayname}
             </p>
             <p className="text-left text-[18px] relative top-3 left-5 text-gray-600">
-              {category}
+              {celebInfo.category}
             </p>
             <p className="text-whtie text-left text-[20px] relative top-3 left-5 text-black">
-              {"⭐".repeat(reviews)}
+              {"⭐".repeat(celebInfo.reviews + 5)}
             </p>
 
             <p className="text-whtie text-left text-[16px] md:w-1/2 md:text-[20px] relative top-3 left-5 text-gray-400 whitespace-pre-line">
-              {description}
+              {celebInfo.description}
             </p>
           </div>
         </div>
 
-        <div className=" flex flex-col  relative  h-full  row-span-3  ">
-          <h1 className="text-whtie text-left text-[24px] bottom-5 relative left-5 md:left-6 underline font-bold  ">
+        <div className=" flex flex-col justify-center  relative  h-[30rem]     ">
+          <h1 className="text-whtie text-left text-[24px]  relative left-5 md:left-6 mb-5 underline font-bold  ">
             Video Display:
           </h1>
           <div className="w-full  px-5 flex gap-2">
@@ -47,7 +57,7 @@ function CelebProfile() {
           </div>
         </div>
 
-        <div className="relative h-full e row-span-1">
+        <div className="relative py-10">
           {!celeb ? (
             <button
               onClick={() => setOrderModal(true)}
@@ -73,9 +83,9 @@ function CelebProfile() {
                   x
                 </div>
                 <RequestForm
-                  celebUid={uid}
+                  celebUid={celebInfo.uid}
                   fanUid={currentUser.uid}
-                  price={price}
+                  price={celebInfo.price}
                 />
               </div>
             </div>

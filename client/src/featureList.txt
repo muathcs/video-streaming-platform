@@ -7,12 +7,23 @@
 -> videos playing on celeb profile
 -> users ability to review a request both through stars/comments
 -> improve DashBoard table
-
+-> on user request, make the expected date compliant with the request time either 7 days from req date, or 24 hour if 24 hour service is bought 
+-> on celeb dashboard add due when, plus "3 days remanin" so due: 20-20-2024, 3 days remaining
+-> on celeb dashboard allow user to sort by data
+-> add 24 hour reply to celebs if they want to 
 
 
 // Major features
 
--> AI prediction model
 -> Notifcation system
--> Live streaming
+-> Filter
+
+-> AI prediction model
+
 -> Live chat
+-> Live Call
+
+-> Profile settings
+
+
+-> Maybe App

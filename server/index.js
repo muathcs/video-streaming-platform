@@ -19,78 +19,19 @@ import s3, { uploadFile } from "./s3.js";
 
 const app = express();
 
-// Set middleware of CORS
-// app.use((req, res, next) => {
-//   res.setHeader(
-//     "Access-Control-Allow-Origin",
-//     "https://video-streaming-client.onrender.com"
-//   );
-//   res.setHeader(
-//     "Access-Control-Allow-Methods",
-//     "GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS,CONNECT,TRACE"
-//   );
-//   res.setHeader(
-//     "Access-Control-Allow-Headers",
-//     "Content-Type, Authorization, X-Content-Type-Options, Accept, X-Requested-With, Origin, Access-Control-Request-Method, Access-Control-Request-Headers"
-//   );
-//   res.setHeader("Access-Control-Allow-Credentials", true);
-//   res.setHeader("Access-Control-Allow-Private-Network", true);
-//   //  Firefox caps this at 24 hours (86400 seconds). Chromium (starting in v76) caps at 2 hours (7200 seconds). The default value is 5 seconds.
-//   res.setHeader("Access-Control-Max-Age", 7200);
-
-//   next();
-// });
-// app.use(
-//   cors({
-//     origin: "https://video-streaming-client.onrender.com",
-//   })
-// );
 const PORT = process.env.PORT || 3001;
-// middleware
 app.use(express.json());
 
-// app.use(
-//   cors({
-//     origin: "https://video-streaming-client.onrender.com",
-//   })
-// );
-
-// app.use(corse());
-
-// app.use((req, res, next) => {
-//   res.header(
-//     "Access-Control-Allow-Origin",
-//     "https://video-streaming-client.onrender.com"
-//   );
-//   res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-//   res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
-//   res.header("Access-Control-Allow-Credentials", true);
-
-//   console.log("Request received:", req.method, req.url);
-
-//   next();
-// });
-
-app.use(function (req, res, next) {
-  const allowedOrigins = [
-    "https://video-streaming-client.onrender.com",
-    "http://localhost:5173",
-  ];
-  const origin = req.headers.origin;
-
-  if (allowedOrigins.includes(origin)) {
-    res.setHeader("Access-Control-Allow-Origin", origin);
-  }
-
-  res.header(
-    "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content-Type, Accept, Authorization"
-  );
-  res.header("Access-Control-Allow-Credentials", true); // Corrected typo here
-  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, UPDATE");
-
-  next();
-});
+app.use(
+  cors({
+    origin: ["https://vid-stream-cl.onrender.com", "http://localhost:5173"],
+    credentials: true,
+    methods: "GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS,CONNECT,TRACE",
+    allowedHeaders:
+      "Origin, X-Requested-With, Content-Type, Accept, Authorization",
+    maxAge: 7200,
+  })
+);
 
 app.use(bodyParser.json());
 app.use(express.static("public"));
@@ -105,73 +46,81 @@ const stripeInstance = stripe(process.env.STRIPE_SECRET_KEY);
 const randomImageName = () => crypto.randomBytes(32).toString("hex");
 
 app.post("/create-payment-intent", async (req, res) => {
-  const { items } = req.body;
+  try {
+    const { items } = req.body;
 
-  // Create a PaymentIntent with the order amount and currency
-  const paymentIntent = await stripeInstance.paymentIntents.create({
-    amount: 1400,
-    currency: "eur",
+    // Create a PaymentIntent with the order amount and currency
+    const paymentIntent = await stripeInstance.paymentIntents.create({
+      amount: 1400,
+      currency: "eur",
 
-    // In the latest version of the API, specifying the `automatic_payment_methods` parameter is optional because Stripe enables its functionality by default.
-    automatic_payment_methods: {
-      enabled: false,
-    },
-    payment_method_types: ["card"],
-  });
+      // In the latest version of the API, specifying the `automatic_payment_methods` parameter is optional because Stripe enables its functionality by default.
+      automatic_payment_methods: {
+        enabled: false,
+      },
+      payment_method_types: ["card"],
+    });
 
-  res.send({
-    clientSecret: paymentIntent.client_secret,
-  });
+    res.send({
+      clientSecret: paymentIntent.client_secret,
+    });
+  } catch (error) {
+    console.log("/create-stripe: ", error);
+  }
 });
 
-app.get("/config", upload.single("file"), async (req, res) => {
-  res.send({
-    publishableKey: process.env.STRIPE_PUBLISHABLE_KEY,
-  });
-});
+// app.get("/config", upload.single("file"), async (req, res) => {
+//   res.send({
+//     publishableKey: process.env.STRIPE_PUBLISHABLE_KEY,
+//   });
+// });
 
-app.post("/testing", upload.single("file"), async (req, res) => {
-  console.log("body: ", req.file);
-
-  res.send("worked well");
+app.get("/testing", async (req, res) => {
+  try {
+    console.log("on testing route");
+    res.send("worked well, got your response, testing route");
+  } catch (error) {
+    console.log("/testing: ", error);
+  }
 });
 
 app.get("/celebs", async (req, res) => {
   //query celeb table by category
   const { category } = req.params;
 
-  console.log("paramS: ", category);
   try {
     const result = await pool.query("SELECT * FROM celeb");
     // client.release(); // Release the connection back to the pool
 
     const celebs = result.rows;
 
-    // console.log("celebs: ", celebs);
-
     res.send(celebs);
   } catch (error) {
+    console.log("error/celebs: ", error);
     res.status(500).json({ error: error.message });
   }
 });
 
 app.get("/celebs/:category", async (req, res) => {
   //query celeb table by category
-  const { category } = req.params;
+  let { category } = req.params;
 
-  console.log("paramSx: ", req.body);
+  category = category.toLocaleLowerCase(); // to match db
+
+  console.log("cat: ", category);
+
   try {
     const result = await pool.query("SELECT * FROM celeb where category = $1", [
       category,
     ]);
     // client.release(); // Release the connection back to the pool
 
+    console.log("res: ", result.rows);
     const celebs = result.rows;
-
-    // console.log("celebs: ", celebs);
 
     res.send(celebs);
   } catch (error) {
+    console.log("error/celeb/cat: ", error);
     res.status(500).json({ error: error.message });
   }
 });
@@ -191,7 +140,6 @@ app.get("/status", async (req, res) => {
 
 app.get("/dashboard", async (req, res) => {
   const uid = req.query.data;
-
   try {
     const response = await pool.query(
       "SELECT * from Requests WHERE reqstatus = $1 AND celebUid = $2 ORDER BY requestid DESC",
@@ -207,7 +155,7 @@ app.get("/dashboard", async (req, res) => {
 });
 
 app.get("/fanrequests", async (req, res) => {
-  const uid = req.query.data;
+  const { uid } = req.query;
 
   try {
     // this queries all the requests that match the get query uid. Basically when a fan clicks there on there requests this retrieves them
@@ -215,8 +163,6 @@ app.get("/fanrequests", async (req, res) => {
       "SELECT celebmessage, requestid, message, reqtype, reqAction, timestamp1, reqstatus, celebuid from Requests WHERE fanuid = $1 ORDER BY requestid",
       [uid]
     );
-
-    // console.log(response.rows);
 
     // for (const post of response.rows) {
     //   const getObjectParams = {
@@ -226,9 +172,7 @@ app.get("/fanrequests", async (req, res) => {
 
     //   const command = new GetObjectCommand(getObjectParams);
     //   const url = await getSignedUrl(s3, command, { expiresIn: 3600 });
-    //   console.log("here");
 
-    //   console.log("URL: ", url);
     // }
 
     //array that will be sent back to the response, it's made up of objects of the individual request + celeb info(photo, name)
@@ -269,8 +213,6 @@ app.get("/fanrequests", async (req, res) => {
 });
 
 app.put("/fulfill/:id", upload.single("videoFile"), async (req, res) => {
-  // console.log("here/fulfull: ", req.body);
-
   const itemId = parseInt(req.params.id, 10); // Parse the id parameter as an integer
   console.log("body", req.body);
 
@@ -284,7 +226,6 @@ app.put("/fulfill/:id", upload.single("videoFile"), async (req, res) => {
     try {
       const { celebReply } = req.body;
 
-      // console.log("celeb", celebReply);
       const response = await pool.query(
         "UPDATE requests SET reqstatus = $1, celebmessage = $2 WHERE requestid = $3 ",
         ["fulfilled", celebReply, itemId]
@@ -302,7 +243,6 @@ app.put("/fulfill/:id", upload.single("videoFile"), async (req, res) => {
       const file = req.file; // we get this file, because we're sending a form data.
       const key = `video/${Date.now()}-${randomImageName()}.webm`;
 
-      // console.log("celebREply: ", celebReply);
       const params = {
         Bucket: process.env.S3_BUCKET,
         Key: key,
@@ -312,14 +252,12 @@ app.put("/fulfill/:id", upload.single("videoFile"), async (req, res) => {
 
       const sender = await uploadFile(file.buffer, key, file.mimetype);
 
-      console.log("sender: ", sender);
       // const command = new PutObjectCommand(params);
       // const upload = await s3.send(command);
 
       // // Construct the URL of the uploaded video
       const videoUrl = `https://${process.env.S3_BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com/${key}`;
 
-      // console.log("here", videoUrl);
       // console.log("id: ", itemId);
       const response = await pool.query(
         "UPDATE requests SET reqstatus = $1, celebmessage = $2 WHERE requestid = $3 ",
@@ -362,8 +300,6 @@ app.post(
     const payLoadParsed = JSON.parse(payLoad);
     const { username, email } = payLoadParsed;
 
-    console.log("payload: ", req.body);
-
     try {
       const result = await pool.query(
         "INSERT INTO fan(username, email, uid, imgurl) VALUES ($1, $2, $3, $4)",
@@ -371,14 +307,95 @@ app.post(
       );
       res.send("Sucess crated user");
     } catch (error) {
-      console.log("error: ", error);
+      console.log("error/cr/user: ", error);
     }
     try {
-    } catch (error) {}
+    } catch (error) {
+      console.log("error/createUser: ", error);
+    }
   }
 );
 
-//
+// notification
+app.post("/notification", async (req, res) => {
+  const { intended_uid, sender_uid, message } = req.body;
+
+  console.log(
+    "intend: ",
+    intended_uid,
+    "sender_uid: ",
+    sender_uid,
+    "message: ",
+    message
+  );
+
+  try {
+    const response = await pool.query(
+      "INSERT INTO notification(intended_uid,sender_uid, message) VALUES ($1, $2, $3)",
+      [intended_uid, sender_uid, message]
+    );
+
+    res.status(200).send({ message: "notification has been made" });
+  } catch (error) {
+    console.log("error/notification: ", error);
+  }
+});
+
+app.get("/notification", async (req, res) => {
+  const { data: uid } = req.query;
+  console.log("this: ", uid);
+  try {
+    const response = await pool.query(
+      "SELECT * FROM notification WHERE intended_uid = $1",
+      [uid]
+    );
+
+    return res.send(response.rows);
+  } catch (error) {
+    console.log("get/notification: ", error);
+    res.status(404).send({ message: error.message });
+  }
+});
+
+app.put("/notification", async (req, res) => {
+  const { uid } = req.body;
+  console.log("body: ", uid);
+  try {
+    const response = pool.query(
+      "UPDATE notification SET is_read = true WHERE intended_uid = $1 ",
+      [uid]
+    );
+  } catch (error) {
+    res.status(401).send({ message: "could not update notification table" });
+  }
+});
+
+// search
+
+app.get("/search", async (req, res) => {
+  const { name } = req.query;
+  console.log("name: ", name);
+
+  if (!name) return;
+  try {
+    // const response = await pool.query(
+    //   "select displayname, uid from celeb where document_with_idx @@ to_tsquery($1) order by ts_rank(document_with_idx, plainto_tsquery($1))",
+    //   [name]
+    const response = await pool.query(
+      "SELECT *, ts_rank(document, to_tsquery('simple', $1 || ':*')) AS rank FROM celeb WHERE document @@ to_tsquery('simple', $1 || ':*') ORDER BY CASE WHEN lower(substring(displayname from 1 for 1)) = lower($1) THEN 1 ELSE 2 END, CASE WHEN lower(substring(displayname from 1 for 1)) = lower($1) THEN substring(displayname from 3) END, rank DESC",
+      [name]
+    );
+
+    res.status(201).send(response.rows);
+
+    // console.log("response: ", response.rows);
+  } catch (error) {
+    console.log("/search: ", error);
+    res.status(401).send();
+  }
+});
+
+app.put("/test", upload.single("videoFile"), async (req, res) => {});
 
 app.put("/test", upload.single("videoFile"), async (req, res) => {
   // console.log("file:", req.file);
@@ -386,8 +403,6 @@ app.put("/test", upload.single("videoFile"), async (req, res) => {
 });
 
 app.post("/request", async (req, res) => {
-  console.log("body: ", req.body);
-
   let {
     celebUid,
     fanUid,

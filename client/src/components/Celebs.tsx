@@ -1,12 +1,15 @@
-import { useContext } from "react";
 import CelebCard from "./CelebCard";
 import { useGlobalAxios } from "../hooks/useGlobalAxios";
 import background from "../assets/background.jpg";
-import { RequestContext } from "../context/RequestContext";
 import { useNavigate } from "react-router-dom";
 import { apiUrl } from "../utilities/fetchPath";
+import { useEffect, useState } from "react";
+import axios from "../api/axios";
+import { CelebType } from "../TsTypes/types";
 function Celebs() {
-  const { data, loading, error } = useGlobalAxios("get", `${apiUrl}/celebs`);
+  // const { data: getData, loading, error } = useGlobalAxios("getnow");
+
+  const [celebs, setCelebs] = useState<CelebType[]>([]);
 
   const shopByCategory = [
     {
@@ -43,17 +46,48 @@ function Celebs() {
     },
   ];
 
-  const { requests } = useContext(RequestContext);
+  // fetches celeb on mount
+  useEffect(() => {
+    const getCelebs = async () => {
+      try {
+        const response = await axios.get(`${apiUrl}/celebs`);
+
+        console.log("res: ", response);
+        setCelebs(response.data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    getCelebs();
+  }, []);
 
   const navigate = useNavigate();
 
-  console.log("here", requests);
+  // console.log("data: ", data);
+
+  const amountOfCelebPerPage = 30;
+  const [currentPage, setCurrentPage] = useState(1);
+  const startIndex = (currentPage - 1) * amountOfCelebPerPage; // 30 is the amount of celebs we want to show per page
+  const endIndex = startIndex + amountOfCelebPerPage;
+  const celebsToShow = celebs.slice(startIndex, endIndex);
+
+  const handleNextPage = () => {
+    // window.scrollTo({ top: 10, behavior: "smooth" });
+    // document.querySelector("body")?.scrollTo(0, 0);
+    // window.scrollTo(0, 0);
+    document
+      .getElementById("pagex")
+      ?.scrollTo({ top: 880, behavior: "smooth" });
+    setCurrentPage((prevPage) => prevPage + 1);
+  };
+
   return (
     <>
-      <div className=" flex flex-col  items-center ">
-        <div className="h-[845px]    py-4 w-full flex justify-center flex-col items-center gap-10 ">
+      <div id="pagex" className=" flex flex-col  items-center gap-10   ">
+        <div className="h-[845px] py-4 w-full  flex justify-center flex-col items-center gap-10  ">
           {/* first iamge */}
-          <div className="w-3/4  h-2/3 rounded-lg overflow-hidden relative">
+          <div className="w-3/4  h-2/3 rounded-lg overflow-hidden relative ">
             <img src={background} className="w-full" alt="Background" />
             <p className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white text-2xl font-bold">
               Personalised Videos from your favourite Celebs
@@ -119,7 +153,10 @@ function Celebs() {
             </p>
             <div className=" h-4/6   gap-0 grid  sm:grid-cols-5 md:grid-cols-7 lg:grid-cols-8">
               {shopByCategory.map((category) => (
-                <div className="flex flex-col  items-center justify-center hover:cursor-pointer hover:text-gray-400  ">
+                <div
+                  key={category.categoryName}
+                  className="flex flex-col  items-center justify-center hover:cursor-pointer hover:text-gray-400  "
+                >
                   <div
                     onClick={() => navigate(`/browse/${category.categoryName}`)}
                     className="border-2 bg-red-300 rounded-[50%] w-52 h-52 overflow-hidden relative"
@@ -140,27 +177,22 @@ function Celebs() {
 
         {/* celebs */}
         <div className="w-3/4   relative px-20 justify-items-center   grid  lg:grid-cols-3 xl:grid-cols-4   md:grid-cols-3 sm:grid-cols-2 sm:gap-x-52 md:gap-x-64 lg:gap-30  ">
-          {loading ? (
+          {0 ? (
             <h1>Loading</h1>
-          ) : error ? (
+          ) : 0 ? (
             <h1>Error</h1>
           ) : (
-            [...data]
+            [...celebsToShow]
               .reverse()
-              .map((item, index) => (
-                <CelebCard
-                  name={item.displayname}
-                  category={item.category}
-                  reviews={item.reviews}
-                  price={item.price * 0.1}
-                  description={item.description}
-                  photoURl={item.imgurl}
-                  uid={item.uid}
-                  key={index}
-                />
-              ))
+              .map((celeb, index) => <CelebCard celeb={celeb} key={index} />)
           )}
         </div>
+        <button
+          className="bg-gray-800 px-10 py-5 rounded-md relative bottom-10"
+          onClick={handleNextPage}
+        >
+          Next Page
+        </button>
       </div>
     </>
   );

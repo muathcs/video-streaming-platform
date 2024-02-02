@@ -1,7 +1,6 @@
 import React from "react";
 
 interface FulfillRequestProps {
-  celebReply: FormData | string;
   setCelebReply: React.Dispatch<React.SetStateAction<FormData | string>>;
 }
 

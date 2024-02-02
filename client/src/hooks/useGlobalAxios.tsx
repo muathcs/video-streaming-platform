@@ -1,7 +1,7 @@
 import { useEffect, useReducer } from "react";
 import axios from "../api/axios";
 
-type HttpMethod = "get" | "post" | "put";
+type HttpMethod = "get" | "post" | "put" | "getnow";
 
 interface State {
   data: any;
@@ -42,7 +42,9 @@ export function useGlobalAxios(
   //function to post to the data base.
   async function postData(path: string, params?: unknown) {
     try {
-      await axios.post(path, params);
+      const response = await axios.post(path, params);
+
+      console.log("post req response: ", response);
     } catch (error) {
       console.error(error);
     }
@@ -57,6 +59,12 @@ export function useGlobalAxios(
     }
   }
 
+  async function getData(dataToGet: string, params?: unknown) {
+    try {
+      await axios.get(dataToGet, { params: { params } });
+    } catch (error) {}
+  }
+
   useEffect(() => {
     const fetchData = async () => {
       dispatch({ type: "loading" }); // Use the method directly as the action type
@@ -66,7 +74,7 @@ export function useGlobalAxios(
 
         if (dataToFetch && method === "get") {
           response = await axios.get(dataToFetch, {
-            params: { data: params },
+            params: { uid: params },
           });
         }
 
@@ -76,6 +84,8 @@ export function useGlobalAxios(
           payload:
             method == "get"
               ? response?.data
+              : method == "getnow"
+              ? getData
               : method == "post"
               ? postData
               : method == "put"

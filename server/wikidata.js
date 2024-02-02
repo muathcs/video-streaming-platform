@@ -5,8 +5,10 @@ import open from "open";
 import { getAllUserUIDs } from "./fireBaseAdmin.js";
 import pool from "./db.js";
 import { celebrityNames } from "./celebName.js";
+import { createFirebaseUser } from "./fireBaseAdmin.js";
+import { updatePhotoUrl } from "./fireBaseAdmin.js";
 //main function
-async function getCelebImages(celebName, uidIndex) {
+async function getCelebImages(celebName) {
   const celebId = await getCelebIdByName(celebName);
   //   console.log("id: ", celebId);
   try {
@@ -53,15 +55,25 @@ async function getCelebImages(celebName, uidIndex) {
     const celebDescription = await getEntityDescription(celebId);
     const celebName = await getEntityName(celebId);
 
+    // create a firebase user
+    const email = celebName.replace(/\s+/g, "-").toLowerCase() + "@gmail.com";
+
+    const password = "123456";
+    const fireBaseUser = await createFirebaseUser(email, password); // creates login and password for user on firebase.
+    updatePhotoUrl(fireBaseUser.uid, imgFileUrl);
+
+    console.log("firebaseuser: ", fireBaseUser);
+
+    // create a celeb row in the db.
     const talentInfo = {
       name: celebName,
       category: categoryDict[celebCategory],
-      email: celebName + "@gmail.com",
+      email: email,
       description: celebDescription,
       reviews: 5,
       price: Math.floor(Math.random() * (250 - 20 + 1)) + 20,
       imgUrl: imgFileUrl,
-      uid: a[uidIndex],
+      uid: fireBaseUser.uid,
     };
 
     try {
@@ -78,12 +90,10 @@ async function getCelebImages(celebName, uidIndex) {
           talentInfo.imgUrl,
         ]
       );
-      console.log("succefull");
-    } catch (error) {
-      console.log("error: ", error);
-    }
 
-    console.log(talentInfo);
+      //   await pool.end();
+      return;
+    } catch (error) {}
 
     // console.log("url: ", imageValue);
   } catch (error) {
@@ -249,8 +259,24 @@ const a = await getAllUserUIDs();
 
 console.log(a.length);
 
-for (let i = 0; i < celebrityNames.length; i++) {
-  getCelebImages(celebrityNames[i], i);
-}
+// export const cnames = [
+//   "Robert Downey Jr.",
+//   "Jennifer Aniston",
+//   "Chris Hemsworth",
+//   "Jim Carrey",
+//   "Will Ferrell",
+//   "Dave Chappelle",
+//   "Lionel Messi",
+//   "Cristiano Ronaldo",
+//   "Serena Williams",
+//   "Usain Bolt",
+//   "Elon Musk",
+//   "Oprah Winfrey",
+// ];
+// for (let i = 0; i < celebrityNames.length; i++) {
+//   getCelebImages(celebrityNames[i], i);
+// }
 
+getCelebImages("Tom Cruise");
+// getCelebImages("Ricky Gervais");
 // console.dir(a, { maxArrayLength: null });

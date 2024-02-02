@@ -30,9 +30,11 @@ async function deleteAllUsers() {
     const users = listUsersResult.users;
 
     // Delete each user
-    const deletePromises = users.map((user) =>
-      admin.auth().deleteUser(user.uid)
-    );
+    const deletePromises = users.map((user) => {
+      if (user.email != "muath@gmail.com") {
+        admin.auth().deleteUser(user.uid);
+      }
+    });
     await Promise.all(deletePromises);
 
     console.log("All users deleted successfully.");
@@ -42,22 +44,20 @@ async function deleteAllUsers() {
 }
 
 // Function to create users
-async function createFirebaseUsers() {
+async function createFirebaseUser(email, password) {
   try {
-    const createUserPromises = celebrityNames.map(async (celebName) => {
-      const email = celebName.replace(/\s+/g, "-").toLowerCase() + "@gmail.com";
-      const password = email;
+    // const email = celebName.replace(/\s+/g, "-").toLowerCase() + "@gmail.com";
+    // const password = password;
 
-      // Create user with email and password
-      const userRecord = await admin.auth().createUser({
-        email,
-        password,
-      });
-
-      console.log(`User created: ${userRecord.uid} - ${email}`);
+    // Create user with email and password
+    const userRecord = await admin.auth().createUser({
+      email,
+      password,
     });
 
-    await Promise.all(createUserPromises);
+    return userRecord;
+
+    console.log(`User created: ${userRecord.uid} - ${email}`);
   } catch (error) {
     console.error("Error creating users:", error);
   }
@@ -101,47 +101,28 @@ async function updateEmailAndUid() {
     console.error("Error updating email and UID:", error);
   } finally {
     // Close the PostgreSQL pool
-    await pool.end();
+    // await pool.end();
   }
 }
 // Function to update email and uid
-async function updatePhotoUrl() {
+async function updatePhotoUrl(uid, imgurl) {
   try {
-    // Fetch data from PostgreSQL
-    const result = await pool.query("SELECT * FROM celeb");
-    const celebs = result.rows;
-
-    // Loop through each celeb
-    for (const celeb of celebs) {
-      const email = celeb.email;
-
-      console.log(celeb.celebid);
-      const urlPattern = /^(http|https):\/\//;
-      if (!urlPattern.test(celeb.imgurl)) {
-        throw new Error("Invalid URL format for photoURL");
-      } else {
-        console.log("all good");
-      }
-
-      const userRecord = await admin.auth().updateUser(celeb.uid, {
-        photoURL: celeb.imgurl,
-      });
-
-      console.log("sucess");
+    const urlPattern = /^(http|https):\/\//;
+    if (!urlPattern.test(imgurl)) {
+      console.log("wrong patter");
+      return;
     }
 
-    console.log("Update process complete.");
+    const userRecord = await admin.auth().updateUser(uid, {
+      photoURL: imgurl,
+    });
+
+    console.log("img uploaded");
   } catch (error) {
-    console.error("Error updating email and UID:", error);
-  } finally {
-    // Close the PostgreSQL pool
-    await pool.end();
+    console.error("Error updating profile picture:", error);
   }
 }
 
-// Call the function to create users
-// createFirebaseUsers();
+export { getAllUserUIDs, updatePhotoUrl, createFirebaseUser };
 
-updatePhotoUrl();
-
-export { getAllUserUIDs };
+// deleteAllUsers();

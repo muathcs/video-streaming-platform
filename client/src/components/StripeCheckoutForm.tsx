@@ -6,6 +6,7 @@ import {
 import React, { useContext, useEffect, useState } from "react";
 import { RequestContext } from "../context/RequestContext";
 import { useGlobalAxios } from "../hooks/useGlobalAxios";
+import { Bounce, ToastContainer, toast } from "react-toastify";
 
 export default function StripeCheckoutForm() {
   const stripe = useStripe();
@@ -105,32 +106,68 @@ export default function StripeCheckoutForm() {
     autoFocus: false,
   };
 
+  const notify = () => {
+    toast("🦄 Payment Beign made, please wait", {
+      position: "top-right",
+      autoClose: false,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "light",
+      transition: Bounce,
+    });
+  };
+
+  useEffect(() => {
+    if (isLoading) {
+      notify(); // Show the toast when loading is true
+    } else {
+      toast.dismiss(); // Hide the toast when loading becomes false
+    }
+  }, [isLoading]);
   return (
-    <form id="payment-form" onSubmit={handleSubmit}>
-      <PaymentElement id="payment-element" options={paymentElementOptions} />
-      {/* <CardElement id="payment-element" options={paymentElementOptions} /> */}
-      {/* <AddressElement options={paymentElementOptions} mode="shipping" /> */}
-      {/* <CardNumberElement options={paymentElementOptions} /> */}
-      {/* <CardExpiryElement options={paymentElementOptions} /> */}
-      {/* <CardCvcElement id="payment-element" options={paymentElementOptions} /> */}
-      {!isLoading && stripe && elements && (
-        <button
-          disabled={isLoading || !stripe || !elements}
-          className="bg-blue-400 rounded-lg py-4 px-10 mt-5 "
-          id="submit"
-        >
-          <span className="" id="button-text">
-            {isLoading ? (
-              <div className="spinner" id="spinner"></div>
-            ) : (
-              "Pay now"
-            )}
-          </span>
-        </button>
-      )}
-      {/* Show any error or success messages */}
-      {message && <div id="payment-message">{message}</div>}
-    </form>
+    <>
+      <ToastContainer
+        position="top-center"
+        autoClose={false}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+        style={{ width: "500px", height: "5100px", marginTop: 100 }}
+      />
+      <form id="payment-form" onSubmit={handleSubmit}>
+        <PaymentElement id="payment-element" options={paymentElementOptions} />
+        {/* <CardElement id="payment-element" options={paymentElementOptions} /> */}
+        {/* <AddressElement options={paymentElementOptions} mode="shipping" /> */}
+        {/* <CardNumberElement options={paymentElementOptions} /> */}
+        {/* <CardExpiryElement options={paymentElementOptions} /> */}
+        {/* <CardCvcElement id="payment-element" options={paymentElementOptions} /> */}
+        {!isLoading && stripe && elements && (
+          <button
+            disabled={isLoading || !stripe || !elements}
+            className="bg-blue-400 rounded-lg py-4 px-10 mt-5 "
+            id="submit"
+          >
+            <span className="" id="button-text">
+              {isLoading ? (
+                <div className="spinner" id="spinner"></div>
+              ) : (
+                "Pay now"
+              )}
+            </span>
+          </button>
+        )}
+        {/* Show any error or success messages */}
+        {message && <div id="payment-message">{message}</div>}
+      </form>
+    </>
   );
 }
 

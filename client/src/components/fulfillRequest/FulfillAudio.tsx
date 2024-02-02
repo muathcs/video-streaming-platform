@@ -77,6 +77,8 @@ function FulfillAudio({ reRecord, setCelebReply }: FulfillRequestProps) {
 
       setCelebReply(formData);
 
+      setCelebReply(formData);
+
       setAudio(null);
       setAudioChunks([]);
     };

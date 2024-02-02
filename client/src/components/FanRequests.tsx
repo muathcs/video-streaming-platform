@@ -1,63 +1,65 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import FanRequestContainer from "./FanRequestContainer";
-import { useGlobalAxios } from "../hooks/useGlobalAxios";
-import FulFilled from "./fulfillRequest/FulFilled";
+import { RequestType } from "../TsTypes/types";
+import { CelebType } from "../TsTypes/types";
+import { apiUrl } from "../utilities/fetchPath";
+import axios from "../api/axios";
 
-type requestType = {
-  request: {
-    message: string;
-    reqtype: string;
-    reqaction: string;
-    timestamp1: string;
-    reqstatus: string;
-    celebmessage: string;
-    requestid: string;
-  };
-  celeb: {
-    uid: string;
-    displayname: string;
-    imgurl: string;
-  };
+type fanRequestType = {
+  celeb: CelebType;
+  request: RequestType;
 };
 function FanRequests() {
   const { currentUser }: any = useAuth();
-  const [viewFulfilled, setViewFulfilled] = useState<string | null>("");
+  const [celebReplies, setCelebReplies] = useState<fanRequestType[]>();
 
-  const { data, loading, error } = useGlobalAxios(
-    "get",
-    "http://localhost:3001/fanrequests",
-    currentUser.uid
-  );
+  useEffect(() => {
+    console.log("user: ", currentUser.uid);
+    const getCelebEplies = async () => {
+      try {
+        const response = await axios.get(`${apiUrl}/fanrequests`, {
+          params: { uid: currentUser.uid },
+        });
+        console.log("da: ", response.data);
+
+        setCelebReplies(response.data);
+      } catch (error: any) {
+        console.error(error);
+      }
+    };
+
+    getCelebEplies();
+  }, []);
+
+  // const { data, loading, error } = useGlobalAxios<fanRequestType[]>(
+  //   "get",
+  //   `${apiUrl}/fanrequests`,
+  //   currentUser.uid
+  // );
+
+  // console.log("data: ", data);
 
   return (
     <>
-      {loading ? (
-        <h1>Loading</h1>
-      ) : error ? (
+      {0 ? (
+        <h1 className="">Loading</h1>
+      ) : 0 ? (
         <h1>Error</h1>
       ) : (
-        <div className="  overflow-auto flex flex-col gap-2">
+        <div className="  overflow-auto flex flex-col gap-2 border h-full">
           <>
-            {data &&
-              data.map((req: requestType, index: number) => (
+            {celebReplies &&
+              celebReplies.map((req: fanRequestType) => (
                 <>
-                  {!viewFulfilled ? (
+                  {/* FanRequestContainer holds the requests, the FulFilled contianer holds the viewed requests.   */}
+                  <>
                     <FanRequestContainer
                       request={req.request}
                       celeb={req.celeb}
-                      setViewFulfilled={setViewFulfilled}
-                      key={index}
+                      key={req.request.requestid}
                     />
-                  ) : (
-                    viewFulfilled === req.request.requestid && (
-                      <FulFilled
-                        request={req.request}
-                        celeb={req.celeb}
-                        setViewFulfilled={setViewFulfilled}
-                      />
-                    )
-                  )}
+                  </>
                 </>
               ))}
           </>
