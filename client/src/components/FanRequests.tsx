@@ -52,7 +52,7 @@ function FanRequests() {
       ) : error ? (
         <h1>Error</h1>
       ) : (
-        <div className="  overflow-auto flex flex-col gap-2 border h-full">
+        <div className="  overflow-auto flex flex-col gap-2  h-full">
           <>
             {celebReplies &&
               celebReplies.map((req: fanRequestType) => (

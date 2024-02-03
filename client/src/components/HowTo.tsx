@@ -1,25 +1,12 @@
 import axios from "../api/axios";
 import funky from "../assets/funky.jpg";
 function HowTo() {
-  async function handle() {
-    try {
-      const response = await axios.get("http://localhost:5115/home");
-
-      console.log(response);
-    } catch (error) {}
-  }
   return (
     <div className="px-4 py-16 mx-auto sm:max-w-xl md:max-w-full lg:max-w-screen-xl md:px-24 lg:px-8 lg:py-20 text-[20px] ">
       <div className="grid gap-6 row-gap-10 lg:grid-cols-2">
         <div className="lg:py-6 lg:pr-16">
           <div className="flex">
             <div className="flex flex-col items-center mr-4">
-              <button
-                onClick={handle}
-                className="bg-red-200 p-5 rounded-md text-black"
-              >
-                Click
-              </button>
               <div>
                 <div className="flex items-center justify-center w-20 h-20 border rounded-full ">
                   <svg
