@@ -21,6 +21,7 @@ function Category() {
 
   // get all the celebs that match the param
   useEffect(() => {
+    console.log("inside useEffect");
     // setLoading(true);
     const fetchCelebs = async () => {
       console.log("making Get REquest");
@@ -37,9 +38,9 @@ function Category() {
       }
     };
 
-    return () => {
-      fetchCelebs();
-    };
+    // return () => {
+    fetchCelebs();
+    // };
   }, []);
 
   return (
