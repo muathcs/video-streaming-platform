@@ -1,5 +1,4 @@
 import CelebCard from "./CelebCard";
-import { useGlobalAxios } from "../hooks/useGlobalAxios";
 import background from "../assets/background.jpg";
 import { useNavigate } from "react-router-dom";
 import { apiUrl } from "../utilities/fetchPath";
@@ -76,9 +75,9 @@ function Celebs() {
     // window.scrollTo({ top: 10, behavior: "smooth" });
     // document.querySelector("body")?.scrollTo(0, 0);
     // window.scrollTo(0, 0);
-    document
-      .getElementById("pagex")
-      ?.scrollTo({ top: 880, behavior: "smooth" });
+    // document
+    //   .getElementById("pagex")
+    //   ?.scrollTo({ top: 880, behavior: "smooth" });
     setCurrentPage((prevPage) => prevPage + 1);
   };
 

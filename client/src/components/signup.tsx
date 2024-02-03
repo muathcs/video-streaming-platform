@@ -53,6 +53,8 @@ function SignUp() {
 
       const path = notCeleb ? `${apiUrl}/createUser` : `${apiUrl}/createCeleb`; // if the celeb is being created, create a celeb on the server and vice versa.
 
+      console.log("payload: ", payLoad);
+
       let fd;
 
       if (selectedFile) {

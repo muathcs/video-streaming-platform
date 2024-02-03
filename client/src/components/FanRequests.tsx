@@ -13,19 +13,24 @@ type fanRequestType = {
 function FanRequests() {
   const { currentUser }: any = useAuth();
   const [celebReplies, setCelebReplies] = useState<fanRequestType[]>();
+  const [error, setError] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
     console.log("user: ", currentUser.uid);
+    setLoading(true);
     const getCelebEplies = async () => {
       try {
         const response = await axios.get(`${apiUrl}/fanrequests`, {
           params: { uid: currentUser.uid },
         });
         console.log("da: ", response.data);
+        setLoading(false);
 
         setCelebReplies(response.data);
       } catch (error: any) {
         console.error(error);
+        setError(true);
       }
     };
 
@@ -42,9 +47,9 @@ function FanRequests() {
 
   return (
     <>
-      {0 ? (
+      {loading ? (
         <h1 className="">Loading</h1>
-      ) : 0 ? (
+      ) : error ? (
         <h1>Error</h1>
       ) : (
         <div className="  overflow-auto flex flex-col gap-2 border h-full">

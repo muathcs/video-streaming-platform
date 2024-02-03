@@ -94,23 +94,23 @@ function Category() {
               ) : (
                 [...celebs]
                   .reverse()
-                  .map((celeb, index) => (
-                    <CelebCard celeb={celeb} key={celeb.uid} />
-                  ))
+                  .map((celeb) => <CelebCard celeb={celeb} key={celeb.uid} />)
               )}
             </div>
           </div>
         </div>
         {/* filter */}
-        {!hideFilter ? (
-          <Filter
-            originalCelebs={originalCelebs}
-            celebs={celebs}
-            setCelebs={setCelebs}
-            setSelectedFilters={setSelectedFilters}
-            selectedFilters={selectedFilters}
-          />
-        ) : null}
+        <div className="w-[20%] pt-32 ml-10 ">
+          {!hideFilter ? (
+            <Filter
+              originalCelebs={originalCelebs}
+              celebs={celebs}
+              setCelebs={setCelebs}
+              setSelectedFilters={setSelectedFilters}
+              selectedFilters={selectedFilters}
+            />
+          ) : null}
+        </div>
       </div>
     </div>
   );

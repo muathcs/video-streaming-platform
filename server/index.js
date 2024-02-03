@@ -16,7 +16,9 @@ import multer from "multer";
 import crypto from "crypto";
 import sharp from "sharp";
 import s3, { uploadFile } from "./s3.js";
+import { createTheCelebs } from "./wikidata.js";
 
+// createTheCelebs();
 const app = express();
 
 const PORT = process.env.PORT || 3001;
@@ -378,7 +380,7 @@ app.get("/search", async (req, res) => {
     //   "select displayname, uid from celeb where document_with_idx @@ to_tsquery($1) order by ts_rank(document_with_idx, plainto_tsquery($1))",
     //   [name]
     const response = await pool.query(
-      "SELECT *, ts_rank(document, to_tsquery('simple', $1 || ':*')) AS rank FROM celeb WHERE document @@ to_tsquery('simple', $1 || ':*') ORDER BY CASE WHEN lower(substring(displayname from 1 for 1)) = lower($1) THEN 1 ELSE 2 END, CASE WHEN lower(substring(displayname from 1 for 1)) = lower($1) THEN substring(displayname from 3) END, rank DESC",
+      "SELECT *, ts_rank(document_with_idx, to_tsquery('simple', $1 || ':*')) AS rank FROM celeb WHERE document_with_idx @@ to_tsquery('simple', $1 || ':*') ORDER BY CASE WHEN lower(substring(displayname from 1 for 1)) = lower($1) THEN 1 ELSE 2 END, CASE WHEN lower(substring(displayname from 1 for 1)) = lower($1) THEN substring(displayname from 3) END, rank DESC",
       [name]
     );
 
@@ -435,42 +437,49 @@ app.post("/request", async (req, res) => {
 
 // this path is reached, if someone signs up as a celeb
 // a different path createuser if user signs up as normal user not a celeb
-app.post("/createCeleb", async (req, res) => {
-  const { uid, imgurl } = req.body;
+app.post(
+  "/createCeleb",
+  upload.single("file"),
+  uploadProfileImgToS3,
+  async (req, res) => {
+    const { uid, imgurl } = req.body;
 
-  const {
-    displayName,
-    username,
-    follower,
-    account,
-    category,
-    price,
-    email,
-    description,
-  } = req.body.payLoad;
+    const payload = JSON.parse(req.body.payLoad);
 
-  try {
-    const result = await pool.query(
-      "INSERT INTO celeb(displayName, username, followers, account, category, price, email, description, uid, imgurl) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)",
-      [
-        displayName,
-        username,
-        follower,
-        account,
-        category,
-        price,
-        email,
-        description,
-        uid,
-        imgurl,
-      ]
-    );
-    res.send("Thank you");
-  } catch (error) {
-    console.log(error);
-    res.send("Failed");
+    const {
+      displayName,
+      username,
+      follower,
+      account,
+      category,
+      price,
+      email,
+      description,
+    } = payload;
+
+    try {
+      const result = await pool.query(
+        "INSERT INTO celeb(displayName, username, followers, account, category, price, email, description, uid, imgurl) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)",
+        [
+          displayName,
+          username,
+          follower,
+          account,
+          category,
+          price,
+          email,
+          description,
+          uid,
+          imgurl,
+        ]
+      );
+      res.send("Thank you");
+    } catch (error) {
+      console.log(error);
+      res.send("Failed");
+    }
   }
-});
+);
 
 app.listen(PORT, () => {
   console.log("listing on...", PORT);

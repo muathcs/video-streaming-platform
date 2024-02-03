@@ -30,7 +30,6 @@ function NavBar() {
   const [searchCelebVal, setSearchCelebVal] = useState<string>("");
   const [celebsSuggestion, setCelebsSuggestion] = useState<string[]>([]);
   const optionsRef = useRef<HTMLParagraphElement | null>(null);
-  const [penOptions, setOpenOptions] = useState<Boolean>(false);
 
   const { data: putRequest } = useGlobalAxios("put");
   const navigate = useNavigate();
@@ -374,10 +373,7 @@ function NavBar() {
 
                     <div className="top-16 w-full ">
                       <Combobox>
-                        <div
-                          onClick={() => setOpenOptions(true)}
-                          onBlur={() => setOpenOptions(false)}
-                        >
+                        <div>
                           <p
                             // onClick={() => searchCeleb()}
                             className="absolute  z-10 text-black text-[22px] mt-1 sm:mt-2 lg:mt-2 right-7 flex items-center hover:text-gray-700 cursor-pointer"
@@ -397,7 +393,7 @@ function NavBar() {
                             className="text-black py-1  sm:py-2  rounded-full w-full border border-gray-500 bg-white px-5"
                             value={searchCelebVal}
                             onChange={(e) => {
-                              setSearchCelebVal((prevSearchCelebVal) => {
+                              setSearchCelebVal(() => {
                                 const newValue = e.target.value;
                                 searchCeleb(newValue); // pass the updated value to your function
                                 return newValue; // return the new value to update the state

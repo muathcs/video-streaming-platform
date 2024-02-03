@@ -22,6 +22,19 @@ async function getAllUserUIDs() {
   }
 }
 
+export async function getUID(email) {
+  try {
+    const userRecord = await admin.auth().getUserByEmail(email);
+    const uid = userRecord.uid;
+
+    return uid;
+    return userUIDs;
+  } catch (error) {
+    console.error("Error listing users:", error.message, "email: ", email);
+    throw error;
+  }
+}
+
 // Function to delete all users
 async function deleteAllUsers() {
   try {

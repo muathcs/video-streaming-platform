@@ -67,7 +67,7 @@ function Filter({
     });
   }
   return (
-    <div className="w-[20%] ">
+    <div className="w-full ">
       <details
         open
         className=" max-w-md  overflow-hidden rounded-lg    open:shadow-lg text-gray-700"
