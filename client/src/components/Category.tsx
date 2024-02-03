@@ -21,7 +21,7 @@ function Category() {
 
   // get all the celebs that match the param
   useEffect(() => {
-    setLoading(true);
+    // setLoading(true);
     const fetchCelebs = async () => {
       try {
         const response = await axios.get(`${apiUrl}/celebs/${category}`);

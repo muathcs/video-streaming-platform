@@ -117,7 +117,7 @@ app.get("/celebs/:category", async (req, res) => {
     ]);
     // client.release(); // Release the connection back to the pool
 
-    console.log("res: ", result.rows);
+    // console.log("res: ", result.rows);
     const celebs = result.rows;
 
     res.send(celebs);
