@@ -23,12 +23,14 @@ function Category() {
   useEffect(() => {
     // setLoading(true);
     const fetchCelebs = async () => {
+      console.log("making Get REquest");
       try {
+        console.log("inside try ");
         const response = await axios.get(`${apiUrl}/celebs/${category}`);
 
+        console.log("celeb: ", response.data);
         setCelebs(response.data);
         setOriginalCelebs(response.data);
-        console.log("celeb: ", response.data);
         setLoading(false);
       } catch (error) {
         console.error("error: ", error);

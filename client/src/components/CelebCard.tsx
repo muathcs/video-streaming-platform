@@ -28,8 +28,6 @@ function CelebCard({ celeb }: { celeb: CelebCardProps }) {
     });
   };
 
-  console.log("celebCarD:: ", celeb);
-
   return (
     <div className="shadow-xl rounded-t-xl rounded-md card-zoom w-[20rem] h-[30rem]  text-white">
       <div className="h-[85%]   w-full overflow-hidden rounded-t-xl ">
