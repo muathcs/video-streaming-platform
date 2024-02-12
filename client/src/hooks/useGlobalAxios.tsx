@@ -53,7 +53,8 @@ export function useGlobalAxios(
   // function to put to the database.
   async function putData(dataToPost: string, params?: unknown) {
     try {
-      await axios.put(dataToPost, params);
+      const response = await axios.put(dataToPost, params);
+      return response;
     } catch (error) {
       console.error(error);
     }

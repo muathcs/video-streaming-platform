@@ -8,6 +8,8 @@ import { CelebType } from "../TsTypes/types";
 function Celebs() {
   // const { data: getData, loading, error } = useGlobalAxios("getnow");
 
+  console.log("on celebs");
+
   const [celebs, setCelebs] = useState<CelebType[]>([]);
 
   const shopByCategory = [
@@ -65,7 +67,7 @@ function Celebs() {
 
   // console.log("data: ", data);
 
-  const amountOfCelebPerPage = 30;
+  const amountOfCelebPerPage = 16;
   const [currentPage, setCurrentPage] = useState(1);
   const startIndex = (currentPage - 1) * amountOfCelebPerPage; // 30 is the amount of celebs we want to show per page
   const endIndex = startIndex + amountOfCelebPerPage;

@@ -14,6 +14,8 @@ import Success from "./components/Success";
 import Category from "./components/Category";
 import FulFilled from "./components/fulfillRequest/FulFilled";
 import HowTo from "./components/HowTo";
+import Settings from "./components/Settings";
+import Celebs from "./components/Celebs";
 
 function App() {
   return (
@@ -24,7 +26,10 @@ function App() {
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<SignUp />} />
-          <Route path="/" element={<PrivateRoute />} />
+          <Route path="/" element={<PrivateRoute />}>
+            <Route element={<Celebs />} path="/" />
+            <Route element={<Settings />} path="/settings" />
+          </Route>
           <Route path="/profile" element={<CelebProfile />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/requests" element={<FanRequests />} />

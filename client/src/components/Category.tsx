@@ -17,7 +17,15 @@ function Category() {
 
   const [selectedFilters, setSelectedFilters] = useState<any[]>([]);
 
-  console.log("selected: ", selectedFilters);
+  function removeFilter(filterName: string) {
+    console.log("filterNamex: ", filterName);
+
+    const newFilter = selectedFilters.filter(
+      (filter) => filter.filterName != filterName
+    );
+
+    setSelectedFilters(newFilter);
+  }
 
   // get all the celebs that match the param
   useEffect(() => {
@@ -60,7 +68,10 @@ function Category() {
                     <p className="px-5 py-2 bg-gray-700 rounded-l-sm">
                       {filter.filterName}
                     </p>
-                    <button className=" py-2 bg-red-800  rounded-r-md px-2 cursor-pointer">
+                    <button
+                      onClick={() => removeFilter(filter.filterName)}
+                      className=" py-2 bg-red-800  rounded-r-md px-2 cursor-pointer"
+                    >
                       X
                     </button>
                   </span>

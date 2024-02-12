@@ -16,6 +16,10 @@ export type CelebType = {
   username: string;
 };
 
+export type SocialMediaType = {
+  name: string;
+};
+
 export type notification = {
   notificationid: number;
   message: string;

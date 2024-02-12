@@ -19,21 +19,17 @@ function SignUp() {
 
   // const { data: sendPutRequest } = useGlobalAxios("put");
 
-  async function handleSubmit(
-    e: any,
-    username: string,
-    email: string,
-    password: string,
-    passwordConfirmation: string,
-    payLoad: any,
-    notCeleb: boolean
-  ) {
-    e.preventDefault();
+  async function handleSubmit(data: any, isCeleb: boolean) {
+    // e.preventDefault();
 
-    console.log("payLoad from actual function: ", passwordConfirmation);
+    console.log("targetxx: ", data);
+
+    const { email, username, password, confirmPassword, imgfile } = data;
+
+    console.log("payLoad from actual function: ", confirmPassword);
 
     //if password doesn't match.
-    if (password !== passwordConfirmation) {
+    if (password !== confirmPassword) {
       return setError("Passwords do not match");
       setSuccessfull("");
     }
@@ -45,23 +41,21 @@ function SignUp() {
       setLoading(true);
       const userid = await signup(email, password, username);
 
-      const imgUrl: string = await handleUpload(userid.uid);
+      const imgUrl: string = await handleUpload(userid.uid); // returns url with selected file name only if file is selected. .
 
-      const fireBaseUrlLink = AWS_LINK + imgUrl; // this link adds the AWS S3 Storage to the img url
+      const fireBaseUrlLink = AWS_LINK + imgUrl; // this link adds the AWS S3 Storage url, to the img url
 
-      await uploadProfilePic(fireBaseUrlLink, userid);
+      await uploadProfilePic(fireBaseUrlLink, userid); // uploads the profile pic to firebase user.
 
-      const path = notCeleb ? `${apiUrl}/createUser` : `${apiUrl}/createCeleb`; // if the celeb is being created, create a celeb on the server and vice versa.
+      const path = isCeleb ? `${apiUrl}/createCeleb` : `${apiUrl}/createUser`; // if the celeb is being created, create a celeb on the server and vice versa.
 
-      console.log("payload: ", payLoad);
-
-      let fd;
+      let fd; //formdata
 
       if (selectedFile) {
         fd = new FormData();
         fd.append("file", selectedFile);
         // Append other parameters
-        fd.append("payLoad", JSON.stringify(payLoad));
+        fd.append("payLoad", JSON.stringify(data));
         fd.append("uid", userid.uid);
         fd.append("imgurl", imgUrl);
       }
@@ -75,7 +69,7 @@ function SignUp() {
       // navigate("/");
     } catch (error) {
       setSuccessfull("");
-      console.log("failed to create an account", error);
+      console.error("failed to create an account", error);
     }
     setLoading(false);
     // setSuccessfull(false);
@@ -94,7 +88,7 @@ function SignUp() {
 
       return imgURL;
     } else {
-      console.warn("No file selected for upload.");
+      console.warn("No file selected for upload."); // this returns an empty string if the user doesn't choose an img.
       return "";
     }
   };
@@ -166,12 +160,12 @@ function SignUp() {
               <div className="">
                 {selected == "celeb" ? (
                   <SignupCeleb
-                    handleSubmit={handleSubmit}
+                    createUser={handleSubmit}
                     handleFileChange={handleFileChange}
                   />
                 ) : (
                   <SignupUser
-                    handleSubmit={handleSubmit}
+                    createUser={handleSubmit}
                     handleFileChange={handleFileChange}
                   />
                 )}

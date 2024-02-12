@@ -1,6 +1,8 @@
 import AWS from "aws-sdk";
 
 import { PutObjectCommand, S3, S3Client } from "@aws-sdk/client-s3";
+export const AWS_LINK =
+  "https://cy-vide-stream-imgfiles.s3.eu-west-2.amazonaws.com/";
 
 const bucketName = process.env.S3_BUCKET;
 const region = process.env.AWS_REGION;
@@ -19,8 +21,10 @@ const s3Client = new S3Client({
   },
 });
 
+// loop over a file with lets say 100 links
+
 export function uploadFile(fileBuffer, fileName, mimetype) {
-  console.log(fileName);
+  console.log("filenname : ", fileName);
   const uploadParams = {
     Bucket: bucketName,
     Body: fileBuffer,
@@ -28,9 +32,12 @@ export function uploadFile(fileBuffer, fileName, mimetype) {
     ContentType: mimetype,
   };
 
-  console.log("image upload succefully");
-
-  return s3Client.send(new PutObjectCommand(uploadParams));
+  try {
+    s3Client.send(new PutObjectCommand(uploadParams));
+    console.log("image upload succefully", uploadParams);
+  } catch (error) {
+    console.log("/uploadFile Function S3 File: ", error);
+  }
 }
 
 export function deleteFile(fileName) {

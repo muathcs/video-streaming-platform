@@ -1,7 +1,9 @@
 import React, { useContext, useEffect, useState } from "react";
 import { auth } from "../auth/firebase";
 import {
+  EmailAuthProvider,
   createUserWithEmailAndPassword,
+  reauthenticateWithCredential,
   sendPasswordResetEmail,
   signInWithCustomToken,
   signInWithEmailAndPassword,
@@ -12,6 +14,7 @@ import axios from "../api/axios";
 import { RequestContext } from "./RequestContext";
 import { User as FirebaseUser } from "firebase/auth";
 import { apiUrl } from "../utilities/fetchPath";
+import { ErrorCause } from "aws-sdk/clients/qldb";
 
 const AuthContext = React.createContext("");
 
@@ -23,6 +26,7 @@ export function AuthProvider({ children }: { children: any }) {
   const [currentUser, setCurrentUser] = useState<FirebaseUser>();
   const [token, setToken] = useState();
   const [loading, setLoading] = useState(true);
+  const [userInfo, setUserInfo] = useState<any>();
 
   const [celeb, setCeleb] = useState();
 
@@ -65,7 +69,7 @@ export function AuthProvider({ children }: { children: any }) {
 
   function login(email: any, password: any) {
     return signInWithEmailAndPassword(auth, email, password);
-    signInWithCustomToken;
+    // signInWithCustomToken;
   }
 
   function logout() {
@@ -73,6 +77,29 @@ export function AuthProvider({ children }: { children: any }) {
       return auth.signOut();
     } catch (error) {
       console.log(error);
+    }
+  }
+
+  async function reauthenticateUser(password: string) {
+    const user = auth.currentUser;
+
+    if (user && user.email) {
+      const credential = EmailAuthProvider.credential(user.email, password);
+      console.log("bewlo creds: ", user.email);
+      try {
+        await reauthenticateWithCredential(user, credential);
+        console.log("User reauthenticated successfully.");
+        return {
+          state: true,
+          message: "User credentials updated successfully",
+        };
+      } catch (error: any) {
+        console.error("Error reauthenticating user:", error.message);
+        return { state: false, message: error.message };
+        // throw error;
+      }
+    } else {
+      console.error("No user is currently signed in.");
     }
   }
 
@@ -90,7 +117,9 @@ export function AuthProvider({ children }: { children: any }) {
       async (
         user: any //this works
       ) => {
+        console.log("user auth: ", auth.currentUser);
         setCurrentUser(user);
+
         if (user) {
           try {
             const response = await axios.get(`${apiUrl}/status`, {
@@ -99,20 +128,30 @@ export function AuthProvider({ children }: { children: any }) {
 
             let req;
 
+            let fullUserInfo;
+
             if (response.data) {
               req = await axios.get(`${apiUrl}/dashboard`, {
                 params: { data: user.uid },
               });
 
-              console.log("inside: ", req.data);
+              fullUserInfo = await axios.get(`${apiUrl}/celeb/${user.uid}`);
             } else {
+              console.log("here");
               req = await axios.get(`${apiUrl}/fanrequests`, {
                 params: { data: user.uid },
               });
+
+              // const userInfo = await axios.get(`${apiUrl}/fan`, {
+              //   params: { uid: user.uid },
+              // });
+
+              fullUserInfo = await axios.get(`${apiUrl}/fan/${user.uid}`);
             }
 
             setRequests(req.data);
             setCeleb(response.data);
+            setUserInfo(fullUserInfo.data[0]);
           } catch (error) {
             console.error(error);
           }
@@ -136,8 +175,10 @@ export function AuthProvider({ children }: { children: any }) {
     signup,
     login,
     logout,
+    reauthenticateUser,
     uploadProfilePic,
     celeb,
+    userInfo,
   };
 
   // this is for the Request Context

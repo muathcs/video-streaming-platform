@@ -11,6 +11,33 @@ admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
 });
 
+export async function updateEmail(email, newEmail) {
+  try {
+    console.log("email: ", email, "newEmail: ", newEmail);
+    const user = await admin.auth().getUserByEmail(email);
+    await admin.auth().updateUser(user.uid, {
+      email: newEmail,
+    });
+
+    console.log("email succefully updated");
+  } catch (error) {
+    console.log("could not update email from updateEmailFunction: ", error);
+  }
+}
+
+export async function updatePassword(uid, newPassword) {
+  try {
+    await admin.auth().updateUser(uid, {
+      password: newPassword,
+    });
+
+    console.log("Password successfully updated");
+  } catch (error) {
+    console.log("Could not update password:", error);
+    throw error;
+  }
+}
+
 async function getAllUserUIDs() {
   try {
     const userRecords = await admin.auth().listUsers();

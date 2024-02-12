@@ -15,8 +15,9 @@ import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import multer from "multer";
 import crypto from "crypto";
 import sharp from "sharp";
-import s3, { uploadFile } from "./s3.js";
+import s3, { AWS_LINK, uploadFile } from "./s3.js";
 import { createTheCelebs } from "./wikidata.js";
+import { updateEmail, updatePassword } from "./fireBaseAdmin.js";
 
 // createTheCelebs();
 const app = express();
@@ -99,6 +100,42 @@ app.get("/celebs", async (req, res) => {
     res.send(celebs);
   } catch (error) {
     console.log("error/celebs: ", error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.get("/celeb/:id", async (req, res) => {
+  const { id } = req.params;
+
+  console.log("id: ", id);
+
+  try {
+    const response = await pool.query("Select * from celeb where uid = $1", [
+      id,
+    ]);
+
+    const celeb = response.rows;
+
+    res.send(celeb);
+  } catch (error) {
+    console.log("/celeb/id: ", error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.get("/fan/:uid", async (req, res) => {
+  const { uid } = req.params;
+
+  try {
+    const response = await pool.query("Select * from fan where uid = $1", [
+      uid,
+    ]);
+
+    const fan = response.rows;
+
+    res.send(fan);
+  } catch (error) {
+    console.log("/celeb/id: ", error);
     res.status(500).json({ error: error.message });
   }
 });
@@ -275,16 +312,36 @@ app.put("/fulfill/:id", upload.single("videoFile"), async (req, res) => {
 //post
 
 async function uploadProfileImgToS3(req, res, next) {
-  const { uid, imgurl } = req.body;
+  let { id } = req.params;
+  let { uid, imgurl } = req.body;
+
+  console.log("uid: X:: ", id);
+
+  if (!imgurl && id) {
+    // this function checks if we're updating the img or setting it for the first time. So, if the imgurl doesn't exist but the id does this mean the account is updating the img
+    // if this case
+    imgurl = `profile/user(${id})`;
+  }
 
   const file = req.file;
 
+  console.log("file: ", file);
+
+  if (!file) {
+    //just incase the above passes because the firebase account is created beofre the user and so the id may still exist, this will quit the middle ware if an img file wasnt selected.
+    console.log("its here next()");
+    return next(); //insures middleware below doesn't run.
+  }
+
+  let newUrl = AWS_LINK + imgurl;
+
   try {
     const uploadProf = await uploadFile(file.buffer, imgurl, file.mimetype);
+    req.newUrl = newUrl;
 
     next();
   } catch (error) {
-    console.log("error ploadprofiletos3 middleware");
+    console.log("error ploadprofiletos3 middleware", error);
     res.send("unable to upload profile picture to s3 storage");
   }
 }
@@ -296,12 +353,12 @@ app.post(
   async (req, res) => {
     const { uid, imgurl, payLoad } = req.body;
     const payLoadParsed = JSON.parse(payLoad);
-    const { username, email } = payLoadParsed;
+    const { username, email, description } = payLoadParsed;
 
     try {
       const result = await pool.query(
-        "INSERT INTO fan(username, email, uid, imgurl) VALUES ($1, $2, $3, $4)",
-        [username, email, uid, imgurl]
+        "INSERT INTO fan(username, email, uid, imgurl, description) VALUES ($1, $2, $3, $4, $5)",
+        [username, email, uid, imgurl, description]
       );
       res.send("Sucess crated user");
     } catch (error) {
@@ -313,6 +370,83 @@ app.post(
     }
   }
 );
+
+app.put(
+  "/update/:id",
+  upload.single("file"),
+  uploadProfileImgToS3,
+  async (req, res) => {
+    const { id } = req.params;
+    const payLoadParsed = JSON.parse(req.body.payLoad);
+    const { displayName, followers, price, email, description } = payLoadParsed;
+
+    const imgurl = req.newUrl;
+
+    // const s3Link = AWS_LINK + im
+
+    const { status } = req.body;
+
+    if (status == "celeb") {
+      const response = await pool.query(
+        "Update celeb SET displayname=$1, followers=$2, price= $3, email=$4, description=$5, imgurl=$6",
+        [displayName, followers, price, email, description, imgurl]
+      );
+    }
+  }
+);
+
+app.put("/update/login/email/:id", async (req, res) => {
+  const { email, status } = req.body;
+
+  const { email: newEmail, password } = req.body.data;
+
+  updateEmail(email, newEmail);
+
+  if (status == "celeb") {
+    try {
+      const response = await pool.query("UPDATE celeb SET email=$1", [
+        newEmail,
+      ]);
+      res
+        .status(201)
+        .send({ message: "your email has been updated successfully" });
+    } catch (error) {
+      console.log("erorr/login/email/:id: ", error);
+      res.send(error);
+    }
+  } else {
+    try {
+      const response = await pool.query("UPDATE fan SET email=$1", [newEmail]);
+      res
+        .status(201)
+        .send({ message: "your email has been updated successfully" });
+    } catch (error) {
+      console.log("erorr/login/email/:id: ", error);
+      res.send(error);
+    }
+  }
+});
+
+app.put("/update/login/password/:id", async (req, res) => {
+  const { id } = req.params;
+  const { newPassword, confirmNewPassword } = req.body.data;
+
+  console.log(
+    "id: ",
+    id,
+    "newPAss: ",
+    newPassword,
+    "confirm: ",
+    confirmNewPassword
+  );
+
+  try {
+    await updatePassword(id, newPassword);
+    res.status(201).send({ message: "Your password has been reset" });
+  } catch (error) {
+    res.status(400).send({ message: error });
+  }
+});
 
 // notification
 app.post("/notification", async (req, res) => {
@@ -446,10 +580,12 @@ app.post(
 
     const payload = JSON.parse(req.body.payLoad);
 
+    // console.log("payload: ", payload);
+
     const {
       displayName,
       username,
-      follower,
+      followers,
       account,
       category,
       price,
@@ -463,7 +599,7 @@ app.post(
         [
           displayName,
           username,
-          follower,
+          followers,
           account,
           category,
           price,

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 function Filter({
   originalCelebs,
@@ -8,11 +8,36 @@ function Filter({
   selectedFilters,
 }: any) {
   const [rangeValue, setRangeValue] = useState(20);
+  const [lowToHighCheck, setLowToHighCheck] = useState<boolean | undefined>(
+    false
+  );
+  const [highToLowCheck, setHighToLowCheck] = useState<boolean | undefined>(
+    false
+  );
+
+  // this sets the value of the radio buttons, because there are to ways to remove filters, this function checks if the selectedFilter have been updated from the
+  // category's compmonent removeFilter function.
+  useEffect(() => {
+    // This effect will run whenever selectedFilters changes
+    const checkHigh = selectedFilters.some((filter: any) => {
+      return filter.filterName === "high-to-low" && filter.visible === true;
+    });
+
+    const checkLow = selectedFilters.some((filter: any) => {
+      return filter.filterName === "low-to-high" && filter.visible === true;
+    });
+
+    // Update highToLowCheck state based on the check value
+    setHighToLowCheck(checkHigh);
+    setLowToHighCheck(checkLow);
+  }, [selectedFilters]);
 
   function handleRangeChange(e: React.ChangeEvent<HTMLInputElement>) {
     console.log("value: ", e.target.value);
     setRangeValue(parseInt(e.target.value, 10));
   }
+
+  console.log("running in filter");
 
   function handleFilters(filterType: string, filterName: string) {
     const updatedArr = [...selectedFilters];
@@ -35,7 +60,12 @@ function Filter({
     console.log("selected: ", selectedFilters);
   }
 
+  // should probably put the below functions into one function and add a swithc statement.
+
   function filterLowToHigh() {
+    setLowToHighCheck(true);
+    setHighToLowCheck(false);
+
     let newState = [...celebs];
 
     handleFilters("price", "low-to-high");
@@ -45,6 +75,9 @@ function Filter({
   }
 
   function highToLow() {
+    setHighToLowCheck(true);
+    setLowToHighCheck(false);
+
     handleFilters("price", "high-to-low");
     let newState = [...celebs];
     newState = newState.slice().sort((a, b) => a.price - b.price);
@@ -65,9 +98,12 @@ function Filter({
     setRangeValue(() => {
       return 10;
     });
+    setHighToLowCheck(false);
+    setLowToHighCheck(false);
+    setSelectedFilters([]);
   }
   return (
-    <div className="w-full ">
+    <div className="w-full  ">
       <details
         open
         className=" max-w-md  overflow-hidden rounded-lg    open:shadow-lg text-gray-700"
@@ -106,6 +142,7 @@ function Filter({
                   id="low-to"
                   type="radio"
                   name="low-to"
+                  checked={lowToHighCheck}
                   onClick={filterLowToHigh}
                   // className="h-5 w-5 rounded border-gray-300 bg-yellow-400  cursor-pointer"
                   className="peer h-5 w-5 cursor-pointer"
@@ -123,6 +160,7 @@ function Filter({
                   id="high-to"
                   type="radio"
                   name="low-to"
+                  checked={highToLowCheck}
                   onClick={highToLow}
                   className="peer h-5 w-5 cursor-pointer"
                 />
