@@ -24,14 +24,18 @@ function PublicProfileSettings({
   const [mostPopularSocialMedia, setMostPopularSocialMedia] =
     useState<string>("");
 
-  const [email, setEmail] = useState<string>(userInfo.email);
-  const [imgUrl, setImgUrl] = useState<string>(userInfo.imgurl);
-  const [description, setDescription] = useState<string>(userInfo.description);
-  const [displayName, setDisplayName] = useState<string>(userInfo.username);
-  const [price, setPrice] = useState<number>(userInfo.price);
-  const [app, setApp] = useState<string>(userInfo.app || "");
-  const [category, setCategory] = useState(userInfo.category);
-  const followers = userInfo.followers;
+  const [email, setEmail] = useState<string>(userInfo?.email || "");
+  const [imgUrl, setImgUrl] = useState<string>(userInfo?.imgurl || "");
+  const [description, setDescription] = useState<string>(
+    userInfo?.description || ""
+  );
+  const [displayName, setDisplayName] = useState<string>(
+    userInfo?.username || ""
+  );
+  const [price, setPrice] = useState<number>(userInfo?.price || 0);
+  const [app, setApp] = useState<string>(userInfo?.app || "");
+  const [category, setCategory] = useState(userInfo?.category || "");
+  const followers = userInfo?.followers || 0;
 
   const [selectedFile, setSelectedFile] = useState<File>();
 
