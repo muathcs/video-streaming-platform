@@ -24,7 +24,9 @@ interface FanRequestContainerProp {
 // if a request is fulfilled, the user can click the view button, which will display the FulFilled componenet.
 function FanRequestContainer({ request, celeb }: FanRequestContainerProp) {
   const { reqstatus } = request;
-  const { displayname: celebName, imgurl: celebPhoto } = celeb;
+
+  console.log("request/Celeb: ", celeb);
+  const { displayname: celebName, imgurl: celebPhoto } = celeb ?? {};
   const navigate = useNavigate();
 
   const { currentUser }: any = useAuth();

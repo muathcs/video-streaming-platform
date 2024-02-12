@@ -16,6 +16,8 @@ function FanRequests() {
   const [error, setError] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
 
+  // console.log("celebReplies: ", celebReplies[0].celeb);
+
   useEffect(() => {
     console.log("user: ", currentUser.uid);
     setLoading(true);
