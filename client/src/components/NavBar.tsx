@@ -23,7 +23,7 @@ function classNames(...classes: any) {
 // Assuming userID is a variable containing the user ID you want to retrieve the image for
 
 function NavBar() {
-  const { logout, currentUser, celeb }: any = useAuth();
+  const { logout, currentUser, celeb, userInfo }: any = useAuth();
   const [notifications, setNotifications] = useState<notification[]>();
   const [unread, setUnread] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(false);
@@ -300,7 +300,7 @@ function NavBar() {
                           <span className="sr-only">Open user menu</span>
                           <img
                             className="h-full w-full rounded-full object-cover"
-                            src={currentUser && currentUser.photoURL}
+                            src={userInfo && userInfo.imgurl}
                             alt=""
                           />
                         </Menu.Button>

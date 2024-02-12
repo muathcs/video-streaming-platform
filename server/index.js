@@ -353,12 +353,12 @@ app.post(
   async (req, res) => {
     const { uid, imgurl, payLoad } = req.body;
     const payLoadParsed = JSON.parse(payLoad);
-    const { username, email, description } = payLoadParsed;
+    const { displayname, email, description } = payLoadParsed;
 
     try {
       const result = await pool.query(
-        "INSERT INTO fan(username, email, uid, imgurl, description) VALUES ($1, $2, $3, $4, $5)",
-        [username, email, uid, imgurl, description]
+        "INSERT INTO fan(displayname, email, uid, imgurl, description) VALUES ($1, $2, $3, $4, $5)",
+        [displayname, email, uid, imgurl, description]
       );
       res.send("Sucess crated user");
     } catch (error) {
@@ -378,35 +378,50 @@ app.put(
   async (req, res) => {
     const { id } = req.params;
     const payLoadParsed = JSON.parse(req.body.payLoad);
-    const { displayName, followers, price, email, description } = payLoadParsed;
+    const { displayName, followers, price, email, category, description } =
+      payLoadParsed;
 
-    const imgurl = req.newUrl;
+    const newImgUrl = req.newUrl;
 
     // const s3Link = AWS_LINK + im
 
     const { status } = req.body;
 
+    console.log("outside clebe", req.body);
+    console.log("id: ", id);
     if (status == "celeb") {
+      console.log("isinde clebe new url: ", newImgUrl);
       const response = await pool.query(
-        "Update celeb SET displayname=$1, followers=$2, price= $3, email=$4, description=$5, imgurl=$6",
-        [displayName, followers, price, email, description, imgurl]
+        "Update celeb SET displayname=$1, followers=$2, price= $3, category=$4, description=$5, imgurl=$6 where uid=$7",
+        [displayName, followers, price, category, description, newImgUrl, id]
+      );
+    } else {
+      console.log("omsode this: ", newImgUrl);
+      console.log("id: ", id);
+      const response = await pool.query(
+        "Update fan SET displayname=$1, description=$2, imgurl=$3 where uid=$4",
+        [displayName, description, newImgUrl, id]
       );
     }
   }
 );
 
 app.put("/update/login/email/:id", async (req, res) => {
+  const { id } = req.params;
   const { email, status } = req.body;
 
   const { email: newEmail, password } = req.body.data;
+
+  console.log("params: ", req.params);
 
   updateEmail(email, newEmail);
 
   if (status == "celeb") {
     try {
-      const response = await pool.query("UPDATE celeb SET email=$1", [
-        newEmail,
-      ]);
+      const response = await pool.query(
+        "UPDATE celeb SET email=$1 WHERE uid=$2",
+        [newEmail, id]
+      );
       res
         .status(201)
         .send({ message: "your email has been updated successfully" });
@@ -416,7 +431,10 @@ app.put("/update/login/email/:id", async (req, res) => {
     }
   } else {
     try {
-      const response = await pool.query("UPDATE fan SET email=$1", [newEmail]);
+      const response = await pool.query(
+        "UPDATE fan SET email=$1 WHERE uid=$2",
+        [newEmail, id]
+      );
       res
         .status(201)
         .send({ message: "your email has been updated successfully" });

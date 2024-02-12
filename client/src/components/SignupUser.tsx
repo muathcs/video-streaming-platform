@@ -34,11 +34,9 @@ function SignupUser({
   const onSubmit = async (data: FieldValues) => {
     const values = getValues();
 
-    console.log("values: ", values);
-    console.log("data: ", data);
     createUser(data, false);
 
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    reset(); // true indiciates this is a celeb being created.
 
     // reset();
   };
@@ -64,16 +62,16 @@ function SignupUser({
           <div className="relative mb-6" data-te-input-wrapper-init>
             <input
               type="text"
-              {...register("username", {
-                required: "username is required",
+              {...register("displayname", {
+                required: "displayname is required",
               })}
               className="peer block min-h-[auto] w-full rounded border bg-transparent
                      px-3 py-[0.32rem] leading-[2.15] 
                       "
-              placeholder="username"
+              placeholder="displayname"
             />
-            {errors.username && (
-              <p className=" mt-2 text-red-400">{`${errors.username.message}`}</p>
+            {errors.displayname && (
+              <p className=" mt-2 text-red-400">{`${errors.displayname.message}`}</p>
             )}
           </div>
           {/* email  */}

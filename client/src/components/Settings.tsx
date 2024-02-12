@@ -30,7 +30,7 @@ function PublicProfileSettings({
     userInfo?.description || ""
   );
   const [displayName, setDisplayName] = useState<string>(
-    userInfo?.username || ""
+    userInfo?.displayname || ""
   );
   const [price, setPrice] = useState<number>(userInfo?.price || 0);
   const [app, setApp] = useState<string>(userInfo?.app || "");
@@ -71,10 +71,12 @@ function PublicProfileSettings({
     const values = getValues();
   }
 
+  console.log("new: ", userInfo);
+
   return (
     <div className="p-2 md:p-4">
       <div className="w-full px-6 pb-8 mt-8 sm:max-w-xl sm:rounded-lg">
-        <h2 className="pl-6 text-2xl font-bold sm:text-xl">Public Profilex</h2>
+        <h2 className="pl-6 text-2xl font-bold sm:text-xl">Public Profile</h2>
 
         <form
           onSubmit={handleSubmit((data) =>
@@ -85,7 +87,7 @@ function PublicProfileSettings({
             <div className="flex flex-col items-center space-y-5 sm:flex-row sm:space-y-0">
               <img
                 className="object-cover w-40 h-40 p-1 rounded-full ring-2 ring-indigo-300 dark:ring-indigo-500"
-                src={currentUser.photoURL}
+                src={imgUrl}
                 alt="Bordered avatar"
               />
 
@@ -132,7 +134,7 @@ function PublicProfileSettings({
                 </div>
               </div>
 
-              <div className="mb-2 sm:mb-6">
+              {/* <div className="mb-2 sm:mb-6">
                 <label
                   htmlFor="email"
                   className="block mb-2 text-sm font-medium text-indigo-900 dark:text-white"
@@ -145,9 +147,8 @@ function PublicProfileSettings({
                   {...register("displayName")}
                   className="bg-indigo-50 border border-indigo-300 text-indigo-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-2.5 "
                   placeholder="your email"
-                  required
                 />
-              </div>
+              </div> */}
               {celeb && (
                 <>
                   <div className="mb-2 sm:mb-6">
@@ -399,7 +400,9 @@ function LoginSettings({ userInfo, currentUser, celeb }: any) {
         style={{ width: "500px", height: "5100px", marginTop: 100 }}
       />
       <div className="w-full px-6 pb-8 mt-8 sm:max-w-xl sm:rounded-lg">
-        <h2 className="pl-6 text-2xl font-bold sm:text-xl">Public Profilex</h2>
+        <h2 className="pl-6 text-2xl font-bold sm:text-xl">
+          Login Information
+        </h2>
 
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="grid max-w-2xl mx-auto mt-8">
@@ -535,20 +538,18 @@ function Settings() {
           <div className="sticky flex flex-col gap-2 p-4 text-sm border-r border-indigo-100 top-12 ">
             <h2 className="pl-3 mb-4 text-2xl font-semibold ">Settings</h2>
 
-            <a
-              href="#"
+            <p
               onClick={(e) => setActiveSection("public")}
-              className="flex items-center px-3 py-2.5 font-bold bg-white  text-indigo-900 border rounded-full"
+              className="flex items-center px-3 py-2.5 font-bold bg-white  text-indigo-900 border rounded-full cursor-pointer"
             >
               Pubic Profile
-            </a>
-            <a
-              href="#"
+            </p>
+            <p
               onClick={(e) => setActiveSection("login")}
-              className="flex items-center px-3 py-2.5 font-bold bg-white  text-indigo-900 border rounded-full"
+              className="flex items-center px-3 py-2.5 font-bold bg-white  text-indigo-900 border rounded-full cursor-pointer"
             >
               Login Information
-            </a>
+            </p>
           </div>
         </aside>
         <main className="w-full min-h-screen py-1 md:w-2/3 lg:w-3/4 ">

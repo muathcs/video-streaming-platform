@@ -24,7 +24,7 @@ function SignUp() {
 
     console.log("targetxx: ", data);
 
-    const { email, username, password, confirmPassword, imgfile } = data;
+    const { email, displayname, password, confirmPassword, imgfile } = data;
 
     console.log("payLoad from actual function: ", confirmPassword);
 
@@ -39,7 +39,7 @@ function SignUp() {
       setSuccessfull("user created successfully!");
 
       setLoading(true);
-      const userid = await signup(email, password, username);
+      const userid = await signup(email, password, displayname);
 
       const imgUrl: string = await handleUpload(userid.uid); // returns url with selected file name only if file is selected. .
 
