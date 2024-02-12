@@ -20,10 +20,9 @@ function PublicProfileSettings({
     { name: "snapchat" },
   ];
 
+  const navigate = useNavigate();
   const [mostPopularSocialMedia, setMostPopularSocialMedia] =
     useState<string>("");
-
-  console.log("userInfo: ", userInfo);
 
   const [email, setEmail] = useState<string>(userInfo.email);
   const [imgUrl, setImgUrl] = useState<string>(userInfo.imgurl);
@@ -499,21 +498,17 @@ function Settings() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    console.log("herexxx");
-    if (!userInfo) {
+    console.log("useEffect", "userinfo: ", userInfo, "current: ", currentUser);
+    if (!userInfo || !currentUser) {
       navigate("/login");
     }
-  }, [userInfo, currentUser]);
+  }, []);
 
   function onSubmit(
     data: FieldValues,
     accountType: string,
     selectedFile: File
   ) {
-    console.log("data: ", data);
-    console.log("accoutnType: ", accountType);
-    console.log("File: ", selectedFile);
-
     let fd = new FormData();
     const status = celeb ? "celeb" : "fan";
 
