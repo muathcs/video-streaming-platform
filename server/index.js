@@ -355,10 +355,12 @@ app.post(
     const payLoadParsed = JSON.parse(payLoad);
     const { displayname, email, description } = payLoadParsed;
 
+    newurl = req.newUrl;
+
     try {
       const result = await pool.query(
         "INSERT INTO fan(displayname, email, uid, imgurl, description) VALUES ($1, $2, $3, $4, $5)",
-        [displayname, email, uid, imgurl, description]
+        [displayname, email, uid, newurl, description]
       );
       res.send("Sucess crated user");
     } catch (error) {
