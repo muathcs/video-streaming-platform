@@ -6,6 +6,7 @@ import { useGlobalAxios } from "../hooks/useGlobalAxios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Navigate, useNavigate } from "react-router-dom";
+import { apiUrl } from "../utilities/fetchPath";
 function PublicProfileSettings({
   userInfo,
   celeb,
@@ -325,7 +326,7 @@ function LoginSettings({ userInfo, currentUser, celeb }: any) {
       }
 
       const response = await sendPutRequest(
-        `/update/login/email/${currentUser.uid}`,
+        `${apiUrl}/update/login/email/${currentUser.uid}`,
         {
           email,
           data,
@@ -370,7 +371,7 @@ function LoginSettings({ userInfo, currentUser, celeb }: any) {
       }
 
       const response = await sendPutRequest(
-        `/update/login/password/${currentUser.uid}`,
+        `${apiUrl}/update/login/password/${currentUser.uid}`,
         { data }
       );
 
@@ -526,7 +527,7 @@ function Settings() {
     fd.append("payLoad", JSON.stringify(data));
 
     try {
-      sendPutRequest(`/update/${currentUser.uid}`, fd);
+      sendPutRequest(`${apiUrl}/update/${currentUser.uid}`, fd);
     } catch (err) {
       console.error("putreq: ", err);
     }

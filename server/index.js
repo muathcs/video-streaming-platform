@@ -389,14 +389,15 @@ app.put(
 
     const { status } = req.body;
 
-    console.log("outside clebe", req.body);
-    console.log("id: ", id);
+    console.log("idxx: ", id);
     if (status == "celeb") {
       console.log("isinde clebe new url: ", newImgUrl);
       const response = await pool.query(
         "Update celeb SET displayname=$1, followers=$2, price= $3, category=$4, description=$5, imgurl=$6 where uid=$7",
         [displayName, followers, price, category, description, newImgUrl, id]
       );
+
+      res.status(201).send({ message: "account updated" });
     } else {
       console.log("omsode this: ", newImgUrl);
       console.log("id: ", id);
