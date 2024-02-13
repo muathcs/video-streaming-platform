@@ -355,7 +355,7 @@ app.post(
     const payLoadParsed = JSON.parse(payLoad);
     const { displayname, email, description } = payLoadParsed;
 
-    newurl = req.newUrl;
+    const newurl = req.newUrl;
 
     try {
       const result = await pool.query(
