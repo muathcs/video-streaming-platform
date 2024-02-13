@@ -34,6 +34,8 @@ function NavBar() {
   const { data: putRequest } = useGlobalAxios("put");
   const navigate = useNavigate();
 
+  console.log("UserInfoNavBar: ", userInfo);
+
   useEffect(() => {
     setLoading(true);
     console.log("mounting");
