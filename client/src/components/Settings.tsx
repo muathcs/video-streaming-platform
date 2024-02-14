@@ -79,11 +79,7 @@ function PublicProfileSettings({
       <div className="w-full px-6 pb-8 mt-8 sm:max-w-xl sm:rounded-lg">
         <h2 className="pl-6 text-2xl font-bold sm:text-xl">Public Profile</h2>
 
-        <form
-          onSubmit={handleSubmit((data) =>
-            onSubmit(data, "true", selectedFile)
-          )}
-        >
+        <form onSubmit={handleSubmit((data) => onSubmit(data, selectedFile))}>
           <div className="grid max-w-2xl mx-auto mt-8">
             <div className="flex flex-col items-center space-y-5 sm:flex-row sm:space-y-0">
               <img
@@ -268,7 +264,7 @@ function PublicProfileSettings({
   );
 }
 
-function LoginSettings({ userInfo, currentUser, celeb }: any) {
+function LoginSettings({ userInfo, currentUser, celeb, notify }: any) {
   const { reauthenticateUser, login }: any = useAuth();
   const { data: sendPutRequest, error } = useGlobalAxios("put");
   const [tempError, setTempError] = useState<string>("");
@@ -290,22 +286,6 @@ function LoginSettings({ userInfo, currentUser, celeb }: any) {
       confirmNewPassword: "",
     },
   });
-
-  const notify = (
-    message: string,
-    type: "success" | "error" | "info" | "warning" = "success"
-  ) => {
-    toast[type](message, {
-      position: "top-right",
-      autoClose: 5000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: "light",
-    });
-  };
 
   async function onSubmit(data: FieldValues) {
     const status = celeb ? "celeb" : "fan";
@@ -387,19 +367,6 @@ function LoginSettings({ userInfo, currentUser, celeb }: any) {
 
   return (
     <div className="p-2 md:p-4">
-      <ToastContainer
-        position="top-center"
-        autoClose={false}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme="light"
-        style={{ width: "500px", height: "5100px", marginTop: 100 }}
-      />
       <div className="w-full px-6 pb-8 mt-8 sm:max-w-xl sm:rounded-lg">
         <h2 className="pl-6 text-2xl font-bold sm:text-xl">
           Login Information
@@ -505,6 +472,22 @@ function Settings() {
   const { data: sendPutRequest, error } = useGlobalAxios("put");
   const navigate = useNavigate();
 
+  const notify = (
+    message: string,
+    type: "success" | "error" | "info" | "warning" = "success"
+  ) => {
+    toast[type](message, {
+      position: "top-right",
+      autoClose: 2000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "light",
+    });
+  };
+
   useEffect(() => {
     console.log("useEffect", "userinfo: ", userInfo, "current: ", currentUser);
     if (!userInfo || !currentUser) {
@@ -512,22 +495,28 @@ function Settings() {
     }
   }, []);
 
-  function onSubmit(
-    data: FieldValues,
-    accountType: string,
-    selectedFile: File
-  ) {
+  async function onSubmit(data: FieldValues, selectedFile: File) {
+    console.log("onsubmit");
     let fd = new FormData();
     const status = celeb ? "celeb" : "fan";
 
     if (selectedFile) {
+      console.log("file is selected: ", selectedFile);
       fd.append("file", selectedFile);
     }
     fd.append("status", status);
     fd.append("payLoad", JSON.stringify(data));
 
     try {
-      sendPutRequest(`${apiUrl}/update/${currentUser.uid}`, fd);
+      console.log("here submit");
+      const response = await sendPutRequest(
+        `${apiUrl}/update/${currentUser.uid}`,
+        fd
+      );
+
+      if (response.status == 201) {
+        notify(response.data.message);
+      }
     } catch (err) {
       console.error("putreq: ", err);
     }
@@ -535,6 +524,19 @@ function Settings() {
   return (
     <>
       <div className="bg-white w-full flex flex-col gap-5 md:px-16 lg:px-28 md:flex-row text-[#161931]">
+        <ToastContainer
+          position="top-center"
+          autoClose={false}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="light"
+          style={{ width: "500px", height: "5100px", marginTop: 100 }}
+        />
         <aside className="hidden py-4 md:w-1/3 lg:w-1/4 md:block ">
           <div className="sticky flex flex-col gap-2 p-4 text-sm border-r border-indigo-100 top-12 ">
             <h2 className="pl-3 mb-4 text-2xl font-semibold ">Settings</h2>
@@ -560,12 +562,14 @@ function Settings() {
               currentUser={currentUser}
               celeb={celeb}
               onSubmit={onSubmit}
+              notify={notify}
             />
           ) : (
             <LoginSettings
               userInfo={userInfo}
               currentUser={currentUser}
               celeb={celeb}
+              notify={notify}
             />
           )}
         </main>

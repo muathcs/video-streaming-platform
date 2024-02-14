@@ -315,8 +315,6 @@ async function uploadProfileImgToS3(req, res, next) {
   let { id } = req.params;
   let { uid, imgurl } = req.body;
 
-  console.log("uid: X:: ", id);
-
   if (!imgurl && id) {
     // this function checks if we're updating the img or setting it for the first time. So, if the imgurl doesn't exist but the id does this mean the account is updating the img
     // if this case
@@ -325,12 +323,9 @@ async function uploadProfileImgToS3(req, res, next) {
 
   const file = req.file;
 
-  console.log("file: ", file);
-
   if (!file) {
     //just incase the above passes because the firebase account is created beofre the user and so the id may still exist, this will quit the middle ware if an img file wasnt selected.
-    console.log("its here next()");
-    return next(); //insures middleware below doesn't run.
+    return next(); //insures code below doesn't run.
   }
 
   let newUrl = AWS_LINK + imgurl;
@@ -338,7 +333,6 @@ async function uploadProfileImgToS3(req, res, next) {
   try {
     const uploadProf = await uploadFile(file.buffer, imgurl, file.mimetype);
     req.newUrl = newUrl;
-
     next();
   } catch (error) {
     console.log("error ploadprofiletos3 middleware", error);
@@ -380,18 +374,23 @@ app.put(
   async (req, res) => {
     const { id } = req.params;
     const payLoadParsed = JSON.parse(req.body.payLoad);
-    const { displayName, followers, price, email, category, description } =
-      payLoadParsed;
+    const {
+      displayName,
+      followers,
+      price,
+      email,
+      category,
+      description,
+      imgurl,
+    } = payLoadParsed;
 
-    const newImgUrl = req.newUrl;
+    const test = req.newUrl;
 
-    // const s3Link = AWS_LINK + im
+    const newImgUrl = req.newUrl ? req.newUrl : imgurl;
 
     const { status } = req.body;
 
-    console.log("idxx: ", id);
     if (status == "celeb") {
-      console.log("isinde clebe new url: ", newImgUrl);
       const response = await pool.query(
         "Update celeb SET displayname=$1, followers=$2, price= $3, category=$4, description=$5, imgurl=$6 where uid=$7",
         [displayName, followers, price, category, description, newImgUrl, id]
@@ -405,6 +404,7 @@ app.put(
         "Update fan SET displayname=$1, description=$2, imgurl=$3 where uid=$4",
         [displayName, description, newImgUrl, id]
       );
+      res.status(201).send({ message: "account updated" });
     }
   }
 );
