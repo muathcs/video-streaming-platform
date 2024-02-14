@@ -25,9 +25,19 @@ const app = express();
 const PORT = process.env.PORT || 3001;
 app.use(express.json());
 
+const allowedOrigins = [
+  "https://vid-stream-cl.onrender.com",
+  "http://localhost:5173",
+  "http://195.201.26.157",
+  "http://116.203.134.67",
+  "http://116.203.129.16",
+  "http://23.88.105.37",
+  "http://128.140.8.200",
+];
+
 app.use(
   cors({
-    origin: ["https://vid-stream-cl.onrender.com", "http://localhost:5173"],
+    origin: allowedOrigins,
     credentials: true,
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS,CONNECT,TRACE",
     allowedHeaders:
