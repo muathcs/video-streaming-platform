@@ -27,7 +27,7 @@ app.use(express.json());
 
 const allowedOrigins = [
   "https://vid-stream-cl.onrender.com",
-  "https://localhost:5173",
+  "http://localhost:5173",
   "https://195.201.26.157",
   "https://116.203.134.67",
   "https://116.203.129.16",
@@ -154,6 +154,8 @@ app.get("/fan/:uid", async (req, res) => {
 app.get("/celebs/:category", async (req, res) => {
   //query celeb table by category
   let { category } = req.params;
+
+  console.log("parsm: ", req.params);
 
   category = category.toLocaleLowerCase(); // to match db
 
@@ -323,6 +325,7 @@ app.put("/fulfill/:id", upload.single("videoFile"), async (req, res) => {
 //post
 
 async function uploadProfileImgToS3(req, res, next) {
+  console.log("random: ", randomImageName);
   let { id } = req.params;
   let { uid, imgurl } = req.body;
 
@@ -402,6 +405,7 @@ app.put(
     const { status } = req.body;
 
     if (status == "celeb") {
+      console.log("newURl: ", newImgUrl);
       const response = await pool.query(
         "Update celeb SET displayname=$1, followers=$2, price= $3, category=$4, description=$5, imgurl=$6 where uid=$7",
         [displayName, followers, price, category, description, newImgUrl, id]

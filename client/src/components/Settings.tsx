@@ -27,6 +27,8 @@ function PublicProfileSettings({
 
   const [email, setEmail] = useState<string>(userInfo?.email || "");
   const [imgUrl, setImgUrl] = useState<string>(userInfo?.imgurl || "");
+
+  console.log("imgurlx: ", imgUrl);
   const [description, setDescription] = useState<string>(
     userInfo?.description || ""
   );

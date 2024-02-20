@@ -42,7 +42,7 @@ function Celebs() {
       img: "https://cy-vide-stream-imgfiles.s3.eu-west-2.amazonaws.com/categories/peter.jpg",
     },
     {
-      categoryName: "View All",
+      categoryName: "all",
       img: "",
     },
   ];

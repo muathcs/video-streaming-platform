@@ -29,13 +29,17 @@ function Category() {
 
   // get all the celebs that match the param
   useEffect(() => {
-    console.log("inside useEffect");
     // setLoading(true);
     const fetchCelebs = async () => {
-      console.log("making Get REquest");
       try {
-        console.log("inside try ");
-        const response = await axios.get(`${apiUrl}/celebs/${category}`);
+        console.log("inside try: ", category);
+
+        let response;
+        if (category == "all") {
+          response = await axios.get(`${apiUrl}/celebs`);
+        } else {
+          response = await axios.get(`${apiUrl}/celebs/${category}`);
+        }
 
         console.log("celeb: ", response.data);
         setCelebs(response.data);
@@ -52,7 +56,7 @@ function Category() {
   }, []);
 
   return (
-    <div className="flex justify-center relative top-10 h-full   ">
+    <div className="flex justify-center relative top-10 h-full    ">
       <div className="flex  relative top-10 h-full w-4/5">
         <div className={`${hideFilter ? "w-full" : "w-[80%]"} relative`}>
           <h1 className="text-left">{category}</h1>
@@ -77,7 +81,7 @@ function Category() {
                   </span>
                 ))}
               </div>
-              <div className=" w-1/2 flex justify-center items-center gap-12">
+              <div className=" w-1/2 flex justify-center  items-center gap-12">
                 <button className="rounded-full  px-5 w-1/4 py-4 self-center border-2 hover:bg-[#35333a]">
                   Featured ⬇️
                 </button>
@@ -96,8 +100,8 @@ function Category() {
             <div
               className={`min-h-[80rem]  relative  justify-items-start   grid  ${
                 hideFilter
-                  ? "lg:grid-cols-3 xl:grid-cols-5   md:grid-cols-2 "
-                  : "lg:grid-cols-3 xl:grid-cols-4   md:grid-cols-3"
+                  ? "lg:grid-cols-3 xl:grid-cols-4   md:grid-cols-2 "
+                  : "lg:grid-cols-3 xl:grid-cols-3   md:grid-cols-3"
               } sm:grid-cols-2 sm:gap-x-52 md:gap-x-64 lg:gap-0`}
             >
               {/* celebs */}
