@@ -33,7 +33,7 @@ function SignupCeleb({
 
   async function onsubmit(data: FieldValues) {
     createUser(data, true);
-    reset(); // true indiciates this is a celeb being created.
+    // reset(); // true indiciates this is a celeb being created.
   }
 
   const inputStyle =
@@ -139,11 +139,22 @@ function SignupCeleb({
           <div className="mb-6">
             <input
               {...register("followers", {
-                required: "followers field is required",
+                required: "Followers field is required",
+                validate: (value) => {
+                  const parsedValue = parseInt(value, 10);
+
+                  if (isNaN(parsedValue)) {
+                    return "Please enter a valid number for followers";
+                  }
+
+                  // Additional validation logic if needed
+
+                  return true; // Validation passed
+                },
               })}
-              type="number"
+              type="text" // Keep the type as text
               className={inputStyle}
-              placeholder={`how many followers do you have on ${mostPopularSocialMedia}`}
+              placeholder={`How many followers do you have on ${mostPopularSocialMedia}`}
             />
             {errors.followers && (
               <p className=" mt-2 text-red-400">{`${errors.followers.message}`}</p>

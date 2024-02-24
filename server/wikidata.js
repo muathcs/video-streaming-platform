@@ -8,6 +8,7 @@ import { celebrityNames } from "./celebName.js";
 import { createFirebaseUser } from "./fireBaseAdmin.js";
 import { updatePhotoUrl } from "./fireBaseAdmin.js";
 import { getUID } from "./fireBaseAdmin.js";
+import { prisma } from "./index.js";
 //main function
 export async function getCelebImages(celebName) {
   const celebId = await getCelebIdByName(celebName);
@@ -80,19 +81,31 @@ export async function getCelebImages(celebName) {
     };
 
     try {
-      const result = await pool.query(
-        "INSERT INTO celeb(displayName, username, category, price, email, description, uid, imgurl) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)",
-        [
-          talentInfo.name,
-          talentInfo.name,
-          talentInfo.category,
-          talentInfo.price,
-          talentInfo.email,
-          talentInfo.description,
-          talentInfo.uid,
-          talentInfo.imgUrl,
-        ]
-      );
+      const result = await prisma.celeb.create({
+        data: {
+          displayname: talentInfo.name,
+          username: talentInfo.name,
+          category: talentInfo.category,
+          price: talentInfo.price,
+          email: talentInfo.email,
+          description: talentInfo.description,
+          uid: talentInfo.uid,
+          imgurl: talentInfo.imgUrl,
+        },
+      });
+      // const result = await pool.query(
+      //   "INSERT INTO celeb(displayName, username, category, price, email, description, uid, imgurl) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)",
+      //   [
+      //     talentInfo.name,
+      //     talentInfo.name,
+      //     talentInfo.category,
+      //     talentInfo.price,
+      //     talentInfo.email,
+      //     talentInfo.description,
+      //     talentInfo.uid,
+      //     talentInfo.imgUrl,
+      //   ]
+      // );
 
       console.log("uploaded to db");
 

@@ -35,6 +35,7 @@ function NavBar() {
   const navigate = useNavigate();
 
   console.log("UserInfoNavBar: ", userInfo);
+  console.log("currentUser: ", currentUser);
 
   useEffect(() => {
     setLoading(true);
@@ -44,8 +45,6 @@ function NavBar() {
         const response = await axios.get(`${apiUrl}/notification`, {
           params: { data: currentUser.uid },
         });
-
-        console.log("this: ", response.data);
 
         setNotifications(response.data);
 

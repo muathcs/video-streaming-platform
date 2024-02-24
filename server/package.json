@@ -3,13 +3,14 @@
   "proxy": "http://localhost:5173",
   "scripts": {
     "start": "nodemon index.js",
-    "build": "npm i",
+    "build": "npm i && npx prisma migrate dev",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.495.0",
     "@aws-sdk/s3-request-presigner": "^3.496.0",
+    "@prisma/client": "^5.10.2",
     "aws": "^0.0.3-2",
     "aws-sdk": "^2.1517.0",
     "axios": "^1.6.5",
@@ -31,5 +32,8 @@
     "run": "^1.5.0",
     "sharp": "^0.33.2",
     "stripe": "^14.11.0"
+  },
+  "devDependencies": {
+    "prisma": "^5.10.1"
   }
 }

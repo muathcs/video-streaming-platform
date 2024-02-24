@@ -18,6 +18,18 @@ import sharp from "sharp";
 import s3, { AWS_LINK, uploadFile } from "./s3.js";
 import { createTheCelebs } from "./wikidata.js";
 import { updateEmail, updatePassword } from "./fireBaseAdmin.js";
+import e from "express";
+import { send } from "process";
+import { celebrityNames } from "./celebName.js";
+import { userInfo } from "os";
+
+import { PrismaClient } from "@prisma/client";
+export const prisma = new PrismaClient();
+
+// const result = await prisma.$executeRaw`
+//   UPDATE "Celeb"
+//   SET document_with_idx = TO_TSVECTOR('simple', displayname);
+// `;
 
 // createTheCelebs();
 const app = express();
@@ -91,7 +103,23 @@ app.post("/create-payment-intent", async (req, res) => {
 
 app.get("/testing", async (req, res) => {
   try {
-    console.log("on testing route");
+    const allUser = await prisma.celeb.create({
+      data: {
+        displayname: "Muath",
+        username: "muath0x",
+        description: "Student at the univesrity of reading",
+        category: "comedy",
+        price: 250,
+        followers: 236,
+        reviews: 5,
+        imgurl:
+          "https://cy-vide-stream-imgfiles.s3.eu-west-2.amazonaws.com/profile/user(NNf4MMRivSg0Uou00xqgrzhStH02)",
+        email: "muath@gmail.com",
+        account: "tiktokaccount",
+        request_num: 232,
+      },
+    });
+
     res.send("worked well, got your response, testing route");
   } catch (error) {
     console.log("/testing: ", error);
@@ -103,12 +131,10 @@ app.get("/celebs", async (req, res) => {
   const { category } = req.params;
 
   try {
-    const result = await pool.query("SELECT * FROM celeb");
+    const result = await prisma.celeb.findMany();
     // client.release(); // Release the connection back to the pool
 
-    const celebs = result.rows;
-
-    res.send(celebs);
+    res.send(result);
   } catch (error) {
     console.log("error/celebs: ", error);
     res.status(500).json({ error: error.message });
@@ -121,13 +147,16 @@ app.get("/celeb/:id", async (req, res) => {
   console.log("id: ", id);
 
   try {
-    const response = await pool.query("Select * from celeb where uid = $1", [
-      id,
-    ]);
+    const response = await prisma.celeb.findUnique({
+      where: {
+        uid: id,
+      },
+    });
+    // const response = await pool.query("Select * from celeb where uid = $1", [
+    //   id,
+    // ]);
 
-    const celeb = response.rows;
-
-    res.send(celeb);
+    res.send(response);
   } catch (error) {
     console.log("/celeb/id: ", error);
     res.status(500).json({ error: error.message });
@@ -138,13 +167,17 @@ app.get("/fan/:uid", async (req, res) => {
   const { uid } = req.params;
 
   try {
-    const response = await pool.query("Select * from fan where uid = $1", [
-      uid,
-    ]);
+    const response = await prisma.fan.findUnique({
+      where: {
+        uid: uid,
+      },
+    });
+    // const response = await pool.query(
+    //   'Select * from public."Fan" where uid = $1',
+    //   [uid]
+    // );
 
-    const fan = response.rows;
-
-    res.send(fan);
+    res.send(response);
   } catch (error) {
     console.log("/celeb/id: ", error);
     res.status(500).json({ error: error.message });
@@ -155,16 +188,17 @@ app.get("/celebs/:category", async (req, res) => {
   //query celeb table by category
   let { category } = req.params;
 
-  console.log("parsm: ", req.params);
-
   category = category.toLocaleLowerCase(); // to match db
 
-  console.log("cat: ", category);
-
   try {
-    const result = await pool.query("SELECT * FROM celeb where category = $1", [
-      category,
-    ]);
+    const result = await prisma.celeb.findMany({
+      where: {
+        category: category,
+      },
+    });
+    // const result = await pool.query("SELECT * FROM celeb where category = $1", [
+    //   category,
+    // ]);
     // client.release(); // Release the connection back to the pool
 
     // console.log("res: ", result.rows);
@@ -181,26 +215,45 @@ app.get("/celebs/:category", async (req, res) => {
 app.get("/status", async (req, res) => {
   const uid = req.query.uid;
 
-  const result = await pool.query("SELECT * FROM celeb WHERE uid = $1", [uid]);
+  try {
+    const result = await prisma.celeb.findUnique({
+      where: {
+        uid: uid,
+      },
+    });
 
-  if (result.rows.length == 0) {
-    res.send(false);
-  } else {
-    res.send(true);
+    // const result = await pool.query(
+    //   'SELECT * FROM public."Celeb" WHERE uid = $1',
+    //   [uid]
+    // );
+    if (result) {
+      res.send(true);
+    } else {
+      res.send(false);
+    }
+  } catch (error) {
+    console.log("/status: ", error);
   }
 });
 
 app.get("/dashboard", async (req, res) => {
   const uid = req.query.data;
   try {
-    const response = await pool.query(
-      "SELECT * from Requests WHERE reqstatus = $1 AND celebUid = $2 ORDER BY requestid DESC",
-      ["pending", uid]
-    );
+    const response = await prisma.requests.findMany({
+      where: {
+        reqstatus: "pending",
+        celebuid: uid,
+      },
+      orderBy: {
+        requestid: "desc",
+      },
+    });
+    // const response = await pool.query(
+    //   "SELECT * from Requests WHERE reqstatus = $1 AND celebUid = $2 ORDER BY requestid DESC",
+    //   ["pending", uid]
+    // );
 
-    const requests = response.rows;
-
-    res.send(requests);
+    res.send(response);
   } catch (error) {
     console.log("/dasshboard", error);
   }
@@ -211,39 +264,58 @@ app.get("/fanrequests", async (req, res) => {
 
   try {
     // this queries all the requests that match the get query uid. Basically when a fan clicks there on there requests this retrieves them
-    const response = await pool.query(
-      "SELECT celebmessage, requestid, message, reqtype, reqAction, timestamp1, reqstatus, celebuid from Requests WHERE fanuid = $1 ORDER BY requestid",
-      [uid]
-    );
 
-    // for (const post of response.rows) {
-    //   const getObjectParams = {
-    //     Bucket: process.env.S3_BUCKET,
-    //     Key: "https://cy-vide-stream-imgfiles.s3.eu-west-2.amazonaws.com/video/1705718843372-ff3ee63d6be0490373ea383f93fedc7652c6bf1aa6f35fc010aadd2d85825c53.webm",
-    //   };
-
-    //   const command = new GetObjectCommand(getObjectParams);
-    //   const url = await getSignedUrl(s3, command, { expiresIn: 3600 });
-
-    // }
+    const response = await prisma.requests.findMany({
+      select: {
+        celebmessage: true,
+        requestid: true,
+        message: true,
+        reqtype: true,
+        reqaction: true,
+        timestamp1: true,
+        reqstatus: true,
+        celebuid: true,
+      },
+      where: {
+        fanuid: uid,
+      },
+      orderBy: {
+        requestid: "asc",
+      },
+    });
 
     //array that will be sent back to the response, it's made up of objects of the individual request + celeb info(photo, name)
     let reqAndCeleb = [];
 
-    // when the celeb clicks on there requests, I want the individual requests to have the image of the celeb they requested and there name.
-    // note: I chose not to add this info(celeb name/photo) to the request table, because it'll make it requests table messy. I have the celebuid
+    // when the user clicks on the requests, I want the individual requests to have the image of the celeb they requested and their name.
+    // note: I chose not to add this info(celeb name/photo) to the request table.
     // on the requests table, and that's enough to get the celeb photo/name from the code below.
 
-    for (const req of response.rows) {
+    // console.log("res: ", response);
+    if (response.length == 0) {
+      return res.send(reqAndCeleb);
+    }
+    for (const req of response) {
       try {
-        const celebNameAndPhoto = await pool.query(
-          "SELECT uid, displayName, imgUrl FROM celeb WHERE uid = $1 ",
-          [req.celebuid]
-        );
+        const celebNameAndPhoto = await prisma.celeb.findUnique({
+          select: {
+            uid: true,
+            displayname: true,
+            imgurl: true,
+          },
+          where: {
+            uid: req.celebuid,
+          },
+        });
+
+        // const celebNameAndPhoto = await pool.query(
+        //   "SELECT uid, displayName, imgUrl FROM celeb WHERE uid = $1 ",
+        //   [req.celebuid]
+        // );
 
         const combinedObject = {
           request: req,
-          celeb: celebNameAndPhoto.rows[0],
+          celeb: celebNameAndPhoto,
         };
 
         reqAndCeleb.push(combinedObject);
@@ -264,7 +336,7 @@ app.get("/fanrequests", async (req, res) => {
 });
 
 app.put("/fulfill/:id", upload.single("videoFile"), async (req, res) => {
-  const itemId = parseInt(req.params.id, 10); // Parse the id parameter as an integer
+  const itemId = req.params.id; // Parse the id parameter as an integer
 
   // resize image
   // const buffer = await sharp(req.file.buffer)
@@ -272,14 +344,25 @@ app.put("/fulfill/:id", upload.single("videoFile"), async (req, res) => {
   //   .toBuffer();
 
   // if this if false, it means the we're sending an message text, instead of a audio, or video.
+
   if (!req.body.state) {
     try {
       const { celebReply } = req.body;
 
-      const response = await pool.query(
-        "UPDATE requests SET reqstatus = $1, celebmessage = $2 WHERE requestid = $3 ",
-        ["fulfilled", celebReply, itemId]
-      );
+      const response = await prisma.requests.update({
+        where: {
+          requestid: itemId,
+        },
+        data: {
+          reqstatus: "fulfilled",
+          celebmessage: celebReply,
+        },
+      });
+
+      // const response = await pool.query(
+      //   "UPDATE requests SET reqstatus = $1, celebmessage = $2 WHERE requestid = $3 ",
+      //   ["fulfilled", celebReply, itemId]
+      // );
       res.status(200);
       return res.status(200).send("Message Updated successful");
     } catch (error) {
@@ -308,11 +391,21 @@ app.put("/fulfill/:id", upload.single("videoFile"), async (req, res) => {
       // // Construct the URL of the uploaded video
       const videoUrl = `https://${process.env.S3_BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com/${key}`;
 
-      // console.log("id: ", itemId);
-      const response = await pool.query(
-        "UPDATE requests SET reqstatus = $1, celebmessage = $2 WHERE requestid = $3 ",
-        ["fulfilled", videoUrl, itemId]
-      );
+      // console.log("iditem: ::: ", itemId);
+
+      const response = await prisma.requests.update({
+        where: {
+          requestid: itemId,
+        },
+        data: {
+          reqstatus: "fulfilled",
+          celebmessage: videoUrl,
+        },
+      });
+      // const response = await pool.query(
+      //   "UPDATE requests SET reqstatus = $1, celebmessage = $2 WHERE requestid = $3 ",
+      //   ["fulfilled", videoUrl, itemId]
+      // );
 
       res.status(200);
     }
@@ -325,7 +418,6 @@ app.put("/fulfill/:id", upload.single("videoFile"), async (req, res) => {
 //post
 
 async function uploadProfileImgToS3(req, res, next) {
-  console.log("random: ", randomImageName);
   let { id } = req.params;
   let { uid, imgurl } = req.body;
 
@@ -366,10 +458,19 @@ app.post(
     const newurl = req.newUrl;
 
     try {
-      const result = await pool.query(
-        "INSERT INTO fan(displayname, email, uid, imgurl, description) VALUES ($1, $2, $3, $4, $5)",
-        [displayname, email, uid, newurl, description]
-      );
+      const user = await prisma.fan.create({
+        data: {
+          displayname: displayname,
+          email: email,
+          uid: uid,
+          imgurl: newurl,
+          description: description,
+        },
+      });
+      // const result = await pool.query(
+      //   "INSERT INTO fan(displayname, email, uid, imgurl, description) VALUES ($1, $2, $3, $4, $5)",
+      //   [displayname, email, uid, newurl, description]
+      // );
       res.send("Sucess crated user");
     } catch (error) {
       console.log("error/cr/user: ", error);
@@ -405,21 +506,44 @@ app.put(
     const { status } = req.body;
 
     if (status == "celeb") {
-      console.log("newURl: ", newImgUrl);
-      const response = await pool.query(
-        "Update celeb SET displayname=$1, followers=$2, price= $3, category=$4, description=$5, imgurl=$6 where uid=$7",
-        [displayName, followers, price, category, description, newImgUrl, id]
-      );
+      try {
+        const updateCeleb = await prisma.celeb.update({
+          where: {
+            uid: id,
+          },
+          data: {
+            displayname: displayName,
+            followers: followers,
+            price: price,
+            category: category,
+            description: description,
+            imgurl: newImgUrl,
+          },
+        });
 
-      res.status(201).send({ message: "account updated" });
+        res.status(201).send({ message: "account updated" });
+      } catch (error) {
+        console.log("/update:id: ", error);
+      }
     } else {
-      console.log("omsode this: ", newImgUrl);
-      console.log("id: ", id);
-      const response = await pool.query(
-        "Update fan SET displayname=$1, description=$2, imgurl=$3 where uid=$4",
-        [displayName, description, newImgUrl, id]
-      );
-      res.status(201).send({ message: "account updated" });
+      try {
+        const update = await prisma.fan.update({
+          where: {
+            uid: id,
+          },
+          data: {
+            displayname: displayName,
+            email: email,
+            description: description,
+            imgurl: newImgUrl,
+            fav_categories: "action", // add this to the settings page
+          },
+        });
+
+        res.status(201).send({ message: "account updated" });
+      } catch (error) {
+        console.log("/update: ", error);
+      }
     }
   }
 );
@@ -430,16 +554,23 @@ app.put("/update/login/email/:id", async (req, res) => {
 
   const { email: newEmail, password } = req.body.data;
 
-  console.log("params: ", req.params);
-
   updateEmail(email, newEmail);
 
   if (status == "celeb") {
     try {
-      const response = await pool.query(
-        "UPDATE celeb SET email=$1 WHERE uid=$2",
-        [newEmail, id]
-      );
+      const updateCeleb = await prisma.celeb.update({
+        where: {
+          uid: id,
+        },
+        data: {
+          email: newEmail,
+        },
+      });
+
+      // const response = await pool.query(
+      //   "UPDATE celeb SET email=$1 WHERE uid=$2",
+      //   [newEmail, id]
+      // );
       res
         .status(201)
         .send({ message: "your email has been updated successfully" });
@@ -449,10 +580,18 @@ app.put("/update/login/email/:id", async (req, res) => {
     }
   } else {
     try {
-      const response = await pool.query(
-        "UPDATE fan SET email=$1 WHERE uid=$2",
-        [newEmail, id]
-      );
+      const updateCeleb = await prisma.fan.update({
+        where: {
+          uid: id,
+        },
+        data: {
+          email: newEmail,
+        },
+      });
+      // const response = await pool.query(
+      //   "UPDATE fan SET email=$1 WHERE uid=$2",
+      //   [newEmail, id]
+      // );
       res
         .status(201)
         .send({ message: "your email has been updated successfully" });
@@ -467,15 +606,6 @@ app.put("/update/login/password/:id", async (req, res) => {
   const { id } = req.params;
   const { newPassword, confirmNewPassword } = req.body.data;
 
-  console.log(
-    "id: ",
-    id,
-    "newPAss: ",
-    newPassword,
-    "confirm: ",
-    confirmNewPassword
-  );
-
   try {
     await updatePassword(id, newPassword);
     res.status(201).send({ message: "Your password has been reset" });
@@ -488,20 +618,18 @@ app.put("/update/login/password/:id", async (req, res) => {
 app.post("/notification", async (req, res) => {
   const { intended_uid, sender_uid, message } = req.body;
 
-  console.log(
-    "intend: ",
-    intended_uid,
-    "sender_uid: ",
-    sender_uid,
-    "message: ",
-    message
-  );
-
   try {
-    const response = await pool.query(
-      "INSERT INTO notification(intended_uid,sender_uid, message) VALUES ($1, $2, $3)",
-      [intended_uid, sender_uid, message]
-    );
+    const response = await prisma.notification.create({
+      data: {
+        intended_uid: intended_uid,
+        sender_uid: sender_uid,
+        message: message,
+      },
+    });
+    // const response = await pool.query(
+    //   'INSERT INTO public."Notification"(intended_uid,sender_uid, message) VALUES ($1, $2, $3)',
+    //   [intended_uid, sender_uid, message]
+    // );
 
     res.status(200).send({ message: "notification has been made" });
   } catch (error) {
@@ -511,14 +639,14 @@ app.post("/notification", async (req, res) => {
 
 app.get("/notification", async (req, res) => {
   const { data: uid } = req.query;
-  console.log("this: ", uid);
   try {
-    const response = await pool.query(
-      "SELECT * FROM notification WHERE intended_uid = $1",
-      [uid]
-    );
+    const response = await prisma.notification.findMany({
+      where: {
+        intended_uid: uid,
+      },
+    });
 
-    return res.send(response.rows);
+    return res.send(response);
   } catch (error) {
     console.log("get/notification: ", error);
     res.status(404).send({ message: error.message });
@@ -527,12 +655,22 @@ app.get("/notification", async (req, res) => {
 
 app.put("/notification", async (req, res) => {
   const { uid } = req.body;
-  console.log("body: ", uid);
+
+  console.log("uid: ", uid);
+
   try {
-    const response = pool.query(
-      "UPDATE notification SET is_read = true WHERE intended_uid = $1 ",
-      [uid]
-    );
+    const response = await prisma.notification.updateMany({
+      where: {
+        intended_uid: uid,
+      },
+      data: {
+        is_read: true,
+      },
+    });
+    // const response = pool.query(
+    //   "UPDATE notification SET is_read = true WHERE intended_uid = $1 ",
+    //   [uid]
+    // );
   } catch (error) {
     res.status(401).send({ message: "could not update notification table" });
   }
@@ -542,7 +680,6 @@ app.put("/notification", async (req, res) => {
 
 app.get("/search", async (req, res) => {
   const { name } = req.query;
-  console.log("name: ", name);
 
   if (!name) return;
   try {
@@ -550,7 +687,7 @@ app.get("/search", async (req, res) => {
     //   "select displayname, uid from celeb where document_with_idx @@ to_tsquery($1) order by ts_rank(document_with_idx, plainto_tsquery($1))",
     //   [name]
     const response = await pool.query(
-      "SELECT *, ts_rank(document_with_idx, to_tsquery('simple', $1 || ':*')) AS rank FROM celeb WHERE document_with_idx @@ to_tsquery('simple', $1 || ':*') ORDER BY CASE WHEN lower(substring(displayname from 1 for 1)) = lower($1) THEN 1 ELSE 2 END, CASE WHEN lower(substring(displayname from 1 for 1)) = lower($1) THEN substring(displayname from 3) END, rank DESC",
+      `SELECT *, ts_rank(document_with_idx, to_tsquery('simple', $1 || ':*')) AS rank FROM public."Celeb" WHERE document_with_idx @@ to_tsquery('simple', $1 || ':*') ORDER BY CASE WHEN lower(substring(displayname from 1 for 1)) = lower($1) THEN 1 ELSE 2 END, CASE WHEN lower(substring(displayname from 1 for 1)) = lower($1) THEN substring(displayname from 3) END, rank DESC`,
       [name]
     );
 
@@ -578,26 +715,39 @@ app.post("/request", async (req, res) => {
     toPerson, //
   } = req.body;
 
-  console.log("action: ", requestAction);
-  console.log("toperson: ", toPerson);
   price = parseInt(price);
   try {
-    const result = await pool.query(
-      "INSERT INTO Requests(celebUid, fanUid, price, message, reqstatus, reqtype, timeStamp1, reqaction, tosomeoneelse, fromperson, toperson) Values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)",
-      [
-        celebUid,
-        fanUid,
-        price,
-        message,
-        "pending",
-        reqType,
-        new Date(),
-        requestAction,
-        toSomeOneElse,
-        fromPerson,
-        toPerson,
-      ]
-    );
+    const result = await prisma.requests.create({
+      data: {
+        celebuid: celebUid,
+        fanuid: fanUid,
+        price: price,
+        message: message,
+        reqstatus: "pending",
+        reqtype: reqType,
+        timestamp1: new Date(),
+        reqaction: requestAction,
+        tosomeoneelse: toSomeOneElse,
+        fromperson: fromPerson,
+        toperson: toPerson,
+      },
+    });
+    // const result = await pool.query(
+    //   "INSERT INTO Requests(celebUid, fanUid, price, message, reqstatus, reqtype, timeStamp1, reqaction, tosomeoneelse, fromperson, toperson) Values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)",
+    //   [
+    //     celebUid,
+    //     fanUid,
+    //     price,
+    //     message,
+    //     "pending",
+    //     reqType,
+    //     new Date(),
+    //     requestAction,
+    //     toSomeOneElse,
+    //     fromPerson,
+    //     toPerson,
+    //   ]
+    // );
 
     res.send("succesfully added a request");
   } catch (error) {
@@ -605,6 +755,13 @@ app.post("/request", async (req, res) => {
   }
 });
 
+async function indexNewCeleb(uid) {
+  const result = await prisma.$executeRaw`
+  UPDATE "Celeb"
+  SET document_with_idx = TO_TSVECTOR('simple', displayname)
+  WHERE uid = ${uid};
+`;
+}
 // this path is reached, if someone signs up as a celeb
 // a different path createuser if user signs up as normal user not a celeb
 app.post(
@@ -615,6 +772,8 @@ app.post(
     const { uid, imgurl } = req.body;
 
     const payload = JSON.parse(req.body.payLoad);
+
+    const newImg = req.newUrl;
 
     // console.log("payload: ", payload);
 
@@ -630,21 +789,23 @@ app.post(
     } = payload;
 
     try {
-      const result = await pool.query(
-        "INSERT INTO celeb(displayName, username, followers, account, category, price, email, description, uid, imgurl) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)",
-        [
-          displayName,
-          username,
-          followers,
-          account,
-          category,
-          price,
-          email,
-          description,
-          uid,
-          imgurl,
-        ]
-      );
+      const result = await prisma.celeb.create({
+        data: {
+          displayname: displayName,
+          username: username,
+          followers: parseInt(followers),
+          account: account,
+          category: category,
+          price: parseInt(price),
+          email: email,
+          description: description,
+          uid: uid,
+          imgurl: newImg,
+        },
+      });
+
+      await indexNewCeleb(uid);
+
       res.send("Thank you");
     } catch (error) {
       console.log(error);

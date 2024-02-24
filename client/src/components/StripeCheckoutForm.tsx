@@ -107,7 +107,7 @@ export default function StripeCheckoutForm() {
   };
 
   const notify = () => {
-    toast("🦄 Payment Beign made, please wait", {
+    toast("🦄 Payment processing, please wait", {
       position: "top-right",
       autoClose: false,
       hideProgressBar: false,

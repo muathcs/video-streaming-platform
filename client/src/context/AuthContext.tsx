@@ -113,12 +113,15 @@ export function AuthProvider({ children }: { children: any }) {
   }
 
   useEffect(() => {
+    console.log("useEffectXX");
     const unsubscribe = auth.onAuthStateChanged(
       async (
         user: any //this works
       ) => {
         console.log("user auth: ", auth.currentUser);
         setCurrentUser(user);
+
+        console.log("userXXX: ", user);
 
         if (user) {
           try {
@@ -131,11 +134,13 @@ export function AuthProvider({ children }: { children: any }) {
             let fullUserInfo;
 
             if (response.data) {
+              console.log("dashboard");
               req = await axios.get(`${apiUrl}/dashboard`, {
                 params: { data: user.uid },
               });
 
               fullUserInfo = await axios.get(`${apiUrl}/celeb/${user.uid}`);
+              console.log("myFULL: ", fullUserInfo);
             } else {
               console.log("here");
               req = await axios.get(`${apiUrl}/fanrequests`, {
@@ -147,11 +152,12 @@ export function AuthProvider({ children }: { children: any }) {
               // });
 
               fullUserInfo = await axios.get(`${apiUrl}/fan/${user.uid}`);
+              console.log("fullAuth: ", fullUserInfo.data);
             }
 
             setRequests(req.data);
             setCeleb(response.data);
-            setUserInfo(fullUserInfo.data[0]);
+            setUserInfo(fullUserInfo.data);
           } catch (error) {
             console.error(error);
           }

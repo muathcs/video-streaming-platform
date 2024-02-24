@@ -14,15 +14,15 @@ const stripePromise = loadStripe(
 );
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
-  <React.StrictMode>
-    <BrowserRouter>
-      <Provider store={store}>
-        <AuthProvider>
-          <Elements stripe={stripePromise}>
-            <App />
-          </Elements>
-        </AuthProvider>
-      </Provider>
-    </BrowserRouter>
-  </React.StrictMode>
+  // <React.StrictMode>
+  <BrowserRouter>
+    <Provider store={store}>
+      <AuthProvider>
+        <Elements stripe={stripePromise}>
+          <App />
+        </Elements>
+      </AuthProvider>
+    </Provider>
+  </BrowserRouter>
+  // </React.StrictMode>
 );
