@@ -7,6 +7,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { RequestContext } from "../context/RequestContext";
 import { useGlobalAxios } from "../hooks/useGlobalAxios";
 import { Bounce, ToastContainer, toast } from "react-toastify";
+import { apiUrl } from "../utilities/fetchPath";
 
 export default function StripeCheckoutForm() {
   const stripe = useStripe();
@@ -73,7 +74,7 @@ export default function StripeCheckoutForm() {
     const { error }: any = await stripe.confirmPayment({
       elements,
       confirmParams: {
-        return_url: "http://localhost:5173/paymentstatus",
+        return_url: `${apiUrl}/paymentstatus`,
       },
     });
 
