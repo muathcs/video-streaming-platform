@@ -36,7 +36,7 @@ function App() {
           <Route path="/requests" element={<FanRequests />} />
           <Route path="/payment" element={<Payment />} />
           <Route path="/fulfill/:requestId" element={<FulfillRequest />} />
-          <Route path="/paymentstatus" element={<PaymentStatusWrapper />} />
+          <Route path="/paymentstatus" element={<PaymentStatus />} />
           <Route path="/success" element={<Success />} />
           <Route path="/about" element={<HowTo />} />
           <Route path="/request/fulfilled" element={<FulFilled />} />
