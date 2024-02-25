@@ -8,8 +8,6 @@ import { CelebType } from "../TsTypes/types";
 function Celebs() {
   // const { data: getData, loading, error } = useGlobalAxios("getnow");
 
-  console.log("on celebs");
-
   const [celebs, setCelebs] = useState<CelebType[]>([]);
 
   const shopByCategory = [
@@ -53,7 +51,6 @@ function Celebs() {
       try {
         const response = await axios.get(`${apiUrl}/celebs`);
 
-        console.log("res: ", response);
         setCelebs(response.data);
       } catch (error) {
         console.error(error);
@@ -64,8 +61,6 @@ function Celebs() {
   }, []);
 
   const navigate = useNavigate();
-
-  // console.log("data: ", data);
 
   const amountOfCelebPerPage = 16;
   const [currentPage, setCurrentPage] = useState(1);

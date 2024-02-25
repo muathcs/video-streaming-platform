@@ -12,7 +12,6 @@ function SignUp() {
   const { signup, uploadProfilePic }: any = useAuth();
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  console.log(loading);
   const [successfull, setSuccessfull] = useState<string>("");
   // const { data: sendpostrequest } = useGlobalAxios("post");
   const [selectedFile, setSelectedFile] = useState<File>();

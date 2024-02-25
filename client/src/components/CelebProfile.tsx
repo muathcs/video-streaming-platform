@@ -16,7 +16,6 @@ function CelebProfile() {
 
   if (!state) return; // return if there is no state
   const { celeb: celebInfo }: StateType = state;
-  console.log("info: ", celebInfo);
 
   return (
     <>

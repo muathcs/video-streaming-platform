@@ -16,6 +16,7 @@ import FulFilled from "./components/fulfillRequest/FulFilled";
 import HowTo from "./components/HowTo";
 import Settings from "./components/Settings";
 import Celebs from "./components/Celebs";
+import PaymentStatusWrapper from "./components/PaymentStatusWrapper";
 
 function App() {
   return (
@@ -35,7 +36,7 @@ function App() {
           <Route path="/requests" element={<FanRequests />} />
           <Route path="/payment" element={<Payment />} />
           <Route path="/fulfill/:requestId" element={<FulfillRequest />} />
-          <Route path="/paymentstatus" element={<PaymentStatus />} />
+          <Route path="/paymentstatus" element={<PaymentStatusWrapper />} />
           <Route path="/success" element={<Success />} />
           <Route path="/about" element={<HowTo />} />
           <Route path="/request/fulfilled" element={<FulFilled />} />

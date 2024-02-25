@@ -727,7 +727,7 @@ app.post("/request", async (req, res) => {
         reqtype: reqType,
         timestamp1: new Date(),
         reqaction: requestAction,
-        tosomeoneelse: toSomeOneElse,
+        tosomeoneelse: !!toSomeOneElse,
         fromperson: fromPerson,
         toperson: toPerson,
       },

@@ -16,17 +16,13 @@ function FanRequests() {
   const [error, setError] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
 
-  // console.log("celebReplies: ", celebReplies[0].celeb);
-
   useEffect(() => {
-    console.log("user: ", currentUser.uid);
     setLoading(true);
     const getCelebEplies = async () => {
       try {
         const response = await axios.get(`${apiUrl}/fanrequests`, {
           params: { uid: currentUser.uid },
         });
-        console.log("da: ", response.data);
         setLoading(false);
 
         setCelebReplies(response.data);
@@ -44,8 +40,6 @@ function FanRequests() {
   //   `${apiUrl}/fanrequests`,
   //   currentUser.uid
   // );
-
-  // console.log("data: ", data);
 
   return (
     <>

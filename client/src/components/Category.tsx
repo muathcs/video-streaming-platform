@@ -18,8 +18,6 @@ function Category() {
   const [selectedFilters, setSelectedFilters] = useState<any[]>([]);
 
   function removeFilter(filterName: string) {
-    console.log("filterNamex: ", filterName);
-
     const newFilter = selectedFilters.filter(
       (filter) => filter.filterName != filterName
     );
@@ -32,8 +30,6 @@ function Category() {
     // setLoading(true);
     const fetchCelebs = async () => {
       try {
-        console.log("inside try: ", category);
-
         let response;
         if (category == "all") {
           response = await axios.get(`${apiUrl}/celebs`);
@@ -41,7 +37,6 @@ function Category() {
           response = await axios.get(`${apiUrl}/celebs/${category}`);
         }
 
-        console.log("celeb: ", response.data);
         setCelebs(response.data);
         setOriginalCelebs(response.data);
         setLoading(false);

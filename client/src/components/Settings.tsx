@@ -28,7 +28,6 @@ function PublicProfileSettings({
   const [email, setEmail] = useState<string>(userInfo?.email || "");
   const [imgUrl, setImgUrl] = useState<string>(userInfo?.imgurl || "");
 
-  console.log("imgurlx: ", imgUrl);
   const [description, setDescription] = useState<string>(
     userInfo?.description || ""
   );
@@ -73,8 +72,6 @@ function PublicProfileSettings({
 
     const values = getValues();
   }
-
-  console.log("new: ", userInfo);
 
   return (
     <div className="p-2 md:p-4">
@@ -291,7 +288,6 @@ function LoginSettings({ userInfo, currentUser, celeb, notify }: any) {
 
   async function onSubmit(data: FieldValues) {
     const status = celeb ? "celeb" : "fan";
-    console.log("here");
     setTempError("");
 
     //change email
@@ -316,8 +312,6 @@ function LoginSettings({ userInfo, currentUser, celeb, notify }: any) {
         }
       );
 
-      console.log("response: ", response);
-
       if (response.status == 201) {
         await reauthenticateUser(data.password);
         notify(response.data.message);
@@ -332,7 +326,6 @@ function LoginSettings({ userInfo, currentUser, celeb, notify }: any) {
       setTempError(
         "Your new password does not match the confirm new password field"
       );
-      console.log("new password doesn't match");
     } else if (
       data.newPassword &&
       data.newPassword == data.confirmNewPassword &&
@@ -362,7 +355,6 @@ function LoginSettings({ userInfo, currentUser, celeb, notify }: any) {
 
         notify(response.data.message);
       }
-      console.log(response);
       // sendPutRequest(`/update/login/${currentUser.uid}`, { email });
     }
   }
@@ -491,26 +483,22 @@ function Settings() {
   };
 
   useEffect(() => {
-    console.log("useEffect", "userinfo: ", userInfo, "current: ", currentUser);
     if (!userInfo || !currentUser) {
       navigate("/login");
     }
   }, []);
 
   async function onSubmit(data: FieldValues, selectedFile: File) {
-    console.log("onsubmit");
     let fd = new FormData();
     const status = celeb ? "celeb" : "fan";
 
     if (selectedFile) {
-      console.log("file is selected: ", selectedFile);
       fd.append("file", selectedFile);
     }
     fd.append("status", status);
     fd.append("payLoad", JSON.stringify(data));
 
     try {
-      console.log("here submit");
       const response = await sendPutRequest(
         `${apiUrl}/update/${currentUser.uid}`,
         fd

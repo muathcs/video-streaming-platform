@@ -34,12 +34,8 @@ function NavBar() {
   const { data: putRequest } = useGlobalAxios("put");
   const navigate = useNavigate();
 
-  console.log("UserInfoNavBar: ", userInfo);
-  console.log("currentUser: ", currentUser);
-
   useEffect(() => {
     setLoading(true);
-    console.log("mounting");
     const getNotification = async () => {
       try {
         const response = await axios.get(`${apiUrl}/notification`, {
@@ -60,8 +56,6 @@ function NavBar() {
           setUnread(totalUnreadNotifications);
         }
         setLoading(false);
-
-        // console.log("response", response.data);
       } catch (error) {
         console.error(error);
       }
@@ -69,16 +63,13 @@ function NavBar() {
 
     getNotification();
 
-    return () => {
-      console.log("unmounting");
-    };
+    return () => {};
   }, []);
 
   // const celeb = localStorage.getItem("celeb");
 
   // this function will run when a user opens the notification tab, and will set all the notifications the user read to is_read = true
   function readNotifications() {
-    console.log("beofre: ", notifications);
     setNotifications((notifications) => {
       return (
         notifications?.map((notification) => ({
@@ -91,7 +82,6 @@ function NavBar() {
     putRequest(`${apiUrl}/notification`, { uid: currentUser.uid });
 
     setUnread(0);
-    console.log("beofre: ", notifications);
   }
 
   const path = celeb ? "dashboard" : celeb == undefined ? "" : "requests";
@@ -119,19 +109,15 @@ function NavBar() {
   const { requests } = useRequests();
 
   async function searchCeleb(keysSearch: string) {
-    console.log("val: ", searchCelebVal);
-
     try {
       const response = await axios.get(`${apiUrl}/search`, {
         params: { name: keysSearch },
       });
 
-      console.log("res: ", response.data);
       setCelebsSuggestion(response.data);
     } catch (error) {
       console.error(error);
     }
-    console.log("he");
   }
 
   return (
@@ -384,7 +370,6 @@ function NavBar() {
                           <input
                             onClick={() => {
                               // searchCeleb(searchCelebVal);
-                              console.log("ref: ", celebsSuggestion);
 
                               if (!searchCelebVal) {
                                 setCelebsSuggestion([]);
@@ -428,11 +413,6 @@ function NavBar() {
                                       >
                                     ) => {
                                       const target = e.target as HTMLElement;
-                                      console.log(
-                                        "value: ",
-                                        target.innerText,
-                                        celeb
-                                      );
 
                                       navigate("/profile", {
                                         state: { celeb },

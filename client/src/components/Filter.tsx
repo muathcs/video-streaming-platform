@@ -33,11 +33,8 @@ function Filter({
   }, [selectedFilters]);
 
   function handleRangeChange(e: React.ChangeEvent<HTMLInputElement>) {
-    console.log("value: ", e.target.value);
     setRangeValue(parseInt(e.target.value, 10));
   }
-
-  console.log("running in filter");
 
   function handleFilters(filterType: string, filterName: string) {
     const updatedArr = [...selectedFilters];
@@ -56,8 +53,6 @@ function Filter({
         { filterType: filterType, filterName: filterName, visible: true },
       ]);
     }
-
-    console.log("selected: ", selectedFilters);
   }
 
   // should probably put the below functions into one function and add a swithc statement.
@@ -85,7 +80,6 @@ function Filter({
   }
 
   function filterPrice() {
-    console.log("here");
     let newState = [...originalCelebs];
 
     newState = newState.filter((celeb) => celeb.price > rangeValue);

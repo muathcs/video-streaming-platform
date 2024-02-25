@@ -17,8 +17,6 @@ function Login() {
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  console.log(loading);
-
   //login function
   async function handleSubmit(e: any) {
     e.preventDefault();
