@@ -159,13 +159,13 @@ function PublicProfileSettings({
                         required:
                           "pick a category, choose other if nothing applies to you.",
                       })}
-                      value={category}
+                      value={"ha"}
                       onChange={(e) => setCategory(e.target.value)}
                       name="category"
                       data-te-select-init
                       className="w-full h-10 pl-2 rounded-md bg-transparent  border text-black cursor-pointer"
                     >
-                      <option value="actors">actors</option>
+                      <option value="actors">acxtors</option>
                       <option value="business">business</option>
                       <option value="reality-tv">reality-tv</option>
                       <option value="athletes">athletes</option>

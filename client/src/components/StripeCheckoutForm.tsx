@@ -79,7 +79,7 @@ export default function StripeCheckoutForm() {
     const { error }: any = await stripe.confirmPayment({
       elements,
       confirmParams: {
-        return_url: `https://vid-stream-cl.onrender.com/paymentstatus`,
+        return_url: `${currentUrl}/paymentstatus`,
       },
     });
 
