@@ -138,6 +138,7 @@ function Filter({
                   name="low-to"
                   checked={lowToHighCheck}
                   onClick={filterLowToHigh}
+                  onChange={filterLowToHigh}
                   // className="h-5 w-5 rounded border-gray-300 bg-yellow-400  cursor-pointer"
                   className="peer h-5 w-5 cursor-pointer"
 
@@ -156,6 +157,7 @@ function Filter({
                   name="low-to"
                   checked={highToLowCheck}
                   onClick={highToLow}
+                  onChange={highToLow}
                   className="peer h-5 w-5 cursor-pointer"
                 />
 
@@ -234,8 +236,8 @@ function Filter({
                   type="radio"
                   name="Price"
                   value="1500+"
-                  className="h-5 w-5 rounded "
-                  checked
+                  className="h-5 w-5 rounded bg-red-300"
+                  // checked
                 />
 
                 <label htmlFor="1500+" className="ml-3 text-sm font-medium">

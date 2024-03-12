@@ -3,6 +3,11 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer utilities {
+  .review-star {
+    @apply hover:w-[3.2rem] hover:h-[3.2rem];
+  }
+}
 .wotfard {
   font-family: "wotfard";
 }

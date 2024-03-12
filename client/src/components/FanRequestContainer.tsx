@@ -20,12 +20,38 @@ interface FanRequestContainerProp {
   };
 }
 
+function FulfilledRequest({ request, celeb }: FanRequestContainerProp) {
+  const navigate = useNavigate();
+  return (
+    <>
+      <img
+        src={completePic}
+        width={100}
+        className=" absolute bottom-32 right-5"
+      />
+
+      {/* if the request is fullfilled */}
+      <button
+        onClick={() =>
+          navigate("/request/fulfilled", {
+            state: { request, celeb },
+          })
+        }
+        className=" absolute bottom-5 right-2 px-10 py-3 bg-blue-500 rounded-lg hover:bg-blue-600"
+      >
+        View
+      </button>
+    </>
+  );
+}
+
 //this component has the various requests a user has made to diff celebs, and the status of those requestS(fulfilled or pending.)
 // if a request is fulfilled, the user can click the view button, which will display the FulFilled componenet.
 function FanRequestContainer({ request, celeb }: FanRequestContainerProp) {
   const { reqstatus } = request;
 
-  console.log("request/Celeb: ", celeb);
+  console.log("reqhere: ", request);
+
   const { displayname: celebName, imgurl: celebPhoto } = celeb ?? {};
   const navigate = useNavigate();
 
@@ -55,25 +81,7 @@ function FanRequestContainer({ request, celeb }: FanRequestContainerProp) {
             </p>
             <span className=" absolute bottom-0 right-0 w-1/2 h-1/2 ">
               {reqstatus == "fulfilled" ? (
-                <>
-                  <img
-                    src={completePic}
-                    width={100}
-                    className=" absolute bottom-32 right-5"
-                  />
-
-                  {/* if the request is fullfilled */}
-                  <button
-                    onClick={() =>
-                      navigate("/request/fulfilled", {
-                        state: { request, celeb },
-                      })
-                    }
-                    className=" absolute bottom-5 right-2 px-10 py-3 bg-blue-500 rounded-lg hover:bg-blue-600"
-                  >
-                    View
-                  </button>
-                </>
+                <FulfilledRequest request={request} celeb={celeb} />
               ) : reqstatus == "pending" ? (
                 <>
                   <span className="absolute bottom-32 right-6 text-[5rem] ">

@@ -6,6 +6,8 @@ import { CelebType } from "../TsTypes/types";
 import { apiUrl } from "../utilities/fetchPath";
 import axios from "../api/axios";
 
+//this component has the various requests a user has made to diff celebs, and the status of those requestS(fulfilled or pending.)
+// if a request is fulfilled, the user can click the view button, which will display the FulFilled componenet.
 type fanRequestType = {
   celeb: CelebType;
   request: RequestType;
@@ -26,6 +28,7 @@ function FanRequests() {
         setLoading(false);
 
         setCelebReplies(response.data);
+        console.log("rez: ", response.data);
       } catch (error: any) {
         console.error(error);
         setError(true);
@@ -48,19 +51,17 @@ function FanRequests() {
       ) : error ? (
         <h1>Error</h1>
       ) : (
-        <div className="  overflow-auto flex flex-col gap-2  h-full">
+        <div className="overflow-auto flex flex-col gap-2  h-full  ">
           <>
             {celebReplies &&
               celebReplies.map((req: fanRequestType) => (
                 <>
-                  {/* FanRequestContainer holds the requests, the FulFilled contianer holds the viewed requests.   */}
-                  <>
-                    <FanRequestContainer
-                      request={req.request}
-                      celeb={req.celeb}
-                      key={req.request.requestid}
-                    />
-                  </>
+                  {/* each one of these componenets hold a request */}
+                  <FanRequestContainer
+                    request={req.request}
+                    celeb={req.celeb}
+                    key={req.request.requestid}
+                  />
                 </>
               ))}
           </>

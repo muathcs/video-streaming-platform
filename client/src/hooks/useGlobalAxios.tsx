@@ -63,8 +63,13 @@ export function useGlobalAxios(
 
   async function getData(dataToGet: string, params?: unknown) {
     try {
-      await axios.get(dataToGet, { params: { params } });
-    } catch (error) {}
+      console.log("params: ", params);
+      const response = await axios.get(dataToGet, { params }); // Correct destructure here
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      throw error;
+    }
   }
 
   useEffect(() => {

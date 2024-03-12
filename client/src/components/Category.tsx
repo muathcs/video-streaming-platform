@@ -37,6 +37,8 @@ function Category() {
           response = await axios.get(`${apiUrl}/celebs/${category}`);
         }
 
+        console.log("resxxX: ", response);
+
         setCelebs(response.data);
         setOriginalCelebs(response.data);
         setLoading(false);

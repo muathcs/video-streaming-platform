@@ -10,9 +10,9 @@ CREATE TABLE "Celeb" (
     "email" VARCHAR(60),
     "description" VARCHAR(250),
     "request_num" INTEGER,
-    "reviews" INTEGER,
+    "rating" INTEGER,
     "uid" VARCHAR(42),
-    "imgurl" VARCHAR(150),
+    "imgurl" VARCHAR(250),
     "document_with_idx" tsvector,
 
     CONSTRAINT "Celeb_pkey" PRIMARY KEY ("celebid")
@@ -26,7 +26,7 @@ CREATE TABLE "Fan" (
     "total_spent" INTEGER,
     "fav_categories" VARCHAR(50),
     "num_of_requests" INTEGER,
-    "uid" VARCHAR(42),
+    "uid" VARCHAR(42) NOT NULL,
     "imgurl" VARCHAR(150),
     "description" VARCHAR(350),
 
@@ -54,6 +54,17 @@ CREATE TABLE "Requests" (
 );
 
 -- CreateTable
+CREATE TABLE "Review" (
+    "reviewid" TEXT NOT NULL,
+    "reviewer_id" VARCHAR(50) NOT NULL,
+    "reviewed_id" VARCHAR(50) NOT NULL,
+    "message" VARCHAR(50) NOT NULL,
+    "celebCelebid" TEXT,
+
+    CONSTRAINT "Review_pkey" PRIMARY KEY ("reviewid")
+);
+
+-- CreateTable
 CREATE TABLE "Notification" (
     "notificationid" TEXT NOT NULL,
     "intended_uid" VARCHAR(50),
@@ -77,10 +88,19 @@ CREATE TABLE "Transactions" (
 );
 
 -- CreateIndex
+CREATE UNIQUE INDEX "Celeb_uid_key" ON "Celeb"("uid");
+
+-- CreateIndex
 CREATE INDEX "document_idx" ON "Celeb" USING GIN ("document_with_idx");
 
 -- CreateIndex
 CREATE INDEX "document_with_idx_index" ON "Celeb" USING GIN ("document_with_idx");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Fan_uid_key" ON "Fan"("uid");
+
+-- AddForeignKey
+ALTER TABLE "Review" ADD CONSTRAINT "Review_celebCelebid_fkey" FOREIGN KEY ("celebCelebid") REFERENCES "Celeb"("celebid") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Transactions" ADD CONSTRAINT "Transactions_transactionid_fkey" FOREIGN KEY ("transactionid") REFERENCES "Fan"("fanid") ON DELETE RESTRICT ON UPDATE CASCADE;

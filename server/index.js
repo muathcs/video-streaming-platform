@@ -188,23 +188,29 @@ app.get("/celebs/:category", async (req, res) => {
   //query celeb table by category
   let { category } = req.params;
 
-  category = category.toLocaleLowerCase(); // to match db
+  console.log("category: ", category);
+
+  // category = category.toLocaleLowerCase(); // to match db
 
   try {
     const result = await prisma.celeb.findMany({
       where: {
-        category: category,
+        category: {
+          equals: category,
+          mode: "insensitive",
+        },
       },
     });
+
+    console.log("result: ", result);
     // const result = await pool.query("SELECT * FROM celeb where category = $1", [
     //   category,
     // ]);
     // client.release(); // Release the connection back to the pool
 
     // console.log("res: ", result.rows);
-    const celebs = result.rows;
 
-    res.send(celebs);
+    res.send(result);
   } catch (error) {
     console.log("error/celeb/cat: ", error);
     res.status(500).json({ error: error.message });
@@ -275,6 +281,8 @@ app.get("/fanrequests", async (req, res) => {
         timestamp1: true,
         reqstatus: true,
         celebuid: true,
+        fanuid: true,
+        celebuid: true,
       },
       where: {
         fanuid: uid,
@@ -283,6 +291,13 @@ app.get("/fanrequests", async (req, res) => {
         requestid: "asc",
       },
     });
+
+    const check = await pool.query(
+      `select * from public."Requests" where fanuid = $1`,
+      [uid]
+    );
+    console.log("check: ", check.rows);
+    console.log("uid: ", uid);
 
     //array that will be sent back to the response, it's made up of objects of the individual request + celeb info(photo, name)
     let reqAndCeleb = [];
@@ -646,6 +661,9 @@ app.get("/notification", async (req, res) => {
       },
     });
 
+    "Select * from notification WHERE intended_uid = $1 AND is_read = $2",
+      [uid, false];
+
     return res.send(response);
   } catch (error) {
     console.log("get/notification: ", error);
@@ -680,6 +698,7 @@ app.put("/notification", async (req, res) => {
 
 app.get("/search", async (req, res) => {
   const { name } = req.query;
+  console.log("name: ", name);
 
   if (!name) return;
   try {
@@ -690,6 +709,8 @@ app.get("/search", async (req, res) => {
       `SELECT *, ts_rank(document_with_idx, to_tsquery('simple', $1 || ':*')) AS rank FROM public."Celeb" WHERE document_with_idx @@ to_tsquery('simple', $1 || ':*') ORDER BY CASE WHEN lower(substring(displayname from 1 for 1)) = lower($1) THEN 1 ELSE 2 END, CASE WHEN lower(substring(displayname from 1 for 1)) = lower($1) THEN substring(displayname from 3) END, rank DESC`,
       [name]
     );
+
+    console.log("search: ", response);
 
     res.status(201).send(response.rows);
 
@@ -753,6 +774,45 @@ app.post("/request", async (req, res) => {
   } catch (error) {
     console.log("/request", error.message);
   }
+});
+
+app.post("/review", async (req, res) => {
+  console.log("req: ", req.body);
+  const { review, fanuid, celebuid, event, date, name, rating } = req.body;
+  try {
+    const result = await prisma.review.create({
+      data: {
+        message: review,
+        reviewer_id: fanuid,
+        reviewed_id: celebuid,
+        event,
+        Date: date,
+        reviewer_name: name,
+        rating,
+      },
+    });
+  } catch (error) {
+    console.log("/reviews: ", error);
+  }
+});
+
+app.get("/reviews", async (req, res) => {
+  console.log("reqTest: ", req.query);
+  const { uid } = req.query;
+  try {
+    const result = await prisma.review.findMany({
+      where: {
+        reviewed_id: uid, // for now reviewed can only be a celeb, but I chose reviewed instead of celeb incase in the future I want to add feature to allow celebs to reviews users.
+      },
+      orderBy: {
+        Date: "asc",
+      },
+    });
+
+    console.log("res: ", result);
+
+    res.status(201).send(result);
+  } catch (error) {}
 });
 
 async function indexNewCeleb(uid) {

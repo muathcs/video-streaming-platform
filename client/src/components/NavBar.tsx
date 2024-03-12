@@ -114,6 +114,7 @@ function NavBar() {
         params: { name: keysSearch },
       });
 
+      console.log("search: ", response);
       setCelebsSuggestion(response.data);
     } catch (error) {
       console.error(error);
@@ -124,7 +125,7 @@ function NavBar() {
     <>
       <Disclosure
         as="nav"
-        className=" text-[24px]  sm:text-[16px] z-10 block  sm:py-5 py-2 h-[20%]  lg:h-[10%]    "
+        className=" text-[24px]  sm:text-[16px] z-10  block  sm:py-5 py-2 h-[20%]  lg:h-[10%]      "
       >
         {({ open }) => (
           <>
