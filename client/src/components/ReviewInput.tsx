@@ -31,7 +31,7 @@ function ReviewInput({
   async function submitReview() {
     console.log("stars: ", hoveredStars);
     try {
-      await sendPostRequest("/review", {
+      await sendPostRequest(`${apiUrl}/review`, {
         review,
         fanuid,
         celebuid,

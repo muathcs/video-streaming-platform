@@ -7,6 +7,59 @@ type ModalType = {
   children: React.ReactNode;
 };
 
+const theme = {
+  root: {
+    base: "fixed top-0 right-0 left-0 z-50 h-modal h-screen overflow-y-auto overflow-x-hidden md:inset-0 md:h-full",
+    show: {
+      on: "flex bg-gray-900 bg-opacity-50 dark:bg-opacity-70",
+      off: "hidden",
+    },
+    sizes: {
+      sm: "max-w-sm",
+      md: "max-w-md",
+      lg: "max-w-lg",
+      xl: "max-w-xl",
+      "2xl": "max-w-2xl",
+      "3xl": "max-w-3xl",
+      "4xl": "max-w-4xl",
+      "5xl": "max-w-5xl",
+      "6xl": "max-w-6xl",
+      "7xl": "max-w-7xl",
+    },
+    positions: {
+      "top-left": "items-start justify-start",
+      "top-center": "items-start justify-center",
+      "top-right": "items-start justify-end",
+      "center-left": "items-center justify-start",
+      center: "items-center justify-center",
+      "center-right": "items-center justify-end",
+      "bottom-right": "items-end justify-end",
+      "bottom-center": "items-end justify-center",
+      "bottom-left": "items-end justify-start",
+    },
+  },
+  content: {
+    base: "relative h-full w-full p-4 md:h-auto",
+    inner: "",
+  },
+  body: {
+    base: "p-6 flex-1 overflow-auto ",
+    popup: "pt-0",
+  },
+  header: {
+    base: "flex items-start justify-between rounded-t dark:border-gray-600 border-b p-5",
+    popup: "p-2 border-b-0",
+    title: "text-xl font-medium text-gray-900 dark:text-white",
+    close: {
+      base: "ml-auto inline-flex items-center rounded-lg bg-transparent p-1.5 text-sm text-gray-400 hover:bg-gray-200 hover:text-gray-900 dark:hover:bg-gray-600 dark:hover:text-white",
+      icon: "h-5 w-5",
+    },
+  },
+  footer: {
+    base: "flex items-center space-x-2 rounded-b border-gray-200 p-6 dark:border-gray-600",
+    popup: "border-t",
+  },
+};
 function Modal({ openModal, setOpenModal, children }: ModalType) {
   //   const [openModal, setOpenModal] = useState(false);
 
@@ -14,44 +67,19 @@ function Modal({ openModal, setOpenModal, children }: ModalType) {
     <>
       {/* <Button onClick={() => setOpenModal(true)}>Toggle modal</Button> */}
       <RModal
-        className="bg-gray-500 bg-opacity-5 flex items-center  justify-center pt-20 z-10   "
+        theme={theme}
         show={openModal}
         onClose={() => setOpenModal(false)}
+        className="  flex items-center justify-center    "
       >
-        {/* <RModal.Header
-          className="bg-transparent bg-none "
-          onClick={() => {
-            console.log("has");
-          }}
-        >
-          <button>Click</button>
-        </RModal.Header> */}
-        {/* <RModal.Header className="border-2">Terms of Service</RModal.Header> */}
         <RModal.Body
           onClick={() => {
             console.log("clicking");
           }}
+          className=" p-0 rounded-2xl "
         >
           {children}
-          {/* <div className="bg-white rounded-md">
-            <span className="absolute right-2 text-black font-bold">X</span>
-            <div className="space-y-6 p-5 ">
-              <p className="text-base  leading-relaxed text-gray-500 dark:text-gray-400">
-                With less than a month to go before the European Union enacts
-                new consumer privacy laws for its citizens, companies around the
-                world are updating their terms of service agreements to comply.
-              </p>
-              <p className="text-base leading-relaxed text-gray-500 dark:text-gray-400">
-                The European Union’s General Data Protection Regulation
-                (G.D.P.R.) goes into effect on May 25 and is meant to ensure a
-                common set of data rights in the European Union. It requires
-                organizations to notify users as soon as possible of high-risk
-                data breaches that could personally affect them.
-              </p>
-            </div>
-          </div> */}
         </RModal.Body>
-        <RModal.Footer>{/*  */}</RModal.Footer>
       </RModal>
     </>
   );

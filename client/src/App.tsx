@@ -21,7 +21,7 @@ import PaymentStatusWrapper from "./components/PaymentStatusWrapper";
 function App() {
   return (
     <>
-      <div className="flex flex-col  absolute   w-full h-full  p-0 m-0 overflow-auto bg-[#121114] ">
+      <div className="">
         <NavBar />
         {/* <Celebs /> */}
         <Routes>

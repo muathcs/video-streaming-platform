@@ -33,12 +33,12 @@ function FulfillRequest() {
     // Now formDataEntries is an array of key-value pairs
 
     if (state.reqtype == "message") {
-      sendPutRequest(`/fulfill/${state.requestid}`, { celebReply });
+      sendPutRequest(`${apiUrl}/fulfill/${state.requestid}`, { celebReply });
       if (!error) {
         notify(); //pop up notification
       }
     } else {
-      sendPutRequest(`/fulfill/${state.requestid}`, celebReply);
+      sendPutRequest(`${apiUrl}/fulfill/${state.requestid}`, celebReply);
 
       if (!error) {
         notify(); //pop up notification

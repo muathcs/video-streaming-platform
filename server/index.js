@@ -796,6 +796,36 @@ app.post("/review", async (req, res) => {
   }
 });
 
+app.put("/review", async (req, res) => {
+  console.log("herexxx", req.body);
+  const { requestid, uid } = req.body;
+
+  try {
+    const result = await prisma.requests.update({
+      where: {
+        requestid: requestid,
+      },
+      data: {
+        reqstatus: "rejected",
+      },
+    });
+
+    const pendinRequests = await prisma.requests.findMany({
+      where: {
+        reqstatus: "pending",
+        celebuid: uid,
+      },
+      orderBy: {
+        requestid: "desc",
+      },
+    });
+
+    res.status(201).send(pendinRequests);
+  } catch (error) {
+    console.log("revewPut: ", error);
+  }
+});
+
 app.get("/reviews", async (req, res) => {
   console.log("reqTest: ", req.query);
   const { uid } = req.query;
