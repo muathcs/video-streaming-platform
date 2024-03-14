@@ -126,7 +126,7 @@ export function AuthProvider({ children }: { children: any }) {
 
         if (user) {
           try {
-            const response = await axios.get(`${apiUrl}/status`, {
+            const response = await axios.get(`${apiUrl}/fan/status`, {
               params: { uid: user.uid },
             });
 
@@ -140,7 +140,7 @@ export function AuthProvider({ children }: { children: any }) {
                 params: { data: user.uid },
               });
 
-              fullUserInfo = await axios.get(`${apiUrl}/celeb/${user.uid}`);
+              fullUserInfo = await axios.get(`${apiUrl}/celebs/${user.uid}`);
               console.log("myFULL: ", fullUserInfo);
             } else {
               console.log("here");

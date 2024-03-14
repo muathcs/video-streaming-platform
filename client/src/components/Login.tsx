@@ -48,7 +48,7 @@ function Login() {
   async function isACeleb(uid: number) {
     try {
       ("before axios");
-      const response = await axios.get(`${apiUrl}/status`, {
+      const response = await axios.get(`${apiUrl}/user/status`, {
         params: { uid: uid },
       });
 

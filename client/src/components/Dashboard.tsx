@@ -21,7 +21,7 @@ function Dashboard() {
   useEffect(() => {
     const getRequests = async () => {
       try {
-        const response = await axios.get(`${apiUrl}/dashboard`, {
+        const response = await axios.get(`${apiUrl}/request/dashboard`, {
           params: { data: currentUser.uid },
         });
 
@@ -104,7 +104,7 @@ function Dashboard() {
     setOpenModal(false);
     const requestid = rejectedRequestId;
     try {
-      const response = await sendPutRequest(`${apiUrl}/review`, {
+      const response = await sendPutRequest(`${apiUrl}/reviews`, {
         requestid: rejectedRequestId,
         uid: currentUser.uid,
       });

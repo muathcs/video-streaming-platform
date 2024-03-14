@@ -46,7 +46,9 @@ function SignUp() {
 
       await uploadProfilePic(fireBaseUrlLink, userid); // uploads the profile pic to firebase user.
 
-      const path = isCeleb ? `${apiUrl}/createCeleb` : `${apiUrl}/createUser`; // if the celeb is being created, create a celeb on the server and vice versa.
+      const path = isCeleb
+        ? `${apiUrl}/celebs/createCeleb`
+        : `${apiUrl}/fan/createUser`; // if the celeb is being created, create a celeb on the server and vice versa.
 
       let fd; //formdata
 

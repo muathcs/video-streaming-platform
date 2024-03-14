@@ -1,5 +1,7 @@
 import { prisma } from "../index.js";
 import express from "express";
+import { upload } from "./Fan.js";
+import { uploadProfileImgToS3 } from "../s3.js";
 
 const router = express.Router();
 
@@ -75,5 +77,64 @@ router.get("/:id", async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
+
+router.post(
+  "/createCeleb",
+  upload.single("file"),
+  uploadProfileImgToS3,
+  async (req, res) => {
+    const { uid, imgurl } = req.body;
+
+    const payload = JSON.parse(req.body.payLoad);
+
+    const newImg = req.newUrl;
+
+    console.log("creating a celeb: ");
+
+    const {
+      displayName,
+      username,
+      followers,
+      account,
+      category,
+      price,
+      email,
+      description,
+    } = payload;
+
+    try {
+      const result = await prisma.celeb.create({
+        data: {
+          displayname: displayName,
+          username: username,
+          followers: parseInt(followers),
+          account: account,
+          category: category,
+          price: parseInt(price),
+          email: email,
+          description: description,
+          uid: uid,
+          imgurl: newImg,
+        },
+      });
+
+      await indexNewCeleb(uid); //indexing for text search
+
+      res.send("Thank you");
+    } catch (error) {
+      console.log(error);
+      res.send("Failed");
+    }
+  }
+);
+
+// this function adds an index to every celeb entry, this helps with the postgres text search
+async function indexNewCeleb(uid) {
+  const result = await prisma.$executeRaw`
+    UPDATE "Celeb"
+    SET document_with_idx = TO_TSVECTOR('simple', displayname)
+    WHERE uid = ${uid};
+  `;
+}
 
 export default router;

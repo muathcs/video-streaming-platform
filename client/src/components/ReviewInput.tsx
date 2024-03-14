@@ -33,7 +33,7 @@ function ReviewInput({
     console.log("apirUrl: ", apiUrl);
     console.log("stars: ", hoveredStars);
     try {
-      await sendPostRequest(`${apiUrl}/review`, {
+      await sendPostRequest(`${apiUrl}/reviews`, {
         review,
         fanuid,
         celebuid,

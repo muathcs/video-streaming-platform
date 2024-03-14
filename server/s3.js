@@ -40,6 +40,36 @@ export function uploadFile(fileBuffer, fileName, mimetype) {
   }
 }
 
+// middle ware
+export async function uploadProfileImgToS3(req, res, next) {
+  let { id } = req.params;
+  let { uid, imgurl } = req.body;
+
+  if (!imgurl && id) {
+    // this function checks if we're updating the img or setting it for the first time. So, if the imgurl doesn't exist but the id does this mean the account is updating the img
+    // if this case
+    imgurl = `profile/user(${id})`;
+  }
+
+  const file = req.file;
+
+  if (!file) {
+    //just incase the above passes because the firebase account is created beofre the user and so the id may still exist, this will quit the middle ware if an img file wasnt selected.
+    return next(); //insures code below doesn't run.
+  }
+
+  let newUrl = AWS_LINK + imgurl;
+
+  try {
+    const uploadProf = await uploadFile(file.buffer, imgurl, file.mimetype);
+    req.newUrl = newUrl;
+    next();
+  } catch (error) {
+    console.log("error ploadprofiletos3 middleware", error);
+    res.send("unable to upload profile picture to s3 storage");
+  }
+}
+
 export function deleteFile(fileName) {
   const deleteParams = {
     Bucket: bucketName,
