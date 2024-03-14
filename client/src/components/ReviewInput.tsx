@@ -3,6 +3,7 @@ import { useGlobalAxios } from "../hooks/useGlobalAxios";
 import { useAuth } from "../context/AuthContext";
 import { start } from "repl";
 import { IoClose } from "react-icons/io5";
+import { apiUrl } from "../utilities/fetchPath";
 
 type ReviewInputProp = {
   setOpenModal: (state: boolean) => void;
@@ -29,6 +30,7 @@ function ReviewInput({
   const { data: sendPostRequest, error, loading } = useGlobalAxios("post");
 
   async function submitReview() {
+    console.log("apirUrl: ", apiUrl);
     console.log("stars: ", hoveredStars);
     try {
       await sendPostRequest(`${apiUrl}/review`, {

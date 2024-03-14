@@ -22,7 +22,7 @@ function FanRequests() {
     setLoading(true);
     const getCelebEplies = async () => {
       try {
-        const response = await axios.get(`${apiUrl}/fanrequests`, {
+        const response = await axios.get(`${apiUrl}/request/fanrequests`, {
           params: { uid: currentUser.uid },
         });
         setLoading(false);
@@ -37,12 +37,6 @@ function FanRequests() {
 
     getCelebEplies();
   }, []);
-
-  // const { data, loading, error } = useGlobalAxios<fanRequestType[]>(
-  //   "get",
-  //   `${apiUrl}/fanrequests`,
-  //   currentUser.uid
-  // );
 
   return (
     <>

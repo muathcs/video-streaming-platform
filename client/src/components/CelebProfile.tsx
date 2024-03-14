@@ -59,7 +59,7 @@ function ReviewSectionPlusReviewModal({
         <div className=" flex flex-col w-full gap-1 h-[70vh] overflow-auto py-10 px-4 bg-[#201E23]">
           <h1 className="text-[28px] ml-2">ALL Reviews</h1>
           {reviews &&
-            reviews.map((review) => (
+            reviews.reverse().map((review) => (
               <div className="border-b-2 border-gray-500  w-full bg-[#201E23] ">
                 <Review
                   date={review.Date}
@@ -152,6 +152,10 @@ function OrderModal({
     </div>
   );
 }
+
+// this shows the celeb profile,
+
+// the componenent above it ReviewSectionPlusReviewModal handles the review section in the celebProfile.
 function CelebProfile() {
   const { state } = useLocation();
   if (!state) return null; // return if there is no state

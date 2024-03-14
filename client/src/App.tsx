@@ -17,6 +17,7 @@ import HowTo from "./components/HowTo";
 import Settings from "./components/Settings";
 import Celebs from "./components/Celebs";
 import PaymentStatusWrapper from "./components/PaymentStatusWrapper";
+import UserProfile from "./components/UserProfile";
 
 function App() {
   return (
@@ -41,6 +42,7 @@ function App() {
           <Route path="/about" element={<HowTo />} />
           <Route path="/request/fulfilled" element={<FulFilled />} />
           <Route path="/browse/:category" element={<Category />} />
+          <Route path="/user/profile" element={<UserProfile />} />
           <Route path="/*" element={<PrivateRoute />} />
         </Routes>
       </div>

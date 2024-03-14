@@ -15,8 +15,9 @@ import { RequestContext } from "./RequestContext";
 import { User as FirebaseUser } from "firebase/auth";
 import { apiUrl } from "../utilities/fetchPath";
 import { ErrorCause } from "aws-sdk/clients/qldb";
+import { AuthContextType, UserInfoType } from "../TsTypes/types";
 
-const AuthContext = React.createContext("");
+const AuthContext = React.createContext<AuthContextType | any>("");
 
 export function useAuth() {
   return useContext(AuthContext);
@@ -24,11 +25,11 @@ export function useAuth() {
 
 export function AuthProvider({ children }: { children: any }) {
   const [currentUser, setCurrentUser] = useState<FirebaseUser>();
-  const [token, setToken] = useState();
+  const [token, setToken] = useState<string>("");
   const [loading, setLoading] = useState(true);
-  const [userInfo, setUserInfo] = useState<any>();
+  const [userInfo, setUserInfo] = useState<UserInfoType>();
 
-  const [celeb, setCeleb] = useState();
+  const [celeb, setCeleb] = useState<boolean | undefined>();
 
   // const [requests, setRequests] = useState();
 
@@ -143,7 +144,7 @@ export function AuthProvider({ children }: { children: any }) {
               console.log("myFULL: ", fullUserInfo);
             } else {
               console.log("here");
-              req = await axios.get(`${apiUrl}/fanrequests`, {
+              req = await axios.get(`${apiUrl}/request/fanrequests`, {
                 params: { data: user.uid },
               });
 
@@ -174,7 +175,7 @@ export function AuthProvider({ children }: { children: any }) {
     return unsubscribe;
   }, []);
 
-  const value: any = {
+  const value: AuthContextType = {
     currentUser,
     resetPassword,
     token,

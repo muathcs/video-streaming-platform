@@ -34,7 +34,7 @@ function Category() {
         if (category == "all") {
           response = await axios.get(`${apiUrl}/celebs`);
         } else {
-          response = await axios.get(`${apiUrl}/celebs/${category}`);
+          response = await axios.get(`${apiUrl}/celebs/category/${category}`);
         }
 
         console.log("resxxX: ", response);
@@ -59,8 +59,8 @@ function Category() {
           <h1 className="text-left">{category}</h1>
           <div className=" h-full    ">
             {/* top section */}
-            <div className=" h-1/6 flex justify-between ">
-              <div className="w-1/2 flex items-start justify-center gap-5 flex-col ">
+            <div className="flex justify-between  ">
+              <div className="w-1/2 flex items-start justify-center gap-5 flex-col  ">
                 <p className="text-[24px] text-left ">
                   {celebs.length} results
                 </p>
@@ -78,7 +78,7 @@ function Category() {
                   </span>
                 ))}
               </div>
-              <div className=" w-1/2 flex justify-center  items-center gap-12">
+              <div className=" w-1/2 flex justify-center  items-center gap-12 ">
                 <button className="rounded-full  px-5 w-1/4 py-4 self-center border-2 hover:bg-[#35333a]">
                   Featured ⬇️
                 </button>

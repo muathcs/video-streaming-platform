@@ -22,7 +22,9 @@ import e from "express";
 import { send } from "process";
 import { celebrityNames } from "./celebName.js";
 import { userInfo } from "os";
-
+import CelebRoute from "./routes/Celebs.js";
+import FanRoute from "./routes/Fan.js";
+import RequestRoute from "./routes/Request.js";
 import { PrismaClient } from "@prisma/client";
 export const prisma = new PrismaClient();
 
@@ -101,121 +103,100 @@ app.post("/create-payment-intent", async (req, res) => {
 //   });
 // });
 
-app.get("/testing", async (req, res) => {
-  try {
-    const allUser = await prisma.celeb.create({
-      data: {
-        displayname: "Muath",
-        username: "muath0x",
-        description: "Student at the univesrity of reading",
-        category: "comedy",
-        price: 250,
-        followers: 236,
-        reviews: 5,
-        imgurl:
-          "https://cy-vide-stream-imgfiles.s3.eu-west-2.amazonaws.com/profile/user(NNf4MMRivSg0Uou00xqgrzhStH02)",
-        email: "muath@gmail.com",
-        account: "tiktokaccount",
-        request_num: 232,
-      },
-    });
+app.use("/celebs", CelebRoute);
+app.use("/fan", FanRoute);
+app.use("/request", RequestRoute);
 
-    res.send("worked well, got your response, testing route");
-  } catch (error) {
-    console.log("/testing: ", error);
-  }
-});
+// app.get("/celebs", async (req, res) => {
+//   //query celeb table by category
+//   const { category } = req.params;
 
-app.get("/celebs", async (req, res) => {
-  //query celeb table by category
-  const { category } = req.params;
+//   try {
+//     const result = await prisma.celeb.findMany();
+//     // client.release(); // Release the connection back to the pool
 
-  try {
-    const result = await prisma.celeb.findMany();
-    // client.release(); // Release the connection back to the pool
+//     res.send(result);
+//   } catch (error) {
+//     console.log("error/celebs: ", error);
+//     res.status(500).json({ error: error.message });
+//   }
+// });
 
-    res.send(result);
-  } catch (error) {
-    console.log("error/celebs: ", error);
-    res.status(500).json({ error: error.message });
-  }
-});
+// app.get("/celeb/:id", async (req, res) => {
+//   const { id } = req.params;
 
-app.get("/celeb/:id", async (req, res) => {
-  const { id } = req.params;
+//   console.log("id: ", id);
 
-  console.log("id: ", id);
+//   try {
+//     const response = await prisma.celeb.findUnique({
+//       where: {
+//         uid: id,
+//       },
+//     });
+//     // const response = await pool.query("Select * from celeb where uid = $1", [
+//     //   id,
+//     // ]);
 
-  try {
-    const response = await prisma.celeb.findUnique({
-      where: {
-        uid: id,
-      },
-    });
-    // const response = await pool.query("Select * from celeb where uid = $1", [
-    //   id,
-    // ]);
+//     res.send(response);
+//   } catch (error) {
+//     console.log("/celeb/id: ", error);
+//     res.status(500).json({ error: error.message });
+//   }
+// });
 
-    res.send(response);
-  } catch (error) {
-    console.log("/celeb/id: ", error);
-    res.status(500).json({ error: error.message });
-  }
-});
+// app.get("/fan/:uid", async (req, res) => {
+//   const { uid } = req.params;
 
-app.get("/fan/:uid", async (req, res) => {
-  const { uid } = req.params;
+//   try {
+//     const response = await prisma.fan.findUnique({
+//       where: {
+//         uid: uid,
+//       },
+//     });
+//     // const response = await pool.query(
+//     //   'Select * from public."Fan" where uid = $1',
+//     //   [uid]
+//     // );
 
-  try {
-    const response = await prisma.fan.findUnique({
-      where: {
-        uid: uid,
-      },
-    });
-    // const response = await pool.query(
-    //   'Select * from public."Fan" where uid = $1',
-    //   [uid]
-    // );
+//     res.send(response);
+//   } catch (error) {
+//     console.log("/celeb/id: ", error);
+//     res.status(500).json({ error: error.message });
+//   }
+// });
 
-    res.send(response);
-  } catch (error) {
-    console.log("/celeb/id: ", error);
-    res.status(500).json({ error: error.message });
-  }
-});
+// app.get("/celebs/:category", async (req, res) => {
+//   //query celeb table by category
+//   let { category } = req.params;
 
-app.get("/celebs/:category", async (req, res) => {
-  //query celeb table by category
-  let { category } = req.params;
+//   console.log("category: ", category);
 
-  console.log("category: ", category);
+//   // category = category.toLocaleLowerCase(); // to match db
 
-  // category = category.toLocaleLowerCase(); // to match db
+//   try {
+//     const result = await prisma.celeb.findMany({
+//       where: {
+//         category: {
+//           equals: category,
+//           mode: "insensitive",
+//         },
+//       },
+//     });
 
-  try {
-    const result = await prisma.celeb.findMany({
-      where: {
-        category: {
-          equals: category,
-          mode: "insensitive",
-        },
-      },
-    });
+//     console.log("result: ", result);
+//     // const result = await pool.query("SELECT * FROM celeb where category = $1", [
+//     //   category,
+//     // ]);
+//     // client.release(); // Release the connection back to the pool
 
-    console.log("result: ", result);
-    // const result = await pool.query("SELECT * FROM celeb where category = $1", [
-    //   category,
-    // ]);
-    // client.release(); // Release the connection back to the pool
+//     // console.log("res: ", result.rows);
 
-    // console.log("res: ", result.rows);
-
-    res.send(result);
-  } catch (error) {
-    console.log("error/celeb/cat: ", error);
-    res.status(500).json({ error: error.message });
-  }
-});
+//     res.send(result);
+//   } catch (error) {
+//     console.log("error/celeb/cat: ", error);
+//     res.status(500).json({ error: error.message });
+//   }
+// });
 
 //is a celeb or not
 app.get("/status", async (req, res) => {
@@ -265,90 +246,90 @@ app.get("/dashboard", async (req, res) => {
   }
 });
 
-app.get("/fanrequests", async (req, res) => {
-  const { uid } = req.query;
+// app.get("/fanrequests", async (req, res) => {
+//   const { uid } = req.query;
 
-  try {
-    // this queries all the requests that match the get query uid. Basically when a fan clicks there on there requests this retrieves them
+//   try {
+//     // this queries all the requests that match the get query uid. Basically when a fan clicks there on there requests this retrieves them
 
-    const response = await prisma.requests.findMany({
-      select: {
-        celebmessage: true,
-        requestid: true,
-        message: true,
-        reqtype: true,
-        reqaction: true,
-        timestamp1: true,
-        reqstatus: true,
-        celebuid: true,
-        fanuid: true,
-        celebuid: true,
-      },
-      where: {
-        fanuid: uid,
-      },
-      orderBy: {
-        requestid: "asc",
-      },
-    });
+//     const response = await prisma.requests.findMany({
+//       select: {
+//         celebmessage: true,
+//         requestid: true,
+//         message: true,
+//         reqtype: true,
+//         reqaction: true,
+//         timestamp1: true,
+//         reqstatus: true,
+//         celebuid: true,
+//         fanuid: true,
+//         celebuid: true,
+//       },
+//       where: {
+//         fanuid: uid,
+//       },
+//       orderBy: {
+//         requestid: "asc",
+//       },
+//     });
 
-    const check = await pool.query(
-      `select * from public."Requests" where fanuid = $1`,
-      [uid]
-    );
-    console.log("check: ", check.rows);
-    console.log("uid: ", uid);
+//     const check = await pool.query(
+//       `select * from public."Requests" where fanuid = $1`,
+//       [uid]
+//     );
+//     console.log("check: ", check.rows);
+//     console.log("uid: ", uid);
 
-    //array that will be sent back to the response, it's made up of objects of the individual request + celeb info(photo, name)
-    let reqAndCeleb = [];
+//     //array that will be sent back to the response, it's made up of objects of the individual request + celeb info(photo, name)
+//     let reqAndCeleb = [];
 
-    // when the user clicks on the requests, I want the individual requests to have the image of the celeb they requested and their name.
-    // note: I chose not to add this info(celeb name/photo) to the request table.
-    // on the requests table, and that's enough to get the celeb photo/name from the code below.
+//     // when the user clicks on the requests, I want the individual requests to have the image of the celeb they requested and their name.
+//     // note: I chose not to add this info(celeb name/photo) to the request table.
+//     // on the requests table, and that's enough to get the celeb photo/name from the code below.
 
-    // console.log("res: ", response);
-    if (response.length == 0) {
-      return res.send(reqAndCeleb);
-    }
-    for (const req of response) {
-      try {
-        const celebNameAndPhoto = await prisma.celeb.findUnique({
-          select: {
-            uid: true,
-            displayname: true,
-            imgurl: true,
-          },
-          where: {
-            uid: req.celebuid,
-          },
-        });
+//     // console.log("res: ", response);
+//     if (response.length == 0) {
+//       return res.send(reqAndCeleb);
+//     }
+//     for (const req of response) {
+//       try {
+//         const celebNameAndPhoto = await prisma.celeb.findUnique({
+//           select: {
+//             uid: true,
+//             displayname: true,
+//             imgurl: true,
+//           },
+//           where: {
+//             uid: req.celebuid,
+//           },
+//         });
 
-        // const celebNameAndPhoto = await pool.query(
-        //   "SELECT uid, displayName, imgUrl FROM celeb WHERE uid = $1 ",
-        //   [req.celebuid]
-        // );
+//         // const celebNameAndPhoto = await pool.query(
+//         //   "SELECT uid, displayName, imgUrl FROM celeb WHERE uid = $1 ",
+//         //   [req.celebuid]
+//         // );
 
-        const combinedObject = {
-          request: req,
-          celeb: celebNameAndPhoto,
-        };
+//         const combinedObject = {
+//           request: req,
+//           celeb: celebNameAndPhoto,
+//         };
 
-        reqAndCeleb.push(combinedObject);
-      } catch (error) {
-        console.log("/fanReq/map: ", error);
-      }
-    }
+//         reqAndCeleb.push(combinedObject);
+//       } catch (error) {
+//         console.log("/fanReq/map: ", error);
+//       }
+//     }
 
-    // Use Promise.all to wait for all promises to be resolved
-    await Promise.all(reqAndCeleb);
+//     // Use Promise.all to wait for all promises to be resolved
+//     await Promise.all(reqAndCeleb);
 
-    // const celebUidFromRequest = response.rows
+//     // const celebUidFromRequest = response.rows
 
-    res.send(reqAndCeleb);
-  } catch (error) {
-    console.log("/fanrequests: ", error);
-  }
-});
+//     res.send(reqAndCeleb);
+//   } catch (error) {
+//     console.log("/fanrequests: ", error);
+//   }
+// });
 
 app.put("/fulfill/:id", upload.single("videoFile"), async (req, res) => {
   const itemId = req.params.id; // Parse the id parameter as an integer
