@@ -16,8 +16,7 @@ function SignUp() {
   // const { data: sendpostrequest } = useGlobalAxios("post");
   const [selectedFile, setSelectedFile] = useState<File>();
 
-  // const { data: sendPutRequest } = useGlobalAxios("put");
-
+  //loooooooooooong function, because I tried to give the User and Celeb signup the same function
   async function handleSubmit(data: any, isCeleb: boolean) {
     // e.preventDefault();
 

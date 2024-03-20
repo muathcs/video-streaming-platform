@@ -13,17 +13,47 @@
 -> add 24 hour reply to celebs if they want to 
 
 
+-> change email address
+-> change password 
+-> change profile picture
+-> change description
+-> change display name
+
 // Major features
 
 -> Notifcation system
 -> Filter
-
 -> AI prediction model
-
 -> Live chat
 -> Live Call
+
+//fo
 
 -> Profile settings
 
 
 -> Maybe App
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-> Do students 

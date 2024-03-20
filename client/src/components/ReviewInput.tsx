@@ -56,7 +56,7 @@ function ReviewInput({
         </h2>
         <span
           onClick={() => setOpenModal(false)}
-          className=" text-red-500 text-[30px] absolute right-2 top-2 cursor-pointer "
+          className=" text-red-500 text-[30px] absolute right-5 top-5 cursor-pointer "
         >
           <IoClose />
         </span>

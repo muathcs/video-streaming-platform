@@ -1,7 +1,7 @@
 import { useAuth } from "../context/AuthContext";
 import completePic from "../assets/complete.png";
 import { MdOutlinePendingActions } from "react-icons/md";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { BsQuestionCircle } from "react-icons/bs";
 
 import { rejects } from "assert";
@@ -71,6 +71,13 @@ function FanRequestContainer({ request, celeb }: FanRequestContainerProp) {
   // Format the new date as a string
   const requestDeliveryDate = date.toISOString().split("T")[0];
 
+  const handleCardClick = () => {
+    // Pass information about the clicked celeb as state
+    navigate("/profile", {
+      state: { celeb },
+    });
+  };
+
   return (
     <div className=" cursor-pointer w-full flex justify-center items-center mt-10   ">
       <Modal openModal={openModal} setOpenModal={setOpenModal}>
@@ -113,6 +120,7 @@ function FanRequestContainer({ request, celeb }: FanRequestContainerProp) {
       <div className="relative flex p-5 flex-col items-center   md:flex-row    md:w-1/2 rounded-lg  shadow-lg shadow-black border border-gray-600 ">
         <div className=" w-1/3 h-[350px]  ">
           <img
+            onClick={handleCardClick}
             className="rounded-lg border w-full h-full object-cover relative   border-gray-600 "
             src={currentUser && celebPhoto}
             alt=""
@@ -121,7 +129,7 @@ function FanRequestContainer({ request, celeb }: FanRequestContainerProp) {
         <div>
           <div className=" h-[250px] ml-5 ">
             <p className="   text-lg wotfard  flex items-center gap-2  ">
-              Your Request to {celebName} is {reqstatus}{" "}
+              Your Request to {celebName} is {reqstatus}
               {reqstatus == "rejected" ? (
                 <span
                   onClick={() => setOpenModal(true)}

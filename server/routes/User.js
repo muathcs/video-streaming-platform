@@ -3,7 +3,7 @@ import express from "express";
 
 const router = express.Router();
 
-router.get("/:uid", async (req, res) => {
+router.get("/id/:uid", async (req, res) => {
   const { uid } = req.params;
 
   try {
@@ -17,6 +17,7 @@ router.get("/:uid", async (req, res) => {
     //   [uid]
     // );
 
+    console.log("here: ", response);
     res.send(response);
   } catch (error) {
     console.log("/celeb/id: ", error);
@@ -40,8 +41,10 @@ router.get("/status", async (req, res) => {
     //   [uid]
     // );
     if (result) {
+      console.log("true");
       res.send(true);
     } else {
+      console.log("false");
       res.send(false);
     }
   } catch (error) {

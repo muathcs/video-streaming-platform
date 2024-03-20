@@ -107,14 +107,14 @@ export function AuthProvider({ children }: { children: any }) {
   //reset password
   async function resetPassword(email: string) {
     try {
-      await sendPasswordResetEmail(auth, email);
+      // await sendPasswordResetEmail(auth, email);
     } catch (error) {
       console.error(error);
     }
   }
 
   useEffect(() => {
-    console.log("useEffectXX");
+    console.log("useEffectXXz");
     const unsubscribe = auth.onAuthStateChanged(
       async (
         user: any //this works
@@ -126,9 +126,11 @@ export function AuthProvider({ children }: { children: any }) {
 
         if (user) {
           try {
-            const response = await axios.get(`${apiUrl}/fan/status`, {
+            const response = await axios.get(`${apiUrl}/user/status`, {
               params: { uid: user.uid },
             });
+
+            console.log("celebStatus: ", response);
 
             let req;
 
@@ -136,7 +138,7 @@ export function AuthProvider({ children }: { children: any }) {
 
             if (response.data) {
               console.log("dashboard");
-              req = await axios.get(`${apiUrl}/dashboard`, {
+              req = await axios.get(`${apiUrl}/request/dashboard`, {
                 params: { data: user.uid },
               });
 

@@ -3,17 +3,17 @@ import { prisma } from "../index.js";
 import express from "express";
 import { upload } from "./Fan.js";
 import crypto from "crypto";
+import { uploadFile } from "../s3.js";
 
 const router = express.Router();
 
 const randomImageName = () => crypto.randomBytes(32).toString("hex");
 
 router.get("/fanrequests", async (req, res) => {
-  console.log("hereFXX");
   const { uid } = req.query;
 
   try {
-    // this queries all the requests that match the get query uid. Basically when a fan clicks there on there requests this retrieves them
+    // this queries all the requests that match the query uid. when a fan clicks  on the requests this retrieves them
 
     const response = await prisma.requests.findMany({
       select: {
@@ -40,8 +40,6 @@ router.get("/fanrequests", async (req, res) => {
       `select * from public."Requests" where fanuid = $1`,
       [uid]
     );
-    console.log("check: ", check.rows);
-    console.log("uid: ", uid);
 
     //array that will be sent back to the response, it's made up of objects of the individual request + celeb info(photo, name)
     let reqAndCeleb = [];
@@ -50,7 +48,6 @@ router.get("/fanrequests", async (req, res) => {
     // note: I chose not to add this info(celeb name/photo) to the request table.
     // on the requests table, and that's enough to get the celeb photo/name from the code below.
 
-    // console.log("res: ", response);
     if (response.length == 0) {
       return res.send(reqAndCeleb);
     }
@@ -79,7 +76,7 @@ router.get("/fanrequests", async (req, res) => {
 
         reqAndCeleb.push(combinedObject);
       } catch (error) {
-        console.log("/fanReq/map: ", error);
+        // console.log("/fanReq/map: ", error.message);
       }
     }
 
@@ -107,6 +104,8 @@ router.post("/", async (req, res) => {
     toPerson, //
   } = req.body;
 
+  console.log("request: ", requestAction);
+
   price = parseInt(price);
   try {
     const result = await prisma.requests.create({
@@ -122,6 +121,22 @@ router.post("/", async (req, res) => {
         tosomeoneelse: !!toSomeOneElse,
         fromperson: fromPerson,
         toperson: toPerson,
+      },
+    });
+
+    console.log("result: ", result);
+
+    const updateTotalSpent = await prisma.fan.update({
+      data: {
+        total_spent: {
+          increment: price,
+        },
+        num_of_requests: {
+          increment: 1,
+        },
+      },
+      where: {
+        uid: fanUid,
       },
     });
     // const result = await pool.query(
@@ -149,8 +164,6 @@ router.post("/", async (req, res) => {
 
 router.put("/fulfill/:id", upload.single("videoFile"), async (req, res) => {
   const itemId = req.params.id; // Parse the id parameter as an integer
-
-  console.log("on this one now");
 
   // resize image
   // const buffer = await sharp(req.file.buffer)
@@ -232,6 +245,9 @@ router.put("/fulfill/:id", upload.single("videoFile"), async (req, res) => {
 // this gets all the request for a specific celeb's dashboard so they can be fulfilled.
 router.get("/dashboard", async (req, res) => {
   const uid = req.query.data;
+
+  console.log("uid: ", uid);
+
   try {
     const response = await prisma.requests.findMany({
       where: {
@@ -242,6 +258,7 @@ router.get("/dashboard", async (req, res) => {
         requestid: "desc",
       },
     });
+
     // const response = await pool.query(
     //   "SELECT * from Requests WHERE reqstatus = $1 AND celebUid = $2 ORDER BY requestid DESC",
     //   ["pending", uid]

@@ -29,16 +29,18 @@ model Celeb {
 }
 
 model Fan {
-  fanid           String        @id @default(uuid())
-  email           String?       @db.VarChar(100)
-  displayname     String?       @db.VarChar(50)
-  total_spent     Int?
-  fav_categories  String?       @db.VarChar(50)
-  num_of_requests Int?
-  uid             String        @unique @db.VarChar(42)
-  imgurl          String?       @db.VarChar(150)
-  description     String?       @db.VarChar(350)
-  transactions    Transactions?
+  fanid           String   @id @default(uuid())
+  email           String?  @db.VarChar(100)
+  displayname     String?  @db.VarChar(50)
+  total_spent     Int?     @default(0)
+  fav_categories  String?  @db.VarChar(50)
+  num_of_requests Int?     @default(0)
+  uid             String   @unique @db.VarChar(42)
+  imgurl          String?  @db.VarChar(150)
+  description     String?  @db.VarChar(350)
+  created_at      DateTime @default(now()) // Default creation timestamp
+
+  transactions Transactions[]
 }
 
 model Requests {
@@ -63,10 +65,10 @@ model Review {
   reviewer_id   String   @db.VarChar(50)
   reviewed_id   String   @db.VarChar(50)
   message       String   @db.VarChar(350)
-  celebCelebid  String?
   event         String   @db.VarChar(20)
   reviewer_name String   @db.VarChar(40)
   Date          DateTime @default(now())
+  celebCelebid  String?
   rating        Int
   celeb         Celeb?   @relation(fields: [celebCelebid], references: [celebid])
 }
@@ -83,8 +85,8 @@ model Notification {
 model Transactions {
   transactionid String    @id @default(uuid())
   payee_id      Int?
+  buyer_id      Fan       @relation(fields: [transactionid], references: [fanid])
   amount        Int?
   status        String?   @db.VarChar(12)
   payment_date  DateTime? @db.Timestamp(6)
-  buyer_id      Fan       @relation(fields: [transactionid], references: [fanid])
 }

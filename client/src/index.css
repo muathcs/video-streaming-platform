@@ -75,6 +75,14 @@ body {
   ); /* Fallback for older browsers without RGBA-support */
 }
 
+.tooltip {
+  @apply invisible absolute;
+}
+
+.has-tooltip:hover .tooltip {
+  @apply visible z-50;
+}
+
 h1 {
   font-size: 3.2em;
   line-height: 1.1;

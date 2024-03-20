@@ -4,15 +4,8 @@ import bodyParser from "body-parser";
 import pool from "./db.js";
 import dotenv from "dotenv";
 dotenv.config({ path: "../.env" });
-import stripe from "stripe";
-// import s3 from "./s3.js";
-
-import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import multer from "multer";
-import crypto from "crypto";
-import e from "express";
 import { PrismaClient } from "@prisma/client";
-export const prisma = new PrismaClient();
 import CelebRoute from "./routes/Celebs.js";
 import FanRoute from "./routes/Fan.js";
 import RequestRoute from "./routes/Request.js";
@@ -21,6 +14,7 @@ import ReviewRoute from "./routes/Review.js";
 import UpdateRoute from "./routes/Update.js";
 import SearchRoute from "./routes/Search.js";
 import UserRoute from "./routes/User.js";
+import { createTheCelebs } from "./wikidata.js";
 // const result = await prisma.$executeRaw`
 //   UPDATE "Celeb"
 //   SET document_with_idx = TO_TSVECTOR('simple', displayname);
@@ -28,6 +22,7 @@ import UserRoute from "./routes/User.js";
 
 // createTheCelebs();
 const app = express();
+export const prisma = new PrismaClient();
 
 const PORT = process.env.PORT || 3001;
 app.use(express.json());
@@ -35,6 +30,8 @@ app.use(express.json());
 const allowedOrigins = [
   "https://vid-stream-cl.onrender.com",
   "http://localhost:5173",
+  "http://localhost:8081",
+  "http:// 10.0.2.2:8000/",
   "https://195.201.26.157",
   "https://116.203.134.67",
   "https://116.203.129.16",
@@ -43,6 +40,7 @@ const allowedOrigins = [
   "https://console.cron-job.org/jobs/4875267",
 ];
 
+//middleware
 app.use(
   cors({
     origin: allowedOrigins,
@@ -53,18 +51,14 @@ app.use(
     maxAge: 7200,
   })
 );
-
 app.use(bodyParser.json());
 app.use(express.static("public"));
-// multer middleware
+
+//function for image upload
 const storage = multer.memoryStorage();
 export const upload = multer({ storage: storage });
 
-const client = await pool.connect();
-
-// random image key generator for s3 storage
-const randomImageName = () => crypto.randomBytes(32).toString("hex");
-
+// routes
 app.use("/celebs", CelebRoute);
 app.use("/fan", FanRoute);
 app.use("/request", RequestRoute);
@@ -74,12 +68,11 @@ app.use("/update", UpdateRoute);
 app.use("/search", SearchRoute);
 app.use("/user", UserRoute);
 
-// app.get("/config", upload.single("file"), async (req, res) => {
-//   res.send({
-//     publishableKey: process.env.STRIPE_PUBLISHABLE_KEY,
-//   });
-// });
+app.get("/celebs", (req, res) => {
+  console.log("testing path ");
+});
 
+//Listen
 app.listen(PORT, () => {
   console.log("listing on...", PORT);
 });

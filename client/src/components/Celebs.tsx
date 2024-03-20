@@ -80,7 +80,7 @@ function Celebs() {
 
   return (
     <>
-      <div id="pagex" className=" flex flex-col  items-center gap-10   ">
+      <div id="pagex" className=" flex flex-col  items-center gap-10">
         <div className="h-[845px] py-4 w-full  flex justify-center flex-col items-center gap-10  ">
           {/* first iamge */}
           <div className="w-3/4  h-2/3 rounded-lg overflow-hidden relative ">

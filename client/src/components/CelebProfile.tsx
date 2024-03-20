@@ -8,6 +8,7 @@ import Review from "./Review";
 import { useGlobalAxios } from "../hooks/useGlobalAxios";
 import axios from "../api/axios";
 import Modal from "./Modal";
+import { formatter } from "../utilities/currencyFormatter";
 
 type StateType = {
   celeb: CelebType;
@@ -39,6 +40,8 @@ type ReviewSectionPlusReviewModalProps = {
   setOpenModal: (state: boolean) => void;
   reviews: reviewsType[];
 };
+
+// this is the review section shown in the celebprofile
 function ReviewSectionPlusReviewModal({
   openModal,
   setOpenModal,
@@ -83,7 +86,7 @@ function ReviewSectionPlusReviewModal({
             }}
             className="text-whtie text-left text-[24px]   underline font-bold cursor-pointer"
           >
-            view all
+            view all ({reviews.length})
           </p>
         </div>
         <div className="w-full  px-5 md:flex gap-2 flex-row  ">
@@ -115,6 +118,8 @@ type OrderModalType = {
   celebInfo: CelebType;
   currentUserUid: string;
 };
+
+// this is the order form shown on the celeb profile when Book a shoutout is clicked
 function OrderModal({
   setOrderModal,
   celebInfo,
@@ -198,8 +203,9 @@ function CelebProfile() {
           </div>
           <div className="flex flex-col pr-3">
             <p className="text-whtie text-left text-[24px] relative top-3 left-5  ">
-              Name: {celebInfo.displayname}
+              Name: {celebInfo.displayname} {formatter.format(celebInfo.price)}
             </p>
+
             <p className="text-left text-[18px] relative top-3 left-5 text-gray-600">
               {celebInfo.category}
             </p>

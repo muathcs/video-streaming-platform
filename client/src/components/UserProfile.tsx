@@ -5,9 +5,11 @@ import { GoGitPullRequest } from "react-icons/go";
 import { FaDollarSign } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { BiSolidCategory } from "react-icons/bi";
+import { formatter } from "../utilities/currencyFormatter";
 
 function UserProfile() {
   const { userInfo }: AuthContextType = useAuth();
+
   return (
     <div className="max-w-2xl mx-4 sm:max-w-lg  sm:mx-auto md:mx-auto lg:mx-auto xl:mx-auto mt-16 bg-white shadow-xl rounded-lg text-gray-900 border-2 ">
       <div className="rounded-t-lg h-52 overflow-hidden">
@@ -26,27 +28,39 @@ function UserProfile() {
       </div>
       <div className="text-center mt-2">
         <h2 className="font-semibold">{userInfo?.displayname}</h2>
-        <p className="text-gray-500">{userInfo?.fav_categories}Fav category</p>
+        <p className="text-gray-500">{userInfo?.fav_categories}</p>
       </div>
-      <ul className="py-4 mt-2 text-gray-700 flex items-center justify-around">
-        <li className="flex flex-col items-center justify-around">
-          <span className="text-blue-900 text-[20px]">
-            <GoGitPullRequest />
-          </span>
-
-          <div>2k</div>
+      <ul className="py-4 mt-2 text-gray-700 flex items-center justify-around ">
+        <li className="flex flex-col items-center justify-around  basis-[100%]">
+          <div className="text-blue-900 text-[20px] has-tooltip ">
+            <span className="tooltip rounded shadow-lg text-sm p-1 bg-gray-900 text-white 0 -mt-8 cursor-pointer">
+              Number of requests
+            </span>
+            <span className="">
+              <GoGitPullRequest />
+            </span>
+          </div>
+          <div>{userInfo?.num_of_requests}</div>
         </li>
-        <li className="flex flex-col items-center justify-between">
-          <span className="text-blue-900 text-[20px]">
+        <li className="flex flex-col items-center justify-between  basis-[100%]">
+          <div className="text-blue-900 text-[20px] has-tooltip ">
+            <span className="tooltip rounded shadow-lg text-sm p-1 bg-gray-900 text-white 0 -mt-8 cursor-pointer">
+              Amount of money spent
+            </span>
             <FaDollarSign />
-          </span>
-          <div>10k</div>
+          </div>
+          <div>
+            {userInfo?.total_spent && formatter.format(userInfo?.total_spent)}
+          </div>
         </li>
-        <li className="flex flex-col items-center justify-around">
-          <span className="text-blue-900 text-[20px]">
+        <li className="flex flex-col items-center justify-around  basis-[100%]">
+          <div className="text-blue-900 text-[20px] has-tooltip ">
+            <span className="tooltip rounded shadow-lg text-sm p-1 bg-gray-900 text-white 0 -mt-8 cursor-pointer">
+              create at{" "}
+            </span>
             <BiSolidCategory />
-          </span>
-          <div>15</div>
+          </div>
+          <div>{userInfo?.created_at?.toLocaleString().split("T")[0]}</div>
         </li>
       </ul>
       <div className="p-4 border-t mx-8 mt-2">

@@ -37,6 +37,9 @@ export type RequestType = {
   reqstatus: string;
   celebmessage: string;
   requestid: string;
+  tosomeoneelse: boolean;
+  fromperson: string;
+  toPerson: string;
 };
 
 export type UserInfoType = {
@@ -49,6 +52,7 @@ export type UserInfoType = {
   uid: string;
   imgurl: string;
   description: string;
+  created_at: Date;
 };
 
 // for the AuthContext.tsx file, handles the export of the useAuth function
@@ -65,4 +69,16 @@ export type AuthContextType = {
   uploadProfilePic: (imgurl: string, user: any) => void;
   celeb: boolean | undefined;
   userInfo: UserInfoType | undefined;
+};
+
+export type ReviewsType = {
+  Date: Date;
+  celebCelebid: string;
+  event: string;
+  message: string;
+  reviewed_id: string;
+  reviewer_id: string;
+  rating: number;
+  reviewer_name: string;
+  reviewid: string;
 };

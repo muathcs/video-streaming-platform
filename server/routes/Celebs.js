@@ -9,6 +9,8 @@ router.get("/", async (req, res) => {
   //query celeb table by category
   const { category } = req.params;
 
+  // console.log("react nativex", req.query);
+
   try {
     const result = await prisma.celeb.findMany();
     // client.release(); // Release the connection back to the pool
@@ -39,7 +41,6 @@ router.get("/category/:category", async (req, res) => {
       },
     });
 
-    console.log("result: ", result);
     // const result = await pool.query("SELECT * FROM celeb where category = $1", [
     //   category,
     // ]);
@@ -66,7 +67,6 @@ router.get("/:id", async (req, res) => {
       },
     });
 
-    console.log("response: ", response);
     // const response = await pool.query("Select * from celeb where uid = $1", [
     //   id,
     // ]);
@@ -88,8 +88,6 @@ router.post(
     const payload = JSON.parse(req.body.payLoad);
 
     const newImg = req.newUrl;
-
-    console.log("creating a celeb: ");
 
     const {
       displayName,
