@@ -3,7 +3,7 @@ import { useLocation } from "react-router-dom";
 import { bool } from "aws-sdk/clients/signer";
 import RequestForm from "./RequestForm";
 import { useAuth } from "../context/AuthContext";
-import { CelebType } from "../TsTypes/types";
+import { CelebType, ReviewsType } from "../TsTypes/types";
 import Review from "./Review";
 import { useGlobalAxios } from "../hooks/useGlobalAxios";
 import axios from "../api/axios";
@@ -23,22 +23,10 @@ reviewer_id: "GftG290txWMsA1ddMVgMcf4WoUs2";
 reviewer_name: "z";
 reviewid: "3594d349-12b3-4670-8ad7-2442d5a00b4e";
 
-type reviewsType = {
-  Date: Date;
-  celebCelebid: string;
-  event: string;
-  message: string;
-  reviewed_id: string;
-  reviewer_id: string;
-  rating: number;
-  reviewer_name: string;
-  reviewid: string;
-};
-
 type ReviewSectionPlusReviewModalProps = {
   openModal: boolean;
   setOpenModal: (state: boolean) => void;
-  reviews: reviewsType[];
+  reviews: ReviewsType[];
 };
 
 // this is the review section shown in the celebprofile
@@ -125,6 +113,7 @@ function OrderModal({
   celebInfo,
   currentUserUid,
 }: OrderModalType) {
+  console.log("order Modal: ", celebInfo);
   return (
     <div
       onClick={() => {
@@ -167,10 +156,12 @@ function CelebProfile() {
   const [orderModal, setOrderModal] = useState<bool>(false);
   const { currentUser, celeb }: any = useAuth();
   const { data: getData, error, loading } = useGlobalAxios("get");
-  const [reviews, setReviews] = useState<reviewsType[]>();
+  const [reviews, setReviews] = useState<ReviewsType[]>();
   const [openModal, setOpenModal] = useState(false);
 
   const { celeb: celebInfo }: StateType = state;
+
+  console.log("Celeb INfo: ", celebInfo);
 
   async function getReviews() {
     try {

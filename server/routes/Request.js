@@ -137,6 +137,7 @@ router.post("/", async (req, res) => {
       },
       where: {
         uid: fanUid,
+        r,
       },
     });
     // const result = await pool.query(
@@ -246,7 +247,7 @@ router.put("/fulfill/:id", upload.single("videoFile"), async (req, res) => {
 router.get("/dashboard", async (req, res) => {
   const uid = req.query.data;
 
-  console.log("uid: ", uid);
+  console.log("\n\n\nuid: ", uid);
 
   try {
     const response = await prisma.requests.findMany({

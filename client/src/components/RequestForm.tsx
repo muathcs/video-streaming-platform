@@ -9,6 +9,7 @@ type RequestProps = {
   price: number;
 };
 
+// this is coming from the orderModal component in /CelebProfile.tsx
 function RequestForm({ celebUid, fanUid, price }: RequestProps) {
   // const {
   //   data: sendUserRequestForm,
@@ -17,6 +18,8 @@ function RequestForm({ celebUid, fanUid, price }: RequestProps) {
   // } = useGlobalAxios("post", "yourDataEndpoint");
 
   const { data: postData }: any = useGlobalAxios("post", "request"); //
+
+  console.log("price form: ", price);
 
   const navigate = useNavigate();
 

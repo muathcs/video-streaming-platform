@@ -85,6 +85,8 @@ router.post(
   async (req, res) => {
     const { uid, imgurl } = req.body;
 
+    console.log("creating a cleeb");
+
     const payload = JSON.parse(req.body.payLoad);
 
     const newImg = req.newUrl;
@@ -127,7 +129,8 @@ router.post(
 );
 
 // this function adds an index to every celeb entry, this helps with the postgres text search
-async function indexNewCeleb(uid) {
+export async function indexNewCeleb(uid) {
+  console.log("indexinggggggggggggggggggggggg");
   const result = await prisma.$executeRaw`
     UPDATE "Celeb"
     SET document_with_idx = TO_TSVECTOR('simple', displayname)

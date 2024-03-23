@@ -36,6 +36,11 @@
 
 
 
+// errors
+
+Fix the Celeb routing, currenlty, if you access a celeb from the request section, the request price for that celeb is not available, this is the celeb price is currently routed into to the celeb 
+
+
 
 
 

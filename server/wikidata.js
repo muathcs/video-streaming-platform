@@ -9,6 +9,7 @@ import { createFirebaseUser } from "./fireBaseAdmin.js";
 import { updatePhotoUrl } from "./fireBaseAdmin.js";
 import { getUID } from "./fireBaseAdmin.js";
 import { prisma } from "./index.js";
+import { indexNewCeleb } from "./routes/Celebs.js";
 //main function
 export async function getCelebImages(celebName) {
   const celebId = await getCelebIdByName(celebName);
@@ -93,6 +94,8 @@ export async function getCelebImages(celebName) {
           imgurl: talentInfo.imgUrl,
         },
       });
+
+      indexNewCeleb(uid);
       // const result = await pool.query(
       //   "INSERT INTO celeb(displayName, username, category, price, email, description, uid, imgurl) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)",
       //   [
