@@ -167,7 +167,7 @@ function Celebs() {
         <p className=" w-full text-left pl-7 text-2xl md:hidden relative top-8 font-bold">
           Featured
         </p>
-        <div className="2xl:w-4/4   relative justify-items-center flex   w-full overflow-scroll   mb-10 pb-2  ">
+        <div className="2xl:w-4/4   relative justify-items-center flex   w-full overflow-scroll xl:overflow-auto   mb-10 pb-2  ">
           <div className="flex flex-row gap-5 pl-5 md:grid md:grid-cols-2  md:w-full  lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5  p-5 ">
             {0 ? (
               <h1>Loading</h1>

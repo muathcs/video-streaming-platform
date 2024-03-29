@@ -27,6 +27,8 @@ router.get("/fanrequests", async (req, res) => {
         celebuid: true,
         fanuid: true,
         celebuid: true,
+        fromperson: true,
+        price: true,
       },
       where: {
         fanuid: uid,
@@ -35,6 +37,8 @@ router.get("/fanrequests", async (req, res) => {
         requestid: "asc",
       },
     });
+
+    console.log("res: ", response);
 
     const check = await pool.query(
       `select * from public."Requests" where fanuid = $1`,
@@ -165,14 +169,25 @@ router.post("/", async (req, res) => {
 
 router.put("/fulfill/:id", upload.single("videoFile"), async (req, res) => {
   const itemId = req.params.id; // Parse the id parameter as an integer
+  console.log("reqid: ", itemId);
 
+  console.log("\nreqFul: ", req.file);
+  const file = req.body;
+
+  console.log("state: ", req.body);
+  // if (!file) {
+  //   return res.status(400).send("No file uploaded.");
+  // } else {
+  //   return res.status(301).send("No file uploaded.");
+  // }
+
+  // return;
   // resize image
   // const buffer = await sharp(req.file.buffer)
   //   .resize({ height: 1920, width: 1080, fit: "contained" })
   //   .toBuffer();
 
-  // if this if false, it means the we're sending an message text, instead of a audio, or video.
-
+  // for messages not videos
   if (!req.body.state) {
     try {
       const { celebReply } = req.body;
@@ -197,12 +212,14 @@ router.put("/fulfill/:id", upload.single("videoFile"), async (req, res) => {
       console.log("error/put/fulfill/message: ", error);
     }
   }
-  const state = JSON.parse(req.body.state);
+
+  //video or audio
+  const state = JSON.parse(req.body.state); //parse the state, which contains information about the req like requestuid, celeb and fan uid...
 
   try {
     if (state.reqtype == "video" || state.reqtype == "audio") {
-      const file = req.file; // we get this file, because we're sending a form data.
-      const key = `video/${Date.now()}-${randomImageName()}.webm`;
+      const file = req.file; // this contains the actual audio/video
+      const key = `video/${Date.now()}-${randomImageName()}.mp4`; // this is the key/name that will be saved on AWS
 
       const params = {
         Bucket: process.env.S3_BUCKET,
@@ -211,19 +228,22 @@ router.put("/fulfill/:id", upload.single("videoFile"), async (req, res) => {
         ContentType: req.file.mimetype,
       };
 
+      //upload to AWS
       const sender = await uploadFile(file.buffer, key, file.mimetype);
+
+      //now updated the database
 
       // const command = new PutObjectCommand(params);
       // const upload = await s3.send(command);
 
       // // Construct the URL of the uploaded video
-      const videoUrl = `https://${process.env.S3_BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com/${key}`;
+      const videoUrl = `https://${process.env.S3_BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com/${key}`; // will be saved in our db, under celebMessage of request table.
 
       // console.log("iditem: ::: ", itemId);
 
       const response = await prisma.requests.update({
         where: {
-          requestid: itemId,
+          requestid: itemId, //requestid
         },
         data: {
           reqstatus: "fulfilled",
