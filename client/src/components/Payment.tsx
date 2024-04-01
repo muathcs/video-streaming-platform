@@ -120,7 +120,7 @@ function Payment() {
                 />
 
                 <label htmlFor="option5" className={divStyle}>
-                  <p className="text-left ml-5">Stripe</p>
+                  <p className="text-left ml-5">Google</p>
                 </label>
               </div>
 

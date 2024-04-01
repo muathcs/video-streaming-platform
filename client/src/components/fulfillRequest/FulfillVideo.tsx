@@ -111,6 +111,8 @@ function FulfillVideo({ reRecord, setCelebReply }: FulfillRequestProps) {
       // Create a FormData object to send the Blob as a file
       const formData = new FormData();
 
+      console.log("videBlob: ", videoBlob);
+
       formData.append("videoFile", videoBlob, "videoFileName.mp4");
 
       console.log("here", formData.get("videoFile"));

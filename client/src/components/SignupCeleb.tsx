@@ -1,93 +1,106 @@
 import { useRef, useState } from "react";
+import { FieldValues, useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
+import { SocialMediaType } from "../TsTypes/types.ts";
 
 function SignupCeleb({
-  handleSubmit,
+  createUser,
   handleFileChange,
 }: {
-  handleSubmit: any;
+  createUser: any;
   handleFileChange: any;
 }) {
   const [rememberMe, setRememberMe] = useState<boolean>();
-  const userNameRef = useRef<any>();
 
-  // start
-  const emailRef = useRef<any>();
-  const passwordRef = useRef<any>();
-  const passwordConfirmRef = useRef<any>();
-  const [loading, setLoading] = useState(false);
   const [mostPopularSocialMedia, setMostPopularSocialMedia] =
     useState<string>();
 
+  const socialMedias: SocialMediaType[] = [
+    { name: "tiktok" },
+    { name: "twitter" },
+    { name: "instagram" },
+    { name: "facebook" },
+    { name: "snapchat" },
+  ];
+
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    formState: { errors, isSubmitting },
+    reset,
+  } = useForm();
+
+  async function onsubmit(data: FieldValues) {
+    createUser(data, true);
+    // reset(); // true indiciates this is a celeb being created.
+  }
+
   const inputStyle =
     "peer block min-h-[auto] w-full rounded border bg-transparent px-3 py-[0.32rem] leading-[2.15] outline-none transition-all duration-200 ease-linear focus:placeholder:opacity-100 data-[te-input-state-active]:placeholder:opacity-100 motion-reduce:transition-none dark:text-neutral-200 dark:placeholder:text-neutral-200  ";
-  const [celeb, setCeleb] = useState({});
-
-  async function createACeleb(e: any) {
-    setLoading(true);
-    const { name, value, innerText } = e.target;
-
-    setCeleb({
-      ...celeb,
-      [name !== undefined ? name : "remote"]:
-        value !== undefined ? value.toLowerCase() : innerText,
-    });
-
-    setLoading(false);
-  }
 
   return (
     <div>
-      <form
-        onSubmit={(e) =>
-          handleSubmit(
-            e,
-            userNameRef.current.value,
-            emailRef.current.value,
-            passwordRef.current.value,
-            passwordConfirmRef.current.value,
-            celeb
-          )
-        }
-      >
+      <form onSubmit={handleSubmit(onsubmit)}>
         {/* <!-- display Name --> */}
         <div className="relative mb-6" data-te-input-wrapper-init>
           <input
             type="text"
-            name="displayName"
             className={inputStyle}
             placeholder="display Name"
-            onChange={(e) => createACeleb(e)}
+            {...register("displayName", {
+              required: "display name is required",
+            })}
           />
+          {errors.displayName && (
+            <p className=" mt-2 text-red-400">{`${errors.displayName.message}`}</p>
+          )}
         </div>
         {/* <!-- username input --> */}
         <div className="relative mb-6" data-te-input-wrapper-init>
           <input
-            name="username"
             type="text"
-            ref={userNameRef}
             className={inputStyle}
             placeholder="username"
-            onChange={(e) => createACeleb(e)}
+            {...register("username", {
+              required: "username is required",
+            })}
           />
+          {errors.username && (
+            <p className=" mt-2 text-red-400">{`${errors.username.message}`}</p>
+          )}
         </div>
         {/* <!-- Password input --> */}
         <div className="relative mb-6" data-te-input-wrapper-init>
           <input
             type="password"
-            ref={passwordRef}
+            {...register("password", {
+              required: "password is required",
+              minLength: {
+                value: 6,
+                message: "min leng is 6 charecter",
+              },
+            })}
             className={inputStyle}
             placeholder="Password"
           />
+          {errors.password && (
+            <p className=" mt-2 text-red-400">{`${errors.password.message}`}</p>
+          )}
         </div>
         {/* <!-- confirm password --> */}
         <div className="relative mb-6" data-te-input-wrapper-init>
           <input
-            type="password"
-            ref={passwordConfirmRef}
+            type="confirmPassword"
+            {...register("confirmPassword", {
+              required: "confirm password is required",
+            })}
             className={inputStyle}
-            placeholder="Password confirmation"
+            placeholder="confirm password "
           />
+          {errors.confirmPassword && (
+            <p className=" mt-2 text-red-400">{`${errors.confirmPassword.message}`}</p>
+          )}
         </div>
 
         {/* <!-- Popular app input --> */}
@@ -98,92 +111,84 @@ function SignupCeleb({
           className="relative mb-6 flex gap-3  sm:flex-row flex-wrap"
           data-te-input-wrapper-init
         >
-          <button
-            type="button"
-            onClick={() => setMostPopularSocialMedia("tiktok")}
-            className="w-28 border-2 border-white"
-            style={{
-              background: mostPopularSocialMedia == "tiktok" ? "grey" : "",
-            }}
-          >
-            TikTok
-          </button>
-
-          <button
-            type="button"
-            onClick={() => setMostPopularSocialMedia("twitter")}
-            className="w-28 border-2 border-white "
-            style={{
-              background: mostPopularSocialMedia == "twitter" ? "grey" : "",
-            }}
-          >
-            Twitter
-          </button>
-          <button
-            type="button"
-            onClick={() => setMostPopularSocialMedia("facebook")}
-            className="w-28 border-2 border-white"
-            style={{
-              background: mostPopularSocialMedia == "facebook" ? "grey" : "",
-            }}
-          >
-            FaceBook
-          </button>
-          <button
-            type="button"
-            onClick={() => setMostPopularSocialMedia("snapchat")}
-            className="w-28 border-2 border-white"
-            style={{
-              background: mostPopularSocialMedia == "snapchat" ? "grey" : "",
-            }}
-          >
-            SnapChat
-          </button>
-          <button
-            type="button"
-            onClick={() => setMostPopularSocialMedia("instagram")}
-            className="w-28 border-2 border-white"
-            style={{
-              background: mostPopularSocialMedia == "instagram" ? "grey" : "",
-            }}
-          >
-            Instagram
-          </button>
+          {socialMedias.map((app) => (
+            <button
+              {...register("app", {
+                required: "pick a social media app",
+              })}
+              type="button"
+              onClick={() => {
+                setValue("app", app.name);
+                setMostPopularSocialMedia(app.name);
+              }}
+              className="w-28 border-2 border-white"
+              style={{
+                background: mostPopularSocialMedia == app.name ? "grey" : "",
+              }}
+            >
+              {app.name}
+            </button>
+          ))}
         </div>
+        {errors.app && (
+          <p className=" mt-2 text-red-400">{`${errors.app.message}`}</p>
+        )}
 
         {/* how many followers */}
         {mostPopularSocialMedia && (
           <div className="mb-6">
             <input
-              name="follower"
-              type="text"
-              onChange={(e) => createACeleb(e)}
+              {...register("followers", {
+                required: "Followers field is required",
+                validate: (value) => {
+                  const parsedValue = parseInt(value, 10);
+
+                  if (isNaN(parsedValue)) {
+                    return "Please enter a valid number for followers";
+                  }
+
+                  // Additional validation logic if needed
+
+                  return true; // Validation passed
+                },
+              })}
+              type="text" // Keep the type as text
               className={inputStyle}
-              placeholder={`how many followers do you have on ${mostPopularSocialMedia}`}
+              placeholder={`How many followers do you have on ${mostPopularSocialMedia}`}
             />
+            {errors.followers && (
+              <p className=" mt-2 text-red-400">{`${errors.followers.message}`}</p>
+            )}
           </div>
         )}
         {/* what is your @ */}
         {mostPopularSocialMedia && (
           <div className="mb-6">
             <input
-              onChange={(e) => createACeleb(e)}
-              name="account"
               type="text"
+              {...register("account", {
+                required: "input your social media handle?",
+              })}
               //   onChange={(e) => setEmail(e.target.value)}
               className={inputStyle}
               placeholder={`What is your @ on ${mostPopularSocialMedia}`}
             />
+            {errors.account && (
+              <p className=" mt-2 text-red-400">{`${errors.account.message}`}</p>
+            )}
           </div>
         )}
 
         {/* category */}
         <div className="relative mb-6" data-te-input-wrapper-init>
-          <label className="block text-sm font-medium mb-2 w-full sm:w-3/6 text-white text-left">
+          <label className="block text-sm font-medium mb-2 w-full sm:w-4/6 text-white text-left">
             What category do you specialise in?
           </label>
           <select
-            onChange={(e) => createACeleb(e)}
+            {...register("category", {
+              required:
+                "pick a category, choose other if nothing applies to you.",
+            })}
             name="category"
             data-te-select-init
             className="w-full h-10 pl-2 rounded-md bg-transparent  border text-black cursor-pointer"
@@ -197,28 +202,41 @@ function SignupCeleb({
             <option value="6">Question</option>
             <option value="7">Other</option>
           </select>
+          {errors.category && (
+            <p className=" mt-2 text-red-400">{`${errors.category.message}`}</p>
+          )}
         </div>
 
         {/* price */}
         <div className="mb-6">
+          <label className="flex mb-1 text-sm font-medium  w-full sm:w-6/6 text-white text-left">
+            How much do you wish to charge for your shoutouts?
+          </label>
           <input
-            name="price"
-            onChange={(e) => createACeleb(e)}
-            type="text"
+            {...register("price", {
+              required: "Pick a price",
+            })}
+            type="number"
             className={inputStyle}
             placeholder="$0.00"
           />
+          {errors.price && (
+            <p className=" mt-2 text-red-400">{`${errors.price.message}`}</p>
+          )}
         </div>
         {/* email  */}
         <div className="relative mb-6" data-te-input-wrapper-init>
           <input
-            name="email"
-            onChange={(e) => createACeleb(e)}
+            {...register("email", {
+              required: "email field is required",
+            })}
             type="text"
-            ref={emailRef}
             className={inputStyle}
             placeholder="email address"
           />
+          {errors.email && (
+            <p className=" mt-2 text-red-400">{`${errors.email.message}`}</p>
+          )}
         </div>
 
         {/* Message*/}
@@ -228,8 +246,9 @@ function SignupCeleb({
             Give a brief Description of yourself(this will go on your website)
           </div>
           <textarea
-            name="description"
-            onChange={(e) => createACeleb(e)}
+            {...register("description", {
+              required: "description is required. ",
+            })}
             className=" block min-h-[auto] w-full rounded border my-2 bg-transparent
                      px-2 py-2  h-40 shadow-sm shadow-blue-400   outline-none placeholder-style  relative
                       "
@@ -238,12 +257,18 @@ function SignupCeleb({
         </div>
 
         {/* <!-- Image --> */}
+        {errors.imgfile && (
+          <p className=" mt-2 text-red-400">{`${errors.imgfile.message}`}</p>
+        )}
         <div
           className="relative mb-2  h-[50px] border"
           data-te-input-wrapper-init
         >
           <input
             type="file"
+            {...register("imgfile", {
+              required: "choose profile image",
+            })}
             onChange={handleFileChange}
             className={
               inputStyle + " border-none right-0 w-[50%] h-[50px] absolute"
@@ -252,7 +277,7 @@ function SignupCeleb({
 
           <label
             htmlFor="exampleFormControlInput33"
-            className="pointer-events-none absolute left-3 top-0 mb-0 max-w-[90%] origin-[0_0] truncate pt-[0.37rem] leading-[2.15] text-neutral-500 transition-all duration-200 ease-out peer-focus:-translate-y-[1.15rem] peer-focus:scale-[0.8] peer-focus:text-primary peer-data-[te-input-state-active]:-translate-y-[1.15rem] peer-data-[te-input-state-active]:scale-[0.8] motion-reduce:transition-none dark:text-neutral-200 dark:peer-focus:text-primary"
+            className=" absolute right-2 top-3"
           >
             Pick a Profile image
           </label>
@@ -287,9 +312,9 @@ function SignupCeleb({
 
         {/* <!-- Submit button --> */}
         <button
-          disabled={loading}
+          disabled={isSubmitting}
           type="submit"
-          className="inline-block w-full bg-[#5e7dc2] mb-5 rounded bg-primary px-7 pb-2.5 pt-3 text-sm font-medium uppercase leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-primary-600 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:bg-primary-600 focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:bg-primary-700 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]"
+          className="inline-block w-full bg-[#5e7dc2] disabled:bg-gray-600 mb-5 rounded bg-primary px-7 pb-2.5 pt-3 text-sm font-medium uppercase leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-primary-600 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:bg-primary-600 focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:bg-primary-700 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]"
           data-te-ripple-init
           data-te-ripple-color="light"
         >

@@ -1,6 +1,11 @@
 import { Navigate, redirect, useLocation } from "react-router-dom";
+import Modal from "../Modal";
+import { useState } from "react";
+import ReviewInput from "../ReviewInput";
 
 function FulFilled() {
+  const [openModal, setOpenModal] = useState(false);
+
   console.log(!useLocation());
 
   const location = useLocation();
@@ -21,6 +26,8 @@ function FulFilled() {
     redirect("/");
   }
 
+  console.log("request:L ", request);
+
   console.log("stax", useLocation());
   function downloadVideo() {
     const link = document.createElement("a");
@@ -33,16 +40,25 @@ function FulFilled() {
 
   return (
     <div className="h-full w-full  py-10 gap-5  flex justify-center items-start ">
-      <div className="w-3/4  h-5/6 flex flex-col items-center justify-start gap-5">
+      <div className="w-3/4  h-5/6 flex flex-col items-center justify-start gap-5 ">
         <div className="border border-gray-600 h-1/6 w-2/4 rounded-lg p-5 ">
           You requested a {request.reqtype} from {celeb.displayname} on{" "}
           {request.timestamp1}.{" "}
         </div>
-        <div className="border border-gray-600 h-1/6 w-2/4 rounded-lg p-5">
+        <div className="border border-gray-600 h-1/6 w-2/4 rounded-lg p-5 ">
           Your req id is {request.requestid}, if there is an issue with your
           request, please contact our customer support{" "}
         </div>
-        <div className="border border-gray-600  h-4/6 w-2/4 rounded-lg p-5  ">
+        <Modal openModal={openModal} setOpenModal={setOpenModal}>
+          <ReviewInput
+            setOpenModal={setOpenModal}
+            celebuid={request.celebuid}
+            fanuid={request.fanuid}
+            date={request.timestamp1}
+            event={request.reqaction}
+          />
+        </Modal>
+        <div className="border border-gray-600  h-4/6 w-2/4 rounded-lg p-5   ">
           {request.reqtype == "audio" ? (
             <>
               <audio
@@ -67,7 +83,7 @@ function FulFilled() {
 
               <button
                 onClick={downloadVideo}
-                className="w-full py-7 bg-blue-300 hover:bg-blue-400 rounded-md relative top-10 text-lg"
+                className="w-2/4 py-4 bg-blue-300 hover:bg-blue-400 rounded-md relative top-10 text-lg"
               >
                 Download Video
               </button>
@@ -80,6 +96,12 @@ function FulFilled() {
             <h1>Nothing</h1>
           )}
         </div>
+        <button
+          onClick={() => setOpenModal(true)}
+          className=" border border-gray-600 w-2/4 py-4 rounded-lg hover:bg-[#37313d] mt-24"
+        >
+          Leave a Review
+        </button>
       </div>
     </div>
   );

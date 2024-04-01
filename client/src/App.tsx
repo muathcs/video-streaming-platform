@@ -14,17 +14,24 @@ import Success from "./components/Success";
 import Category from "./components/Category";
 import FulFilled from "./components/fulfillRequest/FulFilled";
 import HowTo from "./components/HowTo";
+import Settings from "./components/Settings";
+import Celebs from "./components/Celebs";
+import PaymentStatusWrapper from "./components/PaymentStatusWrapper";
+import UserProfile from "./components/UserProfile";
 
 function App() {
   return (
     <>
-      <div className="flex flex-col  absolute   w-full h-full  p-0 m-0 overflow-auto bg-[#121114] ">
+      <div className="">
         <NavBar />
         {/* <Celebs /> */}
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<SignUp />} />
-          <Route path="/" element={<PrivateRoute />} />
+          <Route path="/" element={<PrivateRoute />}>
+            <Route element={<Settings />} path="/settings" />
+            <Route element={<Celebs />} path="/" />
+          </Route>
           <Route path="/profile" element={<CelebProfile />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/requests" element={<FanRequests />} />
@@ -35,6 +42,7 @@ function App() {
           <Route path="/about" element={<HowTo />} />
           <Route path="/request/fulfilled" element={<FulFilled />} />
           <Route path="/browse/:category" element={<Category />} />
+          <Route path="/user/profile" element={<UserProfile />} />
           <Route path="/*" element={<PrivateRoute />} />
         </Routes>
       </div>

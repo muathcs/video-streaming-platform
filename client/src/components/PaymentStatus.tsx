@@ -36,6 +36,8 @@ const PaymentStatus = () => {
       "payment_intent_client_secret"
     );
 
+    console.log("client Secret: ", clientSecret);
+
     if (!clientSecret) {
       return;
     }

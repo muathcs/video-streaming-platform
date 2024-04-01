@@ -53,16 +53,23 @@ export function useGlobalAxios(
   // function to put to the database.
   async function putData(dataToPost: string, params?: unknown) {
     try {
-      await axios.put(dataToPost, params);
+      const response = await axios.put(dataToPost, params);
+      return response;
     } catch (error) {
       console.error(error);
+      throw error;
     }
   }
 
   async function getData(dataToGet: string, params?: unknown) {
     try {
-      await axios.get(dataToGet, { params: { params } });
-    } catch (error) {}
+      console.log("params: ", params);
+      const response = await axios.get(dataToGet, { params }); // Correct destructure here
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      throw error;
+    }
   }
 
   useEffect(() => {

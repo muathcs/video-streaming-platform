@@ -1,7 +1,9 @@
 import React, { useContext, useEffect, useState } from "react";
 import { auth } from "../auth/firebase";
 import {
+  EmailAuthProvider,
   createUserWithEmailAndPassword,
+  reauthenticateWithCredential,
   sendPasswordResetEmail,
   signInWithCustomToken,
   signInWithEmailAndPassword,
@@ -12,8 +14,10 @@ import axios from "../api/axios";
 import { RequestContext } from "./RequestContext";
 import { User as FirebaseUser } from "firebase/auth";
 import { apiUrl } from "../utilities/fetchPath";
+import { ErrorCause } from "aws-sdk/clients/qldb";
+import { AuthContextType, UserInfoType } from "../TsTypes/types";
 
-const AuthContext = React.createContext("");
+const AuthContext = React.createContext<AuthContextType | any>("");
 
 export function useAuth() {
   return useContext(AuthContext);
@@ -21,10 +25,11 @@ export function useAuth() {
 
 export function AuthProvider({ children }: { children: any }) {
   const [currentUser, setCurrentUser] = useState<FirebaseUser>();
-  const [token, setToken] = useState();
+  const [token, setToken] = useState<string>("");
   const [loading, setLoading] = useState(true);
+  const [userInfo, setUserInfo] = useState<UserInfoType>();
 
-  const [celeb, setCeleb] = useState();
+  const [celeb, setCeleb] = useState<boolean | undefined>();
 
   // const [requests, setRequests] = useState();
 
@@ -65,7 +70,7 @@ export function AuthProvider({ children }: { children: any }) {
 
   function login(email: any, password: any) {
     return signInWithEmailAndPassword(auth, email, password);
-    signInWithCustomToken;
+    // signInWithCustomToken;
   }
 
   function logout() {
@@ -76,43 +81,86 @@ export function AuthProvider({ children }: { children: any }) {
     }
   }
 
+  async function reauthenticateUser(password: string) {
+    const user = auth.currentUser;
+
+    if (user && user.email) {
+      const credential = EmailAuthProvider.credential(user.email, password);
+      console.log("bewlo creds: ", user.email);
+      try {
+        await reauthenticateWithCredential(user, credential);
+        console.log("User reauthenticated successfully.");
+        return {
+          state: true,
+          message: "User credentials updated successfully",
+        };
+      } catch (error: any) {
+        console.error("Error reauthenticating user:", error.message);
+        return { state: false, message: error.message };
+        // throw error;
+      }
+    } else {
+      console.error("No user is currently signed in.");
+    }
+  }
+
   //reset password
   async function resetPassword(email: string) {
     try {
-      await sendPasswordResetEmail(auth, email);
+      // await sendPasswordResetEmail(auth, email);
     } catch (error) {
       console.error(error);
     }
   }
 
   useEffect(() => {
+    console.log("useEffectXXz");
     const unsubscribe = auth.onAuthStateChanged(
       async (
         user: any //this works
       ) => {
+        console.log("user auth: ", auth.currentUser);
         setCurrentUser(user);
+
+        console.log("userXXX: ", user);
+
         if (user) {
           try {
-            const response = await axios.get(`${apiUrl}/status`, {
+            const response = await axios.get(`${apiUrl}/user/status`, {
               params: { uid: user.uid },
             });
 
+            console.log("celebStatus: ", response);
+
             let req;
 
+            let fullUserInfo;
+
             if (response.data) {
-              req = await axios.get(`${apiUrl}/dashboard`, {
+              console.log("dashboard");
+              req = await axios.get(`${apiUrl}/request/dashboard`, {
                 params: { data: user.uid },
               });
 
-              console.log("inside: ", req.data);
+              fullUserInfo = await axios.get(`${apiUrl}/celebs/${user.uid}`);
+              console.log("myFULL: ", fullUserInfo);
             } else {
-              req = await axios.get(`${apiUrl}/fanrequests`, {
+              console.log("here");
+              req = await axios.get(`${apiUrl}/request/fanrequests`, {
                 params: { data: user.uid },
               });
+
+              // const userInfo = await axios.get(`${apiUrl}/fan`, {
+              //   params: { uid: user.uid },
+              // });
+
+              fullUserInfo = await axios.get(`${apiUrl}/fan/${user.uid}`);
+              console.log("fullAuth: ", fullUserInfo.data);
             }
 
             setRequests(req.data);
             setCeleb(response.data);
+            setUserInfo(fullUserInfo.data);
           } catch (error) {
             console.error(error);
           }
@@ -129,15 +177,17 @@ export function AuthProvider({ children }: { children: any }) {
     return unsubscribe;
   }, []);
 
-  const value: any = {
+  const value: AuthContextType = {
     currentUser,
     resetPassword,
     token,
     signup,
     login,
     logout,
+    reauthenticateUser,
     uploadProfilePic,
     celeb,
+    userInfo,
   };
 
   // this is for the Request Context

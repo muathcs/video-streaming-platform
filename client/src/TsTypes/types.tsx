@@ -16,6 +16,10 @@ export type CelebType = {
   username: string;
 };
 
+export type SocialMediaType = {
+  name: string;
+};
+
 export type notification = {
   notificationid: number;
   message: string;
@@ -33,6 +37,48 @@ export type RequestType = {
   reqstatus: string;
   celebmessage: string;
   requestid: string;
+  tosomeoneelse: boolean;
+  fromperson: string;
+  toPerson: string;
 };
 
-// celeb t
+export type UserInfoType = {
+  fanid: string;
+  email: string;
+  displayname: string;
+  total_spent: number;
+  fav_categories: string;
+  num_of_requests: number;
+  uid: string;
+  imgurl: string;
+  description: string;
+  created_at: Date;
+};
+
+// for the AuthContext.tsx file, handles the export of the useAuth function
+export type AuthContextType = {
+  currentUser: any;
+  resetPassword: (email: string) => void;
+  token: string;
+  signup: (email: string, password: string, username: string) => any;
+  login: (email: string, password: string) => any;
+  logout: () => void;
+  reauthenticateUser: (
+    password: string
+  ) => Promise<{ state: boolean; message: any } | undefined>;
+  uploadProfilePic: (imgurl: string, user: any) => void;
+  celeb: boolean | undefined;
+  userInfo: UserInfoType | undefined;
+};
+
+export type ReviewsType = {
+  Date: Date;
+  celebCelebid: string;
+  event: string;
+  message: string;
+  reviewed_id: string;
+  reviewer_id: string;
+  rating: number;
+  reviewer_name: string;
+  reviewid: string;
+};

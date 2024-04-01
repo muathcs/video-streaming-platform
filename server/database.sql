@@ -81,3 +81,12 @@ CREATE TABLE Transactions (
     status VARCHAR(12),
     payement_date timestamp
 );
+
+
+-- UPDATE celeb
+-- SET document_with_idx = to_tsvector('english', displayname);
+
+
+-- -- Create an index on the tsvector column for faster search performance
+-- CREATE INDEX document_with_idx_index
+-- ON celeb USING gin(document_with_idx);

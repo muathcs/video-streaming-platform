@@ -1,3 +1,4 @@
+import axios from "../api/axios";
 import funky from "../assets/funky.jpg";
 function HowTo() {
   return (

@@ -13,17 +13,52 @@
 -> add 24 hour reply to celebs if they want to 
 
 
+-> change email address
+-> change password 
+-> change profile picture
+-> change description
+-> change display name
+
 // Major features
 
 -> Notifcation system
 -> Filter
-
 -> AI prediction model
-
 -> Live chat
 -> Live Call
+
+//fo
 
 -> Profile settings
 
 
 -> Maybe App
+
+
+
+// errors
+
+Fix the Celeb routing, currenlty, if you access a celeb from the request section, the request price for that celeb is not available, this is the celeb price is currently routed into to the celeb 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-> Do students 

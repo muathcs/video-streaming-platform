@@ -3,6 +3,11 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer utilities {
+  .review-star {
+    @apply hover:w-[3.2rem] hover:h-[3.2rem];
+  }
+}
 .wotfard {
   font-family: "wotfard";
 }
@@ -14,7 +19,6 @@
 
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -49,8 +53,17 @@ body {
   margin: 0;
   padding: 0;
   min-height: 100vh;
+  min-width: 100%;
   width: 100%;
   height: 100vh;
+}
+
+#root {
+  padding: 0;
+  margin: 0;
+  height: 100vh;
+  min-width: 100%;
+  /* position: absolute; */
 }
 
 .pay-select {
@@ -62,10 +75,12 @@ body {
   ); /* Fallback for older browsers without RGBA-support */
 }
 
-#root {
-  padding: 0;
-  margin: 0;
-  height: 100vh;
+.tooltip {
+  @apply invisible absolute;
+}
+
+.has-tooltip:hover .tooltip {
+  @apply visible z-50;
 }
 
 h1 {

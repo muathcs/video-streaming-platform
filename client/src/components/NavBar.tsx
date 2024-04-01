@@ -23,28 +23,24 @@ function classNames(...classes: any) {
 // Assuming userID is a variable containing the user ID you want to retrieve the image for
 
 function NavBar() {
-  const { logout, currentUser, celeb }: any = useAuth();
+  const { logout, currentUser, celeb, userInfo }: any = useAuth();
   const [notifications, setNotifications] = useState<notification[]>();
   const [unread, setUnread] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(false);
   const [searchCelebVal, setSearchCelebVal] = useState<string>("");
   const [celebsSuggestion, setCelebsSuggestion] = useState<string[]>([]);
   const optionsRef = useRef<HTMLParagraphElement | null>(null);
-  const [penOptions, setOpenOptions] = useState<Boolean>(false);
 
   const { data: putRequest } = useGlobalAxios("put");
   const navigate = useNavigate();
 
   useEffect(() => {
     setLoading(true);
-    console.log("mounting");
     const getNotification = async () => {
       try {
         const response = await axios.get(`${apiUrl}/notification`, {
           params: { data: currentUser.uid },
         });
-
-        console.log("this: ", response.data);
 
         setNotifications(response.data);
 
@@ -60,8 +56,6 @@ function NavBar() {
           setUnread(totalUnreadNotifications);
         }
         setLoading(false);
-
-        // console.log("response", response.data);
       } catch (error) {
         console.error(error);
       }
@@ -69,16 +63,13 @@ function NavBar() {
 
     getNotification();
 
-    return () => {
-      console.log("unmounting");
-    };
+    return () => {};
   }, []);
 
   // const celeb = localStorage.getItem("celeb");
 
   // this function will run when a user opens the notification tab, and will set all the notifications the user read to is_read = true
   function readNotifications() {
-    console.log("beofre: ", notifications);
     setNotifications((notifications) => {
       return (
         notifications?.map((notification) => ({
@@ -91,7 +82,6 @@ function NavBar() {
     putRequest(`${apiUrl}/notification`, { uid: currentUser.uid });
 
     setUnread(0);
-    console.log("beofre: ", notifications);
   }
 
   const path = celeb ? "dashboard" : celeb == undefined ? "" : "requests";
@@ -121,26 +111,23 @@ function NavBar() {
   const { requests } = useRequests();
 
   async function searchCeleb(keysSearch: string) {
-    console.log("val: ", searchCelebVal);
-
     try {
       const response = await axios.get(`${apiUrl}/search`, {
         params: { name: keysSearch },
       });
 
-      console.log("res: ", response.data);
+      console.log("search: ", response);
       setCelebsSuggestion(response.data);
     } catch (error) {
       console.error(error);
     }
-    console.log("he");
   }
 
   return (
     <>
       <Disclosure
         as="nav"
-        className=" text-[24px]  sm:text-[16px] z-10 block  sm:py-5 py-2 h-[20%]  lg:h-[10%]    "
+        className=" text-[24px]  sm:text-[16px] z-10  block  sm:py-5 py-2 h-[20%]  lg:h-[10%]      "
       >
         {({ open }) => (
           <>
@@ -303,7 +290,7 @@ function NavBar() {
                           <span className="sr-only">Open user menu</span>
                           <img
                             className="h-full w-full rounded-full object-cover"
-                            src={currentUser && currentUser.photoURL}
+                            src={userInfo && userInfo.imgurl}
                             alt=""
                           />
                         </Menu.Button>
@@ -320,35 +307,38 @@ function NavBar() {
                         <Menu.Items className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                           <Menu.Item>
                             {({ active }) => (
-                              <a
-                                href="#"
+                              <Link
+                                to="/user/profile"
+                                onClick={() => {
+                                  console.log("clickixn xx");
+                                }}
                                 className={classNames(
                                   active ? "bg-gray-100" : "",
                                   "block px-4 py-2 text-sm text-gray-700"
                                 )}
                               >
                                 Your Profile
-                              </a>
+                              </Link>
                             )}
                           </Menu.Item>
                           <Menu.Item>
                             {({ active }) => (
-                              <a
-                                href="#"
+                              <Link
+                                to="settings"
                                 className={classNames(
                                   active ? "bg-gray-100" : "",
                                   "block px-4 py-2 text-sm text-gray-700"
                                 )}
                               >
                                 Settings
-                              </a>
+                              </Link>
                             )}
                           </Menu.Item>
                           <Menu.Item>
                             {({ active }) => (
                               <a
                                 onClick={handleLogout}
-                                href="#"
+                                href=""
                                 className={classNames(
                                   active ? "bg-gray-100" : "",
                                   "block px-4 py-2 text-sm text-gray-700"
@@ -376,10 +366,7 @@ function NavBar() {
 
                     <div className="top-16 w-full ">
                       <Combobox>
-                        <div
-                          onClick={() => setOpenOptions(true)}
-                          onBlur={() => setOpenOptions(false)}
-                        >
+                        <div>
                           <p
                             // onClick={() => searchCeleb()}
                             className="absolute  z-10 text-black text-[22px] mt-1 sm:mt-2 lg:mt-2 right-7 flex items-center hover:text-gray-700 cursor-pointer"
@@ -389,7 +376,6 @@ function NavBar() {
                           <input
                             onClick={() => {
                               // searchCeleb(searchCelebVal);
-                              console.log("ref: ", celebsSuggestion);
 
                               if (!searchCelebVal) {
                                 setCelebsSuggestion([]);
@@ -399,7 +385,7 @@ function NavBar() {
                             className="text-black py-1  sm:py-2  rounded-full w-full border border-gray-500 bg-white px-5"
                             value={searchCelebVal}
                             onChange={(e) => {
-                              setSearchCelebVal((prevSearchCelebVal) => {
+                              setSearchCelebVal(() => {
                                 const newValue = e.target.value;
                                 searchCeleb(newValue); // pass the updated value to your function
                                 return newValue; // return the new value to update the state
@@ -433,11 +419,6 @@ function NavBar() {
                                       >
                                     ) => {
                                       const target = e.target as HTMLElement;
-                                      console.log(
-                                        "value: ",
-                                        target.innerText,
-                                        celeb
-                                      );
 
                                       navigate("/profile", {
                                         state: { celeb },

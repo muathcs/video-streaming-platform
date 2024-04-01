@@ -1,121 +1,137 @@
 import { useRef, useState } from "react";
+import { FieldValues, useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
 
 function SignupUser({
-  handleSubmit,
+  createUser,
   handleFileChange,
 }: {
-  handleSubmit: any;
+  createUser: any;
   handleFileChange: any;
 }) {
+  // start here
   const [rememberMe, setRememberMe] = useState<boolean>();
-  const [password, setPassWord] = useState<string>("");
-  const userNameRef = useRef<any>();
-
-  // start
-  const emailRef = useRef<any>();
-  const passwordRef = useRef<any>();
-  const passwordConfirmRef = useRef<any>();
-  const [loading, setLoading] = useState(false);
   const [user, setUser] = useState({});
 
-  async function createAUser(e: any) {
-    setLoading(true);
-    const { name, value, innerText } = e.target;
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+    reset,
+    getValues,
+  } = useForm();
 
-    setUser({
-      ...user,
-      [name !== undefined ? name : "remote"]:
-        value !== undefined ? value.toLowerCase() : innerText,
-    });
-    setLoading(false);
-  }
+  // async function createAUser(e: any) {
+  //   const { name, value, innerText } = e.target;
+
+  //   setUser({
+  //     ...user,
+  //     [name !== undefined ? name : "remote"]:
+  //       value !== undefined ? value.toLowerCase() : innerText,
+  //   });
+  // }
+
+  const onSubmit = async (data: FieldValues) => {
+    const values = getValues();
+
+    createUser(data, false);
+
+    reset(); // true indiciates this is a celeb being created.
+
+    // reset();
+  };
 
   return (
     <>
       <div>
         <form
-          onSubmit={(e) =>
-            handleSubmit(
-              e,
-              userNameRef.current.value,
-              emailRef.current.value,
-              passwordRef.current.value,
-              passwordConfirmRef.current.value,
-              user,
-              true
-            )
-          }
+          onSubmit={handleSubmit(onSubmit)}
+          // onSubmit={(e) =>
+          //   handleSubmit(
+          //     e,
+          //     userNameRef.current.value,
+          //     emailRef.current.value,
+          //     passwordRef.current.value,
+          //     passwordConfirmRef.current.value,
+          //     user,
+          //     true
+          //   )
+          // }
         >
           {/* <!-- username input --> */}
           <div className="relative mb-6" data-te-input-wrapper-init>
             <input
               type="text"
-              ref={userNameRef}
-              name="username"
-              onChange={(e) => createAUser(e)}
+              {...register("displayname", {
+                required: "displayname is required",
+              })}
               className="peer block min-h-[auto] w-full rounded border bg-transparent
-                     px-3 py-[0.32rem] leading-[2.15] outline-none transition-all duration-200 
-                     ease-linear focus:placeholder:opacity-100 data-[te-input-state-active]:placeholder:opacity-100
-                      motion-reduce:transition-none dark:text-neutral-200 dark:placeholder:text-neutral-200 
+                     px-3 py-[0.32rem] leading-[2.15] 
                       "
-              placeholder="username"
+              placeholder="displayname"
             />
+            {errors.displayname && (
+              <p className=" mt-2 text-red-400">{`${errors.displayname.message}`}</p>
+            )}
           </div>
           {/* email  */}
           <div className="relative mb-6" data-te-input-wrapper-init>
             <input
               type="text"
-              ref={emailRef}
-              name="email"
-              onChange={(e) => createAUser(e)}
+              {...register("email", {
+                required: "Email is required",
+              })}
               className="peer block min-h-[auto] w-full rounded border bg-transparent
-                     px-3 py-[0.32rem] leading-[2.15] outline-none transition-all duration-200 
-                     ease-linear focus:placeholder:opacity-100 data-[te-input-state-active]:placeholder:opacity-100
-                      motion-reduce:transition-none dark:text-neutral-200 dark:placeholder:text-neutral-200 
+                     px-3 py-[0.32rem] leading-[2.15] 
               "
               placeholder="email"
-              // placeholder={email.length > 0 ? "Emailxx addressx" : ""}
             />
-            <label
-              htmlFor="exampleFormControlInput3"
-              className="pointer-events-none absolute left-3 top-0 mb-0 max-w-[90%] origin-[0_0] truncate pt-[0.37rem] leading-[2.15] text-neutral-500 transition-all duration-200 ease-out peer-focus:-translate-y-[1.15rem] peer-focus:scale-[0.8] peer-focus:text-primary peer-data-[te-input-state-active]:-translate-y-[1.15rem] peer-data-[te-input-state-active]:scale-[0.8] motion-reduce:transition-none dark:text-neutral-200 dark:peer-focus:text-primary"
-            >
-              {/* {emailRef.current.value.length == 0 ? "Email address" : ""} */}
-            </label>
+            {errors.email && (
+              <p className=" mt-2 text-red-400">{`${errors.email.message}`}</p>
+            )}
           </div>
 
           {/* <!-- Password input --> */}
           <div className="relative mb-6" data-te-input-wrapper-init>
             <input
               type="password"
-              ref={passwordRef}
-              onChange={(e) => setPassWord(e.target.value)}
-              className="peer block min-h-[auto] w-full rounded border bg-transparent px-3 py-[0.32rem] leading-[2.15] outline-none transition-all duration-200 ease-linear focus:placeholder:opacity-100 data-[te-input-state-active]:placeholder:opacity-100 motion-reduce:transition-none dark:text-neutral-200 dark:placeholder:text-neutral-200 [&:not([data-te-input-placeholder-active])]:placeholder:opacity-0"
+              {...register("password", {
+                required: "password is required",
+                minLength: {
+                  value: 10,
+                  message: "password must be at least 10 charecters",
+                },
+              })}
+              className="peer block min-h-[auto] w-full rounded border bg-transparent px-3 py-[0.32rem] leading-[2.15]  "
               placeholder="Password"
             />
-            <label
-              htmlFor="exampleFormControlInput33"
-              className="pointer-events-none absolute left-3 top-0 mb-0 max-w-[90%] origin-[0_0] truncate pt-[0.37rem] leading-[2.15] text-neutral-500 transition-all duration-200 ease-out peer-focus:-translate-y-[1.15rem] peer-focus:scale-[0.8] peer-focus:text-primary peer-data-[te-input-state-active]:-translate-y-[1.15rem] peer-data-[te-input-state-active]:scale-[0.8] motion-reduce:transition-none dark:text-neutral-200 dark:peer-focus:text-primary"
-            >
-              {password.length == 0 ? "Password" : ""}
-            </label>
+            {errors.password && (
+              <p className=" mt-2 text-red-400">{`${errors.password.message}`}</p>
+            )}
           </div>
           {/* <!-- confirm password --> */}
           <div className="relative mb-6" data-te-input-wrapper-init>
             <input
               type="password"
-              ref={passwordConfirmRef}
-              onChange={(e) => setPassWord(e.target.value)}
-              className="peer block min-h-[auto] w-full rounded border bg-transparent px-3 py-[0.32rem] leading-[2.15] outline-none transition-all duration-200 ease-linear focus:placeholder:opacity-100 data-[te-input-state-active]:placeholder:opacity-100 motion-reduce:transition-none dark:text-neutral-200 dark:placeholder:text-neutral-200 [&:not([data-te-input-placeholder-active])]:placeholder:opacity-0"
-              placeholder="Password"
+              {...register("confirmPassword", {
+                required: "Confirm password is required",
+                validate: (value) =>
+                  value === getValues("password") || "password must match",
+              })}
+              className="peer block min-h-[auto] w-full rounded border bg-transparent px-3 py-[0.32rem] leading-[2.15]  "
+              placeholder="confirmPassword"
             />
-            <label
-              htmlFor="exampleFormControlInput33"
-              className="pointer-events-none absolute left-3 top-0 mb-0 max-w-[90%] origin-[0_0] truncate pt-[0.37rem] leading-[2.15] text-neutral-500 transition-all duration-200 ease-out peer-focus:-translate-y-[1.15rem] peer-focus:scale-[0.8] peer-focus:text-primary peer-data-[te-input-state-active]:-translate-y-[1.15rem] peer-data-[te-input-state-active]:scale-[0.8] motion-reduce:transition-none dark:text-neutral-200 dark:peer-focus:text-primary"
-            >
-              {password.length == 0 ? "confirm password" : ""}
-            </label>
+            {errors.confirmPassword && (
+              <p className=" mt-2 text-red-400">{`${errors.confirmPassword.message}`}</p>
+            )}
+          </div>
+          {/* <!-- Description  --> */}
+          <div className="relative mb-6" data-te-input-wrapper-init>
+            <textarea
+              {...register("description")}
+              className="peer block min-h-[auto] w-full rounded border bg-transparent px-3 py-[0.32rem] leading-[2.15]"
+              placeholder="description (optional)"
+            />
           </div>
           {/* <!-- Image --> */}
           <div
@@ -124,21 +140,16 @@ function SignupUser({
           >
             <input
               type="file"
+              {...register("imgfile")}
               onChange={handleFileChange}
               className=" block min-h-[auto] w-2/4 rounded 
-                     bg-transparent px-3 py-[0.32rem] leading-[2.15] outline-none 
-                     transition-all duration-200 ease-linear focus:placeholder:opacity-100 
-                     data-[te-input-state-active]:placeholder:opacity-100 motion-reduce:transition-none
-                     hover:cursor-pointer
-                      dark:text-neutral-200 dark:placeholder:text-neutral-200 [&:not([data-te-input-placeholder-active])]:placeholder:opacity-0
-                        right-0 h-[50px] absolute
+                     bg-transparent px-3 py-[0.32rem] leading-[2.15] cursor-pointer
                       "
-              placeholder="Password"
             />
 
             <label
               htmlFor="exampleFormControlInput33"
-              className="pointer-events-none absolute left-3 top-0 mb-0 max-w-[90%] origin-[0_0] truncate pt-[0.37rem] leading-[2.15] text-neutral-500 transition-all duration-200 ease-out peer-focus:-translate-y-[1.15rem] peer-focus:scale-[0.8] peer-focus:text-primary peer-data-[te-input-state-active]:-translate-y-[1.15rem] peer-data-[te-input-state-active]:scale-[0.8] motion-reduce:transition-none dark:text-neutral-200 dark:peer-focus:text-primary"
+              className="absolute right-2 top-3 cursor-pointer"
             >
               Pick a Profile image
             </label>
@@ -173,9 +184,9 @@ function SignupUser({
 
           {/* <!-- Submit button --> */}
           <button
-            disabled={loading}
             type="submit"
-            className="inline-block w-full bg-[#5e7dc2] mb-5 rounded bg-primary px-7 pb-2.5 pt-3 text-sm font-medium uppercase leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-primary-600 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:bg-primary-600 focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:bg-primary-700 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]"
+            disabled={isSubmitting}
+            className="inline-block w-full bg-[#5e7dc2] disabled:bg-gray-600 mb-5 rounded bg-primary px-7 pb-2.5 pt-3 text-sm font-medium uppercase leading-normal text-white "
             data-te-ripple-init
             data-te-ripple-color="light"
           >

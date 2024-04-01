@@ -7,8 +7,11 @@ import pool from "./db.js";
 import { celebrityNames } from "./celebName.js";
 import { createFirebaseUser } from "./fireBaseAdmin.js";
 import { updatePhotoUrl } from "./fireBaseAdmin.js";
+import { getUID } from "./fireBaseAdmin.js";
+import { prisma } from "./index.js";
+import { indexNewCeleb } from "./routes/Celebs.js";
 //main function
-async function getCelebImages(celebName) {
+export async function getCelebImages(celebName) {
   const celebId = await getCelebIdByName(celebName);
   //   console.log("id: ", celebId);
   try {
@@ -59,10 +62,12 @@ async function getCelebImages(celebName) {
     const email = celebName.replace(/\s+/g, "-").toLowerCase() + "@gmail.com";
 
     const password = "123456";
-    const fireBaseUser = await createFirebaseUser(email, password); // creates login and password for user on firebase.
-    updatePhotoUrl(fireBaseUser.uid, imgFileUrl);
 
-    console.log("firebaseuser: ", fireBaseUser);
+    // const fireBaseUser = await createFirebaseUser(email, password); // creates login and password for user on firebase.
+    // console.log("email: ", email);
+    const uid = await getUID(email);
+
+    // updatePhotoUrl(uid, imgFileUrl);
 
     // create a celeb row in the db.
     const talentInfo = {
@@ -73,27 +78,50 @@ async function getCelebImages(celebName) {
       reviews: 5,
       price: Math.floor(Math.random() * (250 - 20 + 1)) + 20,
       imgUrl: imgFileUrl,
-      uid: fireBaseUser.uid,
+      uid: uid ? uid : "nothing",
     };
 
     try {
-      const result = await pool.query(
-        "INSERT INTO celeb(displayName, username, category, price, email, description, uid, imgurl) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)",
-        [
-          talentInfo.name,
-          talentInfo.name,
-          talentInfo.category,
-          talentInfo.price,
-          talentInfo.email,
-          talentInfo.description,
-          talentInfo.uid,
-          talentInfo.imgUrl,
-        ]
-      );
+      const result = await prisma.celeb.create({
+        data: {
+          displayname: talentInfo.name,
+          username: talentInfo.name,
+          category: talentInfo.category,
+          price: talentInfo.price,
+          email: talentInfo.email,
+          description: talentInfo.description,
+          uid: talentInfo.uid,
+          imgurl: talentInfo.imgUrl,
+        },
+      });
+
+      indexNewCeleb(uid);
+      // const result = await pool.query(
+      //   "INSERT INTO celeb(displayName, username, category, price, email, description, uid, imgurl) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)",
+      //   [
+      //     talentInfo.name,
+      //     talentInfo.name,
+      //     talentInfo.category,
+      //     talentInfo.price,
+      //     talentInfo.email,
+      //     talentInfo.description,
+      //     talentInfo.uid,
+      //     talentInfo.imgUrl,
+      //   ]
+      // );
+
+      console.log("uploaded to db");
 
       //   await pool.end();
       return;
-    } catch (error) {}
+    } catch (error) {
+      console.log(
+        "whilst uploading to db from wikidata: ",
+        error,
+        "imglengh: ",
+        talentInfo.imgUrl.length
+      );
+    }
 
     // console.log("url: ", imageValue);
   } catch (error) {
@@ -188,7 +216,7 @@ async function getEntityDescription(entityId) {
     const descriptions = response.data.entities[entityId].descriptions;
 
     if (descriptions && descriptions.en && descriptions.en.value) {
-      console.log(descriptions.en.value);
+      // console.log(descriptions.en.value);
       return descriptions.en.value;
     } else {
       return "Description not found";
@@ -257,7 +285,7 @@ const categoryDict = {
 // getCelebImages(celebName);
 const a = await getAllUserUIDs();
 
-console.log(a.length);
+// console.log(a.length);
 
 // export const cnames = [
 //   "Robert Downey Jr.",
@@ -273,10 +301,13 @@ console.log(a.length);
 //   "Elon Musk",
 //   "Oprah Winfrey",
 // ];
-// for (let i = 0; i < celebrityNames.length; i++) {
-//   getCelebImages(celebrityNames[i], i);
-// }
 
-getCelebImages("Tom Cruise");
+export function createTheCelebs() {
+  for (let i = 0; i < celebrityNames.length; i++) {
+    getCelebImages(celebrityNames[i], i);
+  }
+}
+
+// getCelebImages("Tom Cruise");
 // getCelebImages("Ricky Gervais");
 // console.dir(a, { maxArrayLength: null });

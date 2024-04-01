@@ -31,18 +31,19 @@ function FulfillRequest() {
       celebReply.append("state", JSON.stringify(state));
 
     // Now formDataEntries is an array of key-value pairs
-    // console.log("statE: ", state);
-
-    console.log("d: ", state);
 
     if (state.reqtype == "message") {
-      sendPutRequest(`/fulfill/${state.requestid}`, { celebReply });
+      sendPutRequest(`${apiUrl}/request/fulfill/${state.requestid}`, {
+        celebReply,
+      });
       if (!error) {
         notify(); //pop up notification
       }
     } else {
-      sendPutRequest(`/fulfill/${state.requestid}`, celebReply);
-      console.log("celebReply: ", celebReply);
+      sendPutRequest(
+        `${apiUrl}/request/fulfill/${state.requestid}`,
+        celebReply
+      );
 
       if (!error) {
         notify(); //pop up notification

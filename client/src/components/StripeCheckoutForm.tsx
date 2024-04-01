@@ -7,10 +7,14 @@ import React, { useContext, useEffect, useState } from "react";
 import { RequestContext } from "../context/RequestContext";
 import { useGlobalAxios } from "../hooks/useGlobalAxios";
 import { Bounce, ToastContainer, toast } from "react-toastify";
+import { apiUrl } from "../utilities/fetchPath";
+import { useLocation } from "react-router-dom";
 
 export default function StripeCheckoutForm() {
   const stripe = useStripe();
   const elements = useElements();
+  const location = useLocation();
+  const currentUrl = window.location.origin;
 
   const [message, setMessage] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -57,6 +61,8 @@ export default function StripeCheckoutForm() {
     });
   }, [stripe]);
 
+  console.log("location ; ", window.location.origin);
+
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     // We don't want to let default form submission happen here,
     // which would refresh the page.
@@ -73,7 +79,7 @@ export default function StripeCheckoutForm() {
     const { error }: any = await stripe.confirmPayment({
       elements,
       confirmParams: {
-        return_url: "http://localhost:5173/paymentstatus",
+        return_url: `${currentUrl}/paymentstatus`,
       },
     });
 
@@ -107,7 +113,7 @@ export default function StripeCheckoutForm() {
   };
 
   const notify = () => {
-    toast("🦄 Payment Beign made, please wait", {
+    toast("🦄 Payment processing, please wait", {
       position: "top-right",
       autoClose: false,
       hideProgressBar: false,

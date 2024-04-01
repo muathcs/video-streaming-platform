@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 function Filter({
   originalCelebs,
@@ -8,9 +8,31 @@ function Filter({
   selectedFilters,
 }: any) {
   const [rangeValue, setRangeValue] = useState(20);
+  const [lowToHighCheck, setLowToHighCheck] = useState<boolean | undefined>(
+    false
+  );
+  const [highToLowCheck, setHighToLowCheck] = useState<boolean | undefined>(
+    false
+  );
+
+  // this sets the value of the radio buttons, because there are to ways to remove filters, this function checks if the selectedFilter have been updated from the
+  // category's compmonent removeFilter function.
+  useEffect(() => {
+    // This effect will run whenever selectedFilters changes
+    const checkHigh = selectedFilters.some((filter: any) => {
+      return filter.filterName === "high-to-low" && filter.visible === true;
+    });
+
+    const checkLow = selectedFilters.some((filter: any) => {
+      return filter.filterName === "low-to-high" && filter.visible === true;
+    });
+
+    // Update highToLowCheck state based on the check value
+    setHighToLowCheck(checkHigh);
+    setLowToHighCheck(checkLow);
+  }, [selectedFilters]);
 
   function handleRangeChange(e: React.ChangeEvent<HTMLInputElement>) {
-    console.log("value: ", e.target.value);
     setRangeValue(parseInt(e.target.value, 10));
   }
 
@@ -31,11 +53,14 @@ function Filter({
         { filterType: filterType, filterName: filterName, visible: true },
       ]);
     }
-
-    console.log("selected: ", selectedFilters);
   }
 
+  // should probably put the below functions into one function and add a swithc statement.
+
   function filterLowToHigh() {
+    setLowToHighCheck(true);
+    setHighToLowCheck(false);
+
     let newState = [...celebs];
 
     handleFilters("price", "low-to-high");
@@ -45,6 +70,9 @@ function Filter({
   }
 
   function highToLow() {
+    setHighToLowCheck(true);
+    setLowToHighCheck(false);
+
     handleFilters("price", "high-to-low");
     let newState = [...celebs];
     newState = newState.slice().sort((a, b) => a.price - b.price);
@@ -52,7 +80,6 @@ function Filter({
   }
 
   function filterPrice() {
-    console.log("here");
     let newState = [...originalCelebs];
 
     newState = newState.filter((celeb) => celeb.price > rangeValue);
@@ -65,9 +92,12 @@ function Filter({
     setRangeValue(() => {
       return 10;
     });
+    setHighToLowCheck(false);
+    setLowToHighCheck(false);
+    setSelectedFilters([]);
   }
   return (
-    <div className="w-[20%] ">
+    <div className="w-full  ">
       <details
         open
         className=" max-w-md  overflow-hidden rounded-lg    open:shadow-lg text-gray-700"
@@ -83,9 +113,9 @@ function Filter({
             stroke="currentColor"
           >
             <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
               d="M4 6h16M4 12h16M4 18h16"
             />
           </svg>
@@ -106,7 +136,9 @@ function Filter({
                   id="low-to"
                   type="radio"
                   name="low-to"
+                  checked={lowToHighCheck}
                   onClick={filterLowToHigh}
+                  onChange={filterLowToHigh}
                   // className="h-5 w-5 rounded border-gray-300 bg-yellow-400  cursor-pointer"
                   className="peer h-5 w-5 cursor-pointer"
 
@@ -123,7 +155,9 @@ function Filter({
                   id="high-to"
                   type="radio"
                   name="low-to"
+                  checked={highToLowCheck}
                   onClick={highToLow}
+                  onChange={highToLow}
                   className="peer h-5 w-5 cursor-pointer"
                 />
 
@@ -202,8 +236,8 @@ function Filter({
                   type="radio"
                   name="Price"
                   value="1500+"
-                  className="h-5 w-5 rounded "
-                  checked
+                  className="h-5 w-5 rounded bg-red-300"
+                  // checked
                 />
 
                 <label htmlFor="1500+" className="ml-3 text-sm font-medium">
