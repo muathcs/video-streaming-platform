@@ -87,10 +87,9 @@ function NavBar() {
   const path = celeb ? "dashboard" : celeb == undefined ? "" : "requests";
 
   const [navigation, setNavigation] = useState([
-    { name: "Catogories", href: "#", current: false },
+    { name: "Catogories", href: "/", current: false },
     { name: "How ", href: "/about", current: false },
-    { name: "Celebs", href: "#", current: false },
-    { name: "About", href: "#", current: false },
+    { name: "Celebs", href: "/", current: false },
     { name: path, href: path, current: false },
   ]);
 
@@ -125,13 +124,13 @@ function NavBar() {
     <>
       <Disclosure
         as="nav"
-        className=" text-[24px]  sm:text-[16px] z-10  block  sm:py-5 py-2 h-[20%]  lg:h-[10%]      "
+        className=" text-[24px]  sm:text-[16px] z-50  block   py-2       "
       >
         {({ open }) => (
           <>
-            <div className="mx-auto max-w-[100rem] px-2 sm:px-6   h-[8rem]     ">
+            <div className="mx-auto max-w-[100rem] px-2 sm:px-6    z-50   ">
               {/* notifications, profile image and search bar.  */}
-              <div className="relative flex flex-col lg:flex-row  h-full gap-2    ">
+              <div className="relative flex flex-col lg:flex-row  h-full gap-2  z-50   ">
                 {/* Mobile menu button, profile and notifications*/}
                 <div className="relative lg:absolute  h-1/2  w-full  ">
                   {/* mobile menu button */}
@@ -173,38 +172,41 @@ function NavBar() {
                       </h1>
                       <div className="hidden  lg:flex    w-3/4   ">
                         <div className="flex flex-shrink space-x-4 mx-2 w-full ">
-                          {navigation.map((item, index) => (
-                            <Link
-                              key={item.name}
-                              to={item.href}
-                              onClick={() => {
-                                const updatedNav = navigation.map(
-                                  (item, i) => ({
-                                    ...item,
-                                    current: i == index, //when a spec link is clicked, current becomes true
-                                  })
-                                );
+                          {navigation.map((item, index) => {
+                            if (!item.name) return;
+                            return (
+                              <Link
+                                key={item.name}
+                                to={item.href}
+                                onClick={() => {
+                                  const updatedNav = navigation.map(
+                                    (item, i) => ({
+                                      ...item,
+                                      current: i == index, //when a spec link is clicked, current becomes true
+                                    })
+                                  );
 
-                                setNavigation(updatedNav);
-                              }}
-                              className={classNames(
-                                item.current
-                                  ? "bg-slate-300 rounded-full text-white"
-                                  : "text-white hover:bg-gray-700 hover:rounded-full focus:bg-gray-800 hover:text-white ",
-                                "rounded-full px-3 py-3 text-[20px] font-medium "
-                              )}
-                              aria-current={item.current ? "page" : undefined}
-                            >
-                              {item.name}
-                            </Link>
-                          ))}
+                                  setNavigation(updatedNav);
+                                }}
+                                className={classNames(
+                                  item.current
+                                    ? "bg-slate-300 rounded-full text-white"
+                                    : "text-white hover:bg-gray-700 hover:rounded-full focus:bg-gray-800 hover:text-white ",
+                                  "rounded-full px-3 py-3 text-[20px] font-medium "
+                                )}
+                                aria-current={item.current ? "page" : undefined}
+                              >
+                                {item.name}
+                              </Link>
+                            );
+                          })}
                         </div>
                       </div>
                     </div>
                   </div>
 
                   {/* notification and profile buttons */}
-                  <div className="absolute inset-y-0  right-0 flex items-center pr-2 ">
+                  <div className="absolute inset-y-0  right-0 flex items-center pr-2 md:mt-5 ">
                     <Menu as="div" className="relative inline-block text-left">
                       <div>
                         <Menu.Button className=" inline-flex w-full justify-center rounded-md px-4 py-2 text-sm font-medium text-white hover:bg-black/30 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75">
@@ -218,7 +220,7 @@ function NavBar() {
                             {requests && (
                               <>
                                 {unread ? (
-                                  <span className="bg-red-600 font-bold text-lg text-center flex justify-center items-center absolute h-7 w-7 bottom-7 left-6 rounded-[50%] text-white">
+                                  <span className="bg-red-600  font-bold text-lg text-center flex justify-center items-center absolute h-7 w-7 bottom-7 left-6 rounded-[50%] text-white">
                                     {loading ? (
                                       <AiOutlineLoading3Quarters />
                                     ) : (
@@ -281,13 +283,13 @@ function NavBar() {
                     </Menu>
 
                     {/* Profile dropdown */}
-                    <Menu as="div" className="relative ml-3 ">
+                    <Menu as="div" className="relative ml-3  ">
                       <div>
                         <Menu.Button className="relative  w-16 h-16 flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
                           <span className="absolute -inset-1.5" />
                           <span className="sr-only">Open user menu</span>
                           <img
-                            className="h-full w-full rounded-full object-cover"
+                            className="h-full w-full rounded-full object-cover "
                             src={userInfo && userInfo.imgurl}
                             alt=""
                           />

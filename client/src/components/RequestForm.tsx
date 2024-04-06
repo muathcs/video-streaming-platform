@@ -3,6 +3,7 @@ import { useForm } from "react-hook-form";
 import { useLocalStorage } from "../hooks/useLocalStorage";
 import { useNavigate } from "react-router-dom";
 import { useGlobalAxios } from "../hooks/useGlobalAxios";
+import { apiUrl } from "../utilities/fetchPath";
 type RequestProps = {
   celebUid: string;
   fanUid: string;
@@ -16,6 +17,8 @@ function RequestForm({ celebUid, fanUid, price }: RequestProps) {
   //   loading,
   //   error,
   // } = useGlobalAxios("post", "yourDataEndpoint");
+
+  const { data: sendPostRequest } = useGlobalAxios("post");
 
   const { data: postData }: any = useGlobalAxios("post", "request"); //
 
@@ -54,12 +57,22 @@ function RequestForm({ celebUid, fanUid, price }: RequestProps) {
     console.log(localStorageRequest);
 
     // navigate("/payment", { state: requestInfo });
-    postData("request", requestInfo);
+    postData(`${apiUrl}/request`, requestInfo);
+    createNotification();
     // navigate("/success");
 
     reset();
 
     //
+  }
+
+  function createNotification() {
+    console.log("made a request");
+    sendPostRequest(`${apiUrl}/notification`, {
+      intended_uid: celebUid,
+      sender_uid: fanUid,
+      message: "user has made a request",
+    });
   }
 
   return (

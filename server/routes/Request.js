@@ -108,7 +108,7 @@ router.post("/", async (req, res) => {
     toPerson, //
   } = req.body;
 
-  console.log("request: ", requestAction);
+  console.log("request: ", req.body);
 
   price = parseInt(price);
   try {
@@ -129,7 +129,7 @@ router.post("/", async (req, res) => {
     });
 
     console.log("result: ", result);
-
+    //update total spent for a specific Fan.
     const updateTotalSpent = await prisma.fan.update({
       data: {
         total_spent: {
@@ -141,7 +141,6 @@ router.post("/", async (req, res) => {
       },
       where: {
         uid: fanUid,
-        r,
       },
     });
     // const result = await pool.query(
@@ -276,7 +275,7 @@ router.get("/dashboard", async (req, res) => {
         celebuid: uid,
       },
       orderBy: {
-        requestid: "desc",
+        timestamp1: "desc",
       },
     });
 

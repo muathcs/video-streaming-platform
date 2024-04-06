@@ -23,24 +23,24 @@ function App() {
   return (
     <>
       <div className="">
-        <NavBar />
         {/* <Celebs /> */}
+        <NavBar />
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<SignUp />} />
           <Route path="/" element={<PrivateRoute />}>
             <Route element={<Settings />} path="/settings" />
             <Route element={<Celebs />} path="/" />
+            <Route path="/requests" element={<FanRequests />} />
+            <Route path="/profile" element={<CelebProfile />} />
+            <Route path="/fulfill/:requestId" element={<FulfillRequest />} />
+            <Route path="/request/fulfilled" element={<FulFilled />} />
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/payment" element={<Payment />} />
+            <Route path="/paymentstatus" element={<PaymentStatus />} />
+            <Route path="/success" element={<Success />} />
           </Route>
-          <Route path="/profile" element={<CelebProfile />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/requests" element={<FanRequests />} />
-          <Route path="/payment" element={<Payment />} />
-          <Route path="/fulfill/:requestId" element={<FulfillRequest />} />
-          <Route path="/paymentstatus" element={<PaymentStatus />} />
-          <Route path="/success" element={<Success />} />
           <Route path="/about" element={<HowTo />} />
-          <Route path="/request/fulfilled" element={<FulFilled />} />
           <Route path="/browse/:category" element={<Category />} />
           <Route path="/user/profile" element={<UserProfile />} />
           <Route path="/*" element={<PrivateRoute />} />
