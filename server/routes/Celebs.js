@@ -6,6 +6,7 @@ import { uploadProfileImgToS3 } from "../s3.js";
 const router = express.Router();
 
 router.get("/", async (req, res) => {
+  console.log("paramszz: ", req.query);
   //query celeb table by category
   const { category } = req.params;
 

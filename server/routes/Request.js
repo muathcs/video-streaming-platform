@@ -13,9 +13,9 @@ router.get("/fanrequests", async (req, res) => {
   const { uid } = req.query;
 
   try {
-    // this queries all the requests that match the query uid. when a fan clicks  on the requests this retrieves them
+    // this queries all the request that match the query uid. when a fan clicks  on the request this retrieves them
 
-    const response = await prisma.requests.findMany({
+    const response = await prisma.request.findMany({
       select: {
         celebmessage: true,
         requestid: true,
@@ -40,15 +40,15 @@ router.get("/fanrequests", async (req, res) => {
 
     console.log("res: ", response);
 
-    const check = await pool.query(
-      `select * from public."Requests" where fanuid = $1`,
-      [uid]
-    );
+    // const check = await pool.query(
+    //   `select * from public."request" where fanuid = $1`,
+    //   [uid]
+    // );
 
     //array that will be sent back to the response, it's made up of objects of the individual request + celeb info(photo, name)
     let reqAndCeleb = [];
 
-    // when the user clicks on the requests, I want the individual requests to have the image of the celeb they requested and their name.
+    // when the user clicks on the request, I want the individual requests to have the image of the celeb they requested and their name.
     // note: I chose not to add this info(celeb name/photo) to the request table.
     // on the requests table, and that's enough to get the celeb photo/name from the code below.
 
@@ -96,6 +96,7 @@ router.get("/fanrequests", async (req, res) => {
 });
 
 router.post("/", async (req, res) => {
+  console.log("here");
   let {
     celebUid,
     fanUid,
@@ -112,7 +113,7 @@ router.post("/", async (req, res) => {
 
   price = parseInt(price);
   try {
-    const result = await prisma.requests.create({
+    const result = await prisma.request.create({
       data: {
         celebuid: celebUid,
         fanuid: fanUid,
@@ -166,6 +167,22 @@ router.post("/", async (req, res) => {
   }
 });
 
+router.put("/expired/:id", upload.single("videoFile"), async (req, res) => {
+  const requestid = req.params.id;
+
+  console.log("id: :: ", requestid);
+  try {
+    const response = await prisma.request.update({
+      where: {
+        requestid: requestid,
+      },
+      data: {
+        reqstatus: "expired",
+      },
+    });
+  } catch (error) {}
+});
+
 router.put("/fulfill/:id", upload.single("videoFile"), async (req, res) => {
   const itemId = req.params.id; // Parse the id parameter as an integer
   console.log("reqid: ", itemId);
@@ -191,7 +208,7 @@ router.put("/fulfill/:id", upload.single("videoFile"), async (req, res) => {
     try {
       const { celebReply } = req.body;
 
-      const response = await prisma.requests.update({
+      const response = await prisma.request.update({
         where: {
           requestid: itemId,
         },
@@ -202,7 +219,7 @@ router.put("/fulfill/:id", upload.single("videoFile"), async (req, res) => {
       });
 
       // const response = await pool.query(
-      //   "UPDATE requests SET reqstatus = $1, celebmessage = $2 WHERE requestid = $3 ",
+      //   "UPDATE request SET reqstatus = $1, celebmessage = $2 WHERE requestid = $3 ",
       //   ["fulfilled", celebReply, itemId]
       // );
       res.status(200);
@@ -240,7 +257,7 @@ router.put("/fulfill/:id", upload.single("videoFile"), async (req, res) => {
 
       // console.log("iditem: ::: ", itemId);
 
-      const response = await prisma.requests.update({
+      const response = await prisma.request.update({
         where: {
           requestid: itemId, //requestid
         },
@@ -250,7 +267,7 @@ router.put("/fulfill/:id", upload.single("videoFile"), async (req, res) => {
         },
       });
       // const response = await pool.query(
-      //   "UPDATE requests SET reqstatus = $1, celebmessage = $2 WHERE requestid = $3 ",
+      //   "UPDATE request SET reqstatus = $1, celebmessage = $2 WHERE requestid = $3 ",
       //   ["fulfilled", videoUrl, itemId]
       // );
 
@@ -269,7 +286,7 @@ router.get("/dashboard", async (req, res) => {
   console.log("\n\n\nuid: ", uid);
 
   try {
-    const response = await prisma.requests.findMany({
+    const response = await prisma.request.findMany({
       where: {
         reqstatus: "pending",
         celebuid: uid,
@@ -280,7 +297,7 @@ router.get("/dashboard", async (req, res) => {
     });
 
     // const response = await pool.query(
-    //   "SELECT * from Requests WHERE reqstatus = $1 AND celebUid = $2 ORDER BY requestid DESC",
+    //   "SELECT * from request WHERE reqstatus = $1 AND celebUid = $2 ORDER BY requestid DESC",
     //   ["pending", uid]
     // );
 
