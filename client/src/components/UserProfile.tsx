@@ -40,7 +40,7 @@ function UserProfile() {
               <GoGitPullRequest />
             </span>
           </div>
-          <div>{userInfo?.num_of_requests}</div>
+          <div>{userInfo?.num_of_requests}x</div>
         </li>
         <li className="flex flex-col items-center justify-between  basis-[100%]">
           <div className="text-blue-900 text-[20px] has-tooltip ">

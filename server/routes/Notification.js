@@ -35,8 +35,8 @@ router.get("/", async (req, res) => {
       },
     });
 
-    "Select * from notification WHERE intended_uid = $1 AND is_read = $2",
-      [uid, false];
+    // "Select * from notification WHERE intended_uid = $1 AND is_read = $2",
+    //   [uid, false];
 
     return res.send(response);
   } catch (error) {

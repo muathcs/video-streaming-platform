@@ -29,7 +29,7 @@ export function uploadFile(fileBuffer, fileName, mimetype) {
     Bucket: bucketName,
     Body: fileBuffer,
     Key: fileName,
-    ContentType: "video/mp4",
+    ContentType: mimetype,
   };
 
   try {
@@ -46,7 +46,7 @@ export async function uploadProfileImgToS3(req, res, next) {
   let { uid, imgurl } = req.body;
 
   if (!imgurl && id) {
-    // this function checks if we're updating the img or setting it for the first time. So, if the imgurl doesn't exist but the id does this mean the account is updating the img
+    // this function checks if we're updating the img or setting it for the first time. So, if the imgurl doesn't exist but the id does this means the account is setting the img
     // if this case
     imgurl = `profile/user(${id})`;
   }

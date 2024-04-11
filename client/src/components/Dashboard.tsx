@@ -7,6 +7,7 @@ import axios from "../api/axios";
 import { RequestType, notification } from "../TsTypes/types";
 import Modal from "./Modal";
 import { useGlobalAxios } from "../hooks/useGlobalAxios";
+import { calculateTimeLeftForCelebrityReply } from "../utilities/timeLeftForRequest";
 
 const emptyArray: any = [];
 
@@ -68,6 +69,10 @@ function Dashboard() {
         Header: "Reply",
         accessor: "reply",
       },
+      {
+        Header: "Time Left",
+        accessor: "timeleft",
+      },
 
       {
         Header: "Reject",
@@ -88,6 +93,7 @@ function Dashboard() {
     canNextPage,
     page,
     rows,
+    gotoPage,
     pageOptions,
     prepareRow,
   } = useTable(
@@ -217,6 +223,25 @@ function Dashboard() {
                                 Reply
                               </button>
                             </>
+                          ) : cell.column.id == "timeleft" ? (
+                            <p>
+                              <p>
+                                {(() => {
+                                  const timeLeft =
+                                    calculateTimeLeftForCelebrityReply(
+                                      row.original.timestamp1
+                                    );
+
+                                  if (timeLeft == "expired") {
+                                    return (
+                                      <p className="text-red-500">expired</p>
+                                    );
+                                  } else {
+                                    return <p className="">{timeLeft}</p>;
+                                  }
+                                })()}
+                              </p>
+                            </p>
                           ) : (
                             ""
                           )}
@@ -239,22 +264,24 @@ function Dashboard() {
                   Previous
                 </a>
               </li>
-              <li>
-                <a
-                  href="#"
-                  className="flex items-center justify-center px-3 h-full leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
-                >
-                  1
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#"
-                  className="flex items-center justify-center px-3 h-full leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
-                >
-                  2
-                </a>
-              </li>
+
+              {pageOptions.map((pageIndex: number) => {
+                console.log("page index: ", pageIndex);
+                if (pageIndex > 4) {
+                  return;
+                }
+                return (
+                  <li key={pageIndex}>
+                    <a
+                      href="#"
+                      onClick={() => gotoPage(pageIndex)}
+                      className="flex items-center justify-center px-3 h-full leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+                    >
+                      {pageIndex + 1}
+                    </a>
+                  </li>
+                );
+              })}
 
               <li>
                 <a

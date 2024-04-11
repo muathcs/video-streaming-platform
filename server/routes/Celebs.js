@@ -6,13 +6,22 @@ import { uploadProfileImgToS3 } from "../s3.js";
 const router = express.Router();
 
 router.get("/", async (req, res) => {
+  console.log("paramszz: ", req.query);
   //query celeb table by category
+
+  const page = parseInt(req.query.page) || 1; // Default to page 1 if not provided
+  const pageSize = parseInt(req.query.pageSize) || 10; // Default page size to 10 if not provided
+  const offset = (page - 1) * pageSize; // Calculate the offset based on page number and page size
   const { category } = req.params;
 
   // console.log("react nativex", req.query);
 
   try {
-    const result = await prisma.celeb.findMany();
+    const result = await prisma.celeb.findMany({
+      skip: offset,
+      take: pageSize,
+    });
+    // const result = await prisma.celeb.findMany();
     // client.release(); // Release the connection back to the pool
 
     res.send(result);
@@ -27,12 +36,18 @@ router.get("/category/:category", async (req, res) => {
   //query celeb table by category
   let { category } = req.params;
 
+  const page = parseInt(req.query.page) || 1; // Default to page 1 if not provided
+  const pageSize = parseInt(req.query.pageSize) || 10; // Default page size to 10 if not provided
+  const offset = (page - 1) * pageSize; // Calculate the offset based on page number and page size
+
   console.log("category: ", category);
 
   // category = category.toLocaleLowerCase(); // to match db
 
   try {
     const result = await prisma.celeb.findMany({
+      skip: offset,
+      take: pageSize,
       where: {
         category: {
           equals: category,

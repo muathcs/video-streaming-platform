@@ -491,7 +491,7 @@ function Settings() {
   async function onSubmit(data: FieldValues, selectedFile: File) {
     let fd = new FormData();
     const status = celeb ? "celeb" : "fan";
-
+    //if new profile pic is picked.
     if (selectedFile) {
       fd.append("file", selectedFile);
     }
