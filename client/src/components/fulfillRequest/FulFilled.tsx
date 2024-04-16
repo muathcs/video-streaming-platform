@@ -83,7 +83,7 @@ function FulFilled() {
 
               <button
                 onClick={downloadVideo}
-                className="w-2/4 py-4 bg-blue-300 hover:bg-blue-400 rounded-md relative top-10 text-lg"
+                className="w-2/4 py-4 bg-blue-300 hover:bg-blue-400 rounded-md relative top-24 text-lg "
               >
                 Download Video
               </button>

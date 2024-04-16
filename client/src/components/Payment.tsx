@@ -19,10 +19,10 @@ function Payment() {
   return (
     <>
       <div className="w-full h-full   overflow-auto  ">
-        <div className="h-full w-full relative grid grid-cols-1   grid-rows-6 overflow-auto   justify-items-center  ">
+        <div className="h-full w-full relative grid grid-cols-1   grid-rows-6  overflow-auto   justify-items-center   ">
           {/* <!-- Email input --> */}
           <div
-            className="relative    0 w-1/3 row-span-3  flex  "
+            className="relative    0 w-1/3 row-span-1.5  flex  "
             data-te-input-wrapper-init
           >
             <div className="gap-4 text-center sm:grid-cols-3  flex flex-col justify-center items-center  w-full my-2">

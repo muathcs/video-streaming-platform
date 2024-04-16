@@ -56,9 +56,9 @@ function RequestForm({ celebUid, fanUid, price }: RequestProps) {
     await setLocalStorageRequest(getValues());
     console.log(localStorageRequest);
 
-    // navigate("/payment", { state: requestInfo });
-    postData(`${apiUrl}/request`, requestInfo);
+    navigate("/payment", { state: requestInfo });
     createNotification();
+    // postData(`${apiUrl}/request`, requestInfo);
     // navigate("/success");
 
     reset();

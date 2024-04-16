@@ -71,7 +71,6 @@ router.put(
             email: email,
             description: description,
             imgurl: newImgUrl,
-            fav_categories: "action", // add this to the settings page
           },
         });
 

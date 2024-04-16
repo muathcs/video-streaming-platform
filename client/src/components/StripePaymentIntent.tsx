@@ -15,7 +15,7 @@ function StripePaymentIntent() {
     // Create PaymentIntent as soon as the page loads
 
     const sendRequest = async () => {
-      fetch(`${apiUrl}/create-payment-intent`, {
+      fetch(`${apiUrl}/stripe/create-payment-intent`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ items: [{ id: "xl-tshirt" }] }),

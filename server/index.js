@@ -14,7 +14,9 @@ import ReviewRoute from "./routes/Review.js";
 import UpdateRoute from "./routes/Update.js";
 import SearchRoute from "./routes/Search.js";
 import UserRoute from "./routes/User.js";
+import StripeRoute from "./routes/Stripe.js";
 import { createTheCelebs } from "./wikidata.js";
+
 // const result = await prisma.$executeRaw`
 //   UPDATE "Celeb"
 //   SET document_with_idx = TO_TSVECTOR('simple', displayname);
@@ -67,6 +69,7 @@ app.use("/reviews", ReviewRoute);
 app.use("/update", UpdateRoute);
 app.use("/search", SearchRoute);
 app.use("/user", UserRoute);
+app.use("/stripe", StripeRoute);
 
 app.get("/celebs", (req, res) => {
   console.log("testing path ");
