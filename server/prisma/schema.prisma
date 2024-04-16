@@ -23,6 +23,7 @@ model Celeb {
   imgurl            String?                  @db.VarChar(250)
   document_with_idx Unsupported("tsvector")?
   reviews           Review[]
+  cluster_id Int?
 
   @@index([document_with_idx], map: "document_idx", type: Gin)
   @@index([document_with_idx], map: "document_with_idx_index", type: Gin)
@@ -33,7 +34,7 @@ model Fan {
   email           String?  @db.VarChar(100)
   displayname     String?  @db.VarChar(50)
   total_spent     Int?     @default(0)
-  fav_categories  String?  @db.VarChar(50)
+  fav_categories  Int?  
   num_of_requests Int?     @default(0)
   uid             String   @unique @db.VarChar(42)
   imgurl          String?  @db.VarChar(150)

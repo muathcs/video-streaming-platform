@@ -8,6 +8,9 @@
 -- DropForeignKey
 ALTER TABLE "Transactions" DROP CONSTRAINT "Transactions_transactionid_fkey";
 
+-- AlterTable
+ALTER TABLE "Celeb" ADD COLUMN     "cluster_id" INTEGER;
+
 -- DropTable
 DROP TABLE "Requests";
 

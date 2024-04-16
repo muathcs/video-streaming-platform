@@ -17,17 +17,39 @@ router.get("/", async (req, res) => {
   // console.log("react nativex", req.query);
 
   try {
-    const result = await prisma.celeb.findMany({
-      skip: offset,
-      take: pageSize,
-    });
-    // const result = await prisma.celeb.findMany();
+    // const result = await prisma.celeb.findMany({
+    //   skip: offset,
+    //   take: pageSize,
+    // });
+    const result = await prisma.celeb.findMany();
     // client.release(); // Release the connection back to the pool
 
     res.send(result);
   } catch (error) {
     console.log("error/celebs: ", error);
     res.status(500).json({ error: error.message });
+  }
+});
+
+//recommendations
+router.get("/rec/:id", async (req, res) => {
+  const { id } = req.params;
+
+  const clusterId = parseInt(id);
+
+  console.log("idxx: ", clusterId);
+  try {
+    const response = await prisma.celeb.findMany({
+      where: {
+        cluster_id: clusterId,
+      },
+      take: 5,
+    });
+
+    console.log("response=== ", response);
+    res.send(response);
+  } catch (error) {
+    console.error(error);
   }
 });
 
@@ -73,7 +95,7 @@ router.get("/category/:category", async (req, res) => {
 router.get("/:id", async (req, res) => {
   const { id } = req.params;
 
-  console.log("id: ", id);
+  console.log("id: ", req.params);
 
   try {
     const response = await prisma.celeb.findUnique({
@@ -98,7 +120,7 @@ router.post(
   upload.single("file"),
   uploadProfileImgToS3,
   async (req, res) => {
-    const { uid, imgurl } = req.body;
+    const { uid } = req.body;
 
     console.log("creating a cleeb");
 

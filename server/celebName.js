@@ -92,3 +92,23 @@ export const celebrityNames = [
   "David Beckham",
   "Cristiano Ronaldo Jr.",
 ];
+
+// Function to duplicate each name in the array and append a suffix
+function duplicateNamesWithSuffix(names, duplicates, suffix) {
+  // Create a new array to store the duplicated names
+  const duplicatedNames = [];
+
+  // Iterate over each name in the original array
+  names.forEach((name) => {
+    // Add the original name to the duplicated names array
+    duplicatedNames.push(name);
+
+    // Duplicate the name and append the suffix based on the number of duplications
+    for (let i = 1; i <= duplicates; i++) {
+      duplicatedNames.push(`${name} ${suffix}${i}`);
+    }
+  });
+
+  // Return the array of duplicated names
+  return duplicatedNames;
+}

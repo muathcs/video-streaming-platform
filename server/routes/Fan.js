@@ -24,7 +24,7 @@ router.get("/:uid", async (req, res) => {
 
     res.send(response);
   } catch (error) {
-    console.log("/celeb/id: ", error);
+    console.log("/celeb/id: ", error.message);
     res.status(500).json({ error: error.message });
   }
 });
@@ -35,10 +35,10 @@ router.post(
   upload.single("file"),
   uploadProfileImgToS3,
   async (req, res) => {
-    console.log("creating a fam jhere");
-    const { uid, imgurl, payLoad } = req.body;
+    const { uid, payLoad } = req.body;
     const payLoadParsed = JSON.parse(payLoad);
     const { displayname, email, description } = payLoadParsed;
+    console.log("creating a fan jhere: ", req.newUrl);
 
     const newurl = req.newUrl;
 

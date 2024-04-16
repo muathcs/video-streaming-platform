@@ -12,10 +12,16 @@ const randomImageName = () => crypto.randomBytes(32).toString("hex");
 router.get("/fanrequests", async (req, res) => {
   const { uid } = req.query;
 
+  console.log("query: ", req.query);
+
+  console.log("iod: ", uid);
+
   try {
     // this queries all the request that match the query uid. when a fan clicks  on the request this retrieves them
-
     const response = await prisma.request.findMany({
+      where: {
+        fanuid: uid,
+      },
       select: {
         celebmessage: true,
         requestid: true,
@@ -30,15 +36,12 @@ router.get("/fanrequests", async (req, res) => {
         fromperson: true,
         price: true,
       },
-      where: {
-        fanuid: uid,
-      },
       orderBy: {
         requestid: "asc",
       },
     });
 
-    console.log("res: ", response);
+    // console.log("res: ", response);
 
     // const check = await pool.query(
     //   `select * from public."request" where fanuid = $1`,
@@ -129,6 +132,31 @@ router.post("/", async (req, res) => {
       },
     });
 
+    console.log("celebuid: ", celebUid);
+    console.log("fanuid: ", fanUid);
+
+    const getCelebCluster = await prisma.celeb.findFirst({
+      where: {
+        uid: celebUid,
+      },
+      select: {
+        cluster_id: true,
+      },
+    });
+
+    console.log("cluster id: ", getCelebCluster);
+
+    const { cluster_id } = getCelebCluster;
+
+    const addUserFavCat = await prisma.fan.update({
+      where: {
+        uid: fanUid,
+      },
+      data: {
+        fav_categories: cluster_id,
+      },
+    });
+
     console.log("result: ", result);
     //update total spent for a specific Fan.
     const updateTotalSpent = await prisma.fan.update({
@@ -215,7 +243,6 @@ router.put("/fulfill/:id", upload.single("videoFile"), async (req, res) => {
         data: {
           reqstatus: "fulfilled",
           celebmessage: celebReply,
-          F,
         },
       });
 

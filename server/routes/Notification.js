@@ -32,6 +32,7 @@ router.get("/", async (req, res) => {
     const response = await prisma.notification.findMany({
       where: {
         intended_uid: uid,
+        is_read: false,
       },
     });
 

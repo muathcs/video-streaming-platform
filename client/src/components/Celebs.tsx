@@ -1,15 +1,20 @@
 import CelebCard from "./CelebCard";
 import background from "../assets/background.jpg";
-import { useNavigate } from "react-router-dom";
+import { useInRouterContext, useNavigate } from "react-router-dom";
 import { apiUrl } from "../utilities/fetchPath";
 import { useEffect, useState } from "react";
 import axios from "../api/axios";
-import { CelebType } from "../TsTypes/types";
+import { AuthContextType, CelebType } from "../TsTypes/types";
+import { useAuth } from "../context/AuthContext";
+import { userInfo } from "os";
 function Celebs() {
   // const { data: getData, loading, error } = useGlobalAxios("getnow");
 
   const [celebs, setCelebs] = useState<CelebType[]>([]);
 
+  const { currentUser }: AuthContextType = useAuth();
+
+  console.log("uid: ", currentUser.uid);
   const shopByCategory = [
     {
       categoryName: "Actors",
@@ -50,7 +55,7 @@ function Celebs() {
     const getCelebs = async () => {
       try {
         const response = await axios.get(`${apiUrl}/celebs`);
-
+        console.log("celebs: ", response.data);
         setCelebs(response.data);
       } catch (error) {
         console.error(error);
@@ -69,6 +74,10 @@ function Celebs() {
   const celebsToShow = celebs.slice(startIndex, endIndex);
   const [amountOfCategoryToShow, setAmountOfCategoryToShow] =
     useState<number>(6);
+  const { userInfo }: AuthContextType = useAuth();
+  const [recommendations, setRecommendations] = useState<CelebType[]>();
+
+  console.log("celebs To Show: ", celebs);
 
   const handleNextPage = () => {
     // window.scrollTo({ top: 10, behavior: "smooth" });
@@ -79,6 +88,28 @@ function Celebs() {
     //   ?.scrollTo({ top: 880, behavior: "smooth" });
     setCurrentPage((prevPage) => prevPage + 1);
   };
+
+  async function getRecommendations() {
+    try {
+      const response = await axios.get(
+        `${apiUrl}/celebs/rec/${userInfo?.fav_categories}`
+      );
+
+      console.log("response: ", response.data);
+      setRecommendations(response.data);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  useEffect(() => {
+    if (userInfo?.fav_categories) {
+      console.log("Inside:::");
+      getRecommendations();
+    }
+  }, []);
+
+  console.log("REcommendation: ", recommendations);
 
   return (
     <>
@@ -162,6 +193,57 @@ function Celebs() {
             </button>
           </div>
         </div>
+
+        {/* Recommendations */}
+        {userInfo?.fav_categories ? (
+          <div className=" h-[450px] xl:h-[350px]  md:w-full xl:w-[90%] flex justify-center   w-full lg:mb-40 xl:mb-20  xl:ml-24 ">
+            <div className="w-full flex flex-col">
+              <p className="text-left text-[26px] font-serif relative  h-1/6  flex items-end mb-2 justify-center  ">
+                recommendations
+              </p>
+              <div className=" md:h-4/6 gap-0 grid  grid-cols-3 sm:grid-cols-5 xl:grid-cols-5 just  px-4  justify-center md:mb-5 xl:gap-20  ">
+                {recommendations?.map((celeb, index) => {
+                  return (
+                    <div
+                      key={celeb.celebid}
+                      className="flex flex-col  items-center justify-center  hover:cursor-pointer hover:text-gray-400 mb-2    "
+                    >
+                      <div
+                        onClick={
+                          () => {
+                            navigate("/profile", {
+                              state: { celeb },
+                            });
+                          }
+                          // navigate(`/browse/${cele.categoryName}`)
+                        }
+                        className="border-2 bg-red-300 rounded-full w-[6.5rem] h-[6.5rem] md:w-[8rem]  md:h-[8rem]  lg:w-[11rem] lg:h-[11rem] xl:w-[12rem] xl:h-[12rem] overflow-hidden relative "
+                      >
+                        <img
+                          src={celeb.imgurl}
+                          className="h-full w-full object-cover card-zoom-image"
+                        />
+                      </div>
+                      <p className="font-bold text-sm md:text-[24px] w-full flex justify-center hover:text-gray-400  ">
+                        {celeb.displayname}
+                      </p>
+                    </div>
+                  );
+                })}
+              </div>
+              {/* <button
+                onClick={() => {
+                  setAmountOfCategoryToShow(
+                    amountOfCategoryToShow == 8 ? 6 : 8
+                  );
+                }}
+                className=" border-2 border-gray-50   mx-4   rounded-full py-3 hover:bg-gray-950 mt-5 lg:mt-32 xl:mt-10"
+              >
+                View All
+              </button> */}
+            </div>
+          </div>
+        ) : null}
 
         {/* celebs */}
         <p className=" w-full text-left pl-7 text-2xl md:hidden relative top-8 font-bold">
