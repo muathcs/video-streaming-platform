@@ -2,16 +2,24 @@ import { useState } from "react";
 import StripePaymentIntent from "./StripePaymentIntent";
 import { useLocation } from "react-router-dom";
 import "react-toastify/dist/ReactToastify.css";
+import { AuthContextType, RequestType } from "../TsTypes/types";
+import { useAuth } from "../context/AuthContext";
 
+type LocationStateType = {
+  state: Pick<RequestType, "fanUid" | "celebUid" | "price">;
+};
 function Payment() {
   const [paymentChoice, setPaymentChoice] = useState<string>("");
+  const { currentUser }: AuthContextType = useAuth();
 
   // instead of making this a boolean, just use number, and when the 24 hour delivery is false, set it to 0(null),
   // when it's positive however, set it to 50% of the requests's price.
   const [twentyFourHourDelivery, setTwentyFourHourDelivery] =
     useState<number>();
 
-  const { state } = useLocation();
+  const { state }: LocationStateType = useLocation();
+
+  console.log("state: ", currentUser.email);
 
   const divStyle =
     " border-2 h-24 w-full rounded-xl  peer-checked:shadow-blue-200 peer-checked:border-blue-600  cursor-pointer flex items-center justify-between ";
@@ -160,14 +168,19 @@ function Payment() {
                 <span className="border-b  border-gray-600"></span>
                 <div className=" flex justify-between px-3">
                   <p>Total</p>
-                  <p>£{state.price + twentyFourHourDelivery}.00</p>
+                  <p>£{state.price + (twentyFourHourDelivery || 0)}.00</p>
                 </div>
               </div>
 
               <div className=" p-5 h-76 ">
                 {paymentChoice == "card" ? (
                   <div>
-                    <StripePaymentIntent />
+                    <StripePaymentIntent
+                      requestPrice={state.price}
+                      celebUid={state.celebUid}
+                      fanUid={state.fanUid}
+                      email={currentUser.email}
+                    />
                   </div>
                 ) : null}
               </div>

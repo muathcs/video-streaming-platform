@@ -98,6 +98,7 @@ router.get("/fanrequests", async (req, res) => {
   }
 });
 
+// create the request.
 router.post("/", async (req, res) => {
   console.log("here");
   let {
@@ -135,6 +136,7 @@ router.post("/", async (req, res) => {
     console.log("celebuid: ", celebUid);
     console.log("fanuid: ", fanUid);
 
+    //get the cluster id of the celeb that was just reqeusted
     const getCelebCluster = await prisma.celeb.findFirst({
       where: {
         uid: celebUid,
@@ -144,10 +146,10 @@ router.post("/", async (req, res) => {
       },
     });
 
-    console.log("cluster id: ", getCelebCluster);
-
+    //destruct cluster id
     const { cluster_id } = getCelebCluster;
 
+    //update the fan who made the request table fav_categories column, with the cluster of the id
     const addUserFavCat = await prisma.fan.update({
       where: {
         uid: fanUid,
@@ -157,7 +159,6 @@ router.post("/", async (req, res) => {
       },
     });
 
-    console.log("result: ", result);
     //update total spent for a specific Fan.
     const updateTotalSpent = await prisma.fan.update({
       data: {
@@ -172,22 +173,6 @@ router.post("/", async (req, res) => {
         uid: fanUid,
       },
     });
-    // const result = await pool.query(
-    //   "INSERT INTO Requests(celebUid, fanUid, price, message, reqstatus, reqtype, timeStamp1, reqaction, tosomeoneelse, fromperson, toperson) Values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)",
-    //   [
-    //     celebUid,
-    //     fanUid,
-    //     price,
-    //     message,
-    //     "pending",
-    //     reqType,
-    //     new Date(),
-    //     requestAction,
-    //     toSomeOneElse,
-    //     fromPerson,
-    //     toPerson,
-    //   ]
-    // );
 
     res.send("succesfully added a request");
   } catch (error) {
@@ -210,6 +195,11 @@ router.put("/expired/:id", upload.single("videoFile"), async (req, res) => {
     });
   } catch (error) {}
 });
+
+function PayCeleb() {
+  //first check if Celeb has a custom connect account
+  // const celebCustomAccount = stripe
+}
 
 router.put("/fulfill/:id", upload.single("videoFile"), async (req, res) => {
   const itemId = req.params.id; // Parse the id parameter as an integer
@@ -294,6 +284,10 @@ router.put("/fulfill/:id", upload.single("videoFile"), async (req, res) => {
           celebmessage: videoUrl,
         },
       });
+
+      // pay Celeb
+
+      await PayCeleb();
       // const response = await pool.query(
       //   "UPDATE request SET reqstatus = $1, celebmessage = $2 WHERE requestid = $3 ",
       //   ["fulfilled", videoUrl, itemId]

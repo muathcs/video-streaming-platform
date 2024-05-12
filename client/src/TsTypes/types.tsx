@@ -32,6 +32,8 @@ export type notification = {
 export type RequestType = {
   message: string;
   reqtype: string;
+  celebUid: string;
+  fanUid: string;
   reqaction: string;
   timestamp1: string;
   reqstatus: string;
@@ -40,6 +42,7 @@ export type RequestType = {
   tosomeoneelse: boolean;
   fromperson: string;
   toPerson: string;
+  price: number;
 };
 
 export type UserInfoType = {

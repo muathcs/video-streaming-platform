@@ -5,7 +5,10 @@ import express from "express";
 const router = express.Router();
 
 router.get("/", async (req, res) => {
-  const { name } = req.query;
+  let { name } = req.query;
+
+  console.log("name: ", name);
+  name = name.replace(/ /g, "");
 
   if (!name) return;
   try {

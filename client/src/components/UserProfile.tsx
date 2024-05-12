@@ -6,9 +6,23 @@ import { FaDollarSign } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { BiSolidCategory } from "react-icons/bi";
 import { formatter } from "../utilities/currencyFormatter";
+import { apiUrl } from "../utilities/fetchPath";
+import axios from "../api/axios";
 
 function UserProfile() {
-  const { userInfo }: AuthContextType = useAuth();
+  const { userInfo, celeb }: AuthContextType = useAuth();
+
+  async function addBankAccount() {
+    try {
+      axios.post(`${apiUrl}/stripe/add-account`, {
+        displayname: userInfo?.displayname,
+        email: userInfo?.email,
+        uid: userInfo?.uid,
+      });
+    } catch (error) {
+      console.error(error);
+    }
+  }
 
   return (
     <div className="max-w-2xl mx-4 sm:max-w-lg  sm:mx-auto md:mx-auto lg:mx-auto xl:mx-auto mt-16 bg-white shadow-xl rounded-lg text-gray-900 border-2 ">
@@ -70,6 +84,14 @@ function UserProfile() {
         >
           Settings
         </Link>
+        {celeb && (
+          <button
+            onClick={addBankAccount}
+            className="w-1/2 mt-4 block mx-auto rounded-full bg-gray-900 hover:bg-gray-800 hover:shadow-lg font-semibold text-white px-6 py-2"
+          >
+            Add a Bank Account
+          </button>
+        )}
       </div>
     </div>
   );

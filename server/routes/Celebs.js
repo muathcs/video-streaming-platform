@@ -157,7 +157,9 @@ router.post(
 
       await indexNewCeleb(uid); //indexing for text search
 
-      res.send("Thank you");
+      console.log("done");
+
+      res.send(201);
     } catch (error) {
       console.log(error);
       res.send("Failed");
