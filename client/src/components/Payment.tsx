@@ -71,7 +71,7 @@ function Payment() {
                     <p className="text-left">24 hours</p>
                     <p>up to 24 hours</p>
                   </div>
-                  <p className="mr-5">£20</p>
+                  {/* <p className="mr-5">£20</p> */}
                 </label>
               </div>
             </div>

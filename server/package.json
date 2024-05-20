@@ -11,6 +11,7 @@
     "@aws-sdk/client-s3": "^3.495.0",
     "@aws-sdk/s3-request-presigner": "^3.496.0",
     "@prisma/client": "^5.12.1",
+    "@react-email/components": "0.0.17",
     "aws": "^0.0.3-2",
     "aws-sdk": "^2.1517.0",
     "axios": "^1.6.5",
@@ -29,6 +30,7 @@
     "open": "^10.0.3",
     "pg": "^8.11.3",
     "postgres": "^3.4.3",
+    "resend": "^3.2.0",
     "run": "^1.5.0",
     "sharp": "^0.33.2",
     "stripe": "^14.11.0"

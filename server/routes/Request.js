@@ -4,6 +4,7 @@ import express from "express";
 import { upload } from "./Fan.js";
 import crypto from "crypto";
 import { uploadFile } from "../s3.js";
+import { PayCeleb, refundFan } from "../actions/actions.js";
 
 const router = express.Router();
 
@@ -193,13 +194,12 @@ router.put("/expired/:id", upload.single("videoFile"), async (req, res) => {
         reqstatus: "expired",
       },
     });
-  } catch (error) {}
-});
 
-function PayCeleb() {
-  //first check if Celeb has a custom connect account
-  // const celebCustomAccount = stripe
-}
+    refundFan(response.requestid, response.amount);
+  } catch (error) {
+    console.error(error);
+  }
+});
 
 router.put("/fulfill/:id", upload.single("videoFile"), async (req, res) => {
   const itemId = req.params.id; // Parse the id parameter as an integer
@@ -235,6 +235,8 @@ router.put("/fulfill/:id", upload.single("videoFile"), async (req, res) => {
           celebmessage: celebReply,
         },
       });
+
+      PayCeleb(response.celebuid, response.price);
 
       // const response = await pool.query(
       //   "UPDATE request SET reqstatus = $1, celebmessage = $2 WHERE requestid = $3 ",

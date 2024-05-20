@@ -1,8 +1,10 @@
 import { prisma } from "../index.js";
 import express from "express";
+import { Resend } from "resend";
 import Stripe from "stripe";
 
 const router = express.Router();
+const resend = new Resend("re_4BKCu5uX_Lc8VgihresCMVwvBsAED315i");
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
@@ -186,6 +188,47 @@ router.post("/add-account", async (req, res) => {
     });
 
     res.send(accountLink).status(201);
+  } catch (error) {
+    console.error(error);
+  }
+});
+
+router.post("/reciept", async (req, res) => {
+  const name = "muah";
+  const { celebuid, price } = req.body;
+
+  console.log("uid: ", celebuid, "price: ", price);
+  try {
+    const celebName = await prisma.celeb.findUnique({
+      where: {
+        uid: celebuid, // Ensure that 'celebuid' is defined and holds the unique identifier for the celebrity
+      },
+      select: {
+        displayname: true, // This tells Prisma to only return the 'displayname' field
+      },
+    });
+
+    console.log("celebname: ", celebName);
+    const { data, error } = await resend.emails.send({
+      from: "onboarding@resend.dev",
+      to: ["muath.khalifa@yahoo.com"],
+      subject: "Order Confirmation",
+      html: `
+      <html>
+        <body>
+          <h1>Order Confirmation</h1>
+          <p>Dear Customer ,</p>
+          <p>Thank you for your shoutout request !</p>
+          <p>You have successfully booked a shoutout with <strong>${celebName.displayname}</strong>. The total price for your request is <strong>£${price}</strong>.</p>
+          <p>We are currently processing your request and you can expect to receive it within one week.</p>
+          <p>If you have any questions or need to make any changes to your order, please do not hesitate to contact us at <a href="mailto:onboarding@resend.dev">onboarding@resend.dev</a>.</p>
+          <p>Thank you for choosing our service!</p>
+          <p>Warm regards,</p>
+          <p>Muath Khalifa</p>
+        </body>
+      </html>
+    `,
+    });
   } catch (error) {
     console.error(error);
   }

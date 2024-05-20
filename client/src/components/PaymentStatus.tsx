@@ -80,7 +80,7 @@ const PaymentStatus = () => {
     });
   }, [stripe]);
 
-  return <>{message == "success" ? <Success /> : null}</>;
+  return <>{message == "success" ? <Success request={request} /> : null}</>;
 };
 
 export default PaymentStatus;

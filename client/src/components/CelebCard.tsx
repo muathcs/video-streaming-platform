@@ -29,8 +29,8 @@ function CelebCard({ celeb }: { celeb: CelebCardProps }) {
   };
 
   return (
-    <div className="shadow-xl rounded-t-xl rounded-md card-zoom md:w-full md:h-full w-[12rem] h-[20rem]  text-white ">
-      <div className="h-[85%]   w-full overflow-hidden rounded-t-xl ">
+    <div className="shadow-xl rounded-t-xl rounded-md card-zoom md:w-full md:h-full w-[12rem] h-[20rem]  text-white  ">
+      <div className="h-[85%]   w-[90%]  overflow-hidden rounded-t-xl ">
         <img
           onClick={handleCardClick}
           src={celeb.imgurl}

@@ -2,11 +2,32 @@ import { useEffect } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useLocation } from "react-router-dom";
+import axios from "../api/axios";
+import { apiUrl } from "../utilities/fetchPath";
+import { RequestType } from "../TsTypes/types";
 
 // if we reach the success page, it means a request has been sent to the celeb, so we can also create a notificaiton here to notify the celeb of the request that was made to them.
 
-const Success = () => {
+const Success = ({ request }: { request: RequestType }) => {
   const { state } = useLocation();
+
+  async function sendReciept() {
+    try {
+      const celeb = await axios.get(`${apiUrl}/Celebs/${request.celebUid}`);
+
+      console.log("this", celeb.data);
+      const response = await axios.post(`${apiUrl}/stripe/reciept`, {
+        celebuid: request.celebUid,
+        price: request.price,
+      });
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  useEffect(() => {
+    sendReciept();
+  }, []);
 
   console.log("request: ", state);
   console.log("location: ", useLocation());
@@ -31,6 +52,8 @@ const Success = () => {
       theme: "light",
     });
   };
+
+  console.log("requeST: ", request);
 
   useEffect(() => {
     notify(); // Show the toast when loading is true
