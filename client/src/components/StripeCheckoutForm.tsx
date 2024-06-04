@@ -33,38 +33,42 @@ export default function StripeCheckoutForm() {
 
   // const { request } = useContext(RequestContext);
 
-  useEffect(() => {
-    if (!stripe) {
-      return;
-    }
+  // useEffect(() => {
+  //   if (!stripe) {
+  //     return;
+  //   }
 
-    const clientSecret = new URLSearchParams(window.location.search).get(
-      "payment_intent_client_secret"
-    );
+  //   // get client secret from URL
+  //   const clientSecret = new URLSearchParams(window.location.search).get(
+  //     "payment_intent_client_secret"
+  //   );
 
-    if (!clientSecret) {
-      return;
-    }
+  //   // if client secret doesn't exist, then we can't confirm payment, so just return.
 
-    stripe.retrievePaymentIntent(clientSecret).then(({ paymentIntent }) => {
-      switch (paymentIntent?.status) {
-        case "succeeded":
-          console.log("request Context: ", request);
-          setMessage("Payment succeeded!");
-          sendUserRequestForm("request", request);
-          break;
-        case "processing":
-          setMessage("Your payment is processing.");
-          break;
-        case "requires_payment_method":
-          setMessage("Your payment was not successful, please try again.");
-          break;
-        default:
-          setMessage("Something went wrong.");
-          break;
-      }
-    });
-  }, [stripe]);
+  //   if (!clientSecret) {
+  //     return;
+  //   }
+
+  //   // now get the payment intent using the client secret.
+  //   stripe.retrievePaymentIntent(clientSecret).then(({ paymentIntent }) => {
+  //     switch (paymentIntent?.status) {
+  //       case "succeeded":
+  //         console.log("request Context: ", request);
+  //         setMessage("Payment succeeded!");
+  //         sendUserRequestForm("request", request);
+  //         break;
+  //       case "processing":
+  //         setMessage("Your payment is processing.");
+  //         break;
+  //       case "requires_payment_method":
+  //         setMessage("Your payment was not successful, please try again.");
+  //         break;
+  //       default:
+  //         setMessage("Something went wrong.");
+  //         break;
+  //     }
+  //   });
+  // }, [stripe]);
 
   console.log("location ; ", window.location.origin);
 
@@ -79,6 +83,8 @@ export default function StripeCheckoutForm() {
       return;
     }
 
+    console.log("elements: ", elements);
+
     setIsLoading(true);
 
     const { error }: any = await stripe.confirmPayment({
@@ -86,6 +92,7 @@ export default function StripeCheckoutForm() {
       confirmParams: {
         return_url: `${currentUrl}/paymentstatus`,
       },
+      // redirect: "if_required",
     });
 
     // This point will only be reached if there is an immediate error when
