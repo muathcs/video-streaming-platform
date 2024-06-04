@@ -31,48 +31,11 @@ export default function StripeCheckoutForm() {
     "yourDataEndpoint"
   );
 
-  // const { request } = useContext(RequestContext);
-
-  // useEffect(() => {
-  //   if (!stripe) {
-  //     return;
-  //   }
-
-  //   // get client secret from URL
-  //   const clientSecret = new URLSearchParams(window.location.search).get(
-  //     "payment_intent_client_secret"
-  //   );
-
-  //   // if client secret doesn't exist, then we can't confirm payment, so just return.
-
-  //   if (!clientSecret) {
-  //     return;
-  //   }
-
-  //   // now get the payment intent using the client secret.
-  //   stripe.retrievePaymentIntent(clientSecret).then(({ paymentIntent }) => {
-  //     switch (paymentIntent?.status) {
-  //       case "succeeded":
-  //         console.log("request Context: ", request);
-  //         setMessage("Payment succeeded!");
-  //         sendUserRequestForm("request", request);
-  //         break;
-  //       case "processing":
-  //         setMessage("Your payment is processing.");
-  //         break;
-  //       case "requires_payment_method":
-  //         setMessage("Your payment was not successful, please try again.");
-  //         break;
-  //       default:
-  //         setMessage("Something went wrong.");
-  //         break;
-  //     }
-  //   });
-  // }, [stripe]);
-
   console.log("location ; ", window.location.origin);
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (
+    event: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ) => {
     // We don't want to let default form submission happen here,
     // which would refresh the page.
     event.preventDefault();
@@ -160,7 +123,7 @@ export default function StripeCheckoutForm() {
         theme="light"
         style={{ width: "500px", height: "5100px", marginTop: 100 }}
       />
-      <form id="payment-form" onSubmit={handleSubmit}>
+      <div id="payment-form">
         <PaymentElement id="payment-element" options={paymentElementOptions} />
         {/* <CardElement id="payment-element" options={paymentElementOptions} /> */}
         {/* <AddressElement options={paymentElementOptions} mode="shipping" /> */}
@@ -170,6 +133,7 @@ export default function StripeCheckoutForm() {
         {!isLoading && stripe && elements && (
           <button
             disabled={isLoading || !stripe || !elements}
+            onClick={(e) => handleSubmit(e)}
             className="bg-blue-400 rounded-lg py-4 px-10 mt-5 "
             id="submit"
           >
@@ -184,7 +148,7 @@ export default function StripeCheckoutForm() {
         )}
         {/* Show any error or success messages */}
         {message && <div id="payment-message">{message}</div>}
-      </form>
+      </div>
     </>
   );
 }
