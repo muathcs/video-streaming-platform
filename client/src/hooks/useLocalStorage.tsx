@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 
-function getSavedValue(key: any, initialValue: any) {
+// Function to get the saved value from local storage
+function getSavedValue(key: string, initialValue: any) {
   const savedValue = localStorage.getItem(key);
 
   // If savedValue is null, return the initial value
@@ -10,8 +11,9 @@ function getSavedValue(key: any, initialValue: any) {
 
   return initialValue;
 }
-export function useLocalStorage(key: any, initialValue?: any) {
-  const [value, setValue] = useState(() => {
+// Custom hook to use local storage
+export function useLocalStorage<T>(key: string, initialValue?: T) {
+  const [value, setValue] = useState<T>(() => {
     return getSavedValue(key, initialValue);
   });
 
@@ -19,5 +21,5 @@ export function useLocalStorage(key: any, initialValue?: any) {
     localStorage.setItem(key, JSON.stringify(value));
   }, [value]);
 
-  return [value, setValue];
+  return [value, setValue] as const;
 }

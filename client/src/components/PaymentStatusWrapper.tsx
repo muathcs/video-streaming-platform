@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import PaymentStatus from "./PaymentStatus";
+import PaymentStatus from "../pages/PaymentStatus";
 
 const PaymentStatusWrapper = () => {
   const location = useLocation();

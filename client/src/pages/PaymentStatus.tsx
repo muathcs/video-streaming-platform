@@ -2,13 +2,14 @@ import { useState, useEffect } from "react";
 import { useStripe } from "@stripe/react-stripe-js";
 import { useLocalStorage } from "../hooks/useLocalStorage";
 import { useGlobalAxios } from "../hooks/useGlobalAxios";
-import Success from "./Success";
+import Success from "../components/Success";
 import { apiUrl } from "../utilities/fetchPath";
+import { RequestType } from "../TsTypes/types";
 const PaymentStatus = () => {
   const stripe = useStripe();
   const [message, setMessage] = useState<string | null>(null);
 
-  const [request] = useLocalStorage("request");
+  const [request] = useLocalStorage<RequestType>("request");
 
   const { data: sendPostRequest } = useGlobalAxios("post");
 
@@ -80,7 +81,13 @@ const PaymentStatus = () => {
     });
   }, [stripe]);
 
-  return <>{message == "success" ? <Success request={request} /> : null}</>;
+  return (
+    <>
+      {message == "success" ? (
+        <Success celebUid={request.celebUid} price={request.price} />
+      ) : null}
+    </>
+  );
 };
 
 export default PaymentStatus;

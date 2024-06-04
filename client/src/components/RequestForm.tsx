@@ -8,10 +8,11 @@ type RequestProps = {
   celebUid: string;
   fanUid: string;
   price: number;
+  setOrderModal: (state: boolean) => void;
 };
 
 // this is coming from the orderModal component in /CelebProfile.tsx
-function RequestForm({ celebUid, fanUid, price }: RequestProps) {
+function RequestForm({ celebUid, fanUid, price, setOrderModal }: RequestProps) {
   // const {
   //   data: sendUserRequestForm,
   //   loading,
@@ -26,10 +27,8 @@ function RequestForm({ celebUid, fanUid, price }: RequestProps) {
 
   const navigate = useNavigate();
 
-  const [localStorageRequest, setLocalStorageRequest] = useLocalStorage(
-    "request",
-    ""
-  );
+  const [localStorageRequest, setLocalStorageRequest] =
+    useLocalStorage("request");
 
   const {
     register,
@@ -47,6 +46,7 @@ function RequestForm({ celebUid, fanUid, price }: RequestProps) {
 
     reset({
       ...getValues(),
+      reqType: "video",
       celebUid,
       fanUid,
       price,
@@ -77,9 +77,18 @@ function RequestForm({ celebUid, fanUid, price }: RequestProps) {
 
   return (
     <>
-      <div className="h-full w-full relative text-white bg-[#121114]   ">
-        <form onSubmit={handleSubmit(onSubmit)}>
-          {/* <!-- Email input --> */}
+      <div className="h-[90%]  w-full  md:w-3/4 lg:w-2/4 rounded-md relative text-white bg-[#222125]  px-2  sm:px-10 py-10 overflow-auto top-10  ">
+        <div
+          onClick={() => {
+            console.log("here");
+            setOrderModal(false);
+          }}
+          className="absolute  right-2 sm:right-5 top-0 sm:top-2 rounded-full  w-8 h-8 flex justify-center text-lg font-bold bg-red-500 cursor-pointer hover:bg-red-700 border-2"
+        >
+          x
+        </div>
+        <form className="relative top-2 p-1 " onSubmit={handleSubmit(onSubmit)}>
+          {/* Step 1 */}
           <div className="relative mb-6" data-te-input-wrapper-init>
             <label className="block text-sm font-medium mb-2 w-full sm:w-4/6 text-white text-left">
               Step 1: Type of video request
@@ -90,28 +99,43 @@ function RequestForm({ celebUid, fanUid, price }: RequestProps) {
               })}
               name="requestAction"
               data-te-select-init
-              className="w-full h-10 rounded-md bg-transparent border text-slate-800 cursor-pointer"
+              className="w-full h-10 rounded-md bg-transparent border text-white cursor-pointer"
             >
-              <option value="">Select</option>
-              <option value="Holiday">Holiday</option>
-              <option value="Birthday">Birthday</option>
-              <option value="Pep Talk">Pep Talk</option>
-              <option value="Roast">Roast</option>
-              <option value="Advice">Advice</option>
-              <option value="Question">Question</option>
-              <option value="Other">Other</option>
+              <option className="text-black" value="">
+                Select
+              </option>
+              <option className="text-black" value="Holiday">
+                Holiday
+              </option>
+              <option className="text-black" value="Birthday">
+                Birthday
+              </option>
+              <option className="text-black" value="Pep Talk">
+                Pep Talk
+              </option>
+              <option className="text-black" value="Roast">
+                Roast
+              </option>
+              <option className="text-black" value="Advice">
+                Advice
+              </option>
+              <option className="text-black" value="Question">
+                Question
+              </option>
+              <option className="text-black" value="Other">
+                Other
+              </option>
             </select>
             {errors.requestAction && (
               <p className="text-red-500">{`${errors.requestAction.message}`}</p>
             )}
           </div>
 
-          {/* <!-- for  who --> */}
-
-          <div className=" ">
-            <p className="text-left">Step 2: Who's this video for?</p>
-            <div className="gap-4 text-center sm:grid-cols-3  flex justify-center items-center  my-2">
-              <div>
+          {/* Step 2 */}
+          <div className="mb-6">
+            <p className="text-left mb-2">Step 2: Who's this video for?</p>
+            <div className="gap-4 text-center sm:grid-cols-3 flex justify-center items-center flex-wrap">
+              <div className="w-full sm:w-auto mb-2 sm:mb-0">
                 <input
                   {...register("toSomeOneElse")}
                   className="peer sr-only"
@@ -121,16 +145,14 @@ function RequestForm({ celebUid, fanUid, price }: RequestProps) {
                   onClick={() => setToSomeoneElse(true)}
                   value="true"
                 />
-
                 <label
                   htmlFor="option1"
-                  className="block w-full rounded-lg border border-gray-200 py-3 px-8 cursor-pointer hover:bg-blue-700   peer-checked:border-black peer-checked:shadow-lg peer-checked:shadow-blue-400 peer-checked:bg-blue-800 peer-checked:text-white bg-blue-600 text-white"
+                  className="block w-full rounded-lg border border-gray-200 py-3 px-8 cursor-pointer hover:bg-blue-700 peer-checked:border-black peer-checked:shadow-lg peer-checked:shadow-blue-400 peer-checked:bg-blue-800 peer-checked:text-white bg-blue-600 text-white"
                 >
                   Someone else
                 </label>
               </div>
-
-              <div>
+              <div className="w-full sm:w-auto">
                 <input
                   className="peer sr-only"
                   id="option2"
@@ -139,10 +161,9 @@ function RequestForm({ celebUid, fanUid, price }: RequestProps) {
                   onClick={() => setToSomeoneElse(false)}
                   {...register("toSomeOneElse")}
                 />
-
                 <label
                   htmlFor="option2"
-                  className="block w-full rounded-lg border border-gray-200 py-3 px-8 cursor-pointer hover:bg-blue-700   peer-checked:border-black peer-checked:shadow-lg peer-checked:shadow-blue-400 peer-checked:bg-blue-800 peer-checked:text-white bg-blue-600 text-white"
+                  className="block w-full rounded-lg border border-gray-200 py-3 px-8 cursor-pointer hover:bg-blue-700 peer-checked:border-black peer-checked:shadow-lg peer-checked:shadow-blue-400 peer-checked:bg-blue-800 peer-checked:text-white bg-blue-600 text-white"
                 >
                   Myself
                 </label>
@@ -150,9 +171,8 @@ function RequestForm({ celebUid, fanUid, price }: RequestProps) {
             </div>
           </div>
 
-          {/* personal info */}
-
-          <div className="relative " data-te-input-wrapper-init>
+          {/* Personal Info */}
+          <div className="relative mb-6" data-te-input-wrapper-init>
             {toSomeoneElse && (
               <>
                 <p className="text-left">From (first name): </p>
@@ -162,9 +182,7 @@ function RequestForm({ celebUid, fanUid, price }: RequestProps) {
                   })}
                   name="fromPerson"
                   type="text"
-                  className=" block min-h-[auto] w-full rounded border my-2 bg-transparent 
-            px-3 py-[0.32rem] leading-[2.5] outline-none 
-            "
+                  className="block min-h-[auto] w-full rounded border my-2 bg-transparent px-3 py-[0.32rem] leading-[2.5] outline-none"
                   placeholder="first name"
                 />
                 {errors.fromPerson && (
@@ -179,9 +197,7 @@ function RequestForm({ celebUid, fanUid, price }: RequestProps) {
               })}
               name="toPerson"
               type="text"
-              className=" block min-h-[auto] w-full rounded border my-2 bg-transparent
-                     px-3 py-[0.32rem] leading-[2.5] outline-none 
-                      "
+              className="block min-h-[auto] w-full rounded border my-2 bg-transparent px-3 py-[0.32rem] leading-[2.5] outline-none"
               placeholder="first name"
             />
             {errors.toPerson && (
@@ -189,12 +205,11 @@ function RequestForm({ celebUid, fanUid, price }: RequestProps) {
             )}
           </div>
 
-          {/* <!-- Request Type --> */}
-
-          <div className=" ">
-            <p className="text-left">Step 3: choose a request</p>
-            <div className="gap-4 text-center sm:grid-cols-3  flex justify-center items-center  my-2">
-              <div>
+          {/* Step 3 */}
+          {/* <div className="mb-6">
+            <p className="text-left mb-2">Step 3: Request Type</p>
+            <div className="gap-4 text-center sm:grid-cols-3 flex justify-center items-center flex-wrap"> */}
+          {/* <div className="w-full sm:w-auto mb-2 sm:mb-0">
                 <input
                   className="peer sr-only"
                   id="option3"
@@ -205,16 +220,14 @@ function RequestForm({ celebUid, fanUid, price }: RequestProps) {
                   name="reqType"
                   value="message"
                 />
-
                 <label
                   htmlFor="option3"
-                  className="block w-full rounded-lg border border-gray-200 py-3 px-8 cursor-pointer hover:bg-blue-700   peer-checked:border-black peer-checked:shadow-lg peer-checked:shadow-blue-400 peer-checked:bg-blue-800 peer-checked:text-white bg-blue-600 text-white"
+                  className="block w-full rounded-lg border border-gray-200 py-3 px-8 cursor-pointer hover:bg-blue-700 peer-checked:border-black peer-checked:shadow-lg peer-checked:shadow-blue-400 peer-checked:bg-blue-800 peer-checked:text-white bg-blue-600 text-white"
                 >
                   Message
                 </label>
-              </div>
-
-              <div>
+              </div> */}
+          {/* <div className="w-full sm:w-auto mb-2 sm:mb-0">
                 <input
                   className="peer sr-only"
                   id="option4"
@@ -225,15 +238,14 @@ function RequestForm({ celebUid, fanUid, price }: RequestProps) {
                   name="reqType"
                   value="audio"
                 />
-
                 <label
                   htmlFor="option4"
-                  className="block w-full rounded-lg border border-gray-200 py-3 px-8 cursor-pointer hover:bg-blue-700   peer-checked:border-black peer-checked:shadow-lg peer-checked:shadow-blue-400 peer-checked:bg-blue-800 peer-checked:text-white bg-blue-600 text-white"
+                  className="block w-full rounded-lg border border-gray-200 py-3 px-8 cursor-pointer hover:bg-blue-700 peer-checked:border-black peer-checked:shadow-lg peer-checked:shadow-blue-400 peer-checked:bg-blue-800 peer-checked:text-white bg-blue-600 text-white"
                 >
                   Audio
                 </label>
-              </div>
-              <div>
+              </div> */}
+          {/* <div className="w-full sm:w-auto">
                 <input
                   className="peer sr-only"
                   id="option5"
@@ -244,45 +256,41 @@ function RequestForm({ celebUid, fanUid, price }: RequestProps) {
                   name="reqType"
                   value="video"
                 />
-
                 <label
                   htmlFor="option5"
-                  className="block w-full rounded-lg border border-gray-200 py-3 px-8 cursor-pointer hover:bg-blue-700   peer-checked:border-black peer-checked:shadow-lg peer-checked:shadow-blue-400 peer-checked:bg-blue-800 peer-checked:text-white bg-blue-600 text-white"
+                  className="block w-full rounded-lg border border-gray-200 py-3 px-8 cursor-pointer  peer-checked:border-black peer-checked:shadow-lg bg-gray-800 peer-checked:text-white  text-white"
                 >
-                  video
+                  Video
                 </label>
-              </div>
-            </div>
+              </div> */}
+          {/* </div>
             {errors.reqType && (
               <p className="text-red-500">{`${errors.reqType.message}`}</p>
             )}
-          </div>
+          </div> */}
 
-          {/* Message*/}
-
-          <div className="">
-            <div className="text-left">Step 4: Request details</div>
+          {/* Message */}
+          <div className="mb-6">
+            <div className="text-left mb-2">Step 3: Request details</div>
             <textarea
               {...register("message", {
                 required: "Write a message to the celeb",
                 maxLength: 350,
               })}
               name="message"
-              className=" block min-h-[auto] w-full rounded border my-2 bg-transparent
-                     px-2 py-2  h-40 shadow-sm shadow-blue-400   outline-none placeholder-style  relative
-                      "
+              className="block min-h-[auto] w-full rounded border my-2 bg-transparent px-2 py-2 h-40 shadow-sm shadow-blue-400 outline-none placeholder-style"
               placeholder="I'm a huge fan of your incredible work. I have a special occasion coming up, and I was wondering if you could send a personalized shout-out or a few words of encouragement to make it even more memorable."
             />
+            {errors.message && (
+              <p className="text-red-500">{`${errors.message.message}`}</p>
+            )}
           </div>
-          {errors.message && (
-            <p className="text-red-500">{`${errors.message.message}`}</p>
-          )}
-          {/* continue */}
 
-          <div className=" flex justify-center">
+          {/* Continue */}
+          <div className="flex justify-center mb-6">
             <button
               disabled={isSubmitting}
-              className=" disabled:bg-red-500 block w-1/2  rounded-full my-8 border border-gray-200 py-3 px-8 cursor-pointer hover:bg-blue-700 bg-blue-600 text-white"
+              className="disabled:bg-red-500 block w-full sm:w-1/2 rounded-full my-8 border border-gray-200 py-3 px-8 cursor-pointer hover:bg-blue-700 bg-blue-600 text-white"
             >
               Continue
             </button>

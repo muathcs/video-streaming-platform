@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { apiUrl } from "../utilities/fetchPath";
 import axios from "../api/axios";
 import { RequestType, notification } from "../TsTypes/types";
-import Modal from "./Modal";
+import Modal from "../components/Modal";
 import { useGlobalAxios } from "../hooks/useGlobalAxios";
 import { calculateTimeLeftForCelebrityReply } from "../utilities/timeLeftForRequest";
 

@@ -15,11 +15,10 @@ export async function PayCeleb(celebId, amount) {
     res.send(transfer);
   } catch (error) {
     console.log(error.message);
-    res.sendStatus(401);
+    // res.sendStatus(401);
   }
 }
 
-//charge id is reuqest id
 export async function refundFan(chargeId, amount) {
   try {
     const refund = await stripe.refunds.create({

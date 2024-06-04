@@ -35,6 +35,7 @@ function StripePaymentIntent({
       const response = await axios.post(
         `${apiUrl}/stripe/create-payment-intent`,
         {
+          reqType: "video",
           requestPrice,
           fanUid,
           celebUid,

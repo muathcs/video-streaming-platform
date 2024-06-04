@@ -1,5 +1,5 @@
 // import { describe, it, expect } from "vitest";
-import Login from "../components/Login";
+import Login from "../pages/Login";
 import { render, screen, fireEvent } from "@testing-library/react";
 
 import "@testing-library/jest-dom";

@@ -28,7 +28,7 @@ router.put("/", async (req, res) => {
   const { requestid, uid } = req.body;
 
   try {
-    const result = await prisma.requests.update({
+    const result = await prisma.request.update({
       where: {
         requestid: requestid,
       },
@@ -37,7 +37,7 @@ router.put("/", async (req, res) => {
       },
     });
 
-    const pendinRequests = await prisma.requests.findMany({
+    const pendinRequests = await prisma.request.findMany({
       where: {
         reqstatus: "pending",
         celebuid: uid,

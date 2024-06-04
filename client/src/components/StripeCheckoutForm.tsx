@@ -9,6 +9,7 @@ import { useGlobalAxios } from "../hooks/useGlobalAxios";
 import { Bounce, ToastContainer, toast } from "react-toastify";
 import { apiUrl } from "../utilities/fetchPath";
 import { useLocation } from "react-router-dom";
+import { useLocalStorage } from "@/hooks/useLocalStorage";
 
 export default function StripeCheckoutForm() {
   const stripe = useStripe();
@@ -18,6 +19,9 @@ export default function StripeCheckoutForm() {
 
   const [message, setMessage] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [request] = useLocalStorage("request");
+
+  console.log("here: ", request);
 
   // custom to hook to get, post and put.
   // data is the function.
@@ -27,7 +31,7 @@ export default function StripeCheckoutForm() {
     "yourDataEndpoint"
   );
 
-  const { request } = useContext(RequestContext);
+  // const { request } = useContext(RequestContext);
 
   useEffect(() => {
     if (!stripe) {
@@ -45,6 +49,7 @@ export default function StripeCheckoutForm() {
     stripe.retrievePaymentIntent(clientSecret).then(({ paymentIntent }) => {
       switch (paymentIntent?.status) {
         case "succeeded":
+          console.log("request Context: ", request);
           setMessage("Payment succeeded!");
           sendUserRequestForm("request", request);
           break;

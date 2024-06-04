@@ -13,6 +13,7 @@ export type CelebType = {
   request_num: number;
   reviews: number;
   uid: string;
+  rating: number;
   username: string;
 };
 

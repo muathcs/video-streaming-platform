@@ -197,12 +197,12 @@ function Filter({
           </fieldset>
 
           <fieldset className="w-full">
-            <legend className="block w-full  px-5 py-3 text-lg font-medium">
+            {/* <legend className="block w-full  px-5 py-3 text-lg font-medium">
               Filter
-            </legend>
+            </legend> */}
 
-            <div className="space-y-2 px-5 py-6 border-b border-purple-600">
-              <div className="flex items-center">
+            <div className="space-y-2 px-5 py-6 ">
+              {/* <div className="flex items-center">
                 <input
                   id="300+"
                   type="radio"
@@ -214,9 +214,9 @@ function Filter({
                 <label htmlFor="300+" className="ml-3 text-sm font-medium">
                   24 hour delivery
                 </label>
-              </div>
+              </div> */}
 
-              <div className="flex items-center">
+              {/* <div className="flex items-center">
                 <input
                   id="600+"
                   type="radio"
@@ -228,9 +228,9 @@ function Filter({
                 <label htmlFor="600+" className="ml-3 text-sm font-medium">
                   5 star reviews
                 </label>
-              </div>
+              </div> */}
 
-              <div className="flex items-center">
+              {/* <div className="flex items-center">
                 <input
                   id="1500+"
                   type="radio"
@@ -243,20 +243,20 @@ function Filter({
                 <label htmlFor="1500+" className="ml-3 text-sm font-medium">
                   Most Popular
                 </label>
-              </div>
+              </div> */}
 
-              <div className="pt-2">
+              {/* <div className="pt-2">
                 <button
                   type="button"
                   className="text-xs text-gray-500 underline"
                 >
                   Reset Filter
                 </button>
-              </div>
+              </div> */}
             </div>
           </fieldset>
         </form>
-        <div className="">
+        {/* <div className="">
           <div className="flex justify-between   px-5 py-3">
             <button
               name="reset"
@@ -266,7 +266,7 @@ function Filter({
               Reset All
             </button>
           </div>
-        </div>
+        </div> */}
       </details>
     </div>
   );

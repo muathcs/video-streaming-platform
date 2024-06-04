@@ -6,13 +6,13 @@ dotenv.config();
 console.log("dd: ", process.env.PG_PORT);
 const pool = new Pool.Pool({
   user: process.env.PG_USER,
-  // user: "muath",
+  // user: "hikdev_user",
   host: process.env.PG_HOST,
-  // host: "dpg-cmkra0qcn0vc73frd2h0-a.frankfurt-postgres.render.com",
+  // host: "dpg-cpdd2qlds78s73ed4jqg-a",
   database: process.env.PG_DATABASE,
-  // database: "videostreaming",
+  // database: "hikdev",
   password: process.env.PG_PASSWORD,
-  // password: "2C27ijXqSntIXjjAUYPdDx72T2xr5y6w",
+  // password: "J9CVUuqMQJdIGGg4kWym7ZNXQ7atCLzX",
   port: process.env.PG_PORT, // Default PostgreSQL port
   // port: 5432, // Default PostgreSQL port
 

@@ -1,21 +1,21 @@
 import "./App.css";
 import NavBar from "./components/NavBar";
 import { Route, Routes } from "react-router-dom";
-import CelebProfile from "./components/CelebProfile";
-import Login from "./components/Login";
-import SignUp from "./components/signup";
+import CelebProfile from "./pages/CelebProfile";
+import Login from "./pages/Login";
+import SignUp from "./pages/signup";
 import PrivateRoute from "./components/privateRoute";
-import Dashboard from "./components/Dashboard";
-import FanRequests from "./components/FanRequests";
+import Dashboard from "./pages/Dashboard";
+import FanRequests from "./pages/FanRequests";
 import FulfillRequest from "./components/FulfillRequest";
-import Payment from "./components/Payment";
-import PaymentStatus from "./components/PaymentStatus";
+import Payment from "./pages/Payment";
+import PaymentStatus from "./pages/PaymentStatus";
 import Success from "./components/Success";
-import Category from "./components/Category";
+import Category from "./pages/Category";
 import FulFilled from "./components/fulfillRequest/FulFilled";
-import HowTo from "./components/HowTo";
-import Settings from "./components/Settings";
-import Celebs from "./components/Celebs";
+import HowTo from "./pages/HowTo";
+import Settings from "./pages/Settings";
+import Celebs from "./pages/Celebs";
 import PaymentStatusWrapper from "./components/PaymentStatusWrapper";
 import UserProfile from "./components/UserProfile";
 
@@ -33,12 +33,13 @@ function App() {
             <Route element={<Celebs />} path="/" />
             <Route path="/requests" element={<FanRequests />} />
             <Route path="/profile" element={<CelebProfile />} />
+            <Route path="/profile/:name/:id" element={<CelebProfile />} />
             <Route path="/fulfill/:requestId" element={<FulfillRequest />} />
             <Route path="/request/fulfilled" element={<FulFilled />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/payment" element={<Payment />} />
             <Route path="/paymentstatus" element={<PaymentStatus />} />
-            <Route path="/success" element={<Success />} />
+            {/* <Route path="/success" element={<Success />} /> */}
           </Route>
           <Route path="/about" element={<HowTo />} />
           <Route path="/browse/:category" element={<Category />} />

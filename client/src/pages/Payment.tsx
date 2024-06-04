@@ -1,23 +1,24 @@
 import { useState } from "react";
-import StripePaymentIntent from "./StripePaymentIntent";
+import StripePaymentIntent from "../components/StripePaymentIntent";
 import { useLocation } from "react-router-dom";
 import "react-toastify/dist/ReactToastify.css";
 import { AuthContextType, RequestType } from "../TsTypes/types";
 import { useAuth } from "../context/AuthContext";
+import { useLocalStorage } from "@/hooks/useLocalStorage";
 
 type LocationStateType = {
-  state: Pick<RequestType, "fanUid" | "celebUid" | "price">;
+  fanUid: string;
+  celebUid: string;
+  price: number;
 };
 function Payment() {
   const [paymentChoice, setPaymentChoice] = useState<string>("");
   const { currentUser }: AuthContextType = useAuth();
+  const [state] = useLocalStorage<LocationStateType>("request");
 
-  // instead of making this a boolean, just use number, and when the 24 hour delivery is false, set it to 0(null),
-  // when it's positive however, set it to 50% of the requests's price.
-  const [twentyFourHourDelivery, setTwentyFourHourDelivery] =
-    useState<number>();
+  console.log("local: ", state);
 
-  const { state }: LocationStateType = useLocation();
+  // const { state }: LocationStateType = useLocation();
 
   console.log("state: ", currentUser.email);
 
@@ -44,7 +45,7 @@ function Payment() {
                   id="option1"
                   type="radio"
                   name="delivery"
-                  onClick={() => setTwentyFourHourDelivery(0)}
+                  // onClick={() => setTwentyFourHourDelivery(0)}
                   defaultChecked
                 />
 
@@ -54,24 +55,6 @@ function Payment() {
                     <p>up to 7 days</p>
                   </div>
                   <p className="mr-5">Free</p>
-                </label>
-              </div>
-
-              <div className="w-full">
-                <input
-                  className="peer sr-only"
-                  id="option2"
-                  type="radio"
-                  name="delivery"
-                  onClick={() => setTwentyFourHourDelivery(state.price * 0.5)}
-                />
-
-                <label htmlFor="option2" className={divStyle}>
-                  <div className="ml-5">
-                    <p className="text-left">24 hours</p>
-                    <p>up to 24 hours</p>
-                  </div>
-                  {/* <p className="mr-5">£20</p> */}
                 </label>
               </div>
             </div>
@@ -144,12 +127,7 @@ function Payment() {
                   <p>Personalised Video</p>
                   <p>£{state.price}.00</p>
                 </div>
-                {twentyFourHourDelivery && (
-                  <div className=" flex justify-between px-3 ">
-                    <p>Expediate delivery Video</p>
-                    <p>£{state.price * 0.5}.00</p>
-                  </div>
-                )}
+
                 <span className="border-b  border-gray-600"></span>
                 <div className=" flex justify-between px-3">
                   <p>Service Fee </p>
@@ -160,15 +138,15 @@ function Payment() {
                   <p>free</p>
                 </div>
                 <span className="border-b  border-gray-600"></span>
-                <div className=" flex justify-between px-3">
+                {/* <div className=" flex justify-between px-3">
                   <a className="text-white underline hover:text-white cursor-pointer">
                     Add Promo Code
                   </a>
-                </div>
+                </div> */}
                 <span className="border-b  border-gray-600"></span>
                 <div className=" flex justify-between px-3">
                   <p>Total</p>
-                  <p>£{state.price + (twentyFourHourDelivery || 0)}.00</p>
+                  <p>£{state.price}.00</p>
                 </div>
               </div>
 

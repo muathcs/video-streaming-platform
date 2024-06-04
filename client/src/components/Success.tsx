@@ -7,18 +7,22 @@ import { apiUrl } from "../utilities/fetchPath";
 import { RequestType } from "../TsTypes/types";
 
 // if we reach the success page, it means a request has been sent to the celeb, so we can also create a notificaiton here to notify the celeb of the request that was made to them.
+type SuccessType = {
+  celebUid: string;
+  price: number;
+};
 
-const Success = ({ request }: { request: RequestType }) => {
+const Success = ({ celebUid, price }: SuccessType) => {
   const { state } = useLocation();
 
   async function sendReciept() {
     try {
-      const celeb = await axios.get(`${apiUrl}/Celebs/${request.celebUid}`);
+      const celeb = await axios.get(`${apiUrl}/Celebs/${celebUid}`);
 
       console.log("this", celeb.data);
       const response = await axios.post(`${apiUrl}/stripe/reciept`, {
-        celebuid: request.celebUid,
-        price: request.price,
+        celebuid: celebUid,
+        price: price,
       });
     } catch (error) {
       console.error(error);
@@ -52,8 +56,6 @@ const Success = ({ request }: { request: RequestType }) => {
       theme: "light",
     });
   };
-
-  console.log("requeST: ", request);
 
   useEffect(() => {
     notify(); // Show the toast when loading is true

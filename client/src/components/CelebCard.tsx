@@ -18,19 +18,19 @@ type CelebCardProps = {
   username: string;
 };
 
-function CelebCard({ celeb }: { celeb: CelebCardProps }) {
+function CelebCard({ celeb, size }: { celeb: CelebCardProps; size?: number }) {
   const navigate = useNavigate();
 
   const handleCardClick = () => {
     // Pass information about the clicked celeb as state
-    navigate("/profile", {
+    navigate(`/profile/${celeb.displayname}/${celeb.uid}`, {
       state: { celeb },
     });
   };
 
   return (
-    <div className="shadow-xl rounded-t-xl rounded-md card-zoom md:w-full md:h-full w-[12rem] h-[20rem]  text-white  ">
-      <div className="h-[85%]   w-[90%]  overflow-hidden rounded-t-xl ">
+    <div className="shadow-xl border border-gray-700 rounded-t-xl rounded-md card-zoom w-[18rem] h-[32rem] md:w-full  sm:h-[28rem]  text-white flex justify-center items-center  ">
+      <div className="h-[85%] w-full overflow-hidden rounded-t-xl ">
         <img
           onClick={handleCardClick}
           src={celeb.imgurl}

@@ -114,7 +114,6 @@ export function AuthProvider({ children }: { children: any }) {
   }
 
   useEffect(() => {
-    console.log("useEffectXXz");
     const unsubscribe = auth.onAuthStateChanged(
       async (
         user: any //this works
@@ -129,8 +128,6 @@ export function AuthProvider({ children }: { children: any }) {
             const response = await axios.get(`${apiUrl}/user/status`, {
               params: { uid: user.uid },
             });
-
-            console.log("celebStatus: ", response);
 
             let req;
 

@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 import { FieldValues, useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
-import { SocialMediaType } from "../TsTypes/types.ts";
+import { SocialMediaType } from "../TsTypes/types.tsx";
 
 function SignupCeleb({
   createUser,

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext";
-import FanRequestContainer from "./FanRequestContainer";
+import FanRequestContainer from "../components/FanRequestContainer";
 import { RequestType } from "../TsTypes/types";
 import { CelebType } from "../TsTypes/types";
 import { apiUrl } from "../utilities/fetchPath";
@@ -45,7 +45,7 @@ function FanRequests() {
       ) : error ? (
         <h1>Error</h1>
       ) : (
-        <div className="overflow-auto flex flex-col gap-2  h-full  ">
+        <div className="overflow-auto flex flex-col gap-2">
           <>
             {celebReplies &&
               celebReplies.map((req: fanRequestType) => (

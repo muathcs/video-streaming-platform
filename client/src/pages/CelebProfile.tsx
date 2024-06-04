@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { bool } from "aws-sdk/clients/signer";
-import RequestForm from "./RequestForm";
+import RequestForm from "../components/RequestForm";
 import { useAuth } from "../context/AuthContext";
 import { CelebType, ReviewsType } from "../TsTypes/types";
-import Review from "./Review";
+import Review from "../components/Review";
 import { useGlobalAxios } from "../hooks/useGlobalAxios";
 import axios from "../api/axios";
-import Modal from "./Modal";
+import Modal from "../components/Modal";
 import { formatter } from "../utilities/currencyFormatter";
 
 type StateType = {
@@ -115,33 +115,74 @@ function OrderModal({
 }: OrderModalType) {
   console.log("order Modal: ", celebInfo);
   return (
-    <div
-      onClick={() => {
-        console.log("herexx");
-      }}
-      className="bg-[#121114]    h-full w-full sm:top-0 fixed  flex justify-center items-center sm:bg-opacity-60 z-10    "
-    >
-      <div
-        onClick={() => {
-          console.log("fitrs");
-        }}
-        className="w-full sm:w-3/4 xl:w-2/5 h-full sm:h-[83%] overflow-auto sm:pt-12 bg-[#121114]  border-2 shadow-md shadow-blue-300  rounded-md  px-5  relative 
+    <div className="bg-[#121114]    h-full w-full top-0 fixed  flex justify-center items-center sm:bg-opacity-60 z-10     ">
+      {/* <div
+       
+        className="w-full sm:w-3/4 xl:w-2/5 h-full sm:h-[83%] overflow-auto sm:pt-12 bg-[#121114]  border-2 shadow-md shadow-blue-300  rounded-md  px-5  relative bg-yellow-300 
     "
-      >
-        <div
-          onClick={() => {
-            console.log("here");
-            setOrderModal(false);
-          }}
-          className="absolute  right-2 sm:right-5 top-0 sm:top-2 rounded-full  w-8 h-8 flex justify-center text-lg font-bold bg-red-500 cursor-pointer hover:bg-red-700 border-2"
-        >
-          x
-        </div>
-        <RequestForm
-          celebUid={celebInfo.uid}
-          fanUid={currentUserUid}
-          price={celebInfo.price}
-        />
+      > */}
+
+      <RequestForm
+        setOrderModal={setOrderModal}
+        celebUid={celebInfo.uid}
+        fanUid={currentUserUid}
+        price={celebInfo.price}
+      />
+    </div>
+    // </div>
+  );
+}
+
+function CelebInfoDisplay({
+  imgurl,
+  price,
+  category,
+  rating,
+  description,
+  displayname,
+}: Pick<
+  CelebType,
+  "imgurl" | "price" | "category" | "rating" | "description" | "displayname"
+>) {
+  return (
+    <div className="flex flex-col mb-10 pb-20 mt-10 ">
+      <div className=" rounded-full relative left-5 w-52 h-52   border  overflow-hidden ">
+        <img className="w-full h-full object-cover" src={imgurl} />
+      </div>
+      <div className="flex flex-col pr-3">
+        <p className="text-whtie text-left text-[24px] relative top-3 left-5  ">
+          Name: {displayname} {formatter.format(price)}
+        </p>
+
+        <p className="text-left text-[18px] relative top-3 left-5 text-gray-600">
+          {category}
+        </p>
+        <p className="text-whtie text-left text-[20px] relative top-3 left-5 text-black">
+          {"⭐".repeat(rating + 5)}
+        </p>
+
+        <p className="text-whtie text-left text-[16px] md:w-1/2 md:text-[20px] relative top-3 left-5 text-gray-400 whitespace-pre-line">
+          {description}
+        </p>
+      </div>
+    </div>
+  );
+}
+
+function VideoSection() {
+  return (
+    <div className="relative justify-items-center flex   w-full overflow-scroll xl:overflow-auto   mb-10 pb-2    ">
+      <div className="flex flex-row gap-5 pl-5  md:w-full   p-5 items-center md:justify-center ">
+        {0 ? (
+          <h1>Loading</h1>
+        ) : 0 ? (
+          <h1>Error</h1>
+        ) : (
+          // array represents how many videos there are.
+          [...Array(6)].map((celeb, index) => (
+            <div className="border-2 h-96 rounded-md w-60 md:w-72"></div>
+          ))
+        )}
       </div>
     </div>
   );
@@ -160,6 +201,15 @@ function CelebProfile() {
   const [openModal, setOpenModal] = useState(false);
 
   const { celeb: celebInfo }: StateType = state;
+  const {
+    displayname,
+    imgurl,
+    category,
+    price,
+    description,
+    reviews: rating,
+    ...rest
+  }: CelebType = celebInfo;
 
   console.log("Celeb INfo: ", celebInfo);
 
@@ -178,37 +228,25 @@ function CelebProfile() {
   }
 
   useEffect(() => {
-    console.log("useEffect");
     getReviews();
   }, [celebInfo]);
   return (
     <>
       <div className="h-full  w-[99%] flex  flex-col relative   text-white text-lg  ">
         {/* celeb pic and description */}
-        <div className="flex flex-col mb-10 pb-20 mt-10 ">
-          <div className=" rounded-full relative left-5 w-52 h-52   border bg-green-300 overflow-hidden ">
-            <img
-              className="w-full h-full object-cover"
-              src={celebInfo.imgurl}
-            />
-          </div>
-          <div className="flex flex-col pr-3">
-            <p className="text-whtie text-left text-[24px] relative top-3 left-5  ">
-              Name: {celebInfo.displayname} {formatter.format(celebInfo.price)}
-            </p>
+        <CelebInfoDisplay
+          displayname={displayname}
+          imgurl={imgurl}
+          category={category}
+          rating={rating}
+          description={description}
+          price={price}
+        />
 
-            <p className="text-left text-[18px] relative top-3 left-5 text-gray-600">
-              {celebInfo.category}
-            </p>
-            <p className="text-whtie text-left text-[20px] relative top-3 left-5 text-black">
-              {"⭐".repeat(celebInfo.reviews + 5)}
-            </p>
+        {/* Videos */}
+        <VideoSection />
 
-            <p className="text-whtie text-left text-[16px] md:w-1/2 md:text-[20px] relative top-3 left-5 text-gray-400 whitespace-pre-line">
-              {celebInfo.description}
-            </p>
-          </div>
-        </div>
+        {/* Review Section */}
 
         <div className=" h-max py-10  ">
           {reviews && reviews?.length > 0 ? (
@@ -222,17 +260,13 @@ function CelebProfile() {
           )}
         </div>
 
-        <div className="relative py-10 ">
-          {!celeb ? (
-            <button
-              onClick={() => setOrderModal(true)}
-              className=" relative  w-1/2 md:w-1/5 rounded-md hover:bg-slate-700 py-5 bg-slate-500  text-white hover:border-none outline-none focus:outline-none border-none"
-            >
-              Book A Shoutouta
-            </button>
-          ) : (
-            ""
-          )}
+        <div className="relative py-10  ">
+          <button
+            onClick={() => setOrderModal(true)}
+            className=" relative  w-1/2 md:w-1/5 rounded-md hover:bg-slate-700 py-5 bg-slate-500  text-white hover:border-none outline-none focus:outline-none border-none "
+          >
+            Book A Shoutouta
+          </button>
         </div>
         {orderModal && (
           <>
