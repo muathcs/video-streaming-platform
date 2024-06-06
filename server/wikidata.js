@@ -118,7 +118,7 @@ export async function getCelebImages(celebName) {
       console.log(
         "whilst uploading to db from wikidata: ",
         error,
-        "imglengh: ",
+        "imglength: ",
         talentInfo.imgUrl.length
       );
     }

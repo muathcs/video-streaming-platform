@@ -42,6 +42,8 @@ function NavBar() {
           params: { data: currentUser.uid },
         });
 
+        console.log("notification response: ", response);
+
         setNotifications(response.data);
 
         const totalUnreadNotifications: number = response.data.reduce(
@@ -57,7 +59,7 @@ function NavBar() {
         }
         setLoading(false);
       } catch (error) {
-        console.error(error);
+        console.error("THIS HERE: ", error);
       }
     };
 

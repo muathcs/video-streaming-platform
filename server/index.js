@@ -15,13 +15,26 @@ import UpdateRoute from "./routes/Update.js";
 import SearchRoute from "./routes/Search.js";
 import UserRoute from "./routes/User.js";
 import StripeRoute from "./routes/Stripe.js";
-import { createTheCelebs } from "./wikidata.js";
+// import { createTheCelebs } from "./wikidata.js";
+import path from "path";
+import fs from "fs";
+import React from "react";
+import { fileURLToPath } from "url";
+import { dirname } from "path";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+// import ReactDomServer from "react-dom/server.js";
+// import { StaticRouter } from "react-router-dom/server";
+// import App from "../client/src/App.tsx";
 
 // const result = await prisma.$executeRaw`
 //   UPDATE "Celeb"
 //   SET document_with_idx = TO_TSVECTOR('simple', displayname);
 // `;
 
+console.log("here");
 // createTheCelebs();
 const app = express();
 export const prisma = new PrismaClient();
@@ -42,6 +55,40 @@ const allowedOrigins = [
   "https://console.cron-job.org/jobs/4875267",
 ];
 
+console.log("__", __dirname);
+const clientDir = path.join(__dirname, "../client/dist");
+app.use(express.static(clientDir));
+
+// app.get("/*", async (req, res) => {
+//   fs.readFile(
+//     path.resolve("../client/dist/index.html"),
+//     "utf-8",
+//     (err, data) => {
+//       if (err) {
+//         console.log(err);
+//         res.status(500).send("some error happened");
+//       }
+
+//       const html = ReactDomServer.renderToString(
+//         <StaticRouter location={req.url}>
+//           <App />
+//         </StaticRouter>
+//       );
+//       return res.send(
+//         data.replace(`<div id="root"></div>`, `<div id="root>${html}</div>`)
+//       );
+//     }
+//   );
+// });
+
+// app.use((req, res, next) => {
+//   let router = Router.create({ location: req.url, routes: routes });
+
+//   router.run((Handler, state) => {
+//     let html = React.renderToString(<Handler />);
+//     return res.render("react_page", { html: html });
+//   });
+// });
 //middleware
 app.use(
   cors({
@@ -73,6 +120,15 @@ app.use("/stripe", StripeRoute);
 
 app.get("/celebs", (req, res) => {
   console.log("testing path ");
+});
+
+// Catch-all route to serve the client app
+app.get("/*", function (req, res) {
+  res.sendFile(path.join(clientDir, "index.html"), function (err) {
+    if (err) {
+      res.status(500).send(err);
+    }
+  });
 });
 
 //Listen

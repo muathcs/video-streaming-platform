@@ -22,31 +22,29 @@ import UserProfile from "./components/UserProfile";
 function App() {
   return (
     <>
-      <div className="">
-        {/* <Celebs /> */}
-        <NavBar />
-        <Routes>
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<SignUp />} />
-          <Route path="/" element={<PrivateRoute />}>
-            <Route element={<Settings />} path="/settings" />
-            <Route element={<Celebs />} path="/" />
-            <Route path="/requests" element={<FanRequests />} />
-            <Route path="/profile" element={<CelebProfile />} />
-            <Route path="/profile/:name/:id" element={<CelebProfile />} />
-            <Route path="/fulfill/:requestId" element={<FulfillRequest />} />
-            <Route path="/request/fulfilled" element={<FulFilled />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/payment" element={<Payment />} />
-            <Route path="/paymentstatus" element={<PaymentStatus />} />
-            {/* <Route path="/success" element={<Success />} /> */}
-          </Route>
-          <Route path="/about" element={<HowTo />} />
-          <Route path="/browse/:category" element={<Category />} />
-          <Route path="/user/profile" element={<UserProfile />} />
-          <Route path="/*" element={<PrivateRoute />} />
-        </Routes>
-      </div>
+      {/* <Celebs /> */}
+      <NavBar />
+      <Routes>
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<SignUp />} />
+        <Route path="/" element={<PrivateRoute />}>
+          <Route element={<Settings />} path="/settings" />
+          <Route element={<Celebs />} path="/" />
+          <Route path="/requests" element={<FanRequests />} />
+          <Route path="/profile" element={<CelebProfile />} />
+          <Route path="/profile/:name/:id" element={<CelebProfile />} />
+          <Route path="/fulfill/:requestId" element={<FulfillRequest />} />
+          <Route path="/request/fulfilled" element={<FulFilled />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/payment" element={<Payment />} />
+          <Route path="/paymentstatus" element={<PaymentStatus />} />
+          {/* <Route path="/success" element={<Success />} /> */}
+        </Route>
+        <Route path="/about" element={<HowTo />} />
+        <Route path="/browse/:category" element={<Category />} />
+        <Route path="/user/profile" element={<UserProfile />} />
+        <Route path="/*" element={<PrivateRoute />} />
+      </Routes>
     </>
   );
 }
