@@ -177,6 +177,7 @@ router.post("/", async (req, res) => {
 
     res.send("succesfully added a request");
   } catch (error) {
+    res.status(500).json(error);
     console.log("/request", error.message);
   }
 });
@@ -236,7 +237,7 @@ router.put("/fulfill/:id", upload.single("videoFile"), async (req, res) => {
         },
       });
 
-      PayCeleb(response.celebuid, response.price);
+      // PayCeleb(response.celebuid, response.price);
 
       // const response = await pool.query(
       //   "UPDATE request SET reqstatus = $1, celebmessage = $2 WHERE requestid = $3 ",
