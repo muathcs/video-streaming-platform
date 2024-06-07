@@ -118,6 +118,7 @@ router.post("/", async (req, res) => {
 
   price = parseInt(price);
   try {
+    // create a request from the req body.
     const result = await prisma.request.create({
       data: {
         celebuid: celebUid,
@@ -137,6 +138,17 @@ router.post("/", async (req, res) => {
     console.log("celebuid: ", celebUid);
     console.log("fanuid: ", fanUid);
 
+    updateFanClusterIdAndTotalSpent(celebUid, fanUid, price);
+
+    res.send("succesfully added a request");
+  } catch (error) {
+    res.status(500).json(error);
+    console.log("/request", error.message);
+  }
+});
+
+async function updateFanClusterIdAndTotalSpent(celebUid, fanUid, price) {
+  try {
     //get the cluster id of the celeb that was just reqeusted
     const getCelebCluster = await prisma.celeb.findFirst({
       where: {
@@ -174,13 +186,10 @@ router.post("/", async (req, res) => {
         uid: fanUid,
       },
     });
-
-    res.send("succesfully added a request");
   } catch (error) {
-    res.status(500).json(error);
-    console.log("/request", error.message);
+    console.error(error);
   }
-});
+}
 
 router.put("/expired/:id", upload.single("videoFile"), async (req, res) => {
   const requestid = req.params.id;
