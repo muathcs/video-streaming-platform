@@ -118,13 +118,9 @@ app.use("/search", SearchRoute);
 app.use("/user", UserRoute);
 app.use("/stripe", StripeRoute);
 
-app.get("/celebs", (req, res) => {
-  console.log("testing path ");
-});
-
 // Catch-all route to serve the client app
 app.get("/*", function (req, res) {
-  console.log("req to * path");
+  console.log("req to * path: ", clientDir);
   res.sendFile(path.join(clientDir, "index.html"), function (err) {
     if (err) {
       res.status(500).send(err);
