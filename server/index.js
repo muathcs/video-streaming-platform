@@ -56,7 +56,8 @@ const allowedOrigins = [
 ];
 
 console.log("__", __dirname);
-const clientDir = path.join(__dirname, "../client/dist");
+const clientDir = path.join(__dirname, "../../client/dist");
+
 app.use(express.static(clientDir));
 
 // app.get("/*", async (req, res) => {
