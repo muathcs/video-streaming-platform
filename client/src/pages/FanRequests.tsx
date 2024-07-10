@@ -28,6 +28,7 @@ function FanRequests() {
         setLoading(false);
 
         setCelebReplies(response.data);
+        console.log("equal: ", response.data.length === 0);
         console.log("rez: ", response.data);
       } catch (error: any) {
         console.error(error);
@@ -45,8 +46,13 @@ function FanRequests() {
       ) : error ? (
         <h1>Error</h1>
       ) : (
-        <div className="overflow-auto flex flex-col gap-2">
+        <div className="overflow-auto flex flex-col gap-2 h-full   ">
           <>
+            {celebReplies?.length === 0 ? (
+              <h1 className=" top-40 relative">You do not have any requests</h1>
+            ) : (
+              ""
+            )}
             {celebReplies &&
               celebReplies.map((req: fanRequestType) => (
                 <>

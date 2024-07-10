@@ -52,6 +52,7 @@ const allowedOrigins = [
   "https://116.203.129.16",
   "https://23.88.105.37",
   "https://128.140.8.200",
+  "192.168.0.16",
   "https://console.cron-job.org/jobs/4875267",
 ];
 
