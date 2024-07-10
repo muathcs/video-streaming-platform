@@ -15,7 +15,7 @@ import UpdateRoute from "./routes/Update.js";
 import SearchRoute from "./routes/Search.js";
 import UserRoute from "./routes/User.js";
 import StripeRoute from "./routes/Stripe.js";
-// import { createTheCelebs } from "./wikidata.js";
+import { createTheCelebs } from "./wikidata.js";
 import path from "path";
 import fs from "fs";
 import React from "react";
