@@ -2,6 +2,17 @@ import { useRef, useState } from "react";
 import { FieldValues, useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
 import { SocialMediaType } from "../TsTypes/types.tsx";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select.tsx";
+import { Input } from "@/components/ui/input.tsx";
+import { Label } from "@/components/ui/label.tsx";
 
 function SignupCeleb({
   createUser,
@@ -135,7 +146,7 @@ function SignupCeleb({
         )}
 
         {/* how many followers */}
-        {mostPopularSocialMedia && (
+        {/* {mostPopularSocialMedia && (
           <div className="mb-6">
             <input
               {...register("followers", {
@@ -160,7 +171,7 @@ function SignupCeleb({
               <p className=" mt-2 text-red-400">{`${errors.followers.message}`}</p>
             )}
           </div>
-        )}
+        )} */}
         {/* what is your @ */}
         {mostPopularSocialMedia && (
           <div className="mb-6">
@@ -182,9 +193,9 @@ function SignupCeleb({
         {/* category */}
         <div className="relative mb-6" data-te-input-wrapper-init>
           <label className="block text-sm font-medium mb-2 w-full sm:w-4/6 text-white text-left">
-            What category do you specialise in?
+            What is your largest following
           </label>
-          <select
+          {/* <select
             {...register("category", {
               required:
                 "pick a category, choose other if nothing applies to you.",
@@ -201,14 +212,59 @@ function SignupCeleb({
             <option value="5">Advice</option>
             <option value="6">Question</option>
             <option value="7">Other</option>
-          </select>
+          </select> */}
+          <div className="z-20">
+            <Select
+              name="category"
+              onValueChange={(e) => {
+                console.log("E: ", e);
+                setValue("category", e);
+              }}
+            >
+              <SelectTrigger className=" border-2 border-white w-full z-10 ">
+                <SelectValue placeholder="Select a range" />
+              </SelectTrigger>
+              <SelectContent className="z-10">
+                <SelectGroup
+                  {...register("category", {
+                    required: "Select a range for how many followers you have.",
+                  })}
+                  className="z-20 cursor-pointer bg-slate-800 "
+                >
+                  <SelectLabel>Followers count</SelectLabel>
+                  <SelectItem className="cursor-pointer" value="<10K">
+                    {"<10K"}
+                  </SelectItem>
+                  <SelectItem className="cursor-pointer" value="10K-50k">
+                    {"10K-50k"}
+                  </SelectItem>
+                  <SelectItem className="cursor-pointer" value="50K-100k">
+                    {"50K-100k"}
+                  </SelectItem>
+                  <SelectItem className="cursor-pointer" value="100K-300k">
+                    {"100K-300k"}
+                  </SelectItem>
+                  <SelectItem className="cursor-pointer" value="300K-1m">
+                    {"300K-1m"}
+                  </SelectItem>
+                  <SelectItem className="cursor-pointer" value="1m-3m">
+                    {"1m-3m"}
+                  </SelectItem>
+                  <SelectItem className="cursor-pointer" value="3m+">
+                    {"3m+"}
+                  </SelectItem>
+                </SelectGroup>
+              </SelectContent>
+            </Select>
+          </div>
+
           {errors.category && (
             <p className=" mt-2 text-red-400">{`${errors.category.message}`}</p>
           )}
         </div>
 
         {/* price */}
-        <div className="mb-6">
+        {/* <div className="mb-6">
           <label className="flex mb-1 text-sm font-medium  w-full sm:w-6/6 text-white text-left">
             How much do you wish to charge for your shoutouts?
           </label>
@@ -223,28 +279,31 @@ function SignupCeleb({
           {errors.price && (
             <p className=" mt-2 text-red-400">{`${errors.price.message}`}</p>
           )}
-        </div>
+        </div> */}
         {/* email  */}
-        <div className="relative mb-6" data-te-input-wrapper-init>
-          <input
-            {...register("email", {
-              required: "email field is required",
-            })}
-            type="text"
-            className={inputStyle}
-            placeholder="email address"
-          />
-          {errors.email && (
-            <p className=" mt-2 text-red-400">{`${errors.email.message}`}</p>
-          )}
+        <div className="border-1 relative">
+          <label className="block text-sm font-medium mb-2 w-full sm:w-4/6 text-white text-left">
+            Add your email address
+          </label>{" "}
+          <div className="relative mb-6" data-te-input-wrapper-init>
+            <input
+              {...register("email", {
+                required: "email field is required",
+              })}
+              type="text"
+              className={inputStyle}
+              placeholder="email address"
+            />
+            {errors.email && (
+              <p className=" mt-2 text-red-400">{`${errors.email.message}`}</p>
+            )}
+          </div>
         </div>
 
-        {/* Message*/}
+        {/* Message to US*/}
 
         <div className="">
-          <div className="text-left">
-            Give a brief Description of yourself(this will go on your website)
-          </div>
+          <div className="text-left">Anything else you'd like us to know?</div>
           <textarea
             {...register("description", {
               required: "description is required. ",
@@ -252,7 +311,6 @@ function SignupCeleb({
             className=" block min-h-[auto] w-full rounded border my-2 bg-transparent
                      px-2 py-2  h-40 shadow-sm shadow-blue-400   outline-none placeholder-style  relative
                       "
-            placeholder="I'm a huge fan of your incredible work. I have a special occasion coming up, and I was wondering if you could send a personalized shout-out or a few words of encouragement to make it even more memorable."
           />
         </div>
 
@@ -260,11 +318,11 @@ function SignupCeleb({
         {errors.imgfile && (
           <p className=" mt-2 text-red-400">{`${errors.imgfile.message}`}</p>
         )}
-        <div
+        {/* <div
           className="relative mb-2  h-[50px] border"
           data-te-input-wrapper-init
-        >
-          <input
+        > */}
+        {/* <input
             type="file"
             {...register("imgfile", {
               required: "choose profile image",
@@ -273,15 +331,22 @@ function SignupCeleb({
             className={
               inputStyle + " border-none right-0 w-[50%] h-[50px] absolute"
             }
-          />
+          /> */}
+        {/* <SelectLabel htmlFor="picture">Picture</Label> */}
+        {/* <div className="grid w-full max-w-sm items-center gap-1.5 my-3 ">
+          <Label htmlFor="picture" className="text-left">
+            Choose a profile image
+          </Label>
+          <Input className="cursor-pointer" id="picture" type="file" />
+        </div> */}
 
-          <label
+        {/* <label
             htmlFor="exampleFormControlInput33"
             className=" absolute right-2 top-3"
           >
             Pick a Profile image
-          </label>
-        </div>
+          </label> */}
+        {/* </div> */}
 
         {/* <!-- Remember me checkbox --> */}
         <div className="mb-5 flex items-center justify-between ">

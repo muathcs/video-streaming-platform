@@ -8,22 +8,23 @@ datasource db {
 }
 
 model Celeb {
-  celebid           String                   @id @default(uuid())
-  displayname       String?                  @db.VarChar(60)
-  username          String?                  @db.VarChar(20)
-  followers         Int?
-  account           String?                  @db.VarChar(30)
-  category          String?                  @db.VarChar(20)
-  price             Int?
-  email             String?                  @db.VarChar(60)
-  description       String?                  @db.VarChar(250)
-  request_num       Int?
-  rating            Int?
-  uid               String?                  @unique @db.VarChar(42)
-  imgurl            String?                  @db.VarChar(250)
-  document_with_idx Unsupported("tsvector")?
-  reviews           Review[]
-  cluster_id        Int?
+  celebid              String                   @id @default(uuid())
+  displayname          String?                  @db.VarChar(60)
+  username             String?                  @db.VarChar(20)
+  followers            Int?
+  account              String?                  @db.VarChar(30)
+  category             String?                  @db.VarChar(20)
+  price                Int?
+  email                String?                  @db.VarChar(60)
+  description          String?                  @db.VarChar(250)
+  request_num          Int?
+  rating               Int?
+  uid                  String?                  @unique @db.VarChar(42)
+  imgurl               String?                  @db.VarChar(250)
+  document_with_idx    Unsupported("tsvector")?
+  reviews              Review[]
+  cluster_id           Int?
+  completed_onboarding Boolean                  @default(false)
 
   @@index([document_with_idx], map: "document_idx", type: Gin)
   @@index([document_with_idx], map: "document_with_idx_index", type: Gin)

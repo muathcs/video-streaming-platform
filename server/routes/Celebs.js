@@ -115,6 +115,7 @@ router.get("/:id", async (req, res) => {
   }
 });
 
+// this created a celeb account.
 router.post(
   "/createCeleb",
   upload.single("file"),
@@ -124,8 +125,11 @@ router.post(
 
     console.log("creating a cleeb");
 
-    const payload = JSON.parse(req.body.payLoad);
+    console.log("req: ", req.body);
 
+    const payload = JSON.parse(req.body);
+
+    console.log("here");
     const newImg = req.newUrl;
 
     const {
@@ -161,7 +165,7 @@ router.post(
 
       res.send(201);
     } catch (error) {
-      console.log(error);
+      console.log("create a celeb", error);
       res.send("Failed");
     }
   }
