@@ -7,6 +7,8 @@ import SignupUser from "./SignupUser";
 import { apiUrl } from "../utilities/fetchPath";
 // import { useGlobalAxios } from "../hooks/useGlobalAxios";
 import { AWS_LINK } from "../utilities/awsLink";
+import { useNavigate } from "react-router-dom";
+import AccountSuccess from "@/components/TalentAccountSuccessMessage";
 function SignUp() {
   // start
   const { signup, uploadProfilePic }: any = useAuth();
@@ -15,6 +17,9 @@ function SignUp() {
   const [successfull, setSuccessfull] = useState<string>("");
   // const { data: sendpostrequest } = useGlobalAxios("post");
   const [selectedFile, setSelectedFile] = useState<File>();
+  const [successMessage, setSuccessMessage] = useState<boolean>(false);
+
+  const navigate = useNavigate();
 
   //loooooooooooong function, because I tried to give the User and Celeb signup the same function
   async function handleSubmit(data: any, isCeleb: boolean) {
@@ -71,6 +76,10 @@ function SignUp() {
       setSuccessfull("");
       console.error("failed to create an account", error);
     }
+
+    if (isCeleb) {
+      navigate("");
+    }
     setLoading(false);
     // setSuccessfull(false);
   }
@@ -103,77 +112,81 @@ function SignUp() {
 
   return (
     <div className="">
-      {/* <!-- TW Elements is free under AGPL, with commercial license required for specific uses. See more details: https://tw-elements.com/license/ and contact us for queries at tailwind@mdbootstrap.com -->  */}
-      <section className="h-screen bg-[#121114] flex justify-center">
-        <div className="container h-full px-6 py-24 ">
-          <div className="g-6 flex h-full flex-wrap sm:items-center items-start justify-center lg:justify-between ">
-            {/* <!-- Left column container with background--> */}
-            <div className="mb-12 md:mb-0 md:w-8/12 lg:w-6/12 hidden sm:block">
-              <img
-                src="https://tecdn.b-cdn.net/img/Photos/new-templates/bootstrap-login-form/draw2.svg"
-                className="w-full"
-                alt="Phone image"
-              />
-            </div>
-
-            {/* <!-- Right column container with form --> */}
-            <div className="md:w-8/12 lg:ml-6 lg:w-5/12 w-[90%] relative">
-              <h1 className="text-[30px]  mb-10">Sign Up</h1>
-              {error ? (
-                <p className="bg-red-200 border text-black border-red-600 w-full rounded-lg text-center sm:p-4 p-3 relative mb sm:top-2  left-1/2 transform -translate-x-1/2 -translate-y-1/2 ">
-                  {error}
-                </p>
-              ) : successfull ? (
-                <p className="bg-green-200 border text-lg text-black border-green-600 w-full rounded-lg text-center sm:p-4 p-3 relative mb sm:top-2  left-1/2 transform -translate-x-1/2 -translate-y-1/2 ">
-                  {successfull}
-                </p>
-              ) : null}
-
-              <div className="flex justify-center gap-5 mb-3">
-                <button
-                  onClick={() => {
-                    setSelected("celeb");
-                    handleChoice("celeb");
-                  }}
-                  className={` p-5 w-32 ${
-                    selected == "celeb"
-                      ? "bg-blue-600 bg-border-4  border-white"
-                      : "bg-blue-500"
-                  }`}
-                >
-                  Celeb
-                </button>
-                <button
-                  onClick={() => {
-                    setSelected("fan");
-                    handleChoice("fan");
-                  }}
-                  className={` p-5 w-32 ${
-                    selected == "fan"
-                      ? "bg-blue-600 bg-border-4  border-white"
-                      : "bg-blue-500"
-                  }`}
-                >
-                  Fan
-                </button>
+      {successMessage ? (
+        <AccountSuccess />
+      ) : (
+        <section className="h-screen bg-[#121114] flex justify-center">
+          <div className="container h-full px-6 py-24 ">
+            <div className="g-6 flex h-full flex-wrap sm:items-center items-start justify-center lg:justify-between ">
+              {/* <!-- Left column container with background--> */}
+              <div className="mb-12 md:mb-0 md:w-8/12 lg:w-6/12 hidden sm:block">
+                <img
+                  src="https://tecdn.b-cdn.net/img/Photos/new-templates/bootstrap-login-form/draw2.svg"
+                  className="w-full"
+                  alt="Phone image"
+                />
               </div>
-              <div className="">
-                {selected == "celeb" ? (
-                  <SignupCeleb
-                    createUser={handleSubmit}
-                    handleFileChange={handleFileChange}
-                  />
-                ) : (
-                  <SignupUser
-                    createUser={handleSubmit}
-                    handleFileChange={handleFileChange}
-                  />
-                )}
+
+              {/* <!-- Right column container with form --> */}
+              <div className="md:w-8/12 lg:ml-6 lg:w-5/12 w-[90%] relative">
+                <h1 className="text-[30px]  mb-10">Sign Up</h1>
+                {error ? (
+                  <p className="bg-red-200 border text-black border-red-600 w-full rounded-lg text-center sm:p-4 p-3 relative mb sm:top-2  left-1/2 transform -translate-x-1/2 -translate-y-1/2 ">
+                    {error}
+                  </p>
+                ) : successfull ? (
+                  <p className="bg-green-200 border text-lg text-black border-green-600 w-full rounded-lg text-center sm:p-4 p-3 relative mb sm:top-2  left-1/2 transform -translate-x-1/2 -translate-y-1/2 ">
+                    {successfull}
+                  </p>
+                ) : null}
+
+                <div className="flex justify-center gap-5 mb-3">
+                  <button
+                    onClick={() => {
+                      setSelected("celeb");
+                      handleChoice("celeb");
+                    }}
+                    className={` p-5 w-32 ${
+                      selected == "celeb"
+                        ? "bg-blue-600 bg-border-4  border-white"
+                        : "bg-blue-500"
+                    }`}
+                  >
+                    Celeb
+                  </button>
+                  <button
+                    onClick={() => {
+                      setSelected("fan");
+                      handleChoice("fan");
+                    }}
+                    className={` p-5 w-32 ${
+                      selected == "fan"
+                        ? "bg-blue-600 bg-border-4  border-white"
+                        : "bg-blue-500"
+                    }`}
+                  >
+                    Fan
+                  </button>
+                </div>
+                <div className="">
+                  {selected == "celeb" ? (
+                    <SignupCeleb
+                      createUser={handleSubmit}
+                      handleFileChange={handleFileChange}
+                      setSuccessMessage={setSuccessMessage}
+                    />
+                  ) : (
+                    <SignupUser
+                      createUser={handleSubmit}
+                      handleFileChange={handleFileChange}
+                    />
+                  )}
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
     </div>
   );
 }

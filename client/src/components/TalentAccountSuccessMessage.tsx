@@ -1,11 +1,11 @@
 import React from "react";
 import Confett from "../assets/Confetti.png";
 import Tick from "../assets/complete.png";
-function AccountSuccess() {
+function TalentAccountSuccessMessage() {
   return (
     <div className="flex items-start justify-center">
-      <div className="mt-10 border-2 ">
-        <div className="border border-yellow-300 flex justify-center">
+      <div className="mt-10  ">
+        <div className=" flex justify-center">
           <img src={Confett} />
         </div>
         <div className="flex mt-10 justify-center items-center">
@@ -16,11 +16,11 @@ function AccountSuccess() {
         </div>
         <p className="mt-10 text-lg">
           Download the Hikaya app from either the App Store or Google Play Store
-          to finish setting up your account, login using your credentials.
+          to finish setting up your account, login using your email.
         </p>
       </div>
     </div>
   );
 }
 
-export default AccountSuccess;
+export default TalentAccountSuccessMessage;

@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { Dispatch, SetStateAction, useRef, useState } from "react";
 import { FieldValues, useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
 import { SocialMediaType } from "../TsTypes/types.tsx";
@@ -13,13 +13,16 @@ import {
 } from "@/components/ui/select.tsx";
 import { Input } from "@/components/ui/input.tsx";
 import { Label } from "@/components/ui/label.tsx";
+import AccountSuccess from "@/components/TalentAccountSuccessMessage.tsx";
 
 function SignupCeleb({
   createUser,
   handleFileChange,
+  setSuccessMessage,
 }: {
   createUser: any;
   handleFileChange: any;
+  setSuccessMessage: Dispatch<SetStateAction<boolean>>;
 }) {
   const [rememberMe, setRememberMe] = useState<boolean>();
 
@@ -42,17 +45,27 @@ function SignupCeleb({
     reset,
   } = useForm();
 
+  console.log("here");
+
   async function onsubmit(data: FieldValues) {
-    createUser(data, true);
+    console.log("herex");
+    console.log("successMessagE: ");
+    console.log("here");
+    await createUser(data, true);
+    // setSuccessMessage(true);
     // reset(); // true indiciates this is a celeb being created.
   }
 
   const inputStyle =
     "peer block min-h-[auto] w-full rounded border bg-transparent px-3 py-[0.32rem] leading-[2.15] outline-none transition-all duration-200 ease-linear focus:placeholder:opacity-100 data-[te-input-state-active]:placeholder:opacity-100 motion-reduce:transition-none dark:text-neutral-200 dark:placeholder:text-neutral-200  ";
 
+  function testFunction() {
+    console.log("testing");
+  }
   return (
     <div>
-      <form onSubmit={handleSubmit(onsubmit)}>
+      <form onSubmit={onsubmit}>
+        {" "}
         {/* <!-- display Name --> */}
         <div className="relative mb-6" data-te-input-wrapper-init>
           <input
@@ -113,7 +126,6 @@ function SignupCeleb({
             <p className=" mt-2 text-red-400">{`${errors.confirmPassword.message}`}</p>
           )}
         </div>
-
         {/* <!-- Popular app input --> */}
         <p className="text-left mb-2">
           Which App do you have the most followers on?{" "}
@@ -144,7 +156,6 @@ function SignupCeleb({
         {errors.app && (
           <p className=" mt-2 text-red-400">{`${errors.app.message}`}</p>
         )}
-
         {/* how many followers */}
         {/* {mostPopularSocialMedia && (
           <div className="mb-6">
@@ -189,7 +200,6 @@ function SignupCeleb({
             )}
           </div>
         )}
-
         {/* category */}
         <div className="relative mb-6" data-te-input-wrapper-init>
           <label className="block text-sm font-medium mb-2 w-full sm:w-4/6 text-white text-left">
@@ -262,7 +272,6 @@ function SignupCeleb({
             <p className=" mt-2 text-red-400">{`${errors.category.message}`}</p>
           )}
         </div>
-
         {/* price */}
         {/* <div className="mb-6">
           <label className="flex mb-1 text-sm font-medium  w-full sm:w-6/6 text-white text-left">
@@ -299,9 +308,7 @@ function SignupCeleb({
             )}
           </div>
         </div>
-
         {/* Message to US*/}
-
         <div className="">
           <div className="text-left">Anything else you'd like us to know?</div>
           <textarea
@@ -313,7 +320,6 @@ function SignupCeleb({
                       "
           />
         </div>
-
         {/* <!-- Image --> */}
         {errors.imgfile && (
           <p className=" mt-2 text-red-400">{`${errors.imgfile.message}`}</p>
@@ -339,7 +345,6 @@ function SignupCeleb({
           </Label>
           <Input className="cursor-pointer" id="picture" type="file" />
         </div> */}
-
         {/* <label
             htmlFor="exampleFormControlInput33"
             className=" absolute right-2 top-3"
@@ -347,7 +352,6 @@ function SignupCeleb({
             Pick a Profile image
           </label> */}
         {/* </div> */}
-
         {/* <!-- Remember me checkbox --> */}
         <div className="mb-5 flex items-center justify-between ">
           <div className="mb-[0.125rem] block min-h-[1.5rem] pl-[1.5rem]">
@@ -374,7 +378,6 @@ function SignupCeleb({
             have an account already? Login instead
           </Link>
         </div>
-
         {/* <!-- Submit button --> */}
         <button
           disabled={isSubmitting}

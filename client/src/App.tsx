@@ -18,7 +18,7 @@ import Settings from "./pages/Settings";
 import Celebs from "./pages/Celebs";
 import PaymentStatusWrapper from "./components/PaymentStatusWrapper";
 import UserProfile from "./components/UserProfile";
-import AccountSuccess from "./components/AccountSuccess";
+import AccountSuccess from "./components/TalentAccountSuccessMessage";
 
 function App() {
   return (
