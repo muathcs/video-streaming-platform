@@ -56,8 +56,8 @@ function RequestForm({ celebUid, fanUid, price, setOrderModal }: RequestProps) {
     await setLocalStorageRequest(getValues());
     console.log(localStorageRequest);
 
-    navigate("/payment", { state: requestInfo });
-    createNotification();
+    navigate("/payment");
+    // createNotification();
     // postData(`${apiUrl}/request`, requestInfo);
     // navigate("/success");
 
@@ -66,14 +66,14 @@ function RequestForm({ celebUid, fanUid, price, setOrderModal }: RequestProps) {
     //
   }
 
-  function createNotification() {
-    console.log("made a request");
-    sendPostRequest(`${apiUrl}/notification`, {
-      intended_uid: celebUid,
-      sender_uid: fanUid,
-      message: "user has made a request",
-    });
-  }
+  // function createNotification() {
+  //   console.log("made a request");
+  //   sendPostRequest(`${apiUrl}/notification`, {
+  //     intended_uid: celebUid,
+  //     sender_uid: fanUid,
+  //     message: "user has made a request",
+  //   });
+  // }
 
   return (
     <>

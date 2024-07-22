@@ -128,17 +128,17 @@ function NavBar() {
     <>
       <Disclosure
         as="nav"
-        className=" text-[24px]  sm:text-[16px] z-50  block   py-2       "
+        className=" text-[24px]  sm:text-[16px] z-50  block     "
       >
         {({ open }) => (
           <>
-            <div className="mx-auto max-w-[100rem] px-2 sm:px-6    z-50   ">
+            <div className="mx-auto max-w-[100rem] px-2 sm:px-6    z-50    ">
               {/* notifications, profile image and search bar.  */}
-              <div className="relative flex flex-col lg:flex-row  h-full gap-2  z-50   ">
+              <div className="relative flex flex-col lg:flex-row  h-full gap-2  z-50   py-10  ">
                 {/* Mobile menu button, profile and notifications*/}
                 <div className="relative lg:absolute  h-1/2  w-full  ">
                   {/* mobile menu button */}
-                  <div className=" w-1/2  ">
+                  <div className=" w-1/2   ">
                     <div className="absolute inset-y-0 left-0 flex items-center lg:hidden   ">
                       <Disclosure.Button className="relative inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white">
                         <span className="absolute -inset-0.5 " />
@@ -361,41 +361,40 @@ function NavBar() {
 
                 {/* search bar */}
 
-                <div className="h-1/3  lg:relative left-[50%] lg:w-[35%] xl:w-[39%]  right-[20rem]  lg:h-[4rem] lg:flex items-center">
+                <div className="h-1/3  lg:relative left-[50%] lg:w-[35%] xl:w-[39%]  right-[20rem]  lg:h-[4rem] lg:flex items-center mt-10 md:mt-12 lg:mt-0    ">
                   <Menu
                     as="div"
                     className="relative inline-block text-left  w-full"
                   >
                     {/* combox start */}
-
-                    <div className="top-16 w-full ">
+                    <div className="top-16 w-full   ">
                       <Combobox>
                         <div>
-                          <p
-                            // onClick={() => searchCeleb()}
-                            className="absolute  z-10 text-black text-[22px] mt-1 sm:mt-2 lg:mt-2 right-7 flex items-center hover:text-gray-700 cursor-pointer"
-                          >
-                            <CiSearch />
-                          </p>
-                          <input
-                            onClick={() => {
-                              // searchCeleb(searchCelebVal);
-
-                              if (!searchCelebVal) {
-                                setCelebsSuggestion([]);
-                              }
-                              optionsRef.current?.click();
-                            }}
-                            className="text-black py-1  sm:py-2  rounded-full w-full border border-gray-500 bg-white px-5"
-                            value={searchCelebVal}
-                            onChange={(e) => {
-                              setSearchCelebVal(() => {
-                                const newValue = e.target.value;
-                                searchCeleb(newValue); // pass the updated value to your function
-                                return newValue; // return the new value to update the state
-                              });
-                            }}
-                          />
+                          <div className="relative w-full flex items-center ">
+                            <input
+                              onClick={() => {
+                                if (!searchCelebVal) {
+                                  setCelebsSuggestion([]);
+                                }
+                                optionsRef.current?.click();
+                              }}
+                              className="text-black py-1 sm:py-2 rounded-full w-full border border-gray-500 bg-white px-5"
+                              value={searchCelebVal}
+                              onChange={(e) => {
+                                setSearchCelebVal(() => {
+                                  const newValue = e.target.value;
+                                  searchCeleb(newValue); // pass the updated value to your function
+                                  return newValue; // return the new value to update the state
+                                });
+                              }}
+                            />
+                            <button
+                              onClick={() => searchCeleb(searchCelebVal)}
+                              className="absolute right-3 flex items-center text-black text-[22px] hover:text-gray-700 cursor-pointer"
+                            >
+                              <CiSearch className="" />
+                            </button>
+                          </div>
                           <Combobox.Button className="hidden">
                             <p ref={optionsRef} aria-hidden="true" />
                           </Combobox.Button>
@@ -412,7 +411,7 @@ function NavBar() {
                           </div> */}
                               <Combobox.Options
                                 data-headlessui-state="open"
-                                className="absolute mt-1 max-h-60 w-full overflow-auto rounded-md  text-black  py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm"
+                                className="absolute mt-1 max-h-60 w-full overflow-auto rounded-md  text-black  py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm "
                               >
                                 {celebsSuggestion.map((celeb: any) => (
                                   <Combobox.Option
@@ -471,7 +470,7 @@ function NavBar() {
                       </Combobox>
                     </div>
 
-                    <Menu.Items className="absolute right-0 mt-2 w-96 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none">
+                    <Menu.Items className="absolute right-0 mt-2 w-96 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none ">
                       {notifications?.length != 0 ? (
                         <Menu.Item>
                           <p className="text-black flex">

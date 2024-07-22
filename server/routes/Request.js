@@ -5,6 +5,7 @@ import { upload } from "./Fan.js";
 import crypto from "crypto";
 import { uploadFile } from "../s3.js";
 import { PayCeleb, refundFan } from "../actions/actions.js";
+import { createNotification } from "./Notification.js";
 
 const router = express.Router();
 
@@ -99,9 +100,23 @@ router.get("/fanrequests", async (req, res) => {
   }
 });
 
+async function sendRequest(intended_uid, sender_uid, message) {
+  try {
+    const response = await prisma.notification.create({
+      data: {
+        intended_uid: intended_uid,
+        sender_uid: sender_uid,
+        message: message,
+      },
+    });
+  } catch (error) {
+    console.log("error/notification: ", error);
+  }
+}
+
 // create the request.
 router.post("/", async (req, res) => {
-  console.log("here");
+  console.log("Request made in post");
   let {
     celebUid,
     fanUid,
@@ -134,6 +149,9 @@ router.post("/", async (req, res) => {
         toperson: toPerson,
       },
     });
+
+    //this function creates an unread notification
+    createNotification(celebUid, fanUid, "user has made a request");
 
     console.log("celebuid: ", celebUid);
     console.log("fanuid: ", fanUid);

@@ -3,6 +3,20 @@ import express from "express";
 
 const router = express.Router();
 
+export async function createNotification(intended_uid, sender_uid, message) {
+  try {
+    const response = await prisma.notification.create({
+      data: {
+        intended_uid: intended_uid,
+        sender_uid: sender_uid,
+        message: message,
+      },
+    });
+  } catch (error) {
+    console.log("error/notification: ", error);
+  }
+}
+
 // notification
 router.post("/", async (req, res) => {
   const { intended_uid, sender_uid, message } = req.body;

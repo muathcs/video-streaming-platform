@@ -19,12 +19,14 @@ import Celebs from "./pages/Celebs";
 import PaymentStatusWrapper from "./components/PaymentStatusWrapper";
 import UserProfile from "./components/UserProfile";
 import AccountSuccess from "./components/TalentAccountSuccessMessage";
+import Nav from "./components/Nav";
 
 function App() {
   return (
     <>
       {/* <Celebs /> */}
-      <NavBar />
+      {/* <NavBar /> */}
+      <Nav />
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<SignUp />} />

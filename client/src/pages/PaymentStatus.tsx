@@ -12,6 +12,10 @@ const PaymentStatus = () => {
   const [request] = useLocalStorage<RequestType>("request");
 
   const { data: sendPostRequest } = useGlobalAxios("post");
+  const [requestProcessed, setRequestProcessed] = useLocalStorage<boolean>(
+    "requestProcessed",
+    false
+  );
 
   function createNotification() {
     console.log("made a request");
@@ -25,7 +29,7 @@ const PaymentStatus = () => {
   const { data: sendRequest }: any = useGlobalAxios("post", "request"); //
 
   useEffect(() => {
-    if (!stripe) {
+    if (!stripe || requestProcessed) {
       return;
     }
 
@@ -55,9 +59,12 @@ const PaymentStatus = () => {
 
       switch (paymentIntent?.status) {
         case "succeeded":
-          sendRequest("request", request);
+          // sendRequest("request", request);
+          sendRequest("request", request).then(() => {
+            setRequestProcessed(true); // Set the flag to true after the request is processed
+          });
           console.log("sucess", request);
-          createNotification();
+          // createNotification();
           // navigate("/success", request); // we will send the request to the success page, where we will create a notification for the celeb
           setMessage("success");
           break;
@@ -79,7 +86,7 @@ const PaymentStatus = () => {
           break;
       }
     });
-  }, [stripe]);
+  }, [stripe, requestProcessed]);
 
   return (
     <>
