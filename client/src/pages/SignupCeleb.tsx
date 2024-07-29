@@ -18,15 +18,7 @@ import axios from "axios";
 import { apiUrl } from "@/utilities/fetchPath.tsx";
 import { useAuth } from "@/context/AuthContext.tsx";
 
-function SignupCeleb({
-  createUser,
-  handleFileChange,
-  setSuccessMessage,
-}: {
-  createUser: any;
-  handleFileChange: any;
-  setSuccessMessage: Dispatch<SetStateAction<boolean>>;
-}) {
+function SignupCeleb({}: {}) {
   const { signup }: any = useAuth();
 
   const [rememberMe, setRememberMe] = useState<boolean>();

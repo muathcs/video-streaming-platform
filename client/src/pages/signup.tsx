@@ -165,12 +165,13 @@ function SignUp() {
                 </div> */}
                 <div className="">
                   {selected == "celeb" ? (
-                    <SignupCeleb
-                      createUser={handleSubmit}
-                      handleFileChange={handleFileChange}
-                      setSuccessMessage={setSuccessMessage}
-                    />
+                    <h1>Remove this</h1>
                   ) : (
+                    // <SignupCeleb
+                    //   createUser={handleSubmit}
+                    //   handleFileChange={handleFileChange}
+                    //   setSuccessMessage={setSuccessMessage}
+                    // />
                     <SignupUser
                       createUser={handleSubmit}
                       handleFileChange={handleFileChange}
