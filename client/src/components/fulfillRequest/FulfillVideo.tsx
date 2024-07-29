@@ -31,7 +31,6 @@ function FulfillVideo({ reRecord, setCelebReply }: FulfillRequestProps) {
   const [videoChunks, setVideoChunks] = useState([]);
 
   const getCameraPermission = async () => {
-    console.log(setCelebReply);
     setRecordedVideo(null);
     //get video and audio permissions and then stream the result media stream to the videoSrc variable
     if ("MediaRecorder" in window) {
@@ -94,7 +93,6 @@ function FulfillVideo({ reRecord, setCelebReply }: FulfillRequestProps) {
   // useEffect(() => {
   //   if (s3FileUrl) {
   //     setCelebReply(s3FileUrl);
-  //     console.log("File uploaded successfully. S3 URL:", s3FileUrl);
   //   }
   // }, [s3FileUrl]);
 
@@ -111,11 +109,7 @@ function FulfillVideo({ reRecord, setCelebReply }: FulfillRequestProps) {
       // Create a FormData object to send the Blob as a file
       const formData = new FormData();
 
-      console.log("videBlob: ", videoBlob);
-
       formData.append("videoFile", videoBlob, "videoFileName.mp4");
-
-      console.log("here", formData.get("videoFile"));
 
       setCelebReply(formData);
 

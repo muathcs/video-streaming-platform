@@ -13,8 +13,6 @@ function Celebs() {
   const [celebs, setCelebs] = useState<CelebType[]>([]);
 
   const { currentUser }: AuthContextType = useAuth();
-
-  console.log("uid: ", currentUser.uid);
   const shopByCategory = [
     {
       categoryName: "Actors",
@@ -55,7 +53,6 @@ function Celebs() {
     const getCelebs = async () => {
       try {
         const response = await axios.get(`${apiUrl}/celebs`);
-        console.log("celebs: ", response.data);
         setCelebs(response.data);
       } catch (error) {
         console.error(error);
@@ -77,8 +74,6 @@ function Celebs() {
   const { userInfo }: AuthContextType = useAuth();
   const [recommendations, setRecommendations] = useState<CelebType[]>();
 
-  console.log("celebs To Show: ", celebs);
-
   const handleNextPage = () => {
     // window.scrollTo({ top: 10, behavior: "smooth" });
     // document.querySelector("body")?.scrollTo(0, 0);
@@ -95,7 +90,6 @@ function Celebs() {
         `${apiUrl}/celebs/rec/${userInfo?.fav_categories}`
       );
 
-      console.log("response: ", response.data);
       setRecommendations(response.data);
     } catch (error) {
       console.error(error);
@@ -104,12 +98,9 @@ function Celebs() {
 
   useEffect(() => {
     if (userInfo?.fav_categories) {
-      console.log("Inside:::");
       getRecommendations();
     }
   }, []);
-
-  console.log("REcommendation: ", recommendations);
 
   return (
     <>

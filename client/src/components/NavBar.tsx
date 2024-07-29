@@ -42,8 +42,6 @@ function NavBar() {
           params: { data: currentUser.uid },
         });
 
-        console.log("notification response: ", response);
-
         setNotifications(response.data);
 
         const totalUnreadNotifications: number = response.data.reduce(
@@ -107,8 +105,6 @@ function NavBar() {
     }
   }
 
-  console.log("current: ", currentUser);
-
   const { requests } = useRequests();
 
   async function searchCeleb(keysSearch: string) {
@@ -117,7 +113,6 @@ function NavBar() {
         params: { name: keysSearch },
       });
 
-      console.log("search: ", response);
       setCelebsSuggestion(response.data);
     } catch (error) {
       console.error(error);
@@ -313,9 +308,7 @@ function NavBar() {
                             {({ active }) => (
                               <Link
                                 to="/user/profile"
-                                onClick={() => {
-                                  console.log("clickixn xx");
-                                }}
+                                onClick={() => {}}
                                 className={classNames(
                                   active ? "bg-gray-100" : "",
                                   "block px-4 py-2 text-sm text-gray-700"

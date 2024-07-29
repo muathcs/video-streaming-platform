@@ -19,7 +19,6 @@ const Success = ({ celebUid, price }: SuccessType) => {
     try {
       const celeb = await axios.get(`${apiUrl}/Celebs/${celebUid}`);
 
-      console.log("this", celeb.data);
       const response = await axios.post(`${apiUrl}/stripe/reciept`, {
         celebuid: celebUid,
         price: price,
@@ -33,16 +32,9 @@ const Success = ({ celebUid, price }: SuccessType) => {
     sendReciept();
   }, []);
 
-  console.log("request: ", state);
-  console.log("location: ", useLocation());
-
   // const { currentUser } = useAuth();
 
-  // console.log("current: ", currentUser.uid);
-
   // const [request] = useLocalStorage("request");
-
-  // console.log("reqo: ", request);
 
   const notify = () => {
     toast.success("Success", {

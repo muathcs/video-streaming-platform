@@ -20,8 +20,6 @@ function FulfillAudio({ reRecord, setCelebReply }: FulfillRequestProps) {
   // const { uploadToS3 }: any = useS3Upload();
 
   async function getMicrophonePermission() {
-    console.log(setCelebReply);
-    console.log(audioChunks);
     if ("MediaRecorder" in window) {
       try {
         const streamData = await navigator.mediaDevices.getUserMedia({
@@ -72,8 +70,6 @@ function FulfillAudio({ reRecord, setCelebReply }: FulfillRequestProps) {
       const formData = new FormData();
 
       formData.append("videoFile", audioBlob, "videoFileName.mp4");
-
-      console.log("here", formData.get("videoFile"));
 
       setCelebReply(formData);
 

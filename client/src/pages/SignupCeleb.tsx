@@ -14,6 +14,9 @@ import {
 import { Input } from "@/components/ui/input.tsx";
 import { Label } from "@/components/ui/label.tsx";
 import AccountSuccess from "@/components/TalentAccountSuccessMessage.tsx";
+import axios from "axios";
+import { apiUrl } from "@/utilities/fetchPath.tsx";
+import { useAuth } from "@/context/AuthContext.tsx";
 
 function SignupCeleb({
   createUser,
@@ -24,7 +27,10 @@ function SignupCeleb({
   handleFileChange: any;
   setSuccessMessage: Dispatch<SetStateAction<boolean>>;
 }) {
+  const { signup }: any = useAuth();
+
   const [rememberMe, setRememberMe] = useState<boolean>();
+  const [error, setError] = useState("");
 
   const [mostPopularSocialMedia, setMostPopularSocialMedia] =
     useState<string>();
@@ -43,28 +49,55 @@ function SignupCeleb({
     setValue,
     formState: { errors, isSubmitting },
     reset,
+    getValues,
   } = useForm();
 
   console.log("here");
 
-  async function onsubmit(data: FieldValues) {
-    console.log("herex");
-    console.log("successMessagE: ");
-    console.log("here");
-    await createUser(data, true);
-    // setSuccessMessage(true);
-    // reset(); // true indiciates this is a celeb being created.
+  // async function onsubmit(data: FieldValues) {
+  //   console.log("herex");
+  //   console.log("successMessagE: ");
+  //   console.log("here");
+  //   await createUser(data, true);
+  //   // setSuccessMessage(true);
+  //   // reset(); // true indiciates this is a celeb being created.
+  // }
+
+  console.log("asfd: ", getValues().displayName);
+  async function onSubmit(data: FieldValues) {
+    try {
+      const { displayName, email, password, confirmPassword } = data;
+
+      //if password doesn't match.
+      if (password !== confirmPassword) {
+        return setError("Passwords do not match");
+      }
+
+      console.log("data: ", displayName, email, password);
+      const userid = await signup(email, password, displayName);
+
+      // const respones = axios.post(`${apiUrl}/celebs/createCeleb`, data);
+    } catch (error) {
+      console.error("onSubmitCeleb", error);
+    }
   }
 
   const inputStyle =
-    "peer block min-h-[auto] w-full rounded border bg-transparent px-3 py-[0.32rem] leading-[2.15] outline-none transition-all duration-200 ease-linear focus:placeholder:opacity-100 data-[te-input-state-active]:placeholder:opacity-100 motion-reduce:transition-none dark:text-neutral-200 dark:placeholder:text-neutral-200  ";
+    "peer block min-h-[auto] w-full   rounded border bg-transparent px-3 py-4 leading-[2.15] outline-none transition-all duration-200 ease-linear focus:placeholder:opacity-100 data-[te-input-state-active]:placeholder:opacity-100 motion-reduce:transition-none dark:text-neutral-200 dark:placeholder:text-neutral-200   ";
 
-  function testFunction() {
-    console.log("testing");
-  }
   return (
-    <div>
-      <form onSubmit={onsubmit}>
+    <div className=" max-w-7xl mx-auto mt-10 px-4">
+      <div className="">
+        <h1 className="text-7xl">
+          Share Your <span className="text-purple-500">Hikaya</span> <br />
+          and Get Rewarded
+        </h1>
+        <h2 className="text-gray-300 text-3xl mt-10 mb-5">
+          Connect with your audience. <br />
+          Start earning from your passion today.
+        </h2>
+      </div>
+      <form onSubmit={handleSubmit(onSubmit)}>
         {" "}
         {/* <!-- display Name --> */}
         <div className="relative mb-6" data-te-input-wrapper-init>
@@ -85,7 +118,7 @@ function SignupCeleb({
           <input
             type="text"
             className={inputStyle}
-            placeholder="username"
+            placeholder="Legal Name"
             {...register("username", {
               required: "username is required",
             })}
@@ -113,7 +146,7 @@ function SignupCeleb({
           )}
         </div>
         {/* <!-- confirm password --> */}
-        <div className="relative mb-6" data-te-input-wrapper-init>
+        {/* <div className="relative mb-6" data-te-input-wrapper-init>
           <input
             type="confirmPassword"
             {...register("confirmPassword", {
@@ -125,13 +158,13 @@ function SignupCeleb({
           {errors.confirmPassword && (
             <p className=" mt-2 text-red-400">{`${errors.confirmPassword.message}`}</p>
           )}
-        </div>
+        </div> */}
         {/* <!-- Popular app input --> */}
-        <p className="text-left mb-2">
+        {/* <p className="text-left mb-2">
           Which App do you have the most followers on?{" "}
         </p>
         <div
-          className="relative mb-6 flex gap-3  sm:flex-row flex-wrap"
+          className="relative mb-6 flex gap-3  sm:flex-row flex-wrap "
           data-te-input-wrapper-init
         >
           {socialMedias.map((app) => (
@@ -144,7 +177,7 @@ function SignupCeleb({
                 setValue("app", app.name);
                 setMostPopularSocialMedia(app.name);
               }}
-              className="w-28 border-2 border-white"
+              className="w-28 border-2 border-white py-4"
               style={{
                 background: mostPopularSocialMedia == app.name ? "grey" : "",
               }}
@@ -152,10 +185,10 @@ function SignupCeleb({
               {app.name}
             </button>
           ))}
-        </div>
-        {errors.app && (
+        </div> */}
+        {/* {errors.app && (
           <p className=" mt-2 text-red-400">{`${errors.app.message}`}</p>
-        )}
+        )} */}
         {/* how many followers */}
         {/* {mostPopularSocialMedia && (
           <div className="mb-6">
@@ -201,8 +234,8 @@ function SignupCeleb({
           </div>
         )}
         {/* category */}
-        <div className="relative mb-6" data-te-input-wrapper-init>
-          <label className="block text-sm font-medium mb-2 w-full sm:w-4/6 text-white text-left">
+        <div className="relative mb-6 " data-te-input-wrapper-init>
+          <label className="block text-sm font-medium mb-2 w-full sm:w-4/6 text-white text-left ">
             What is your largest following
           </label>
           {/* <select
@@ -231,7 +264,7 @@ function SignupCeleb({
                 setValue("category", e);
               }}
             >
-              <SelectTrigger className=" border-2 border-white w-full z-10 ">
+              <SelectTrigger className=" border-2 border-white w-full z-10 py-6 ">
                 <SelectValue placeholder="Select a range" />
               </SelectTrigger>
               <SelectContent className="z-10">
@@ -386,7 +419,7 @@ function SignupCeleb({
           data-te-ripple-init
           data-te-ripple-color="light"
         >
-          Sign Up
+          Join
         </button>
       </form>
     </div>

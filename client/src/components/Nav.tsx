@@ -69,6 +69,7 @@ function Nav() {
     { name: "How ", href: "/about", current: false },
     { name: "Celebs", href: "/", current: false },
     { name: path, href: path, current: false },
+    { name: "Join as Talent", href: "/signup/talent", current: false },
   ]);
 
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
@@ -83,12 +84,13 @@ function Nav() {
   useEffect(() => {
     setLoading(true);
     const getNotification = async () => {
+      if (!currentUser) {
+        return;
+      }
       try {
         const response = await axios.get(`${apiUrl}/notification`, {
           params: { data: currentUser.uid },
         });
-
-        console.log("notification response: ", response);
 
         setNotifications(response.data);
 
@@ -122,6 +124,9 @@ function Nav() {
     setIsMobileMenuOpen(!isMobileMenuOpen);
   };
   function readNotifications() {
+    if (!currentUser) {
+      return;
+    }
     setNotifications((notifications) => {
       return (
         notifications?.map((notification) => ({
@@ -148,15 +153,12 @@ function Nav() {
     }
   }
 
-  console.log("current: ", currentUser);
-
   async function searchCeleb(keysSearch: string) {
     try {
       const response = await axios.get(`${apiUrl}/search`, {
         params: { name: keysSearch },
       });
 
-      console.log("search: ", response);
       setCelebsSuggestion(response.data);
     } catch (error) {
       console.error(error);
@@ -164,10 +166,10 @@ function Nav() {
   }
 
   return (
-    <nav className="">
-      <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8   ">
-        <div className="relative flex h-16 items-center justify-between  w-full ">
-          <div className="absolute inset-y-0 left-0 flex items-center sm:hidden ">
+    <nav className="mt-2 ">
+      <div className=" max-w-7xl px-2 sm:px-6 lg:px-8    mx-auto">
+        <div className="relative flex h-16 items-center justify-between   ">
+          <div className="absolute inset-y-0 left-0 flex items-center md:hidden ">
             {/* Mobile menu button */}
             <button
               type="button"
@@ -208,17 +210,15 @@ function Nav() {
             </button>
           </div>
           {/* nav items */}
-          <div className=" flex w-full items-center  ">
-            <div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-center  ">
+          <div className=" flex w-full items-center    ">
+            <div className="hidden md:flex flex-1 items-center justify-center md:items-stretch md:justify-center     ">
               <div className="flex flex-shrink-0 items-center">
-                <img
-                  className="h-8 w-auto"
-                  src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=500"
-                  alt="Your Company"
-                />
+                <Link to={"/"} className="text-4xl font-bold md:block hidden">
+                  Cameo
+                </Link>
               </div>
-              <div className="hidden sm:ml-6 sm:block">
-                <div className="flex space-x-4">
+              <div className="hidden sm:ml-6 md:block ">
+                <div className="flex md:space-x-2 lg:space-x-4 ">
                   {navigation.length > 0 &&
                     navigation.map((item, index) => {
                       if (!item.name) return;
@@ -236,9 +236,9 @@ function Nav() {
                           }}
                           className={classNames(
                             item.current
-                              ? "bg-slate-300 rounded-full text-white"
-                              : "text-white hover:bg-gray-700 hover:rounded-full focus:bg-gray-800 hover:text-white text-lg font-medium ",
-                            "rounded-full px-3 py-3 "
+                              ? "underline rounded-full text-white "
+                              : "text-white hover:bg-gray-700 hover:rounded-full focus:bg-gray-800 hover:text-white text-sm lg:text-lg  lg:font-medium  ",
+                            "rounded-full px-3 py-3 text-nowrap "
                           )}
                           aria-current={item.current ? "page" : undefined}
                         >
@@ -250,9 +250,9 @@ function Nav() {
               </div>
             </div>
             {/* Search bar */}
-            <div className="relative mx-auto text-gray-600 sm:block hidden  ml-10 w-1/2    ">
+            <div className="relative mx-auto text-gray-600 sm:block ml-10 w-full  sm:right-0   ">
               <input
-                className=" h-10 pl-2 w-full rounded-full text-sm focus:outline-none bg-white   "
+                className=" h-10 pl-2 w-full rounded-full text-sm focus:outline-none bg-white    "
                 type="search"
                 name="search"
                 value={searchCelebVal}
@@ -260,7 +260,6 @@ function Nav() {
                 onChange={(e) => {
                   const input = e.target.value;
 
-                  console.log("celebs: ", celebsSuggestion.length);
                   setSearchCelebVal(input);
                   searchCeleb(input);
                 }}
@@ -316,12 +315,10 @@ function Nav() {
           </div>
 
           {/* logo and notification */}
-          <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0 ">
+          <div className="inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0 ">
             <button
               onClick={() => {
                 setOpenNotification(() => !openNotification);
-
-                console.log("df");
               }}
               type="button"
               className="relative rounded-full p-1 text-gray-400 "
@@ -366,7 +363,7 @@ function Nav() {
                 >
                   <span className="sr-only">Open user menu</span>
                   <img
-                    className="w-16 h-14 rounded-full"
+                    className="w-16 h-14 rounded-full object-cover"
                     src={userInfo && userInfo.imgurl}
                     alt=""
                   />
@@ -384,7 +381,6 @@ function Nav() {
                     to="/user/profile"
                     onClick={() => {
                       setIsUserMenuOpen(false);
-                      console.log("clickixn xx");
                     }}
                     className={
                       "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 "
@@ -420,7 +416,7 @@ function Nav() {
       </div>
 
       {isMobileMenuOpen && (
-        <div className="sm:hidden" id="mobile-menu">
+        <div className="md:hidden" id="mobile-menu">
           <div className="space-y-1 px-2 pb-3 pt-2">
             <a
               href="#"

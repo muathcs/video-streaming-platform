@@ -127,15 +127,31 @@ router.post("/", async (req, res) => {
     reqType, //
     fromPerson, //
     toPerson, //
+    requestid,
   } = req.body;
 
-  console.log("request: ", req.body);
-
   price = parseInt(price);
+
   try {
     // create a request from the req body.
+
+    // check if requests exists first, if it does do not make a new req.
+
+    const reqExists = await prisma.request.findUnique({
+      where: {
+        requestid,
+      },
+    });
+
+    if (reqExists) {
+      console.log("req exists");
+      return res.status(201).send("Req already exist");
+    }
+
+    console.log("after req");
     const result = await prisma.request.create({
       data: {
+        requestid,
         celebuid: celebUid,
         fanuid: fanUid,
         price: price,
@@ -147,21 +163,44 @@ router.post("/", async (req, res) => {
         tosomeoneelse: !!toSomeOneElse,
         fromperson: fromPerson,
         toperson: toPerson,
+        processed: true,
       },
     });
 
     //this function creates an unread notification
     createNotification(celebUid, fanUid, "user has made a request");
 
-    console.log("celebuid: ", celebUid);
-    console.log("fanuid: ", fanUid);
-
     updateFanClusterIdAndTotalSpent(celebUid, fanUid, price);
 
-    res.send("succesfully added a request");
+    res.status(201).send("succesfully added a request");
   } catch (error) {
-    res.status(500).json(error);
+    res.status(401).json(error);
     console.log("/request", error.message);
+  }
+});
+
+router.get("/status/:id", async (req, res) => {
+  const { id: requestId } = req.params;
+
+  try {
+    const response = await prisma.request.findUnique({
+      where: {
+        requestid: requestId,
+      },
+    });
+
+    console.log("response: ", response.processed);
+
+    if (response) {
+      console.log("response: ", response.processed);
+      const processed = response.processed;
+      res.status(201).send({ processed });
+    } else {
+      res.status(404).send({ error: "Request not found" });
+    }
+  } catch (error) {
+    console.log("/status/:id", error);
+    res.status(401).send(error);
   }
 });
 

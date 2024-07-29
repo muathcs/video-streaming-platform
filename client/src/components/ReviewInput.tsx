@@ -25,13 +25,9 @@ function ReviewInput({
   const [hoveredStars, setHoveredStars] = useState<number>(3);
   const totalStars = 5;
 
-  console.log("fan: ", fanuid);
-
   const { data: sendPostRequest, error, loading } = useGlobalAxios("post");
 
   async function submitReview() {
-    console.log("apirUrl: ", apiUrl);
-    console.log("stars: ", hoveredStars);
     try {
       await sendPostRequest(`${apiUrl}/reviews`, {
         review,
@@ -47,7 +43,6 @@ function ReviewInput({
     }
   }
 
-  console.log("rerendering:");
   return (
     <div className=" min-w-1xl flex flex-col rounded-xl shadow-lg bg-white">
       <div className="px-12 py-5 flex  justify-between">
@@ -69,8 +64,6 @@ function ReviewInput({
           <div className="flex space-x-3   h-12  cursor-pointer  ">
             {[...Array(totalStars)].map((_, index) => {
               const starValue = index + 1;
-              console.log("hover stars: ", hoveredStars);
-              // console.log("value: ", starValue);
               const isYellow = starValue <= hoveredStars;
               return (
                 <>
@@ -120,13 +113,11 @@ function ReviewInput({
     </div>
     // <div
     //   onClick={() => {
-    //     console.log("clicking");
     //   }}
     //   className=" w-full p-4  rounded-xl bg-white   "
     // >
     //   <button
     //     onClick={() => {
-    //       console.log("clicking");
     //       setOpenModal(false);
     //     }}
     //     className=" right-5 top-2 absolute   text-black  p-5   hover:cursor-pointer  "

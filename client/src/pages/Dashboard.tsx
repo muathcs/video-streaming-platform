@@ -26,7 +26,6 @@ function Dashboard() {
           params: { data: currentUser.uid },
         });
 
-        console.log("res: ", response);
         setData(response.data);
       } catch (error) {
         console.error(error);
@@ -106,7 +105,6 @@ function Dashboard() {
   );
 
   async function handleRejection() {
-    console.log("rejectedStatE:X : ", rejectedRequestId);
     setOpenModal(false);
     const requestid = rejectedRequestId;
     try {
@@ -117,14 +115,11 @@ function Dashboard() {
 
       const requestsAfterOneRequestHasBeenRejected = response.data;
 
-      console.log("response: ", requestsAfterOneRequestHasBeenRejected);
-
       setData(requestsAfterOneRequestHasBeenRejected);
     } catch (error) {
       console.error(error);
     }
   }
-  console.log("first");
 
   return (
     <>

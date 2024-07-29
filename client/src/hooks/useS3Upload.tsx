@@ -19,7 +19,6 @@
 //       const response = await s3.upload(params).promise();
 //       setS3FileUrl(response.Location);
 
-//       console.log("File Uploaded Successfully: ", response.Location);
 //       return response.Location;
 //     } catch (error: any) {
 //       console.error("Error Uploading File to S3", error.message || error);

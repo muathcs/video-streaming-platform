@@ -3,7 +3,6 @@ import React from "react";
 import { ImNotification } from "react-icons/im";
 
 const NotificationMenu = ({ notifications }: { notifications: any }) => {
-  console.log("notification: ", notifications);
   return (
     <div className="absolute right-0  mt-2 w-96 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none z-10">
       <div className="px-1 py-1">

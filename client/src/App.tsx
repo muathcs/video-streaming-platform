@@ -20,6 +20,7 @@ import PaymentStatusWrapper from "./components/PaymentStatusWrapper";
 import UserProfile from "./components/UserProfile";
 import AccountSuccess from "./components/TalentAccountSuccessMessage";
 import Nav from "./components/Nav";
+import SignupCeleb from "./pages/SignupCeleb";
 
 function App() {
   return (
@@ -44,6 +45,7 @@ function App() {
           {/* <Route path="/success" element={<Success />} /> */}
         </Route>
         <Route path="/about" element={<HowTo />} />
+        <Route path="/signup/talent" element={<SignupCeleb />} />
         <Route path="/account" element={<AccountSuccess />} />
         <Route path="/browse/:category" element={<Category />} />
         <Route path="/user/profile" element={<UserProfile />} />

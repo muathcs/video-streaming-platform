@@ -6,8 +6,6 @@ import ReviewInput from "../ReviewInput";
 function FulFilled() {
   const [openModal, setOpenModal] = useState(false);
 
-  console.log(!useLocation());
-
   const location = useLocation();
   const { state } = location || {};
   let request: any, celeb;
@@ -26,9 +24,6 @@ function FulFilled() {
     redirect("/");
   }
 
-  console.log("request:L ", request);
-
-  console.log("stax", useLocation());
   function downloadVideo() {
     const link = document.createElement("a");
     link.href = request.celebmessage;

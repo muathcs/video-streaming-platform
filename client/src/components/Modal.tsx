@@ -72,12 +72,7 @@ function Modal({ openModal, setOpenModal, children }: ModalType) {
         onClose={() => setOpenModal(false)}
         className="  flex items-center justify-center    "
       >
-        <RModal.Body
-          onClick={() => {
-            console.log("clicking");
-          }}
-          className=" p-0 rounded-2xl "
-        >
+        <RModal.Body onClick={() => {}} className=" p-0 rounded-2xl ">
           {children}
         </RModal.Body>
       </RModal>

@@ -28,8 +28,6 @@ function FanRequests() {
         setLoading(false);
 
         setCelebReplies(response.data);
-        console.log("equal: ", response.data.length === 0);
-        console.log("rez: ", response.data);
       } catch (error: any) {
         console.error(error);
         setError(true);

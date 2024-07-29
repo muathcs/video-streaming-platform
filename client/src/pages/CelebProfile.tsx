@@ -9,6 +9,14 @@ import { useGlobalAxios } from "../hooks/useGlobalAxios";
 import axios from "../api/axios";
 import Modal from "../components/Modal";
 import { formatter } from "../utilities/currencyFormatter";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
+import { Card, CardContent } from "@/components/ui/card";
 
 type StateType = {
   celeb: CelebType;
@@ -113,7 +121,6 @@ function OrderModal({
   celebInfo,
   currentUserUid,
 }: OrderModalType) {
-  console.log("order Modal: ", celebInfo);
   return (
     <div className="bg-[#121114]    h-full w-full top-0 fixed  flex justify-center items-center sm:bg-opacity-60 z-10     ">
       {/* <div
@@ -171,20 +178,23 @@ function CelebInfoDisplay({
 
 function VideoSection() {
   return (
-    <div className="relative justify-items-center flex   w-full overflow-scroll xl:overflow-auto   mb-10 pb-2    ">
-      <div className="flex flex-row gap-5 pl-5  md:w-full   p-5 items-center md:justify-center ">
-        {0 ? (
-          <h1>Loading</h1>
-        ) : 0 ? (
-          <h1>Error</h1>
-        ) : (
-          // array represents how many videos there are.
-          [...Array(6)].map((celeb, index) => (
-            <div className="border-2 h-96 rounded-md w-60 md:w-72"></div>
-          ))
-        )}
-      </div>
-    </div>
+    <Carousel className="w-full max-w-lg ">
+      <CarouselContent className="">
+        {Array.from({ length: 5 }).map((_, index) => (
+          <CarouselItem key={index}>
+            <div className="p-1">
+              <Card>
+                <CardContent className="flex aspect-square items-center justify-center p-6">
+                  <span className="text-4xl font-semibold">{index + 1}</span>
+                </CardContent>
+              </Card>
+            </div>
+          </CarouselItem>
+        ))}
+      </CarouselContent>
+      <CarouselPrevious className="ml-16 w-16 h-16" />
+      <CarouselNext className="mr-16  w-16 h-16 " />
+    </Carousel>
   );
 }
 
@@ -211,8 +221,6 @@ function CelebProfile() {
     ...rest
   }: CelebType = celebInfo;
 
-  console.log("Celeb INfo: ", celebInfo);
-
   async function getReviews() {
     try {
       const result = await axios.get("/reviews", {
@@ -222,8 +230,6 @@ function CelebProfile() {
       });
 
       setReviews(result.data);
-
-      console.log("rev res: ", result.data);
     } catch (error) {}
   }
 
@@ -244,7 +250,9 @@ function CelebProfile() {
         />
 
         {/* Videos */}
-        <VideoSection />
+        <div className=" flex justify-center">
+          <VideoSection />
+        </div>
 
         {/* Review Section */}
 

@@ -57,8 +57,6 @@ function FanRequestContainer({ request, celeb }: FanRequestContainerProp) {
   const [openModal, setOpenModal] = useState<boolean>(false);
   const { reqstatus } = request;
 
-  console.log("reqhere: ", request);
-
   const { displayname: celebName, imgurl: celebPhoto } = celeb ?? {};
   const navigate = useNavigate();
 
@@ -73,7 +71,7 @@ function FanRequestContainer({ request, celeb }: FanRequestContainerProp) {
 
   const handleCardClick = () => {
     // Pass information about the clicked celeb as state
-    navigate("/profile", {
+    navigate(`/profile/${celeb.displayname}/${celeb.uid}`, {
       state: { celeb },
     });
   };

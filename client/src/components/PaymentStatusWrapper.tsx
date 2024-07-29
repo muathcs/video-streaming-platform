@@ -6,8 +6,6 @@ const PaymentStatusWrapper = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  console.log("inside wrapper");
-
   useEffect(() => {
     // Check if the location.pathname is "/paymentstatus"
     if (location.pathname === "/paymentstatus") {
@@ -19,8 +17,6 @@ const PaymentStatusWrapper = () => {
 
       // Modify the URL as needed
       const updatedURL = `/paymentstatus?payment_intent=${paymentIntent}&payment_intent_client_secret=${clientSecret}&redirect_status=${redirectStatus}`;
-
-      console.log("updatedURL: ", updatedURL);
 
       // Use replace instead of push to update the URL without adding a new entry to the history stack
       navigate(updatedURL, { replace: true });

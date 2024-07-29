@@ -21,8 +21,6 @@ export default function StripeCheckoutForm() {
   const [isLoading, setIsLoading] = useState(false);
   const [request] = useLocalStorage("request");
 
-  console.log("here: ", request);
-
   // custom to hook to get, post and put.
   // data is the function.
 
@@ -30,8 +28,6 @@ export default function StripeCheckoutForm() {
     "post",
     "yourDataEndpoint"
   );
-
-  console.log("location ; ", window.location.origin);
 
   const handleSubmit = async (
     event: React.MouseEvent<HTMLButtonElement, MouseEvent>
@@ -45,8 +41,6 @@ export default function StripeCheckoutForm() {
       // Make sure to disable form submission until Stripe.js has loaded.
       return;
     }
-
-    console.log("elements: ", elements);
 
     setIsLoading(true);
 

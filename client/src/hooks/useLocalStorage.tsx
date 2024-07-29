@@ -4,12 +4,14 @@ import { useEffect, useState } from "react";
 function getSavedValue(key: string, initialValue: any) {
   const savedValue = localStorage.getItem(key);
 
-  // If savedValue is null, return the initial value
-  if (savedValue) return JSON.parse(savedValue);
+  if (savedValue === null) return initialValue;
 
-  if (initialValue instanceof Function) return initialValue();
-
-  return initialValue;
+  try {
+    return JSON.parse(savedValue);
+  } catch (error) {
+    console.error("Error parsing JSON from localStorage:", error);
+    return initialValue;
+  }
 }
 // Custom hook to use local storage
 export function useLocalStorage<T>(key: string, initialValue?: T) {

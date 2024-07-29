@@ -49,8 +49,6 @@ function TopSection({
     setSortOrder(order);
   };
 
-  console.log(sortOrder);
-
   return (
     <div className="flex justify-between relative mb-5  ">
       <div className="w-1/2 flex items-start justify-center gap-5 flex-col  ">
@@ -112,8 +110,6 @@ function DisplayCelebsForCategory({
   //   fetchCelebsForCategory();
   //   // };
   // }, []);
-
-  console.log("celebs: ", celebs);
 
   return (
     <div className=" relative grid xl:grid-cols-5 md:grid-cols-3 sm:grid-cols-2  sm:gap-x-20  md:gap-x-4 gap-y-10 md:gap-y-4 w-full  justify-items-center">

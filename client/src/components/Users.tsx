@@ -14,11 +14,8 @@
 //           signal: controller.signal,
 //         });
 
-//         console.log("res from axiso: ", response.data);
-
 //         isMounted && setUsers(response.data);
 //       } catch (error: any) {
-//         console.log(error.message);
 //       }
 //     };
 

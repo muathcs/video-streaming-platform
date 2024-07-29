@@ -86,10 +86,8 @@ export function AuthProvider({ children }: { children: any }) {
 
     if (user && user.email) {
       const credential = EmailAuthProvider.credential(user.email, password);
-      console.log("bewlo creds: ", user.email);
       try {
         await reauthenticateWithCredential(user, credential);
-        console.log("User reauthenticated successfully.");
         return {
           state: true,
           message: "User credentials updated successfully",
@@ -118,10 +116,7 @@ export function AuthProvider({ children }: { children: any }) {
       async (
         user: any //this works
       ) => {
-        console.log("user auth: ", auth.currentUser);
         setCurrentUser(user);
-
-        console.log("userXXX: ", user);
 
         if (user) {
           try {
@@ -134,15 +129,12 @@ export function AuthProvider({ children }: { children: any }) {
             let fullUserInfo;
 
             if (response.data) {
-              console.log("dashboard");
               req = await axios.get(`${apiUrl}/request/dashboard`, {
                 params: { data: user.uid },
               });
 
               fullUserInfo = await axios.get(`${apiUrl}/celebs/${user.uid}`);
-              console.log("myFULL: ", fullUserInfo);
             } else {
-              console.log("here");
               req = await axios.get(`${apiUrl}/request/fanrequests`, {
                 params: { data: user.uid },
               });
@@ -152,7 +144,6 @@ export function AuthProvider({ children }: { children: any }) {
               // });
 
               fullUserInfo = await axios.get(`${apiUrl}/fan/${user.uid}`);
-              console.log("fullAuth: ", fullUserInfo.data);
             }
 
             setRequests(req.data);

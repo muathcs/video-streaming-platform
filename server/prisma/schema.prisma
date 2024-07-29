@@ -25,6 +25,7 @@ model Celeb {
   reviews              Review[]
   cluster_id           Int?
   completed_onboarding Boolean                  @default(false)
+  Approved             Boolean                  @default(false)
 
   @@index([document_with_idx], map: "document_idx", type: Gin)
   @@index([document_with_idx], map: "document_with_idx_index", type: Gin)

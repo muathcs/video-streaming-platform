@@ -118,16 +118,19 @@ router.get("/:id", async (req, res) => {
 // this created a celeb account.
 router.post(
   "/createCeleb",
-  upload.single("file"),
-  uploadProfileImgToS3,
+  // upload.single("file"),
+  // uploadProfileImgToS3,
   async (req, res) => {
+    console.log("body: ", req.body);
+
+    // return;
     const { uid } = req.body;
 
     console.log("creating a cleeb");
 
     console.log("req: ", req.body);
 
-    const payload = JSON.parse(req.body);
+    // const payload = JSON.parse(req.body);
 
     console.log("here");
     const newImg = req.newUrl;
@@ -140,8 +143,9 @@ router.post(
       category,
       price,
       email,
+      app,
       description,
-    } = payload;
+    } = req.body;
 
     try {
       const result = await prisma.celeb.create({
@@ -163,10 +167,10 @@ router.post(
 
       console.log("done");
 
-      res.send(201);
+      res.status(201).send("Celeb account created");
     } catch (error) {
-      console.log("create a celeb", error);
-      res.send("Failed");
+      // console.log("create a celeb", error);
+      res.status(401).status(error.message);
     }
   }
 );

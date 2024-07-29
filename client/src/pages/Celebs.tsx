@@ -14,7 +14,6 @@ function Celebs() {
 
   const { currentUser }: AuthContextType = useAuth();
 
-  console.log("uid: ", currentUser.uid);
   const shopByCategory = [
     {
       categoryName: "Actors",
@@ -55,7 +54,6 @@ function Celebs() {
     const getCelebs = async () => {
       try {
         const response = await axios.get(`${apiUrl}/celebs`);
-        console.log("celebs: ", response.data);
         setCelebs(response.data);
       } catch (error) {
         console.error(error);
@@ -77,8 +75,6 @@ function Celebs() {
   const { userInfo }: AuthContextType = useAuth();
   const [recommendations, setRecommendations] = useState<CelebType[]>();
 
-  console.log("celebs To Show: ", celebs);
-
   const handleNextPage = () => {
     // window.scrollTo({ top: 10, behavior: "smooth" });
     // document.querySelector("body")?.scrollTo(0, 0);
@@ -95,7 +91,6 @@ function Celebs() {
         `${apiUrl}/celebs/rec/${userInfo?.fav_categories}`
       );
 
-      console.log("response: ", response.data);
       setRecommendations(response.data);
     } catch (error) {
       console.error(error);
@@ -104,12 +99,9 @@ function Celebs() {
 
   useEffect(() => {
     if (userInfo?.fav_categories) {
-      console.log("Inside:::");
       getRecommendations();
     }
   }, []);
-
-  console.log("REcommendation: ", recommendations);
 
   return (
     <>
@@ -247,7 +239,7 @@ function Celebs() {
 
         {/* celebs */}
         <p className=" w-full text-left pl-7 text-2xl md:hidden relative top-8 font-bold">
-          Featuredx
+          Featured
         </p>
         <div className="2xl:w-5/6   relative justify-items-center flex   w-full overflow-scroll xl:overflow-auto   mb-10 pb-2  ">
           <div className="flex flex-row gap-5 pl-5 md:grid md:grid-cols-2  md:w-full  lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5  p-5 ">

@@ -30,12 +30,9 @@ function StripePaymentIntent({
     //make a request to get the celebs payment
 
     const sendRequest = async () => {
-      console.log("making a intent");
-
       const response = await axios.post(
         `${apiUrl}/stripe/create-payment-intent`,
         {
-          reqType: "video",
           requestPrice,
           fanUid,
           celebUid,
@@ -46,7 +43,6 @@ function StripePaymentIntent({
         }
       );
 
-      console.log("response: ", response);
       setClientSecret(response.data.clientSecret);
       // fetch(`${apiUrl}/stripe/create-payment-intent`, {
       //   method: "POST",
@@ -59,15 +55,12 @@ function StripePaymentIntent({
       // })
       //   .then((res) => res.json())
       //   .then((data) => {
-      //     console.log("data: ", data);
       //     setClientSecret(data.clientSecret);
       //   });
     };
 
     sendRequest();
   }, []);
-
-  console.log("cls: ", clientSecret);
 
   const appearance = {
     theme: "night",

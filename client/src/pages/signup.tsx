@@ -25,16 +25,11 @@ function SignUp() {
   async function handleSubmit(data: any, isCeleb: boolean) {
     // e.preventDefault();
 
-    console.log("targetxx: ", data);
-
     const { email, displayname, password, confirmPassword, imgfile } = data;
-
-    console.log("payLoad from actual function: ", confirmPassword);
 
     //if password doesn't match.
     if (password !== confirmPassword) {
       return setError("Passwords do not match");
-      setSuccessfull("");
     }
 
     try {
@@ -140,7 +135,7 @@ function SignUp() {
                   </p>
                 ) : null}
 
-                <div className="flex justify-center gap-5 mb-3">
+                {/* <div className="flex justify-center gap-5 mb-3">
                   <button
                     onClick={() => {
                       setSelected("celeb");
@@ -167,7 +162,7 @@ function SignUp() {
                   >
                     Fan
                   </button>
-                </div>
+                </div> */}
                 <div className="">
                   {selected == "celeb" ? (
                     <SignupCeleb

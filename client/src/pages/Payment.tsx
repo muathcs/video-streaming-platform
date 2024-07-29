@@ -16,11 +16,7 @@ function Payment() {
   const { currentUser }: AuthContextType = useAuth();
   const [state] = useLocalStorage<LocationStateType>("request");
 
-  console.log("local: ", state);
-
   // const { state }: LocationStateType = useLocation();
-
-  console.log("state: ", currentUser.email);
 
   const divStyle =
     " border-2 h-24 w-full rounded-xl  peer-checked:shadow-blue-200 peer-checked:border-blue-600  cursor-pointer flex items-center justify-between ";

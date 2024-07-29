@@ -122,7 +122,6 @@ app.use("/stripe", StripeRoute);
 
 // Catch-all route to serve the client app
 app.get("/*", function (req, res) {
-  console.log("req to * path: ", clientDir);
   res.sendFile(path.join(clientDir, "index.html"), function (err) {
     if (err) {
       res.status(500).send(err);

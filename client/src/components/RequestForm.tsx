@@ -4,6 +4,7 @@ import { useLocalStorage } from "../hooks/useLocalStorage";
 import { useNavigate } from "react-router-dom";
 import { useGlobalAxios } from "../hooks/useGlobalAxios";
 import { apiUrl } from "../utilities/fetchPath";
+import { randomUUID } from "crypto";
 type RequestProps = {
   celebUid: string;
   fanUid: string;
@@ -22,8 +23,6 @@ function RequestForm({ celebUid, fanUid, price, setOrderModal }: RequestProps) {
   const { data: sendPostRequest } = useGlobalAxios("post");
 
   const { data: postData }: any = useGlobalAxios("post", "request"); //
-
-  console.log("price form: ", price);
 
   const navigate = useNavigate();
 
@@ -47,6 +46,7 @@ function RequestForm({ celebUid, fanUid, price, setOrderModal }: RequestProps) {
     reset({
       ...getValues(),
       reqType: "video",
+      requestid: crypto.randomUUID(),
       celebUid,
       fanUid,
       price,
@@ -54,7 +54,6 @@ function RequestForm({ celebUid, fanUid, price, setOrderModal }: RequestProps) {
 
     const requestInfo = getValues(); // values from form
     await setLocalStorageRequest(getValues());
-    console.log(localStorageRequest);
 
     navigate("/payment");
     // createNotification();
@@ -67,7 +66,6 @@ function RequestForm({ celebUid, fanUid, price, setOrderModal }: RequestProps) {
   }
 
   // function createNotification() {
-  //   console.log("made a request");
   //   sendPostRequest(`${apiUrl}/notification`, {
   //     intended_uid: celebUid,
   //     sender_uid: fanUid,
@@ -80,7 +78,6 @@ function RequestForm({ celebUid, fanUid, price, setOrderModal }: RequestProps) {
       <div className="h-[90%]  w-full  md:w-3/4 lg:w-2/4 rounded-md relative text-white bg-[#222125]  px-2  sm:px-10 py-10 overflow-auto top-10  ">
         <div
           onClick={() => {
-            console.log("here");
             setOrderModal(false);
           }}
           className="absolute  right-2 sm:right-5 top-0 sm:top-2 rounded-full  w-8 h-8 flex justify-center text-lg font-bold bg-red-500 cursor-pointer hover:bg-red-700 border-2"

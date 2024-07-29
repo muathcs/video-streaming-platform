@@ -18,7 +18,6 @@ const PaymentStatus = () => {
   );
 
   function createNotification() {
-    console.log("made a request");
     sendPostRequest(`${apiUrl}/notification`, {
       intended_uid: request.celebUid,
       sender_uid: request.fanUid,
@@ -29,19 +28,15 @@ const PaymentStatus = () => {
   const { data: sendRequest }: any = useGlobalAxios("post", "request"); //
 
   useEffect(() => {
-    if (!stripe || requestProcessed) {
+    if (!stripe) {
       return;
     }
-
-    console.log("req: ", window.location.search);
 
     // Retrieve the "payment_intent_client_secret" query parameter appended to
     // your return_url by Stripe.js
     const clientSecret: any = new URLSearchParams(window.location.search).get(
       "payment_intent_client_secret"
     );
-
-    console.log("client Secret: ", clientSecret);
 
     if (!clientSecret) {
       return;
@@ -59,29 +54,34 @@ const PaymentStatus = () => {
 
       switch (paymentIntent?.status) {
         case "succeeded":
-          // sendRequest("request", request);
-          sendRequest("request", request).then(() => {
-            setRequestProcessed(true); // Set the flag to true after the request is processed
-          });
+          console.log("paymenIntent: ");
+          sendRequest("request", request);
+          // sendRequest("request", request).then(() => {
+          //   setRequestProcessed(true); // Set the flag to true after the request is processed
+          // });
           console.log("sucess", request);
           // createNotification();
           // navigate("/success", request); // we will send the request to the success page, where we will create a notification for the celeb
           setMessage("success");
+          console.log("message set to success");
           break;
 
         case "processing":
           setMessage(
             "Payment processing. We'll update you when payment is received."
           );
+          console.log("processing...");
           break;
 
         case "requires_payment_method":
           // Redirect your user back to your payment page to attempt collecting
           // payment again
           setMessage("Payment failed. Please try another payment method.");
+          console.log("require payment");
           break;
 
         default:
+          console.log("defualt...");
           setMessage("Something went wrong.");
           break;
       }
