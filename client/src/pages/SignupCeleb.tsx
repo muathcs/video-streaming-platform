@@ -1,7 +1,7 @@
 import { Dispatch, SetStateAction, useRef, useState } from "react";
 import { FieldValues, useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
-import { SocialMediaType } from "../TsTypes/types.tsx";
+import { AuthContextType, SocialMediaType } from "../TsTypes/types.tsx";
 import {
   Select,
   SelectContent,
@@ -17,9 +17,17 @@ import AccountSuccess from "@/components/TalentAccountSuccessMessage.tsx";
 import axios from "axios";
 import { apiUrl } from "@/utilities/fetchPath.tsx";
 import { useAuth } from "@/context/AuthContext.tsx";
+import {
+  createUserWithEmailAndPassword,
+  sendEmailVerification,
+  signInWithEmailAndPassword,
+} from "firebase/auth";
+import { auth } from "@/auth/firebase.tsx";
 
 function SignupCeleb({}: {}) {
-  const { signup }: any = useAuth();
+  const { signup, currentUser }: AuthContextType = useAuth();
+
+  console.log("current: ", currentUser);
 
   const [rememberMe, setRememberMe] = useState<boolean>();
   const [error, setError] = useState("");
@@ -58,15 +66,19 @@ function SignupCeleb({}: {}) {
   console.log("asfd: ", getValues().displayName);
   async function onSubmit(data: FieldValues) {
     try {
-      const { displayName, email, password, confirmPassword } = data;
+      // const { displayName, email } = data;
 
-      //if password doesn't match.
-      if (password !== confirmPassword) {
-        return setError("Passwords do not match");
-      }
+      // const userid = await signup(email, password, displayName);
+      // sendEmailVerification(email);
 
-      console.log("data: ", displayName, email, password);
-      const userid = await signup(email, password, displayName);
+      const email = "muath.csx@gmail.com";
+      const password = "user@gmail.com";
+
+      // const userCredential = await signup(email, password, "myanme");
+      // console.log("user: ", userCredential);
+      // const verfiy = await sendEmailVerification(userCredential);
+
+      // const user = auth.getUser("QBZRHzOOBjXwjcqLaZeQyrzDTe23");
 
       // const respones = axios.post(`${apiUrl}/celebs/createCeleb`, data);
     } catch (error) {
@@ -120,7 +132,7 @@ function SignupCeleb({}: {}) {
           )}
         </div>
         {/* <!-- Password input --> */}
-        <div className="relative mb-6" data-te-input-wrapper-init>
+        {/* <div className="relative mb-6" data-te-input-wrapper-init>
           <input
             type="password"
             {...register("password", {
@@ -136,7 +148,7 @@ function SignupCeleb({}: {}) {
           {errors.password && (
             <p className=" mt-2 text-red-400">{`${errors.password.message}`}</p>
           )}
-        </div>
+        </div> */}
         {/* <!-- confirm password --> */}
         {/* <div className="relative mb-6" data-te-input-wrapper-init>
           <input
@@ -152,7 +164,7 @@ function SignupCeleb({}: {}) {
           )}
         </div> */}
         {/* <!-- Popular app input --> */}
-        {/* <p className="text-left mb-2">
+        <p className="text-left mb-2">
           Which App do you have the most followers on?{" "}
         </p>
         <div
@@ -177,12 +189,12 @@ function SignupCeleb({}: {}) {
               {app.name}
             </button>
           ))}
-        </div> */}
+        </div>
         {/* {errors.app && (
           <p className=" mt-2 text-red-400">{`${errors.app.message}`}</p>
         )} */}
         {/* how many followers */}
-        {/* {mostPopularSocialMedia && (
+        {mostPopularSocialMedia && (
           <div className="mb-6">
             <input
               {...register("followers", {
@@ -207,7 +219,7 @@ function SignupCeleb({}: {}) {
               <p className=" mt-2 text-red-400">{`${errors.followers.message}`}</p>
             )}
           </div>
-        )} */}
+        )}
         {/* what is your @ */}
         {mostPopularSocialMedia && (
           <div className="mb-6">

@@ -8,6 +8,7 @@ import {
   signInWithCustomToken,
   signInWithEmailAndPassword,
   updateProfile,
+  sendEmailVerification,
 } from "firebase/auth";
 
 import axios from "../api/axios";

@@ -14,6 +14,8 @@ function Celebs() {
 
   const { currentUser }: AuthContextType = useAuth();
 
+  console.log("current: ", currentUser);
+
   const shopByCategory = [
     {
       categoryName: "Actors",

@@ -21,7 +21,11 @@ router.get("/", async (req, res) => {
     //   skip: offset,
     //   take: pageSize,
     // });
-    const result = await prisma.celeb.findMany();
+    const result = await prisma.celeb.findMany({
+      where: {
+        completed_onboarding: true,
+      },
+    });
     // client.release(); // Release the connection back to the pool
 
     res.send(result);
@@ -130,7 +134,7 @@ router.post(
 
     console.log("req: ", req.body);
 
-    // const payload = JSON.parse(req.body);
+    // const payload = JSON.parse(req.body)
 
     console.log("here");
     const newImg = req.newUrl;
