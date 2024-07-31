@@ -34,6 +34,9 @@ router.get("/status", async (req, res) => {
       where: {
         uid: uid,
       },
+      select: {
+        completed_onboarding: true,
+      },
     });
 
     // const result = await pool.query(
@@ -42,10 +45,15 @@ router.get("/status", async (req, res) => {
     // );
     if (result) {
       console.log("true");
-      res.send(true);
+      res
+        .status(201)
+        .send({
+          isCeleb: true,
+          completed_onboarding: result.completed_onboarding,
+        });
     } else {
       console.log("false");
-      res.send(false);
+      res.status(201).send(false);
     }
   } catch (error) {
     console.log("/status: ", error);
