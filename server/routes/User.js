@@ -29,6 +29,10 @@ router.get("/id/:uid", async (req, res) => {
 router.get("/status", async (req, res) => {
   const uid = req.query.uid;
 
+  if (!uid) {
+    return res.status(400).send({ error: "UID is required" });
+  }
+
   try {
     const result = await prisma.celeb.findUnique({
       where: {
@@ -45,15 +49,13 @@ router.get("/status", async (req, res) => {
     // );
     if (result) {
       console.log("true");
-      res
-        .status(201)
-        .send({
-          isCeleb: true,
-          completed_onboarding: result.completed_onboarding,
-        });
+      res.status(200).send({
+        isCeleb: true,
+        completed_onboarding: result.completed_onboarding,
+      });
     } else {
       console.log("false");
-      res.status(201).send(false);
+      res.status(200).send({ isCeleb: false });
     }
   } catch (error) {
     console.log("/status: ", error);
