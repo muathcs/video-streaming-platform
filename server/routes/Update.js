@@ -1,7 +1,7 @@
 import { prisma } from "../index.js";
 import express from "express";
 import multer from "multer";
-import { uploadProfileImgToS3 } from "../s3.js";
+import { AWS_LINK, uploadFile, uploadProfileImgToS3 } from "../s3.js";
 import { updateEmail, updatePassword } from "../fireBaseAdmin.js";
 
 const router = express.Router();
@@ -78,6 +78,60 @@ router.put(
       } catch (error) {
         console.log("/update: ", error);
       }
+    }
+  }
+);
+
+// uploadImgVerification
+
+async function uploadVerficationToS3(req, res, next) {
+  const files = req.files;
+  const id = "2309afsjhkl2x";
+  try {
+    for (const file in files) {
+      console.log("FILE: ", files[file][0].originalname);
+
+      const fileName = files[file][0];
+
+      if (
+        fileName.originalname == "documentPic" ||
+        fileName.originalname == "documentPicWithFace"
+      ) {
+        console.log("inside: ", fileName.mimetype);
+
+        let imgUrl = `verification/user(${id})-${fileName.originalname}`;
+
+        await uploadFile(fileName.buffer, imgUrl, fileName.mimetype);
+      }
+    }
+
+    // console.log("reqzzzx: ", req.files);
+  } catch (error) {
+    console.error(error.message);
+  }
+}
+router.put(
+  "/celeb/onboard",
+  upload.fields([
+    { name: "profileImg", maxCount: 1 },
+    { name: "documentPic", maxCount: 1 },
+    { name: "documentPicWithFace", maxCount: 1 },
+  ]),
+  uploadVerficationToS3,
+  // uploadProfileImgToS3,
+  async (req, res) => {
+    const check = req.files;
+    const body = req.body;
+
+    // console.log("FirstOne ", check.documentPicWithFace);
+    // console.log("FirstTwo ", check.profileImg);
+    // console.log("FirstThree ", check.profileImg);
+    // console.log("body: ", body.info);
+    try {
+      res.status(201).send("great");
+      // console.log(first)
+    } catch (error) {
+      res.status(401).send("fail");
     }
   }
 );

@@ -36,7 +36,7 @@ function SignupUser({
 
     createUser(data, false);
 
-    reset(); // true indiciates this is a celeb being created.
+    // reset(); // true indiciates this is a celeb being created.
 
     // reset();
   };

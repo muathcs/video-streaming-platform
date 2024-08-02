@@ -24,7 +24,7 @@ const s3Client = new S3Client({
 // loop over a file with lets say 100 links
 
 export function uploadFile(fileBuffer, fileName, mimetype) {
-  console.log("filenname : ", fileName);
+  console.log("filenname : ", mimetype);
   const uploadParams = {
     Bucket: bucketName,
     Body: fileBuffer,
@@ -42,19 +42,19 @@ export function uploadFile(fileBuffer, fileName, mimetype) {
 
 // middle ware
 export async function uploadProfileImgToS3(req, res, next) {
-  let { id } = req.params;
-  let { uid, imgurl } = req.body;
+  let { id } = req.params; //user's uid
+  let { uid, imgurl } = req.body; // user uid and imgurl (if it exists)
 
   if (!imgurl && id) {
-    // this function checks if we're updating the img or setting it for the first time. So, if the imgurl doesn't exist but the id does this means the account is setting the img
-    // if this case
+    // this function checks if we're updating the img or setting it for the first time. So, if the imgurl doesn't exist but the id does this means the account is setting the img for the first time
+
     imgurl = `profile/user(${id})`;
   }
 
-  const file = req.file;
+  const file = req.file; // the img file and it's content
 
   if (!file) {
-    //just incase the above passes because the firebase account is created beofre the user and so the id may still exist, this will quit the middle ware if an img file wasnt selected.
+    // quits if an image file doesn't exist
     return next(); //insures code below doesn't run.
   }
 
