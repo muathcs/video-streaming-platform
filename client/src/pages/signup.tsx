@@ -85,7 +85,7 @@ function SignUp() {
     console.log("on file change", e.target.files[0]);
   };
 
-  const handleUpload = async (key: number) => {
+  const handleUpload = async (key: string) => {
     console.log(key);
     if (selectedFile) {
       const imgURL = `profile/user(${key})`; // img link, the will be sent to S3, with the useruid being the unique identifier. check path /createuser or /createceleb on server.

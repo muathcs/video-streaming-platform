@@ -21,6 +21,7 @@ import fs from "fs";
 import React from "react";
 import { fileURLToPath } from "url";
 import { dirname } from "path";
+import { saveInviteCode } from "./utils/inviteCodeGenerator.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -35,9 +36,12 @@ const __dirname = dirname(__filename);
 // `;
 
 console.log("here");
-// createTheCelebs();
 const app = express();
+
 export const prisma = new PrismaClient();
+
+// createTheCelebs();
+// saveInviteCode();
 
 const PORT = process.env.PORT || 3001;
 app.use(express.json());

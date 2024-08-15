@@ -42,13 +42,33 @@ export function uploadFile(fileBuffer, fileName, mimetype) {
 
 // middle ware
 export async function uploadProfileImgToS3(req, res, next) {
+  console.log("uploadProfileImg");
   let { id } = req.params; //user's uid
-  let { uid, imgurl } = req.body; // user uid and imgurl (if it exists)
 
-  if (!imgurl && id) {
+  console.log("req: ", req.body);
+
+  let parsedBody;
+
+  if (typeof req.body === "string") {
+    try {
+      parsedBody = JSON.parse(req.body);
+    } catch (error) {
+      console.error("Failed to parse JSON:", error);
+      parsedBody = {}; // Handle error or provide a default value
+    }
+  } else {
+    console.log("parsed Body");
+    parsedBody = req.body;
+  }
+
+  let { uid, imgurl } = parsedBody;
+
+  console.log("uid: ", uid);
+
+  if (!imgurl && (id || uid)) {
     // this function checks if we're updating the img or setting it for the first time. So, if the imgurl doesn't exist but the id does this means the account is setting the img for the first time
 
-    imgurl = `profile/user(${id})`;
+    imgurl = `profile/user(${id || uid})`;
   }
 
   const file = req.file; // the img file and it's content
@@ -57,8 +77,9 @@ export async function uploadProfileImgToS3(req, res, next) {
     // quits if an image file doesn't exist
     return next(); //insures code below doesn't run.
   }
-
   let newUrl = AWS_LINK + imgurl;
+
+  console.log("newUrl: ", newUrl);
 
   try {
     const uploadProf = await uploadFile(file.buffer, imgurl, file.mimetype);

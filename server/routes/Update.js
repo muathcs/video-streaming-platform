@@ -101,15 +101,30 @@ async function uploadVerficationToS3(req, res, next) {
 
         let imgUrl = `verification/user(${id})-${fileName.originalname}`;
 
+        if (fileName.originalname == "documentPic") {
+          console.log("original Name: ", fileName.originalname);
+          req.documentPic = AWS_LINK + imgUrl;
+        } else {
+          req.documentPicWithFace = AWS_LINK + imgUrl;
+        }
+
+        // await uploadFile(fileName.buffer, imgUrl, fileName.mimetype);
+      } else if (fileName.originalname == "profilePic") {
+        let imgUrl = `profile/user(${id})`;
+        req.profileImg = AWS_LINK + imgUrl;
+        console.log("here: imgurl");
         await uploadFile(fileName.buffer, imgUrl, fileName.mimetype);
       }
     }
+
+    next();
 
     // console.log("reqzzzx: ", req.files);
   } catch (error) {
     console.error(error.message);
   }
 }
+//
 router.put(
   "/celeb/onboard",
   upload.fields([
@@ -122,15 +137,39 @@ router.put(
   async (req, res) => {
     const check = req.files;
     const body = req.body;
+    const withFace = req.documentPicWithFace;
+    const { bio, category, price, profession, uid } = JSON.parse(
+      req.body.onBoardData
+    );
+
+    console.log("uid: : ", category);
+    console.log("check: ", req.body.onBoardData);
+    console.log("info: ", req.body.info);
+
+    console.log("DocFace: ", withFace);
 
     // console.log("FirstOne ", check.documentPicWithFace);
     // console.log("FirstTwo ", check.profileImg);
     // console.log("FirstThree ", check.profileImg);
     // console.log("body: ", body.info);
+    const profileImg = req.profileImg;
     try {
+      const response = await prisma.celeb.update({
+        where: {
+          uid: uid,
+        },
+        data: {
+          description: bio,
+          category: category,
+          price: price,
+          completed_onboarding: true,
+          imgurl: profileImg,
+        },
+      });
       res.status(201).send("great");
       // console.log(first)
     } catch (error) {
+      console.error(error.message);
       res.status(401).send("fail");
     }
   }

@@ -116,7 +116,7 @@ async function sendRequest(intended_uid, sender_uid, message) {
 
 // create the request.
 router.post("/", async (req, res) => {
-  console.log("Request made in post");
+  console.log("Request made in post: ", req.body);
   let {
     celebUid,
     fanUid,
@@ -163,7 +163,6 @@ router.post("/", async (req, res) => {
         tosomeoneelse: !!toSomeOneElse,
         fromperson: fromPerson,
         toperson: toPerson,
-        processed: true,
       },
     });
 

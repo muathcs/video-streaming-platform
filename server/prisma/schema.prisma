@@ -4,8 +4,13 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url      = env("DIRECT_URL")
 }
+
+// npx prisma migrate dev --name <migration_name>
+
+// npx prisma migrate deploy
+// npx prisma generate
 
 model Celeb {
   celebid              String                   @id @default(uuid())
@@ -26,9 +31,24 @@ model Celeb {
   cluster_id           Int?
   completed_onboarding Boolean                  @default(false)
   Approved             Boolean                  @default(false)
+  MessageToUs          String?                  @db.VarChar(1200)
+  MostPopularApp       String?                  @db.VarChar(30)
+
+  inviteCode   InviteCode? @relation(fields: [inviteCodeId], references: [id])
+  inviteCodeId String?     @unique
 
   @@index([document_with_idx], map: "document_idx", type: Gin)
   @@index([document_with_idx], map: "document_with_idx_index", type: Gin)
+}
+
+model InviteCode {
+  id          String   @id @default(uuid())
+  code        String   @unique @db.VarChar(100)
+  is_used     Boolean? @default(false)
+  celebId     String?  @unique
+  information String?
+  // celeb_id String   @id @default(uuid())
+  Celeb       Celeb?
 }
 
 model Fan {

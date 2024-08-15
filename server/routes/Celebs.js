@@ -23,7 +23,7 @@ router.get("/", async (req, res) => {
     // });
     const result = await prisma.celeb.findMany({
       where: {
-        completed_onboarding: true,
+        completed_onboarding: false,
       },
     });
     // client.release(); // Release the connection back to the pool
@@ -100,6 +100,7 @@ router.get("/:id", async (req, res) => {
   const { id } = req.params;
 
   console.log("id: ", req.params);
+  console.log("Add this to the wait, ");
 
   try {
     const response = await prisma.celeb.findUnique({
@@ -112,58 +113,116 @@ router.get("/:id", async (req, res) => {
     //   id,
     // ]);
 
-    res.send(response);
+    res.status(201).send(response);
   } catch (error) {
     console.log("/celeb/id: ", error);
     res.status(500).json({ error: error.message });
   }
 });
 
+// this is when the celeb created an account from the form on the website, which only fills the info partially.
+
+router.post("/createCelebPartial", async (req, res) => {
+  console.log("body: ", req.body);
+
+  const {
+    displayName,
+    username,
+    MostPopularApp,
+    category,
+    email,
+    MessageToUs,
+    followers: f,
+    account,
+    uid,
+  } = req.body;
+  // res.status(201).send("great");
+
+  const followers = Number(f); // turning followers to a number
+  try {
+    const response = await prisma.celeb.create({
+      data: {
+        displayname: displayName,
+        account,
+        category,
+        uid,
+        username,
+        email,
+        followers,
+        MostPopularApp,
+        MessageToUs,
+      },
+    });
+
+    console.log("response: ", response);
+  } catch (error) {
+    console.error(error);
+  }
+});
+
 // this created a celeb account.
 router.post(
   "/createCeleb",
-  // upload.single("file"),
-  // uploadProfileImgToS3,
+  upload.single("file"),
+  uploadProfileImgToS3,
   async (req, res) => {
-    console.log("body: ", req.body);
-
     // return;
-    const { uid } = req.body;
 
-    console.log("creating a cleeb");
-
-    console.log("req: ", req.body);
+    console.log("req[]: ", req.body.info);
+    console.log("file: ", req.file);
 
     // const payload = JSON.parse(req.body)
 
-    console.log("here");
     const newImg = req.newUrl;
 
+    console.log("newImg: ", newImg);
+
     const {
-      displayName,
-      username,
-      followers,
-      account,
+      bio,
       category,
+      profilePic,
+      legalName,
+      displayName,
       price,
+      uid,
       email,
       app,
       description,
-    } = req.body;
+      inviteCode,
+    } = JSON.parse(req.body.info);
+
+    console.log("price: ", price);
 
     try {
+      // Find the invite code
+      const inviteCodeRecord = await prisma.inviteCode.findUnique({
+        where: { code: inviteCode },
+      });
+
+      // throw error if it doesn't exist
+      if (!inviteCodeRecord || inviteCodeRecord.is_used) {
+        res.status(401).send("code doesn't exist");
+        throw new Error("Invalid or already used invite code");
+      }
+
       const result = await prisma.celeb.create({
         data: {
           displayname: displayName,
-          username: username,
-          followers: parseInt(followers),
-          account: account,
-          category: category,
+          username: legalName,
+          // followers: parseInt(followers),
+          // account: account,
+          category,
           price: parseInt(price),
           email: email,
-          description: description,
-          uid: uid,
+          description: bio,
+          uid: crypto.randomUUID(),
           imgurl: newImg,
+          completed_onboarding: bio ? true : false,
+          inviteCode: {
+            connect: {
+              id: inviteCodeRecord.id,
+            },
+          },
         },
       });
 
@@ -173,11 +232,57 @@ router.post(
 
       res.status(201).send("Celeb account created");
     } catch (error) {
-      // console.log("create a celeb", error);
-      res.status(401).status(error.message);
+      console.log("create a celeb", error.message);
+      res.status(401).send(error.message);
     }
   }
 );
+
+router.post("/custom", async (req, res) => {
+  let { inviteCode } = req.body;
+  console.log("after", inviteCode);
+  inviteCode = inviteCode.trim();
+  console.log("after", inviteCode);
+
+  try {
+    const response = await prisma.inviteCode.findUnique({
+      where: {
+        code: inviteCode,
+      },
+      select: {
+        is_used: true,
+      },
+    });
+
+    // if response null
+
+    console.log("response: ", response);
+    if (!response) {
+      return res.status(404).json({ error: "Code doesn't exist" });
+    }
+
+    if (response.is_used) {
+      // return error
+      return res.status(400).json({ error: "Code has been used" });
+    }
+
+    // await prisma.inviteCode.update({
+    //   where: {
+    //     code: inviteCode,
+    //   },
+    //   data: {
+    //     is_used: true,
+    //   },
+    // });
+
+    return res
+      .status(201)
+      .json({ approve: true, message: "code has been updated" });
+  } catch (error) {
+    console.error(error);
+    return res.status(501).send(error);
+  }
+});
 
 // this function adds an index to every celeb entry, this helps with the postgres text search
 export async function indexNewCeleb(uid) {
