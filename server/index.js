@@ -58,6 +58,7 @@ const allowedOrigins = [
   "https://128.140.8.200",
   "192.168.0.16",
   "https://console.cron-job.org/jobs/4875267",
+  "aws-0-eu-central-1.pooler.supabase.com",
 ];
 
 console.log("__", __dirname);
