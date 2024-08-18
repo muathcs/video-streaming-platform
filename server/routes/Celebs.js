@@ -23,11 +23,12 @@ router.get("/", async (req, res) => {
     // });
     const result = await prisma.celeb.findMany({
       where: {
-        completed_onboarding: false,
+        completed_onboarding: true,
       },
     });
     // client.release(); // Release the connection back to the pool
 
+    console.log("res: ", result)
     res.send(result);
   } catch (error) {
     console.log("error/celebs: ", error);
