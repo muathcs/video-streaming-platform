@@ -30,7 +30,9 @@ export function AuthProvider({ children }: { children: any }) {
   const [loading, setLoading] = useState(true);
   const [userInfo, setUserInfo] = useState<UserInfoType>();
 
-  const [celeb, setCeleb] = useState<boolean | undefined>();
+  const [celeb, setCeleb] = useState<
+    { isCeleb: boolean | undefined } | undefined
+  >();
 
   // const [requests, setRequests] = useState();
 
@@ -121,15 +123,18 @@ export function AuthProvider({ children }: { children: any }) {
 
         if (user) {
           try {
-            const response = await axios.get(`${apiUrl}/user/status`, {
-              params: { uid: user.uid },
-            });
+            const response: { data: { isCeleb: boolean } } = await axios.get(
+              `${apiUrl}/user/status`,
+              {
+                params: { uid: user.uid },
+              }
+            );
 
             let req;
 
             let fullUserInfo;
 
-            if (response.data) {
+            if (response.data.isCeleb) {
               req = await axios.get(`${apiUrl}/request/dashboard`, {
                 params: { data: user.uid },
               });
@@ -150,6 +155,7 @@ export function AuthProvider({ children }: { children: any }) {
             setRequests(req.data);
             setCeleb(response.data);
             setUserInfo(fullUserInfo.data);
+            console.log("fullUser: ", fullUserInfo.data);
           } catch (error) {
             console.error(error);
           }

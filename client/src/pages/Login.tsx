@@ -34,6 +34,7 @@ function Login() {
       await isACeleb(userObj.user.uid); //checking if the user is a celeb or a fan(to render different UIs);
 
       navigate("/");
+      console.log("cureent: ");
       await location.reload();
       // handleUpload()
     } catch (error) {

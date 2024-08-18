@@ -71,7 +71,7 @@ export type AuthContextType = {
     password: string
   ) => Promise<{ state: boolean; message: any } | undefined>;
   uploadProfilePic: (imgurl: string, user: any) => void;
-  celeb: boolean | undefined;
+  celeb: { isCeleb: boolean | undefined } | undefined;
   userInfo: UserInfoType | undefined;
 };
 

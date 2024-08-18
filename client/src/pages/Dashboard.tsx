@@ -261,7 +261,6 @@ function Dashboard() {
               </li>
 
               {pageOptions.map((pageIndex: number) => {
-                console.log("page index: ", pageIndex);
                 if (pageIndex > 4) {
                   return;
                 }

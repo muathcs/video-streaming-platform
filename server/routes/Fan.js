@@ -19,6 +19,9 @@ router.get("/:uid", async (req, res) => {
         uid: uid,
       },
     });
+
+    console.log("response: ", response);
+    console.log("uidxx:: ", uid);
     // const response = await pool.query(
     //   'Select * from public."Fan" where uid = $1',
     //   [uid]
@@ -34,7 +37,7 @@ router.get("/:uid", async (req, res) => {
 //creates a new row on the the Fan table
 router.post(
   "/createUser",
-  upload.single("file"),
+  // upload.single("file"),
   uploadProfileImgToS3,
   async (req, res) => {
     console.log("file: ", req.file);

@@ -47,7 +47,20 @@ Fix the Celeb routing, currenlty, if you access a celeb from the request section
 
 
 
+Oboarding for Celeb:
 
+> create account from join talent then go on mobile phone
+> Signup as Talent:
+    - First input email
+    - Then confirm email
+    - Now Choose a profile image
+    - Then choose profession
+    - What else do fans know you for
+    - Choose a category
+    - Choose a price
+    - Allow notifications
+    - Verify yourself by taking a selfie
+    -Congrat now you're ready to recieve orders. 
 
 
 

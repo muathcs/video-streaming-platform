@@ -44,7 +44,6 @@ export function useGlobalAxios(
     try {
       const response = await axios.post(path, params);
 
-      console.log("post req response: ", response);
     } catch (error) {
       console.error(error);
     }
@@ -63,7 +62,6 @@ export function useGlobalAxios(
 
   async function getData(dataToGet: string, params?: unknown) {
     try {
-      console.log("params: ", params);
       const response = await axios.get(dataToGet, { params }); // Correct destructure here
       return response.data;
     } catch (error) {

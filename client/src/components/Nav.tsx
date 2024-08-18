@@ -21,7 +21,7 @@ import { useAuth } from "@/context/AuthContext";
 import { useRequests } from "@/context/RequestContext";
 import axios from "@/api/axios";
 import { apiUrl } from "@/utilities/fetchPath";
-import { CelebType, notification } from "@/TsTypes/types";
+import { AuthContextType, CelebType, notification } from "@/TsTypes/types";
 import { useGlobalAxios } from "@/hooks/useGlobalAxios";
 import { GiShoppingCart } from "react-icons/gi";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
@@ -32,7 +32,9 @@ function classNames(...classes: any) {
 }
 
 function Nav() {
-  const { logout, currentUser, celeb, userInfo }: any = useAuth();
+  const { logout, currentUser, celeb, userInfo }: AuthContextType = useAuth();
+
+  console.log(celeb?.isCeleb);
   const navigate = useNavigate();
   const { requests } = useRequests();
   const [celebsSuggestion, setCelebsSuggestion] = useState<string[]>([]);
@@ -62,7 +64,11 @@ function Nav() {
       label: "Astro",
     },
   ];
-  const path = celeb ? "dashboard" : celeb == undefined ? "" : "requests";
+  const path = celeb?.isCeleb
+    ? "dashboard"
+    : celeb == undefined
+    ? ""
+    : "requests";
 
   const [navigation, setNavigation] = useState([
     { name: "Catogories", href: "/", current: false },

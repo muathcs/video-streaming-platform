@@ -103,7 +103,7 @@ describe("Auth page", () => {
     expect(loginButtonEl).toBeDisabled();
   });
 
-  it("error missage should not be visible", async () => {
+  it("error message should not be visible", async () => {
     render(
       <BrowserRouter>
         <Login />
