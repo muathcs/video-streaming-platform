@@ -33,6 +33,7 @@ export type notification = {
 export type RequestType = {
   message: string;
   reqtype: string;
+  isReviewed: boolean;
   celebUid: string;
   fanUid: string;
   reqaction: string;

@@ -5,21 +5,36 @@ const router = express.Router();
 
 router.post("/", async (req, res) => {
   console.log("req: ", req.body);
-  const { review, fanuid, celebuid, event, date, name, rating } = req.body;
+  const { review, fanuid, celebuid, event, date, name, rating, requestid } = req.body;
+
+  console.log("requestID: ", requestid)
   try {
     const result = await prisma.review.create({
       data: {
         message: review,
         reviewer_id: fanuid,
         reviewed_id: celebuid,
+        requestId:requestid,
         event,
         Date: date,
         reviewer_name: name,
         rating,
       },
     });
+
+    const updateRequest = await prisma.request.update({
+      where:{
+        requestid
+      },
+      data:{
+        isReviewed:true
+      }
+    })
+
+    res.status(201).send("Request has been reviewed")
   } catch (error) {
     console.log("/reviews: ", error);
+    res.status(401).send("something went wrong: ", error.message)
   }
 });
 

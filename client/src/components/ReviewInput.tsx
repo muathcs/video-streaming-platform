@@ -7,6 +7,7 @@ import { apiUrl } from "../utilities/fetchPath";
 
 type ReviewInputProp = {
   setOpenModal: (state: boolean) => void;
+  requestid: string;
   fanuid: string;
   celebuid: string;
   date: Date;
@@ -18,6 +19,7 @@ function ReviewInput({
   celebuid,
   date,
   event,
+  requestid,
 }: ReviewInputProp) {
   const [review, setReview] = useState<string>("");
   const { userInfo }: any = useAuth();
@@ -35,6 +37,7 @@ function ReviewInput({
         celebuid,
         event,
         date,
+        requestid,
         rating: hoveredStars,
         name: userInfo.displayname,
       });

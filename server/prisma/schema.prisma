@@ -70,6 +70,7 @@ model Request {
   requestid     String    @id @default(uuid())
   celebuid      String?   @db.VarChar(50)
   fanuid        String?   @db.VarChar(50)
+  isReviewed    Boolean   @default(false)
   price         Int?
   tosomeoneelse Boolean?
   reqaction     String?   @db.VarChar(16)
@@ -88,6 +89,7 @@ model Review {
   reviewer_id   String   @db.VarChar(50)
   reviewed_id   String   @db.VarChar(50)
   message       String   @db.VarChar(350)
+  requestId     String   @db.VarChar(50)
   event         String   @db.VarChar(20)
   reviewer_name String   @db.VarChar(40)
   Date          DateTime @default(now())

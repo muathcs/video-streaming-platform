@@ -46,6 +46,7 @@ function FulFilled() {
         </div>
         <Modal openModal={openModal} setOpenModal={setOpenModal}>
           <ReviewInput
+            requestid={request.requestid}
             setOpenModal={setOpenModal}
             celebuid={request.celebuid}
             fanuid={request.fanuid}

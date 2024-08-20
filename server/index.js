@@ -1,9 +1,6 @@
 import express from "express";
 import cors from "cors";
 import bodyParser from "body-parser";
-import pool from "./db.js";
-import dotenv from "dotenv";
-dotenv.config({ path: "../.env" });
 import multer from "multer";
 import { PrismaClient } from "@prisma/client";
 import CelebRoute from "./routes/Celebs.js";
@@ -17,11 +14,8 @@ import UserRoute from "./routes/User.js";
 import StripeRoute from "./routes/Stripe.js";
 import { createTheCelebs } from "./wikidata.js";
 import path from "path";
-import fs from "fs";
-import React from "react";
 import { fileURLToPath } from "url";
 import { dirname } from "path";
-import { saveInviteCode } from "./utils/inviteCodeGenerator.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -40,7 +34,7 @@ const app = express();
 
 export const prisma = new PrismaClient();
 
-// createTheCelebs();
+createTheCelebs();
 // saveInviteCode();
 
 const PORT = process.env.PORT || 3001;
