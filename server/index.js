@@ -34,7 +34,7 @@ const app = express();
 
 export const prisma = new PrismaClient();
 
-createTheCelebs();
+// createTheCelebs();
 // saveInviteCode();
 
 const PORT = process.env.PORT || 3001;
