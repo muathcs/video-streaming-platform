@@ -116,7 +116,9 @@ async function sendRequest(intended_uid, sender_uid, message) {
 
 // create the request.
 router.post("/", async (req, res) => {
-  console.log("Request made in post: ", req.body);
+
+  console.log("onside post requ")
+  
   let {
     celebUid,
     fanUid,
@@ -148,7 +150,6 @@ router.post("/", async (req, res) => {
       return res.status(201).send("Req already exist");
     }
 
-    console.log("after req");
     const result = await prisma.request.create({
       data: {
         requestid,
@@ -165,6 +166,23 @@ router.post("/", async (req, res) => {
         toperson: toPerson,
       },
     });
+
+    console.log("checkUID: ", celebUid)
+
+
+    // update the request_num for the celeb
+    const updatedCeleb = await prisma.celeb.update({
+      where: {
+        uid:celebUid
+      },
+      data: {
+        request_num: {
+          increment:1
+        },
+      },
+    });
+
+    console.log("updateCeleb: ", updatedCeleb)
 
     //this function creates an unread notification
     createNotification(celebUid, fanUid, "user has made a request");
@@ -219,29 +237,29 @@ async function updateFanClusterIdAndTotalSpent(celebUid, fanUid, price) {
     const { cluster_id } = getCelebCluster;
 
     //update the fan who made the request table fav_categories column, with the cluster of the id
-    const addUserFavCat = await prisma.fan.update({
-      where: {
-        uid: fanUid,
-      },
-      data: {
-        fav_categories: cluster_id,
-      },
-    });
+    // const addUserFavCat = await prisma.fan.update({
+    //   where: {
+    //     uid: fanUid,
+    //   },
+    //   data: {
+    //     fav_categories: cluster_id,
+    //   },
+    // });
 
     //update total spent for a specific Fan.
-    const updateTotalSpent = await prisma.fan.update({
-      data: {
-        total_spent: {
-          increment: price,
-        },
-        num_of_requests: {
-          increment: 1,
-        },
-      },
-      where: {
-        uid: fanUid,
-      },
-    });
+    // const updateTotalSpent = await prisma.fan.update({
+    //   data: {
+    //     total_spent: {
+    //       increment: price,
+    //     },
+    //     num_of_requests: {
+    //       increment: 1,
+    //     },
+    //   },
+    //   where: {
+    //     uid: fanUid,
+    //   },
+    // });
   } catch (error) {
     console.error(error);
   }

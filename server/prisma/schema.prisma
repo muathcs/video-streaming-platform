@@ -3,8 +3,9 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 // npx prisma migrate dev --name <migration_name>
@@ -22,7 +23,7 @@ model Celeb {
   price                Int?
   email                String?                  @db.VarChar(60)
   description          String?                  @db.VarChar(250)
-  request_num          Int?
+  request_num          Int?                     @default(0)
   rating               Int?
   uid                  String?                  @unique @db.VarChar(42)
   imgurl               String?                  @db.VarChar(250)

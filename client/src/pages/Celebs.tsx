@@ -250,9 +250,9 @@ function Celebs() {
             ) : 0 ? (
               <h1>Error</h1>
             ) : (
-              [...celebsToShow]
-                .reverse()
-                .map((celeb, index) => <CelebCard celeb={celeb} key={index} />)
+              [...celebsToShow].map((celeb, index) => (
+                <CelebCard celeb={celeb} key={index} />
+              ))
             )}
           </div>
         </div>

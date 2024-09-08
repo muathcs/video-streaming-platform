@@ -37,7 +37,7 @@ router.get("/:uid", async (req, res) => {
 //creates a new row on the the Fan table
 router.post(
   "/createUser",
-  // upload.single("file"),
+  upload.single("file"),
   uploadProfileImgToS3,
   async (req, res) => {
     console.log("file: ", req.file);

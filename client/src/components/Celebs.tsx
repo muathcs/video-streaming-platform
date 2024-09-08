@@ -145,7 +145,7 @@ function Celebs() {
         <div className=" h-[450px] xl:h-[350px]  md:w-full xl:w-[90%] flex justify-center   w-full lg:mb-40 xl:mb-20  xl:ml-24">
           <div className="w-full flex flex-col">
             <p className="text-left text-[26px] font-serif relative  h-1/6  flex items-end mb-2 justify-center  ">
-              Shop By Category
+              Shop By Categoryx
             </p>
             <div className=" md:h-4/6 gap-0 grid  grid-cols-3 sm:grid-cols-5 xl:grid-cols-9 just  px-4  justify-center md:mb-5 xl:gap-20   ">
               {shopByCategory
@@ -247,9 +247,12 @@ function Celebs() {
             ) : 0 ? (
               <h1>Error</h1>
             ) : (
-              [...celebsToShow]
-                .reverse()
-                .map((celeb, index) => <CelebCard celeb={celeb} key={index} />)
+              [...celebsToShow].map((celeb, index) => (
+                <>
+                  <h1 className="bg-red-300 h-10">{index}</h1>
+                  <CelebCard celeb={celeb} key={index} />
+                </>
+              ))
             )}
           </div>
         </div>

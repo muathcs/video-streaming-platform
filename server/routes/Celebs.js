@@ -25,6 +25,9 @@ router.get("/", async (req, res) => {
       where: {
         completed_onboarding: true,
       },
+      orderBy:{
+        request_num:"desc"
+      }
     });
     // client.release(); // Release the connection back to the pool
 
@@ -109,6 +112,8 @@ router.get("/:id", async (req, res) => {
         uid: id,
       },
     });
+
+    console.log("Response: ", response)
 
     // const response = await pool.query("Select * from celeb where uid = $1", [
     //   id,
