@@ -13,7 +13,7 @@
     "@babel/preset-env": "^7.24.6",
     "@babel/preset-react": "^7.24.6",
     "@babel/register": "^7.24.6",
-    "@prisma/client": "^5.12.1",
+    "@prisma/client": "^5.19.1",
     "@react-email/components": "0.0.17",
     "aws": "^0.0.3-2",
     "aws-sdk": "^2.1517.0",
@@ -44,6 +44,6 @@
   },
   "devDependencies": {
     "nodemon": "^3.1.4",
-    "prisma": "^5.12.1"
+    "prisma": "^5.19.1"
   }
 }
