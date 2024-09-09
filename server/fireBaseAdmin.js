@@ -1,7 +1,6 @@
 import admin from "firebase-admin";
 import { readFileSync } from "fs";
 import { celebrityNames } from "./celebName.js";
-import pool from "./db.js";
 
 const serviceAccount = JSON.parse(
   readFileSync("./serviceAccount/serviceAccountKey.json", "utf8")
@@ -104,46 +103,46 @@ async function createFirebaseUser(email, password) {
 }
 
 // Function to update email and uid
-async function updateEmailAndUid() {
-  try {
-    // Fetch data from PostgreSQL
-    const result = await pool.query("SELECT * FROM celeb");
-    const celebs = result.rows;
+// async function updateEmailAndUid() {
+//   try {
+//     // Fetch data from PostgreSQL
+//     const result = await pool.query("SELECT * FROM celeb");
+//     const celebs = result.rows;
 
-    // Loop through each celeb
-    for (const celeb of celebs) {
-      const oldEmail = celeb.email;
-      const newEmail = oldEmail.replace(/\s+/g, "-");
+//     // Loop through each celeb
+//     for (const celeb of celebs) {
+//       const oldEmail = celeb.email;
+//       const newEmail = oldEmail.replace(/\s+/g, "-");
 
-      // Update email in PostgreSQL
-      await pool.query("UPDATE celeb SET email = $1 WHERE celebid = $2", [
-        newEmail,
-        celeb.celebid,
-      ]);
+//       // Update email in PostgreSQL
+//       await pool.query("UPDATE celeb SET email = $1 WHERE celebid = $2", [
+//         newEmail,
+//         celeb.celebid,
+//       ]);
 
-      // Fetch Firebase user by email
-      console.log("old email: ", newEmail);
-      const userRecord = await admin.auth().getUserByEmail(newEmail);
+//       // Fetch Firebase user by email
+//       console.log("old email: ", newEmail);
+//       const userRecord = await admin.auth().getUserByEmail(newEmail);
 
-      // Update UID in PostgreSQL
-      await pool.query("UPDATE celeb SET uid = $1 WHERE uid = $2", [
-        userRecord.uid,
-        celeb.uid,
-      ]);
+//       // Update UID in PostgreSQL
+//       await pool.query("UPDATE celeb SET uid = $1 WHERE uid = $2", [
+//         userRecord.uid,
+//         celeb.uid,
+//       ]);
 
-      console.log(
-        `Updated celeb: ${celeb.name}, Email: ${oldEmail} -> ${newEmail}, UID: ${userRecord.uid}`
-      );
-    }
+//       console.log(
+//         `Updated celeb: ${celeb.name}, Email: ${oldEmail} -> ${newEmail}, UID: ${userRecord.uid}`
+//       );
+//     }
 
-    console.log("Update process complete.");
-  } catch (error) {
-    console.error("Error updating email and UID:", error);
-  } finally {
-    // Close the PostgreSQL pool
-    // await pool.end();
-  }
-}
+//     console.log("Update process complete.");
+//   } catch (error) {
+//     console.error("Error updating email and UID:", error);
+//   } finally {
+//     // Close the PostgreSQL pool
+//     // await pool.end();
+//   }
+// }
 // Function to update email and uid
 async function updatePhotoUrl(uid, imgurl) {
   try {

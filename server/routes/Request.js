@@ -1,4 +1,3 @@
-import pool from "../db.js";
 import { prisma } from "../index.js";
 import express from "express";
 import { upload } from "./Fan.js";
