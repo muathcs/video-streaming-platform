@@ -7,7 +7,14 @@
   .review-star {
     @apply hover:w-[3.2rem] hover:h-[3.2rem];
   }
+  .gradiant-page {
+    @apply bg-gradient-to-b from-black from-5% via-[#43268D] via-20% to-black to-40%;
+  }
+  .gradiant-other-pages {
+    @apply bg-gradient-to-b from-black via-[#241f2c] via-70% to-black to-100%;
+  }
 }
+
 .wotfard {
   font-family: "wotfard";
 }
@@ -63,6 +70,7 @@ body {
   margin: 0;
   height: 100vh;
   min-width: 100%;
+
   /* position: absolute; */
 }
 

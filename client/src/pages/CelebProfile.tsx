@@ -238,7 +238,7 @@ function CelebProfile() {
   }, [celebInfo]);
   return (
     <>
-      <div className="h-full  w-[99%] flex  flex-col relative   text-white text-lg  ">
+      <div className="  w-[99%] flex  flex-col relative   text-white text-lg  gradiant-other-pages ">
         {/* celeb pic and description */}
         <CelebInfoDisplay
           displayname={displayname}
@@ -268,7 +268,7 @@ function CelebProfile() {
           )}
         </div>
 
-        <div className="relative py-10  ">
+        <div className="relative py-10 border flex justify-center  ">
           <button
             onClick={() => setOrderModal(true)}
             className=" relative  w-1/2 md:w-1/5 rounded-md hover:bg-slate-700 py-5 bg-slate-500  text-white hover:border-none outline-none focus:outline-none border-none "

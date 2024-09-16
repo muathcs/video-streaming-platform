@@ -40,11 +40,15 @@ function FanRequests() {
   return (
     <>
       {loading ? (
-        <h1 className="">Loading</h1>
+        <div className="gradiant-other-pages h-full flex items-center justify-center">
+          <h1 className="">Loading...</h1>
+        </div>
       ) : error ? (
-        <h1>Error</h1>
+        <div className="gradiant-other-pages h-full flex items-center justify-center">
+          <h1>Error.. Something went wrong</h1>
+        </div>
       ) : (
-        <div className="overflow-auto flex flex-col gap-2 h-full   ">
+        <div className="overflow-auto flex flex-col gap-2 h-full  gradiant-other-pages  ">
           <>
             {celebReplies?.length === 0 ? (
               <h1 className=" top-40 relative">You do not have any requests</h1>

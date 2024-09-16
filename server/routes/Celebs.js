@@ -6,13 +6,13 @@ import { uploadProfileImgToS3 } from "../s3.js";
 const router = express.Router();
 
 router.get("/", async (req, res) => {
-  console.log("paramszz: ", req.query);
   //query celeb table by category
 
   const page = parseInt(req.query.page) || 1; // Default to page 1 if not provided
   const pageSize = parseInt(req.query.pageSize) || 10; // Default page size to 10 if not provided
   const offset = (page - 1) * pageSize; // Calculate the offset based on page number and page size
   const { category } = req.params;
+  console.log("here")
 
   // console.log("react nativex", req.query);
 
@@ -22,6 +22,8 @@ router.get("/", async (req, res) => {
     //   take: pageSize,
     // });
     const result = await prisma.celeb.findMany({
+      skip:offset,
+      take:pageSize,
       where: {
         completed_onboarding: true,
       },
@@ -39,28 +41,6 @@ router.get("/", async (req, res) => {
   }
 });
 
-//recommendations
-router.get("/rec/:id", async (req, res) => {
-  const { id } = req.params;
-
-  const clusterId = parseInt(id);
-
-  console.log("idxx: ", clusterId);
-  try {
-    const response = await prisma.celeb.findMany({
-      where: {
-        cluster_id: clusterId,
-      },
-      take: 5,
-    });
-
-    console.log("response=== ", response);
-    res.send(response);
-  } catch (error) {
-    console.error(error);
-  }
-});
-
 router.get("/category/:category", async (req, res) => {
   console.log("hereXXXX");
   //query celeb table by category
@@ -70,7 +50,10 @@ router.get("/category/:category", async (req, res) => {
   const pageSize = parseInt(req.query.pageSize) || 10; // Default page size to 10 if not provided
   const offset = (page - 1) * pageSize; // Calculate the offset based on page number and page size
 
-  console.log("category: ", category);
+  // console.log("category: ", category);
+
+  console.log("page size: ", pageSize)
+  console.log("page size: ", page)
 
   // category = category.toLocaleLowerCase(); // to match db
 
@@ -100,11 +83,33 @@ router.get("/category/:category", async (req, res) => {
   }
 });
 
+//recommendations
+router.get("/rec/:id", async (req, res) => {
+  const { id } = req.params;
+
+  const clusterId = parseInt(id);
+
+  console.log("idxx: ", clusterId);
+  try {
+    const response = await prisma.celeb.findMany({
+      where: {
+        cluster_id: clusterId,
+      },
+      take: 5,
+    });
+
+    console.log("response=== ", response);
+    res.send(response);
+  } catch (error) {
+    console.error(error);
+  }
+});
+
+
+
 router.get("/:id", async (req, res) => {
   const { id } = req.params;
 
-  console.log("id: ", req.params);
-  console.log("Add this to the wait, ");
 
   try {
     const response = await prisma.celeb.findUnique({
@@ -113,7 +118,6 @@ router.get("/:id", async (req, res) => {
       },
     });
 
-    console.log("Response: ", response)
 
     // const response = await pool.query("Select * from celeb where uid = $1", [
     //   id,

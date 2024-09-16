@@ -50,7 +50,7 @@ function TopSection({
   };
 
   return (
-    <div className="flex justify-between relative mb-5  ">
+    <div className="flex justify-between relative mb-5   ">
       <div className="w-1/2 flex items-start justify-center gap-5 flex-col  ">
         <p className="text-[24px] text-left ">{results} results</p>
       </div>
@@ -67,7 +67,7 @@ function TopSection({
           <SelectTrigger className="w-[280px]">
             <SelectValue placeholder="Filter" />
           </SelectTrigger>
-          <SelectContent className="bg-red-400 cursor-pointer">
+          <SelectContent className=" cursor-pointer bg-black">
             <SelectItem value="asc">High to Low</SelectItem>
             <SelectItem value="desc">Low to High</SelectItem>
           </SelectContent>
@@ -173,11 +173,11 @@ function Category() {
   }, []);
 
   return (
-    <div className="flex justify-center relative top-10 h-full   ">
-      <div className="flex  relative top-10 h-full w-4/5  ">
+    <div className="flex justify-center relative   gradiant-other-pages py-20 ">
+      <div className="flex  relative top-10  w-4/5  ">
         <div className="w-full ">
           <h1 className="text-left">{category}</h1>
-          <div className=" h-full    ">
+          <div className="   ">
             {/* top section */}
             <TopSection
               originalCelebs={originalCelebs}

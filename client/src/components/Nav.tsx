@@ -172,8 +172,8 @@ function Nav() {
   }
 
   return (
-    <nav className="mt-2 ">
-      <div className=" max-w-7xl px-2 sm:px-6 lg:px-8    mx-auto">
+    <nav className="bg-black">
+      <div className=" max-w-7xl px-2 sm:px-6 lg:px-8    mx-auto bg-black">
         <div className="relative flex h-16 items-center justify-between   ">
           <div className="absolute inset-y-0 left-0 flex items-center md:hidden ">
             {/* Mobile menu button */}
@@ -242,9 +242,12 @@ function Nav() {
                           }}
                           className={classNames(
                             item.current
-                              ? "underline rounded-full text-white "
-                              : "text-white hover:bg-gray-700 hover:rounded-full focus:bg-gray-800 hover:text-white text-sm lg:text-lg  lg:font-medium  ",
-                            "rounded-full px-3 py-3 text-nowrap "
+                              ? "underline rounded-full text-purple-600 "
+                              : " hover:rounded-full  hover:text-gray-600",
+                            "rounded-full px-3 py-3 text-nowrap font-serif  text-sm lg:text-lg  lg:font-medium",
+                            item.name == "Join as Talent"
+                              ? "bg-gradient-to-r from-fuchsia-600 to-violet-300 text-transparent bg-clip-text"
+                              : "text-white"
                           )}
                           aria-current={item.current ? "page" : undefined}
                         >
@@ -256,13 +259,13 @@ function Nav() {
               </div>
             </div>
             {/* Search bar */}
-            <div className="relative mx-auto text-gray-600 sm:block ml-10 w-full  sm:right-0   ">
+            <div className="relative mx-auto text-gray-600 sm:block ml-10 w-full  sm:right-0    ">
               <input
-                className=" h-10 pl-2 w-full rounded-full text-sm focus:outline-none bg-white    "
+                className=" h-10 pl-2 w-full rounded-full text-sm focus:outline-none bg-white border border-gray-200   "
                 type="search"
                 name="search"
                 value={searchCelebVal}
-                placeholder="Search "
+                placeholder="Search for Celebrity"
                 onChange={(e) => {
                   const input = e.target.value;
 
@@ -321,103 +324,112 @@ function Nav() {
           </div>
 
           {/* logo and notification */}
-          <div className="inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0 ">
-            <button
-              onClick={() => {
-                setOpenNotification(() => !openNotification);
-              }}
-              type="button"
-              className="relative rounded-full p-1 text-gray-400 "
-            >
-              <p
-                onClick={readNotifications}
-                className="relative rounded-full   p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
+          {userInfo ? (
+            <div className="inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0 ">
+              <button
+                onClick={() => {
+                  setOpenNotification(() => !openNotification);
+                }}
+                type="button"
+                className="relative rounded-full p-1 text-gray-400 "
               >
-                <span className="absolute -inset-1.5 " />
-                <span className="sr-only ">View notifications</span>
+                <p
+                  onClick={readNotifications}
+                  className="relative rounded-full   p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
+                >
+                  <span className="absolute -inset-1.5 " />
+                  <span className="sr-only ">View notifications</span>
 
-                {requests && (
-                  <>
-                    {unread ? (
-                      <span className="bg-red-600  font-bold text-lg text-center flex justify-center items-center absolute h-7 w-7 bottom-7 left-6 rounded-[50%] text-white">
-                        {loading ? <AiOutlineLoading3Quarters /> : unread}
-                      </span>
-                    ) : (
-                      ""
-                    )}
-                  </>
+                  {requests && (
+                    <>
+                      {unread ? (
+                        <span className="bg-red-600  font-bold text-lg text-center flex justify-center items-center absolute h-7 w-7 bottom-7 left-6 rounded-[50%] text-white">
+                          {loading ? <AiOutlineLoading3Quarters /> : unread}
+                        </span>
+                      ) : (
+                        ""
+                      )}
+                    </>
+                  )}
+                  <GiShoppingCart className="h-10 w-10" aria-hidden="true" />
+                </p>
+                {openNotification ? (
+                  <NotificationMenu notifications={notifications} />
+                ) : (
+                  ""
                 )}
-                <GiShoppingCart className="h-10 w-10" aria-hidden="true" />
-              </p>
-              {openNotification ? (
-                <NotificationMenu notifications={notifications} />
-              ) : (
-                ""
-              )}
-            </button>
+              </button>
 
-            {/* Profile dropdown */}
-            <div className="relative ml-3 ">
-              <div>
-                <button
-                  type="button"
-                  className="relative flex   "
-                  id="user-menu-button"
-                  aria-expanded={isUserMenuOpen}
-                  aria-haspopup="true"
-                  onClick={toggleUserMenu}
-                >
-                  <span className="sr-only">Open user menu</span>
-                  <img
-                    className="w-16 h-14 rounded-full object-cover"
-                    src={userInfo && userInfo.imgurl}
-                    alt=""
-                  />
-                </button>
-              </div>
-
-              {isUserMenuOpen && (
-                <div
-                  className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
-                  role="menu"
-                  aria-orientation="vertical"
-                  aria-labelledby="user-menu-button"
-                >
-                  <Link
-                    to="/user/profile"
-                    onClick={() => {
-                      setIsUserMenuOpen(false);
-                    }}
-                    className={
-                      "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 "
-                    }
+              {/* Profile dropdown */}
+              <div className="relative ml-3 ">
+                <div>
+                  <button
+                    type="button"
+                    className="relative flex   "
+                    id="user-menu-button"
+                    aria-expanded={isUserMenuOpen}
+                    aria-haspopup="true"
+                    onClick={toggleUserMenu}
                   >
-                    Your Profile
-                  </Link>
-                  <Link
-                    to="settings"
-                    onClick={() => {
-                      setIsUserMenuOpen(false);
-                    }}
-                    className={
-                      "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                    }
-                  >
-                    Settings
-                  </Link>
-                  <a
-                    onClick={handleLogout}
-                    href=""
-                    className={
-                      "block px-4 py-2 text-sm text-gray-700 bg-gray-100"
-                    }
-                  >
-                    Sign out
-                  </a>
+                    <span className="sr-only">Open user menu</span>
+                    <img
+                      className="w-16 h-14 rounded-full object-cover border "
+                      src={userInfo && userInfo.imgurl}
+                      alt=""
+                    />
+                  </button>
                 </div>
-              )}
+
+                {isUserMenuOpen && (
+                  <div
+                    className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+                    role="menu"
+                    aria-orientation="vertical"
+                    aria-labelledby="user-menu-button"
+                  >
+                    <Link
+                      to="/user/profile"
+                      onClick={() => {
+                        setIsUserMenuOpen(false);
+                      }}
+                      className={
+                        "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 "
+                      }
+                    >
+                      Your Profile
+                    </Link>
+                    <Link
+                      to="settings"
+                      onClick={() => {
+                        setIsUserMenuOpen(false);
+                      }}
+                      className={
+                        "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      }
+                    >
+                      Settings
+                    </Link>
+                    <a
+                      onClick={handleLogout}
+                      href=""
+                      className={
+                        "block px-4 py-2 text-sm text-gray-700 bg-gray-100"
+                      }
+                    >
+                      Sign out
+                    </a>
+                  </div>
+                )}
+              </div>
             </div>
-          </div>
+          ) : (
+            <Link
+              to={"/login"}
+              className="ml-5 w-40 h-10 rounded-full text-white bg-black hover:bg-purple-900 flex items-center justify-center hover:text-white"
+            >
+              Log in
+            </Link>
+          )}
         </div>
       </div>
 

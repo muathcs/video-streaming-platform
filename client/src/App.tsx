@@ -15,7 +15,7 @@ import Category from "./pages/Category";
 import FulFilled from "./components/fulfillRequest/FulFilled";
 import HowTo from "./pages/HowTo";
 import Settings from "./pages/Settings";
-import Celebs from "./pages/Celebs";
+import Celebs, { Footer } from "./pages/Celebs";
 import PaymentStatusWrapper from "./components/PaymentStatusWrapper";
 import UserProfile from "./components/UserProfile";
 import AccountSuccess from "./components/TalentAccountSuccessMessage";
@@ -51,6 +51,7 @@ function App() {
         <Route path="/user/profile" element={<UserProfile />} />
         <Route path="/*" element={<PrivateRoute />} />
       </Routes>
+      <Footer />
     </>
   );
 }

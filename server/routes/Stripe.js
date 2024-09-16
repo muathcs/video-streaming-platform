@@ -88,11 +88,15 @@ async function createCustomer(email, displayname, uid) {
 //   }
 // });
 
+
+//
 router.post("/create-payment-intent", async (req, res) => {
   try {
     const { items } = req.body;
     console.log("price: ", req.body);
-    const price = req.body.requestPrice * 100;
+    const price = Number(req.body.requestPrice * 100)
+
+    console.log("type: ", typeof price)
 
     // Create a PaymentIntent with the order amount and currency
     const paymentIntent = await stripe.paymentIntents.create({
@@ -101,16 +105,17 @@ router.post("/create-payment-intent", async (req, res) => {
 
       // In the latest version of the API, specifying the `automatic_payment_methods` parameter is optional because Stripe enables its functionality by default.
       automatic_payment_methods: {
-        enabled: false,
+        enabled: true,
       },
-      payment_method_types: ["card"],
+      // payment_method_types: ["card"],
     });
 
     res.send({
       clientSecret: paymentIntent.client_secret,
     });
   } catch (error) {
-    console.log("/create-stripe: ", error);
+    console.log("/create-stripe: ", error.message);
+    res.send(error.message)
   }
 });
 
