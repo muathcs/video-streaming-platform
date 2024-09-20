@@ -2,6 +2,7 @@ import { prisma } from "../index.js";
 import express from "express";
 import { upload } from "./Fan.js";
 import { uploadProfileImgToS3 } from "../s3.js";
+import { createStripeCustomAccount } from "../actions/actions.js";
 
 const router = express.Router();
 
@@ -170,38 +171,24 @@ router.post("/createCelebPartial", async (req, res) => {
   }
 });
 
-// this created a celeb account.
+// this created a celeb account final account also create stripe account with it.
 router.post(
   "/createCeleb",
   upload.single("file"),
   uploadProfileImgToS3,
   async (req, res) => {
-    // return;
-
-    console.log("req[]: ", req.body.info);
-    console.log("file: ", req.file);
-
-    // const payload = JSON.parse(req.body)
-
     const newImg = req.newUrl;
-
-    console.log("newImg: ", newImg);
 
     const {
       bio,
       category,
-      profilePic,
       legalName,
       displayName,
       price,
       uid,
       email,
-      app,
-      description,
       inviteCode,
     } = JSON.parse(req.body.info);
-
-    console.log("price: ", price);
 
     try {
       // Find the invite code
@@ -211,23 +198,20 @@ router.post(
 
       // throw error if it doesn't exist
       if (!inviteCodeRecord || inviteCodeRecord.is_used) {
-        res.status(401).send("code doesn't exist");
-        throw new Error("Invalid or already used invite code");
+        return res.status(401).send("Invalid or already used invite code");
       }
 
       const result = await prisma.celeb.create({
         data: {
           displayname: displayName,
           username: legalName,
-          // followers: parseInt(followers),
-          // account: account,
           category,
           price: parseInt(price),
           email: email,
           description: bio,
           uid: crypto.randomUUID(),
           imgurl: newImg,
-          completed_onboarding: bio ? true : false,
+          completed_onboarding: !!bio, // Simplified
           inviteCode: {
             connect: {
               id: inviteCodeRecord.id,
@@ -236,17 +220,34 @@ router.post(
         },
       });
 
-      await indexNewCeleb(uid); //indexing for text search
+      console.log("before stripe account")
 
-      console.log("done");
+      const stripeAccount = await createStripeCustomAccount(email, result.uid, displayName);
+
+
+      console.log("stripeID: ", stripeAccount.id)
+      console.log("type of stripeID: ", typeof stripeAccount.id)
+      if (stripeAccount) {
+        await prisma.celeb.update({
+          where: {
+            uid: result.uid,
+          },
+          data: {
+            stripe_account_id: stripeAccount.id,
+          },
+        });
+      }
+
+      await indexNewCeleb(uid); // indexing for text search
 
       res.status(201).send("Celeb account created");
     } catch (error) {
-      console.log("create a celeb", error.message);
-      res.status(401).send(error.message);
+      console.error("Error creating celeb:", error.message);
+      res.status(500).send("An error occurred while creating the celeb account.");
     }
   }
 );
+
 
 router.post("/custom", async (req, res) => {
   let { inviteCode } = req.body;

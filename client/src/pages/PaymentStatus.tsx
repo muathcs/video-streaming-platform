@@ -42,6 +42,9 @@ const PaymentStatus = () => {
       return;
     }
 
+    const paymentId = clientSecret.split("_secret")[0];
+    console.log("paymentID: ", paymentId);
+
     // Retrieve the PaymentIntent
     stripe.retrievePaymentIntent(clientSecret).then(({ paymentIntent }) => {
       // Inspect the PaymentIntent `status` to indicate the status of the payment
@@ -54,7 +57,7 @@ const PaymentStatus = () => {
 
       switch (paymentIntent?.status) {
         case "succeeded":
-          console.log("paymenIntent: ");
+          request.paymentId = paymentId;
           sendRequest("request", request);
           // sendRequest("request", request).then(() => {
           //   setRequestProcessed(true); // Set the flag to true after the request is processed

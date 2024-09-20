@@ -1,8 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { AuthContextType, UserInfoType } from "../TsTypes/types";
 import { GoGitPullRequest } from "react-icons/go";
-import { FaDollarSign } from "react-icons/fa";
+import { FaDollarSign, FaSpinner } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { BiSolidCategory } from "react-icons/bi";
 import { formatter } from "../utilities/currencyFormatter";
@@ -11,16 +11,36 @@ import axios from "../api/axios";
 
 function UserProfile() {
   const { userInfo, celeb }: AuthContextType = useAuth();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string>("");
 
+  console.log("userinfo: ", userInfo);
   async function addBankAccount() {
+    setLoading(true);
+    setError("null");
+
     try {
-      axios.post(`${apiUrl}/stripe/add-account`, {
+      const response = await axios.post(`${apiUrl}/stripe/add-account`, {
         displayname: userInfo?.displayname,
         email: userInfo?.email,
         uid: userInfo?.uid,
       });
-    } catch (error) {
-      console.error(error);
+
+      console.log("data: ", response);
+      // Handle successful response
+      if (response.data.url) {
+        // Redirect to the Stripe onboarding URL
+        window.open(response.data.url, "_blank")?.focus();
+      } else {
+        // Handle cases where no URL is provided
+        console.error("No URL provided");
+        setError("Failed to get the onboarding URL.");
+      }
+    } catch (err) {
+      console.error(err);
+      setError("An error occurred while processing your request.");
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -80,16 +100,23 @@ function UserProfile() {
       <div className="p-4 border-t mx-8 mt-2">
         <Link
           to={"/settings"}
-          className="w-1/2 block mx-auto rounded-full bg-gray-900 hover:shadow-lg font-semibold text-white px-6 py-2"
+          className="w-1/2 block mx-auto rounded-full bg-gray-900 hover:shadow-lg font-semibold text-white px-6 py-2 text-center"
         >
           Settings
         </Link>
         {celeb && (
           <button
+            disabled={loading}
             onClick={addBankAccount}
-            className="w-1/2 mt-4 block mx-auto rounded-full bg-gray-900 hover:bg-gray-800 hover:shadow-lg font-semibold text-white px-6 py-2"
+            className="w-1/2 mt-4  mx-auto rounded-full bg-gray-900 hover:bg-gray-800 hover:shadow-lg font-semibold text-white px-6 py-2 flex items-center justify-center"
           >
-            Add a Bank Account
+            {loading ? (
+              <FaSpinner />
+            ) : userInfo?.stripe_onboarded ? (
+              "Edit Bank Details"
+            ) : (
+              "Add a Bank Account"
+            )}
           </button>
         )}
       </div>

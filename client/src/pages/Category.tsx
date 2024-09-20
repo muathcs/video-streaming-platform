@@ -173,7 +173,7 @@ function Category() {
   }, []);
 
   return (
-    <div className="flex justify-center relative   gradiant-other-pages py-20 ">
+    <div className="flex justify-center relative   bg-black py-20 ">
       <div className="flex  relative top-10  w-4/5  ">
         <div className="w-full ">
           <h1 className="text-left">{category}</h1>

@@ -165,7 +165,7 @@ function SignupCeleb({}: {}) {
     "peer block min-h-[auto] w-full   rounded border bg-transparent px-3 py-4 leading-[2.15] outline-none transition-all duration-200 ease-linear focus:placeholder:opacity-100 data-[te-input-state-active]:placeholder:opacity-100 motion-reduce:transition-none dark:text-neutral-200 dark:placeholder:text-neutral-200   ";
 
   return (
-    <div className="gradiant-other-pages">
+    <div className="bg-black">
       <div className=" max-w-7xl mx-auto px-4 ">
         {error && (
           <div

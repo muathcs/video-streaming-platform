@@ -45,6 +45,7 @@ export type RequestType = {
   fromperson: string;
   toPerson: string;
   price: number;
+  paymentId: string;
 };
 
 export type UserInfoType = {
@@ -58,6 +59,8 @@ export type UserInfoType = {
   imgurl: string;
   description: string;
   created_at: Date;
+  stripe_account_id: string;
+  stripe_onboarded: boolean;
 };
 
 // for the AuthContext.tsx file, handles the export of the useAuth function

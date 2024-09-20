@@ -11,7 +11,11 @@
     @apply bg-gradient-to-b from-black from-5% via-[#43268D] via-20% to-black to-40%;
   }
   .gradiant-other-pages {
-    @apply bg-gradient-to-b from-black via-[#241f2c] via-70% to-black to-100%;
+    @apply bg-gradient-to-b from-black via-[#241f2c] via-60% to-black to-90%;
+  }
+
+  .bg-skeleton {
+    @apply bg-gradient-to-b from-black via-[#241f2c] via-60% to-black to-90%;
   }
 }
 

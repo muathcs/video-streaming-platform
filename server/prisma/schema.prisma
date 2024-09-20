@@ -34,6 +34,8 @@ model Celeb {
   Approved             Boolean                  @default(false)
   MessageToUs          String?                  @db.VarChar(1200)
   MostPopularApp       String?                  @db.VarChar(30)
+  stripe_account_id    String?                  @db.VarChar(30)
+  stripe_onboarded     Boolean                  @default(false)
 
   inviteCode   InviteCode? @relation(fields: [inviteCodeId], references: [id])
   inviteCodeId String?     @unique
@@ -83,6 +85,7 @@ model Request {
   timestamp1    DateTime? @db.Timestamp(6)
   timestamp2    DateTime? @db.Timestamp(6)
   celebmessage  String?   @db.VarChar(1200)
+  paymentId     String?   @db.VarChar(30)
 }
 
 model Review {

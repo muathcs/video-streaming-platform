@@ -110,6 +110,9 @@ router.post("/create-payment-intent", async (req, res) => {
       // payment_method_types: ["card"],
     });
 
+    console.log("clinetSec: ", paymentIntent.client_secret)
+
+    // pi_3Q1EHXGFwRQBDdF40KkTmQqu_secret_Xgva2OYmz9Q52jZ6KFFYqd7fQ
     res.send({
       clientSecret: paymentIntent.client_secret,
     });
@@ -130,6 +133,7 @@ async function connectAccountExists(uid) {
     );
 
     if (myAccount.length > 0) {
+      console.log("id:: ", myAccount[0].metadata.uid)
       return myAccount[0].id;
     } else {
       return false;
@@ -139,62 +143,126 @@ async function connectAccountExists(uid) {
     // Access the retrieved account(s)
 
     console.log("account:", myAccount);
-  } catch (error) {}
+  } catch (error) {
+    console.error("connectedAccountExistFunction: ", error)
+  }
 }
+
+
+async function deleteAllConnectedAccounts() {
+  try {
+      // List all connected accounts
+      const accounts = await stripe.accounts.list();
+      
+      // Loop through each account and delete
+      for (const account of accounts.data) {
+          try {
+              await stripe.accounts.del(account.id);
+              console.log(`Successfully deleted account: ${account.id}`);
+          } catch (deleteError) {
+              console.error(`Failed to delete account ${account.id}: ${deleteError.message}`);
+          }
+      }
+  } catch (listError) {
+      console.error(`Failed to list accounts: ${listError.message}`);
+  }
+}
+
+
+
 
 router.post("/add-account", async (req, res) => {
   console.log("body: ", req.body);
 
   const { displayname, email, uid } = req.body;
 
-  console.log("uid: ", uid, "displayname: ", email);
+  console.log("uid: ", uid, "displayname: ", displayname);
 
-  res.sendStatus(201);
-
-  const accountExist = connectAccountExists(uid);
+  // await deleteAllConnectedAccounts()
+  // return
 
   try {
-    if (!accountExist) {
-      //create account
-      let account = await stripe.accounts.create({
-        type: "custom",
-        business_type: "individual",
-        email: email, // from body
-        metadata: {
-          uid: uid, // from body
-        },
+    const accountExist = await connectAccountExists(uid);
 
-        individual: {},
-        business_profile: {
-          url: "hikaya.com",
-          name: displayname,
-          mcc: 5815, //mcc code for digital software business sector
-        },
-
-        capabilities: {
-          card_payments: {
-            requested: true, // keep in case I want to allow Fans to directly send money to celebs in the future (maybe tips)
-          },
-          transfers: {
-            requested: true, // will allow us to transfer funds to celeb
-          },
-        },
-      });
-    } else {
+    if(accountExist){
+      console.log("account exists: ", accountExist)
+    }else{
+      console.log("account doesn't exist: ", accountExist)
     }
 
-    let accountLink = await stripe.accountLinks.create({
-      account: account.id,
-      refresh_url: "http://localhost:4242?failure",
-      return_url: "http://localhost:4242?successx",
-      type: "account_onboarding",
+    const {stripe_account_id} = await prisma.celeb.findUnique({
+      where:{
+        uid
 
-      collect: "eventually_due",
-    });
+      },
+      select:{
+        stripe_account_id:true
+      }
+    })
 
-    res.send(accountLink).status(201);
+    
+
+    const status = await stripe.accounts.retrieve(stripe_account_id)
+    // const status = await stripe.accounts.retrieve("acct_1Q13NJ4aIt9NVBmv")
+
+    console.log("status: ", status)
+
+
+
+    if (status.charges_enabled) {
+      console.log("creating")
+      // Create a new account
+      // let account = await stripe.accounts.create({
+      //   type: "custom",
+      //   business_type: "individual",
+      //   email: email,
+      //   metadata: {
+      //     uid: uid,
+      //   },
+      //   individual: {},
+      //   business_profile: {
+      //     url: "hikaya.com",
+      //     name: displayname,
+      //     mcc: 5815,
+      //   },
+      //   capabilities: {
+      //     card_payments: {
+      //       requested: true,
+      //     },
+      //     transfers: {
+      //       requested: true,
+      //     },
+      //   },
+      // });
+
+
+      // Create an account link for onboarding
+      let accountLink = await stripe.accountLinks.create({
+        account: stripe_account_id,
+        refresh_url: "http://localhost:4242?failure",
+        return_url: "http://localhost:4242?success",
+        type: "account_onboarding",
+        collect: "eventually_due",
+      });
+
+      const update = await prisma.celeb.update({
+        where:{
+          uid:uid
+        },
+        data:{
+          stripe_onboarded:true
+        }
+      })
+
+      // Send the URL to the client
+      res.status(201).send({ url: accountLink.url });
+    } else {
+      console.log("Account already onboarded");
+      res.status(400).send({ message: "Account already exists" });
+    }
   } catch (error) {
     console.error(error);
+    res.status(201).send({ error: "Internal Server Error" });
   }
 });
 

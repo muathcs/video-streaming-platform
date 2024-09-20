@@ -5,6 +5,7 @@ import { RequestType } from "../TsTypes/types";
 import { CelebType } from "../TsTypes/types";
 import { apiUrl } from "../utilities/fetchPath";
 import axios from "../api/axios";
+import FanRequestSkeleton from "@/components/loadingSkeletons/FanRequestSkeleton";
 
 //this component has the various requests a user has made to diff celebs, and the status of those requestS(fulfilled or pending.)
 // if a request is fulfilled, the user can click the view button, which will display the FulFilled componenet.
@@ -40,15 +41,19 @@ function FanRequests() {
   return (
     <>
       {loading ? (
-        <div className="gradiant-other-pages h-full flex items-center justify-center">
-          <h1 className="">Loading...</h1>
-        </div>
+        <>
+          <div className="overflow-auto flex flex-col gap-2 h-full  items-center pt-10 bg-black">
+            <FanRequestSkeleton />
+            <FanRequestSkeleton />
+            <FanRequestSkeleton />
+          </div>
+        </>
       ) : error ? (
-        <div className="gradiant-other-pages h-full flex items-center justify-center">
+        <div className="h-full flex items-center justify-center">
           <h1>Error.. Something went wrong</h1>
         </div>
       ) : (
-        <div className="overflow-auto flex flex-col gap-2 h-full  gradiant-other-pages  ">
+        <div className="overflow-auto flex flex-col gap-2 h-full  bg-black  ">
           <>
             {celebReplies?.length === 0 ? (
               <h1 className=" top-40 relative">You do not have any requests</h1>

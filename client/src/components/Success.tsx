@@ -67,13 +67,22 @@ const Success = ({ celebUid, price }: SuccessType) => {
         theme="light"
         style={{ width: "500px", height: "5100px", marginTop: 100 }}
       />
-      <div className="mt-10 text-[24px]">
-        <h1>Thank You!</h1>
-        <p className="">
-          Your request has been made, expect a response within one week, if you
-          do not recieve a response within one week, you can claim a refund.
-        </p>
-        <p>If you paid for 24 hours delivery, expect a reply within 24 hours</p>
+      <div className="text-2xl h-full flex items-center justify-center flex-col bg-black">
+        <div className="text-center  rounded-lg shadow-lg">
+          <h1 className="text-4xl font-bold mb-4 text-white">Thank You!</h1>
+          <p className="text-lg mb-4 text-white">
+            Your request has been successfully submitted. We appreciate your
+            patience and will process your request promptly.
+          </p>
+          <p className="text-lg mb-6 text-white">
+            You can expect a response within one week. If you do not receive a
+            response by then, you'll be automatically refunded.
+          </p>
+          <p className="text-lg text-white">
+            For those who opted for the 24-hour delivery option, you will
+            receive a reply within 24 hours.
+          </p>
+        </div>
       </div>
     </>
   );

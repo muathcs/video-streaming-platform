@@ -32,7 +32,7 @@ import {
 
 export function Footer() {
   return (
-    <div className="w-full flex justify-center  py-20 bg-black border-t-[0.5px] border-gray-600   ">
+    <div className="w-full flex justify-center py-5   bg-black border-t-[0.5px] border-gray-600   ">
       <div className="max-w-7xl w-full px-4">
         <div className="text-center">
           {/* Branding */}
@@ -256,15 +256,15 @@ function Celebs() {
   return (
     <>
       <div className=" flex flex-col w-full items-center gap-10  gradiant-page">
-        <div className=" hidden h-1/2 py-4 w-full  md:flex justify-center flex-col items-center gap-10   max-w-7xl ">
+        <div className=" hidden h-1/2 py-4 w-full  md:flex justify-center flex-col items-center gap-10   max-w-7xl relative ">
           {/* Top Section */}
-          <div className="max-w-7xl w-full h-auto       rounded-lg   relative ">
+          <div className="max-w-7xl w-full h-auto rounded-lg mt-4 relative">
             <p className="text-7xl  font-serif text-white mt-20 mb-10">
               <span className="text-purple-500">Personalized </span> Videos
               <br />
               From Your Favorite <span className="text-purple-500">Stars</span>
             </p>
-            <p className="text-2xl  font-serif text-black ">
+            <p className="text-2xl  font-serif text-white ">
               Make Your Unforgettable Moments with Celebrities 🎉
             </p>
             {/* <p className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white text-2xl font-bold">
@@ -282,8 +282,8 @@ function Celebs() {
         {/* Shop By Category */}
 
         <div className=" max-w-7xl  md:w-full xl:w-[90%] flex justify-center   w-full lg:mb-40 xl:mb-20  xl:ml-24 mb-10">
-          <div className="w-full flex flex-col  ">
-            <p className="text-left text-[26px] font-serif relative  h-1/6  flex items-end mb-2 justify-center  ">
+          <div className="w-full flex flex-col md:mt-0 mt-20  ">
+            <p className=" text-[26px] font-serif relative  h-1/6  flex items-end mb-2 justify-center    ">
               Personalized videos from your favorite stars
             </p>
             <div className=" flex flex-wrap justify-center pl-10  items-center gap-0 px-4 md:mb-5 md:gap-5  ">

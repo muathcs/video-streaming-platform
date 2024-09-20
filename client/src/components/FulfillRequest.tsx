@@ -22,7 +22,10 @@ function FulfillRequest() {
   // the useLocation returns a state with an object holding the information for the user request.
   const { state } = useLocation();
 
+  console.log("statex: ", state);
+
   async function handleFulfill(e: React.MouseEvent<HTMLElement>) {
+    console.log("here");
     e.preventDefault();
 
     // set the state to the formData, in the server, the req.file will hold the first state
@@ -100,7 +103,7 @@ function FulfillRequest() {
         style={{ width: "500px", height: "5100px", marginTop: 100 }}
       />
       {state && (
-        <div className=" flex flex-col items-center gap-5 text-[20px] wotfard mt-20">
+        <div className=" flex flex-col items-center gap-5 text-[20px] wotfard  pt-20 bg-black">
           <div className="w-1/2 ">
             <p className="border border-red-200 w-full  p-10 mt-2  ">
               From: Mimo{state.fromperson}
@@ -122,19 +125,19 @@ function FulfillRequest() {
             </p>
           </div>
 
-          <div className=" h-full  w-1/2  ">
+          <div className=" h-full  w-1/2 items-center flex justify-center flex-col">
             <p>FulFill Fan's Request</p>
-            <div className="button-flex">
+            <div className="button-flex w-full ">
               {state.reqtype === "video" ? (
                 <button
-                  className="w-1/4 py-4 m-2 bg-red-800 rounded-md hover:bg-red-900"
+                  className="w-full py-4 my-2 bg-red-800 rounded-md hover:bg-red-900"
                   onClick={() => {
                     forceUpdate();
 
                     toggleRecordOption("video");
                   }}
                 >
-                  Record Videoz
+                  Record Video
                 </button>
               ) : state.reqtype === "audio" ? (
                 <button
@@ -176,7 +179,7 @@ function FulfillRequest() {
               <div className="w-full ">
                 <button
                   onClick={handleFulfill}
-                  className="px-12 py-4 m-2 bg-red-800 rounded-md hover:bg-red-900"
+                  className=" py-4 m-2 bg-red-800 rounded-md hover:bg-red-900 w-full"
                 >
                   Fulfill
                 </button>

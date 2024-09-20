@@ -38,7 +38,7 @@ router.get("/fanrequests", async (req, res) => {
         price: true,
       },
       orderBy: {
-        requestid: "asc",
+        timestamp1: "desc",
       },
     });
 
@@ -116,7 +116,7 @@ async function sendRequest(intended_uid, sender_uid, message) {
 // create the request.
 router.post("/", async (req, res) => {
 
-  console.log("onside post requ")
+  console.log("onside post requ: ", req.body)
   
   let {
     celebUid,
@@ -129,6 +129,7 @@ router.post("/", async (req, res) => {
     fromPerson, //
     toPerson, //
     requestid,
+    paymentId
   } = req.body;
 
   price = parseInt(price);
@@ -163,6 +164,7 @@ router.post("/", async (req, res) => {
         tosomeoneelse: !!toSomeOneElse,
         fromperson: fromPerson,
         toperson: toPerson,
+        paymentId
       },
     });
 
@@ -278,7 +280,14 @@ router.put("/expired/:id", upload.single("videoFile"), async (req, res) => {
       },
     });
 
-    refundFan(response.requestid, response.amount);
+    const paymentId = response.paymentId
+    const amount = response.price
+
+    console.log("res: ", paymentId)
+
+    res.status(201).send("request expired")
+
+    refundFan(paymentId,amount );
   } catch (error) {
     console.error(error);
   }
@@ -291,7 +300,6 @@ router.put("/fulfill/:id", upload.single("videoFile"), async (req, res) => {
   console.log("\nreqFul: ", req.file);
   const file = req.body;
 
-  console.log("state: ", req.body);
   // if (!file) {
   //   return res.status(400).send("No file uploaded.");
   // } else {
@@ -319,7 +327,7 @@ router.put("/fulfill/:id", upload.single("videoFile"), async (req, res) => {
         },
       });
 
-      // PayCeleb(response.celebuid, response.price);
+      // PayCeleb(amount, response.price);
 
       // const response = await pool.query(
       //   "UPDATE request SET reqstatus = $1, celebmessage = $2 WHERE requestid = $3 ",
@@ -334,7 +342,7 @@ router.put("/fulfill/:id", upload.single("videoFile"), async (req, res) => {
 
   //video or audio
   const state = JSON.parse(req.body.state); //parse the state, which contains information about the req like requestuid, celeb and fan uid...
-
+console.log("statex: ", state)
   try {
     if (state.reqtype == "video" || state.reqtype == "audio") {
       const file = req.file; // this contains the actual audio/video
@@ -370,9 +378,20 @@ router.put("/fulfill/:id", upload.single("videoFile"), async (req, res) => {
         },
       });
 
+      const {stripe_account_id} = await prisma.celeb.findUnique({
+        where:{
+          uid:state.celebuid
+        },
+        select:{
+          stripe_account_id:true
+        }
+      })
+
+      console.log("stripe: ", stripe_account_id)
+
       // pay Celeb
 
-      await PayCeleb();
+      await PayCeleb(state.price, stripe_account_id);
       // const response = await pool.query(
       //   "UPDATE request SET reqstatus = $1, celebmessage = $2 WHERE requestid = $3 ",
       //   ["fulfilled", videoUrl, itemId]

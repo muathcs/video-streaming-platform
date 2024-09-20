@@ -129,7 +129,7 @@ function FulfillVideo({ reRecord, setCelebReply }: FulfillRequestProps) {
         <div className="video-controls">
           {permission && recordingStatus === "inactive" ? (
             <button
-              className="px-12 py-4  bg-red-800 rounded-md hover:bg-red-900"
+              className="py-4  bg-red-800 rounded-md hover:bg-red-900 w-full"
               onClick={() => {
                 startRecording();
               }}
@@ -140,7 +140,7 @@ function FulfillVideo({ reRecord, setCelebReply }: FulfillRequestProps) {
           ) : null}
           {recordingStatus === "recording" ? (
             <button
-              className="px-12 py-4  bg-red-800 rounded-md hover:bg-red-900"
+              className=" py-4  bg-red-800 rounded-md hover:bg-red-900 w-full"
               onClick={() => {
                 stopRecording();
               }}

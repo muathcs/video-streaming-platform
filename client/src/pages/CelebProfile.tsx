@@ -72,37 +72,43 @@ function ReviewSectionPlusReviewModal({
         </div>
       </Modal>
       <div className="">
-        <div className="flex justify-between px-5">
-          <h1 className="text-whtie text-left text-[24px] md:left-6 mb-5  font-bold  ">
-            Reviews:
-          </h1>
-          <p
-            onClick={() => {
-              setOpenModal(true);
-            }}
-            className="text-whtie text-left text-[24px]   underline font-bold cursor-pointer"
-          >
-            view all ({reviews.length})
-          </p>
-        </div>
-        <div className="w-full  px-5 md:flex gap-2 flex-row  ">
-          {reviews &&
-            reviews
-              .slice(-3) //gets last 3 reviews
-              .reverse() // reverse them so the newest is on the left
-              .map((review) => (
-                <Review
-                  date={review.Date}
-                  event={review.event}
-                  message={review.message}
-                  name={review.reviewer_name}
-                  rating={review.rating}
-                />
-              ))}
-
-          {/* <div className="bg-[#201E23] h-[250px] w-3/4 border-2 rounded-xl"></div> */}
-          {/* <div className="bg-[#201E23] h-[250px] w-3/4 border-2 rounded-xl"></div> */}
-          {/* <div className="bg-[#201E23] h-[250px] w-3/4 border-2 rounded-xl"></div> */}
+        <div className="max-w-7xl h-10 w-full flex flex-col mb-80 relative px-2">
+          <Carousel className=" mb-20 ">
+            <div className="w-full  h-10 relative  mb-5 flex items-center ">
+              <p className="text-xl font-semibold ">Reviews</p>
+              <div className="absolute right-16 top-5 ">
+                <CarouselPrevious className="  bg-[#1C1C1F] w-10 h-10 border-gray-600  " />
+                <CarouselNext className="bg-[#1C1C1F]  w-10 h-10  border-gray-600" />
+              </div>
+            </div>
+            <CarouselContent>
+              {reviews &&
+                reviews.slice(0, 10).map((review, index) => (
+                  <CarouselItem
+                    key={index}
+                    className="basis-1/1 md:basis-1/2 lg:basis-1/3"
+                  >
+                    <Review
+                      date={review.Date}
+                      event={review.event}
+                      message={review.message}
+                      name={review.reviewer_name}
+                      rating={review.rating}
+                    />
+                  </CarouselItem>
+                ))}
+            </CarouselContent>
+            <div className=" text-end">
+              <p
+                onClick={() => {
+                  setOpenModal(true);
+                }}
+                className="text-whtie  text-[20px]   underline font-bold cursor-pointer text-end"
+              >
+                View All Reviews
+              </p>
+            </div>
+          </Carousel>
         </div>
       </div>
     </div>
@@ -238,7 +244,7 @@ function CelebProfile() {
   }, [celebInfo]);
   return (
     <>
-      <div className="  w-[99%] flex  flex-col relative   text-white text-lg  gradiant-other-pages ">
+      <div className="  w-[99%] flex  flex-col relative   text-white text-lg  bg-black  ">
         {/* celeb pic and description */}
         <CelebInfoDisplay
           displayname={displayname}
@@ -256,7 +262,7 @@ function CelebProfile() {
 
         {/* Review Section */}
 
-        <div className=" h-max py-10  ">
+        <div className=" h-max py-10  flex justify-center">
           {reviews && reviews?.length > 0 ? (
             <ReviewSectionPlusReviewModal
               openModal={openModal}
@@ -268,7 +274,7 @@ function CelebProfile() {
           )}
         </div>
 
-        <div className="relative py-10 border flex justify-center  ">
+        <div className="relative py-10 flex justify-center  ">
           <button
             onClick={() => setOrderModal(true)}
             className=" relative  w-1/2 md:w-1/5 rounded-md hover:bg-slate-700 py-5 bg-slate-500  text-white hover:border-none outline-none focus:outline-none border-none "

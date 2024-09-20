@@ -10,6 +10,10 @@ import { updatePhotoUrl } from "./fireBaseAdmin.js";
 import { getUID } from "./fireBaseAdmin.js";
 import { prisma } from "./index.js";
 import { indexNewCeleb } from "./routes/Celebs.js";
+import { createStripeCustomAccount } from "./actions/actions.js";
+
+const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
 //main function
 export async function getCelebImages(celebName) {
   const celebId = await getCelebIdByName(celebName);
@@ -94,6 +98,24 @@ export async function getCelebImages(celebName) {
           imgurl: talentInfo.imgUrl,
         },
       });
+
+
+
+      const stripeAccount = await createStripeCustomAccount(talentInfo.email, talentInfo.uid, talentInfo.name);
+
+
+      console.log("stripeID: ", stripeAccount.id)
+      console.log("type of stripeID: ", typeof stripeAccount.id)
+      if (stripeAccount) {
+        await prisma.celeb.update({
+          where: {
+            uid: result.uid,
+          },
+          data: {
+            stripe_account_id: stripeAccount.id,
+          },
+        });
+      }
 
       indexNewCeleb(uid);
       // const result = await pool.query(
@@ -302,9 +324,10 @@ const a = await getAllUserUIDs();
 //   "Oprah Winfrey",
 // ];
 
-export function createTheCelebs() {
+export async function createTheCelebs() {
   for (let i = 0; i < celebrityNames.length; i++) {
-    getCelebImages(celebrityNames[i], i);
+    await getCelebImages(celebrityNames[i], i);
+    await delay(3000)
   }
 }
 
