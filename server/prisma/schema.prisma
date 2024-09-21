@@ -86,6 +86,7 @@ model Request {
   timestamp2    DateTime? @db.Timestamp(6)
   celebmessage  String?   @db.VarChar(1200)
   paymentId     String?   @db.VarChar(30)
+  refunded Boolean @default(false)
 }
 
 model Review {

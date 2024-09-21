@@ -23,42 +23,11 @@ function Payment() {
 
   return (
     <>
-      <div className="w-full h-full   overflow-auto  ">
-        <div className="h-full w-full relative grid grid-cols-1   grid-rows-6  overflow-auto   justify-items-center   ">
-          {/* <!-- Email input --> */}
-          <div
-            className="relative    0 w-1/3 row-span-1.5  flex  "
-            data-te-input-wrapper-init
-          >
-            <div className="gap-4 text-center sm:grid-cols-3  flex flex-col justify-center items-center  w-full my-2">
-              <p className="text-left w-full font-serif text-lg font-bold">
-                Delivery Speed
-              </p>
-
-              <div className=" w-full">
-                <input
-                  className="peer sr-only  w-full"
-                  id="option1"
-                  type="radio"
-                  name="delivery"
-                  // onClick={() => setTwentyFourHourDelivery(0)}
-                  defaultChecked
-                />
-
-                <label htmlFor="option1" className={divStyle}>
-                  <div className="ml-5 ">
-                    <p className="text-left">Standard</p>
-                    <p>up to 7 days</p>
-                  </div>
-                  <p className="mr-5">Free</p>
-                </label>
-              </div>
-            </div>
-          </div>
+      <div className="w-full flex justify-center pt-10 bg-black  ">
 
           {/* <!-- Payment method --> */}
           <div
-            className="relative  mb-6  overflow-hidden w-1/3 row-span-3 h-[65rem]   "
+            className="relative w-1/3     "
             data-te-input-wrapper-init
           >
             <p className="text-left text-lg font-bold font-serif   ">
@@ -111,12 +80,7 @@ function Payment() {
                 </label>
               </div>
 
-              {/* //order detail
-              // personalise video <----> price
-              // Service Fee <-----> price
-              // Sales Tax <---> free
-              //Total ---> total */}
-
+              {/* Reciept */}
               <div className=" text-left flex flex-col border-t mt-10 text-lg gap-2 border-gray-600">
                 <p>Order detail</p>
                 <div className=" flex justify-between px-3">
@@ -146,9 +110,10 @@ function Payment() {
                 </div>
               </div>
 
-              <div className=" p-5 h-76 ">
+              <div className="  ">
                 {paymentChoice == "card" ? (
                   <div>
+                    
                     <StripePaymentIntent
                       requestPrice={state.price}
                       celebUid={state.celebUid}
@@ -158,16 +123,8 @@ function Payment() {
                   </div>
                 ) : null}
               </div>
-            </div>
           </div>
 
-          {/* continue */}
-
-          {/* <div className=" border-blue-400 flex justify-center items-start  w-1/3 row-span-1">
-            <button className="block w-1/2 rounded-full border  border-gray-200 py-5 px-8 cursor-pointer hover:bg-blue-700 bg-blue-600 text-white">
-              Continue
-            </button>
-          </div> */}
         </div>
       </div>
     </>

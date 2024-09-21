@@ -1,5 +1,5 @@
 import Stripe from "stripe";
-
+import {prisma} from "../index.js"
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
@@ -29,10 +29,18 @@ export async function PayCeleb(amount, celebStripeId) {
 }
 
 
-export async function refundFan(paymentId, amount) {
+export async function refundFan(paymentId, amount, refunded, requestId) {
+
+
+
+
+  // this is to make sure that two refunds aren't intiated. 
+  if(refunded){
+
+    console.log("Request has already been refunded...")
+    return
+  }
   try {
-
-
     // console.log("refund: ", refund)
 
     console.log("amount: ", amount)
@@ -42,7 +50,6 @@ export async function refundFan(paymentId, amount) {
 
     if(!chargeId){
       throw new Error("No charge found for the provided paymenet Intent")
-
     }
 
         const refund = await stripe.refunds.create({
@@ -51,6 +58,17 @@ export async function refundFan(paymentId, amount) {
     });
 
     console.log("refund succeful: ", refund)
+
+    await prisma.request.update({
+      where:{
+        requestid:requestId
+      },
+      data:{
+        refunded:true
+      }
+    })
+
+    console.log("refund value updated to true")
   } catch (error) {
     console.error(error);
   }

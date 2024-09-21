@@ -16,6 +16,65 @@ import { createTheCelebs } from "./wikidata.js";
 import path from "path";
 import { fileURLToPath } from "url";
 import { dirname } from "path";
+import schedule from "node-schedule"
+import { refundFan } from "./actions/actions.js";
+
+async function handleExpiredRequestsAndRefunds(){
+  const oneWeekAgo = new Date();
+oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+
+try {
+
+  // Step 1: Find all requests that are more than 7 days old and not already expired or fulfilled
+  const expiredRequests = await prisma.request.findMany({
+    where: {
+      reqstatus:
+      
+      {
+        notIn: ['expired', 'fulfilled'], // Ignore requests that are already expired or fulfilled
+      },
+      timestamp1: {
+        lte: oneWeekAgo, // Requests that are older than 7 days
+      },
+    },
+    select: {
+      requestid: true, // We only need the requestid (for initiating refunds)
+      price: true,     // Assuming you also need the price for the refund logic
+      fanuid: true,    // Assuming you need fan ID for refunds
+      paymentId:true,
+      refunded:true
+    },
+  });
+
+  console.log("here2: ", expiredRequests.length)
+
+
+  // Step 2: Loop through each request and handle refunds
+  for (const request of expiredRequests) {
+  console.log("here3")
+
+    // Update the request status to 'expired'
+    await prisma.request.update({
+      where: { requestid: request.requestid },
+      data: { reqstatus: 'expired' },
+    });
+
+    // console.log("amount: ", request)
+
+    // Step 3: Initiate a refund 
+    // await refundFan
+    await refundFan(request.paymentId, request.price, request.refunded, request.requestid);
+    // console.log(`Refund initiated for request ${request.requestid}`);
+  }
+} catch (error) {
+  console.error('Error processing expired requests:', error);
+}
+}
+
+const job = schedule.scheduleJob('*/10 * * * * *', (firedate) => {
+  console.log("runnning every second: ")
+  // handleExpiredRequestsAndRefunds()
+})
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
