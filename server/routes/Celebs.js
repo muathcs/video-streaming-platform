@@ -9,11 +9,12 @@ const router = express.Router();
 router.get("/", async (req, res) => {
   //query celeb table by category
 
+
   const page = parseInt(req.query.page) || 1; // Default to page 1 if not provided
   const pageSize = parseInt(req.query.pageSize) || 10; // Default page size to 10 if not provided
   const offset = (page - 1) * pageSize; // Calculate the offset based on page number and page size
   const { category } = req.params;
-  console.log("here")
+  console.log("celeb body: ", req.query)
 
   // console.log("react nativex", req.query);
 
@@ -34,7 +35,6 @@ router.get("/", async (req, res) => {
     });
     // client.release(); // Release the connection back to the pool
 
-    console.log("res: ", result)
     res.send(result);
   } catch (error) {
     console.log("error/celebs: ", error);

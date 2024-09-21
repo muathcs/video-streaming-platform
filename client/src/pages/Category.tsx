@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useCallback, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import CelebCard from "../components/CelebCard";
 import axios from "../api/axios";
@@ -120,7 +120,6 @@ function DisplayCelebsForCategory({
         <h1>Error</h1>
       ) : (
         [...celebs]
-          .reverse()
           .map((celeb) => <CelebCard celeb={celeb} key={celeb.uid} />)
       )}
     </div>
@@ -134,6 +133,8 @@ function Category() {
   const [celebs, setCelebs] = useState<CelebType[]>([]);
   const [originalCelebs, setOriginalCelebs] = useState<CelebType[]>([]); // used as a copy for filtering
   const [hideFilter, setHideFilter] = useState<Boolean>(false);
+  const [page, setPage] = useState<number>(1)
+  const [hasMoreCelebs, setHasMoreCelebs] = useState<Boolean>(true)
 
   const [loading, setLoading] = useState<boolean>(true);
 
@@ -154,11 +155,22 @@ function Category() {
       try {
         let response;
         if (category == "all") {
-          response = await axios.get(`${apiUrl}/celebs`);
+          response = await axios.get(`${apiUrl}/celebs`, {
+            params:{
+              page:page,
+              pageSize:20
+            }
+          });
         } else {
           response = await axios.get(`${apiUrl}/celebs/category/${category}`);
         }
 
+           // If the response has fewer items than the page size, stop pagination
+           if (response.data.length < 10) {
+            setHasMoreCelebs(false);
+          }else{
+            setHasMoreCelebs(true)
+          }
         setCelebs(response.data);
         setOriginalCelebs(response.data);
         setLoading(false);
@@ -170,10 +182,39 @@ function Category() {
     // return () => {
     fetchCelebs();
     // };
-  }, []);
+  }, [page]);
+
+    // Function to scroll to the top of the page
+ // Function to scroll to the top of the page with slower animation
+// Function to scroll to 25% from the top of the page with slower animation
+const scrollToTop = useCallback(() => {
+  const targetPosition = window.innerHeight * 0.25; // 25% from the top
+  const scrollDuration = 1000; // Duration in ms
+  const startPosition = window.scrollY;
+  const distance = targetPosition - startPosition; // Total distance to scroll
+  const startTime = performance.now(); // Start time for the animation
+
+  const scroll = (currentTime: number) => {
+    const elapsedTime = currentTime - startTime;
+    const progress = Math.min(elapsedTime / scrollDuration, 1); // Normalize progress (0 to 1)
+    const easeInOut = (t: number) => t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t; // Easing function
+    const scrollStep = distance * easeInOut(progress);
+
+    window.scrollTo(0, startPosition + scrollStep);
+
+    if (progress < 1) {
+      requestAnimationFrame(scroll); // Continue the animation
+    }
+  };
+
+  requestAnimationFrame(scroll); // Start the animation
+},[]);
+
+
+  
 
   return (
-    <div className="flex justify-center relative   bg-black py-20 ">
+    <div className="flex justify-center relativ bg-black py-20 flex-col items-center gap-5">
       <div className="flex  relative top-10  w-4/5  ">
         <div className="w-full ">
           <h1 className="text-left">{category}</h1>
@@ -204,6 +245,37 @@ function Category() {
           ) : null}
         </div> */}
       </div>
+      <div className="">
+
+        {
+page > 1 &&
+          <button
+          // disabled={hasMoreCelebs} // Disable button if no more celebs
+          disabled={page == 1 ? true : false}
+          onClick={()=>{
+            setPage((currentPage) => currentPage -1)
+          scrollToTop();
+          }}
+          className={`py-4 w-40 bg-gray-700 hover:bg-gray-800 rounded-md mt-10 mr-2 ${
+            page==1 && "cursor-not-allowed opacity-50"
+            }`}
+            >
+          previous
+        </button>
+        }
+   <button
+          onClick={() => {
+            
+            setPage((prevPage) => prevPage + 1)
+          scrollToTop();
+          }}
+          className={`py-4 w-40 bg-gray-700 hover:bg-gray-800 rounded-md mt-10 ${
+            !hasMoreCelebs && "cursor-not-allowed opacity-50"
+          }`}
+          disabled={!hasMoreCelebs} // Disable button if no more celebs
+        >
+          {hasMoreCelebs ? "Next" : "No More Celebs"}
+        </button>      </div>
     </div>
   );
 }

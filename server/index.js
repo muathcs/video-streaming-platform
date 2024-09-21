@@ -22,7 +22,7 @@ import { refundFan } from "./actions/actions.js";
 async function handleExpiredRequestsAndRefunds(){
   const oneWeekAgo = new Date();
 oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
-
+// 42424242424242424242
 try {
 
   // Step 1: Find all requests that are more than 7 days old and not already expired or fulfilled
@@ -71,9 +71,9 @@ try {
 }
 }
 
-const job = schedule.scheduleJob('*/10 * * * * *', (firedate) => {
+const job = schedule.scheduleJob('*/10 * * * *', (firedate) => {
   console.log("runnning every second: ")
-  // handleExpiredRequestsAndRefunds()
+  handleExpiredRequestsAndRefunds()
 })
 
 const __filename = fileURLToPath(import.meta.url);
