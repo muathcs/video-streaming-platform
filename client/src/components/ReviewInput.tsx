@@ -10,7 +10,7 @@ type ReviewInputProp = {
   requestid: string;
   fanuid: string;
   celebuid: string;
-  date: Date;
+  date: string;
   event: string;
 };
 function ReviewInput({
@@ -24,12 +24,15 @@ function ReviewInput({
   const [review, setReview] = useState<string>("");
   const { userInfo }: any = useAuth();
 
+  const [loading, setLoading] = useState<boolean>(false)
+
   const [hoveredStars, setHoveredStars] = useState<number>(3);
   const totalStars = 5;
 
-  const { data: sendPostRequest, error, loading } = useGlobalAxios("post");
+  const { data: sendPostRequest, error } = useGlobalAxios("post");
 
   async function submitReview() {
+    setLoading(true)
     try {
       await sendPostRequest(`${apiUrl}/reviews`, {
         review,
@@ -41,9 +44,14 @@ function ReviewInput({
         rating: hoveredStars,
         name: userInfo.displayname,
       });
+
     } catch (error) {
       console.error(error);
+    }finally{
+
+      setLoading(false)
     }
+
   }
 
   return (
@@ -99,9 +107,10 @@ function ReviewInput({
           />
           <button
             onClick={submitReview}
+            disabled={loading}
             className="py-3 my-8 text-lg bg-gradient-to-r border border-gray-100 bg-gray-800 hover:bg-gray-700  rounded-xl text-white"
           >
-            Rate now
+            {loading ? "Reviewing..." : "Review"}
           </button>
         </div>
       </div>

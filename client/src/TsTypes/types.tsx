@@ -34,8 +34,8 @@ export type RequestType = {
   message: string;
   reqtype: string;
   isReviewed: boolean;
-  celebUid: string;
-  fanUid: string;
+  celebuid: string;
+  fanuid: string;
   reqaction: string;
   timestamp1: string;
   reqstatus: string;

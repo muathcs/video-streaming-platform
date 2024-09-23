@@ -36,6 +36,7 @@ router.get("/fanrequests", async (req, res) => {
         celebuid: true,
         fromperson: true,
         price: true,
+        isReviewed:true,
       },
       orderBy: {
         timestamp1: "desc",

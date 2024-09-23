@@ -7,8 +7,27 @@ router.post("/", async (req, res) => {
   console.log("req: ", req.body);
   const { review, fanuid, celebuid, event, date, name, rating, requestid } = req.body;
 
-  console.log("requestID: ", requestid)
+  // console.log("requestID: ", requestid)
   try {
+
+    const {isReviewed} = await prisma.request.findUnique({
+      where:{
+        requestid:requestid
+      },
+      select:
+        {
+          isReviewed:true
+        }
+    })
+
+    if(isReviewed){
+      console.log("alreadyr review...")
+      
+      return res.status(201).send("You have already reviewed this request")
+    }
+
+
+    console.log("isReviewed: ", isReviewed)
     const result = await prisma.review.create({
       data: {
         message: review,
@@ -81,7 +100,6 @@ router.get("/", async (req, res) => {
       },
     });
 
-    console.log("res: ", result);
 
     res.status(201).send(result);
   } catch (error) {}

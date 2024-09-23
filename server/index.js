@@ -71,10 +71,10 @@ try {
 }
 }
 
-const job = schedule.scheduleJob('*/10 * * * *', (firedate) => {
-  console.log("runnning every second: ")
-  handleExpiredRequestsAndRefunds()
-})
+// const job = schedule.scheduleJob('*/10 * * * *', (firedate) => {
+//   console.log("runnning every second: ")
+//   handleExpiredRequestsAndRefunds()
+// })
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);

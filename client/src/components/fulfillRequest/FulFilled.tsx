@@ -2,13 +2,14 @@ import { Navigate, redirect, useLocation } from "react-router-dom";
 import Modal from "../Modal";
 import { useState } from "react";
 import ReviewInput from "../ReviewInput";
+import { RequestType } from "@/TsTypes/types";
 
 function FulFilled() {
   const [openModal, setOpenModal] = useState(false);
 
   const location = useLocation();
   const { state } = location || {};
-  let request: any, celeb;
+  let request: RequestType, celeb;
 
   if (state) {
     // `state` exists, you can safely destructure it
@@ -17,7 +18,6 @@ function FulFilled() {
     // Rest of your code
   } else {
     return;
-    <Navigate to={"/login"} />;
   }
 
   if (!state) {
@@ -32,6 +32,8 @@ function FulFilled() {
     link.setAttribute("download", `tesxtc`); //set file name
     link.click();
   }
+
+  console.log("isREV: ", request)
 
   return (
     <div className="w-full  py-10 gap-5  flex justify-center items-start bg-black">
@@ -79,13 +81,15 @@ function FulFilled() {
         >
           Download Video
         </button>
-
-        <button
+        {
+          !request.isReviewed &&
+          <button
           onClick={() => setOpenModal(true)}
           className=" border border-gray-600 w-2/4 py-4 rounded-lg hover:bg-[#37313d] "
-        >
+          >
           Leave a Review
         </button>
+        }
       </div>
     </div>
   );

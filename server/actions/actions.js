@@ -34,7 +34,8 @@ export async function refundFan(paymentId, amount, refunded, requestId) {
 
 
 
-  // this is to make sure that two refunds aren't intiated. 
+  // step 1: this is to make sure that two refunds aren't intiated.
+  // kind of useless because stripe already checks this, but added just in case.  
   if(refunded){
 
     console.log("Request has already been refunded...")
@@ -45,6 +46,7 @@ export async function refundFan(paymentId, amount, refunded, requestId) {
 
     console.log("amount: ", amount)
 
+    // step 1: retrieve payment Intent and the last charge on it (if it exists). 
     const paymentIntent = await stripe.paymentIntents.retrieve(paymentId)
     const chargeId = paymentIntent.latest_charge
 
@@ -52,6 +54,7 @@ export async function refundFan(paymentId, amount, refunded, requestId) {
       throw new Error("No charge found for the provided paymenet Intent")
     }
 
+    // step 2: initiate a refund
         const refund = await stripe.refunds.create({
       // charge: "ch_3PAHQhGFwRQBDdF410sX6yZ4",
       charge:chargeId,
@@ -59,6 +62,8 @@ export async function refundFan(paymentId, amount, refunded, requestId) {
 
     console.log("refund succeful: ", refund)
 
+
+    // step 3: update request to refunded, to insure no double refunds.... again kind of useless because stripe checks this.  
     await prisma.request.update({
       where:{
         requestid:requestId
