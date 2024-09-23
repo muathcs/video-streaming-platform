@@ -13,7 +13,7 @@ import SearchRoute from "./routes/Search.js";
 import UserRoute from "./routes/User.js";
 import StripeRoute from "./routes/Stripe.js";
 import { createTheCelebs } from "./wikidata.js";
-// import path from "path";
+import path from "path";
 import { fileURLToPath } from "url";
 import { dirname } from "path";
 import schedule from "node-schedule"
