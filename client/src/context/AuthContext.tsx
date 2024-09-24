@@ -5,10 +5,8 @@ import {
   createUserWithEmailAndPassword,
   reauthenticateWithCredential,
   sendPasswordResetEmail,
-  signInWithCustomToken,
   signInWithEmailAndPassword,
   updateProfile,
-  sendEmailVerification,
 } from "firebase/auth";
 
 import axios from "../api/axios";

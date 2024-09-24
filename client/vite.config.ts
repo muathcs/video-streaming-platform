@@ -11,6 +11,9 @@ export default defineConfig({
       "/api": "https://video-streaming-server-z2fg.onrender.com",
     },
   },
+  build:{
+    chunkSizeWarningLimit: 1600,
+  },
   plugins: [react()],
   resolve: {
     alias: {
