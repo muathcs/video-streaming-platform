@@ -15,7 +15,6 @@ import axios from "../api/axios";
 import { RequestContext } from "./RequestContext";
 import { User as FirebaseUser } from "firebase/auth";
 import { apiUrl } from "../utilities/fetchPath";
-import { ErrorCause } from "aws-sdk/clients/qldb";
 import { AuthContextType, UserInfoType } from "../TsTypes/types";
 
 const AuthContext = React.createContext<AuthContextType | any>("");
@@ -108,9 +107,11 @@ export function AuthProvider({ children }: { children: any }) {
   //reset password
   async function resetPassword(email: string) {
     try {
-      // await sendPasswordResetEmail(auth, email);
+      console.log("email: ", email)
+      const response = await sendPasswordResetEmail(auth, email);
+      console.log("res: ", response)
     } catch (error) {
-      console.error(error);
+      console.error("resetpassword: ", error.message);
     }
   }
 

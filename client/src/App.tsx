@@ -21,6 +21,7 @@ import UserProfile from "./components/UserProfile";
 import AccountSuccess from "./components/TalentAccountSuccessMessage";
 import Nav from "./components/Nav";
 import SignupCeleb from "./pages/SignupCeleb";
+import PasswordReset from "./components/PasswordReset";
 
 function App() {
   return (
@@ -50,6 +51,7 @@ function App() {
         <Route path="/browse/:category" element={<Category />} />
         <Route path="/user/profile" element={<UserProfile />} />
         <Route path="/*" element={<PrivateRoute />} />
+        <Route path="/reset/password" element={<PasswordReset />} />
       </Routes>
       <Footer />
     </>

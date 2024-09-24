@@ -73,7 +73,7 @@ function Login() {
   return (
     <div>
       {/* <!-- TW Elements is free under AGPL, with commercial license required for specific uses. See more details: https://tw-elements.com/license/ and contact us for queries at tailwind@mdbootstrap.com -->  */}
-      <section className="h-screen flex justify-center ">
+      <section className="h-screen flex justify-center bg-black">
         <div className="container h-full px-6 py-24 ">
           <div className="g-6 flex h-full flex-wrap items-center justify-center lg:justify-between">
             {/* <!-- Left column container with background--> */}
@@ -170,8 +170,8 @@ function Login() {
 
                   {/* <!-- Forgot password link --> */}
                   <a
-                    onClick={handleResetPassword}
-                    href="#!"
+                  
+                    href="/reset/password"
                     className="text-primary transition duration-150 ease-in-out hover:text-primary-600 focus:text-primary-600 active:text-primary-700 dark:text-primary-400 dark:hover:text-primary-500 dark:focus:text-primary-500 dark:active:text-primary-600"
                   >
                     Forgot password?
