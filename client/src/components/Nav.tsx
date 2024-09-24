@@ -87,6 +87,7 @@ function Nav() {
 
   const { data: putRequest } = useGlobalAxios("put");
 
+  console.log("url: ", apiUrl);
   useEffect(() => {
     setLoading(true);
     const getNotification = async () => {

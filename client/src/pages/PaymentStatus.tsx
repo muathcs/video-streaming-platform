@@ -19,8 +19,8 @@ const PaymentStatus = () => {
 
   function createNotification() {
     sendPostRequest(`${apiUrl}/notification`, {
-      intended_uid: request.celebUid,
-      sender_uid: request.fanUid,
+      intended_uid: request.celebuid,
+      sender_uid: request.fanuid,
       message: "user has made a request",
     });
   }
@@ -94,7 +94,7 @@ const PaymentStatus = () => {
   return (
     <>
       {message == "success" ? (
-        <Success celebUid={request.celebUid} price={request.price} />
+        <Success celebUid={request.celebuid} price={request.price} />
       ) : null}
     </>
   );

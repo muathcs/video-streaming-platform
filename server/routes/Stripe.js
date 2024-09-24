@@ -107,12 +107,13 @@ router.post("/create-payment-intent", async (req, res) => {
       automatic_payment_methods: {
         enabled: true,
       },
+      
       // payment_method_types: ["card"],
     });
 
     console.log("clinetSec: ", paymentIntent.client_secret)
 
-    // pi_3Q1EHXGFwRQBDdF40KkTmQqu_secret_Xgva2OYmz9Q52jZ6KFFYqd7fQ
+    // pi_3Q1EImGFwRQBDdF41lBTUqv8_secret_TfeEOn8kjfPoI0H3tOlGiyOaP
     res.send({
       clientSecret: paymentIntent.client_secret,
     });

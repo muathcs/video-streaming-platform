@@ -107,10 +107,10 @@ export function AuthProvider({ children }: { children: any }) {
   //reset password
   async function resetPassword(email: string) {
     try {
-      console.log("email: ", email)
+      console.log("email: ", email);
       const response = await sendPasswordResetEmail(auth, email);
-      console.log("res: ", response)
-    } catch (error) {
+      console.log("res: ", response);
+    } catch (error: any) {
       console.error("resetpassword: ", error.message);
     }
   }
