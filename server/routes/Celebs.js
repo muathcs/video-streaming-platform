@@ -38,6 +38,7 @@ router.get("/", async (req, res) => {
     res.send(result);
   } catch (error) {
     console.log("error/celebs: ", error);
+    console.log("error: ", error)
     res.status(500).json({ error: error.message });
   }
 });

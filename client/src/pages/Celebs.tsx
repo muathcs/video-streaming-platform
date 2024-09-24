@@ -32,7 +32,7 @@ import {
 
 export function Footer() {
   return (
-    <div className="w-full flex justify-center py-5   bg-black border-t-[0.5px] border-gray-600   ">
+    <div className="w-full flex justify-center    bg-black border-t-[0.5px] border-gray-600   ">
       <div className="max-w-7xl w-full px-4">
         <div className="text-center">
           {/* Branding */}
@@ -183,8 +183,17 @@ function Celebs() {
       try {
         const response = await axios.get(`${apiUrl}/celebs`);
         setCelebs(response.data);
-      } catch (error) {
-        console.error(error);
+      } catch (error:any) {
+            // Handle errors (error.response is the response from the server)
+            if (error.response) {
+              // Server responded with a status other than 200 range
+              console.error('Error occurredx:', error.response.data); // Log server error message
+              // alert(`An error occurred: ${error.response.data.error}`);
+          } else {
+              // Other errors (e.g., network errors)
+              console.error('Error occurredy:', error.message);
+              // alert(`An error occurred: ${error.message}`);
+          }
       }
     };
 
