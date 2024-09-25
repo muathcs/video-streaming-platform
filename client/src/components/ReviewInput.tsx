@@ -12,6 +12,7 @@ type ReviewInputProp = {
   celebuid: string;
   date: string;
   event: string;
+  isReviewed: boolean
 };
 function ReviewInput({
   setOpenModal,

@@ -42,28 +42,8 @@ function Nav() {
   const [loading, setLoading] = useState<boolean>(false);
   const [openNotification, setOpenNotification] = useState(false);
 
-  const frameworks = [
-    {
-      value: "next.js",
-      label: "Next.js",
-    },
-    {
-      value: "sveltekit",
-      label: "SvelteKit",
-    },
-    {
-      value: "nuxt.js",
-      label: "Nuxt.js",
-    },
-    {
-      value: "remix",
-      label: "Remix",
-    },
-    {
-      value: "astro",
-      label: "Astro",
-    },
-  ];
+ 
+
   const path = celeb?.isCeleb
     ? "dashboard"
     : celeb == undefined
@@ -80,8 +60,6 @@ function Nav() {
 
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [open, setOpen] = useState(false);
-  const [value, setValue] = useState("");
   const [notifications, setNotifications] = useState<notification[]>();
   const [unread, setUnread] = useState<number>(0);
 

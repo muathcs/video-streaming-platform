@@ -1,8 +1,10 @@
-import { Navigate, redirect, useLocation } from "react-router-dom";
+import {  redirect, useLocation } from "react-router-dom";
 import Modal from "../Modal";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ReviewInput from "../ReviewInput";
 import { RequestType } from "@/TsTypes/types";
+import { apiUrl } from "@/utilities/fetchPath";
+import axios from "@/api/axios";
 
 function FulFilled() {
   const [openModal, setOpenModal] = useState(false);
@@ -10,6 +12,21 @@ function FulFilled() {
   const location = useLocation();
   const { state } = location || {};
   let request: RequestType, celeb;
+
+  useEffect(() => {
+
+    const getReview = async () => {
+
+      if(!request.isReviewed) return
+      try {
+        axios.get(`${apiUrl}/reviews/:${request.requestid}`)
+      } catch (error) {
+        console.error(error)
+      }
+    }
+
+    getReview();
+  },[])
 
   if (state) {
     // `state` exists, you can safely destructure it
@@ -33,6 +50,8 @@ function FulFilled() {
     link.click();
   }
 
+
+
   console.log("isREV: ", request)
 
   return (
@@ -55,6 +74,8 @@ function FulFilled() {
               fanuid={request.fanuid}
               date={request.timestamp1}
               event={request.reqaction}
+              isReviewed={request.isReviewed}
+
             />
           </Modal>
           <div className="border border-gray-600  h-4/6 md:w-2/4 w-full rounded-lg p-5   ">
@@ -82,12 +103,15 @@ function FulFilled() {
           Download Video
         </button>
         {
-          !request.isReviewed &&
           <button
           onClick={() => setOpenModal(true)}
           className=" border border-gray-600 w-2/4 py-4 rounded-lg hover:bg-[#37313d] "
           >
-          Leave a Review
+            {
+          !request.isReviewed ?
+         "Leave a Review" : "Edit Review"
+
+            }
         </button>
         }
       </div>

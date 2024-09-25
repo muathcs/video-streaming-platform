@@ -46,7 +46,7 @@ router.post("/", async (req, res) => {
         requestid
       },
       data:{
-        isReviewed:true
+        isReviewed:result.reviewid
       }
     })
 
@@ -104,5 +104,25 @@ router.get("/", async (req, res) => {
     res.status(201).send(result);
   } catch (error) {}
 });
+
+
+router.get("/:requestId", async (req, res) => {
+
+  const {requestId} = req.params
+  console.log("id: ", req.params)
+  try {
+    const response = await prisma.review.findUnique({
+      where:{
+        requestId:requestId
+      },
+      select:{
+        Date:true
+      }
+
+    })
+  } catch (error) {
+    console.error(error)
+  }
+})
 
 export default router;

@@ -10,9 +10,9 @@
   .gradiant-page {
     @apply bg-gradient-to-b from-black from-5% via-[#43268D] via-20% to-black to-40%;
   }
-  .bg-black {
+  /* .bg-black {
     @apply bg-gradient-to-b from-black via-[#241f2c] via-60% to-black to-90%;
-  }
+  } */
 
   .bg-skeleton {
     @apply bg-gradient-to-b from-black via-[#241f2c] via-60% to-black to-90%;
