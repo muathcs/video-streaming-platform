@@ -10,30 +10,31 @@ router.get("/", async (req, res) => {
   //query celeb table by category
 
 
+  
   const page = parseInt(req.query.page) || 1; // Default to page 1 if not provided
   const pageSize = parseInt(req.query.pageSize) || 10; // Default page size to 10 if not provided
   const offset = (page - 1) * pageSize; // Calculate the offset based on page number and page size
   const { category } = req.params;
   console.log("celeb body: ", req.query)
-
+  
   // console.log("react nativex", req.query);
-
+  
   try {
     // const result = await prisma.celeb.findMany({
-    //   skip: offset,
-    //   take: pageSize,
-    // });
-    const result = await prisma.celeb.findMany({
-      skip:offset,
-      take:pageSize,
-      where: {
-        completed_onboarding: true,
-      },
-      orderBy:{
-        request_num:"desc"
-      }
-    });
-    // client.release(); // Release the connection back to the pool
+      //   skip: offset,
+      //   take: pageSize,
+      // });
+      const result = await prisma.celeb.findMany({
+        skip:offset,
+        take:pageSize,
+        where: {
+          completed_onboarding: true,
+        },
+        orderBy:{
+          request_num:"desc"
+        }
+      });
+      // client.release(); // Release the connection back to the pool
 
     res.send(result);
   } catch (error) {

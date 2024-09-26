@@ -193,7 +193,7 @@ router.post("/add-account", async (req, res) => {
 
     const {stripe_account_id} = await prisma.celeb.findUnique({
       where:{
-        uid
+        uid:uid
 
       },
       select:{
@@ -269,7 +269,11 @@ router.post("/add-account", async (req, res) => {
 
 router.post("/reciept", async (req, res) => {
   const name = "muah";
+
+  console.log("reqbody: ", req.body)
   const { celebuid, price } = req.body;
+
+
 
   console.log("uid: ", celebuid, "price: ", price);
   try {

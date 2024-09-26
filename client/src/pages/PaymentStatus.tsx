@@ -17,6 +17,8 @@ const PaymentStatus = () => {
     false
   );
 
+  console.log("req: ", request);
+
   function createNotification() {
     sendPostRequest(`${apiUrl}/notification`, {
       intended_uid: request.celebuid,

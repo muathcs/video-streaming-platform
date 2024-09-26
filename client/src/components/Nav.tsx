@@ -42,8 +42,6 @@ function Nav() {
   const [loading, setLoading] = useState<boolean>(false);
   const [openNotification, setOpenNotification] = useState(false);
 
- 
-
   const path = celeb?.isCeleb
     ? "dashboard"
     : celeb == undefined

@@ -53,7 +53,7 @@ function FanRequests() {
           <h1>Error.. Something went wrong</h1>
         </div>
       ) : (
-        <div className="overflow-auto flex flex-col gap-2 h-full  bg-black  ">
+        <div className="overflow-auto flex flex-col gap-2 h-full  bg-black justify-start items-center  ">
           <>
             {celebReplies?.length === 0 ? (
               <h1 className=" top-40 relative">You do not have any requests</h1>
