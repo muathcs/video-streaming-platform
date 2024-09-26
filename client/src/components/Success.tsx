@@ -15,6 +15,8 @@ type SuccessType = {
 const Success = ({ celebUid, price }: SuccessType) => {
   const { state } = useLocation();
 
+  console.log("celeb: ", celebUid);
+
   async function sendReciept() {
     try {
       const celeb = await axios.get(`${apiUrl}/Celebs/${celebUid}`);

@@ -120,8 +120,8 @@ router.post("/", async (req, res) => {
   console.log("onside post requ: ", req.body)
   
   let {
-    celebUid,
-    fanUid,
+    celebuid,
+    fanuid,
     price,
     message, //
     requestAction, //
@@ -132,6 +132,8 @@ router.post("/", async (req, res) => {
     requestid,
     paymentId
   } = req.body;
+
+  console.log("uid:TOP:: ", celebuid)
 
   price = parseInt(price);
 
@@ -146,36 +148,41 @@ router.post("/", async (req, res) => {
       },
     });
 
+
+
+    // to prevent double charge when reloading success page. 
     if (reqExists) {
       console.log("req exists");
       return res.status(201).send("Req already exist");
     }
 
+    console.log("before req is created!")
+  
     const result = await prisma.request.create({
       data: {
-        requestid,
-        celebuid: celebUid,
-        fanuid: fanUid,
+        requestid: requestid,
+        celebuid: celebuid,
+        fanuid: fanuid,
         price: price,
-        message: message,
+        message: message || '', // Ensure message is a valid string, empty string as fallback
         reqstatus: "pending",
         reqtype: reqType,
         timestamp1: new Date(),
         reqaction: requestAction,
-        tosomeoneelse: !!toSomeOneElse,
-        fromperson: fromPerson,
-        toperson: toPerson,
-        paymentId
+        tosomeoneelse: toSomeOneElse === 'true', // Explicit conversion of 'false'/'true'
+        fromperson: fromPerson || '', // Ensure fromPerson is a valid string, empty string as fallback
+        toperson: toPerson || '', // Ensure toPerson is a valid string, empty string as fallback
+        paymentId: paymentId || '', // Ensure paymentId is valid
       },
     });
 
-    console.log("checkUID: ", celebUid)
+    console.log("checkUID: ", celebuid)
 
 
     // update the request_num for the celeb
     const updatedCeleb = await prisma.celeb.update({
       where: {
-        uid:celebUid
+        uid:celebuid
       },
       data: {
         request_num: {
@@ -187,14 +194,14 @@ router.post("/", async (req, res) => {
     console.log("updateCeleb: ", updatedCeleb)
 
     //this function creates an unread notification
-    createNotification(celebUid, fanUid, "user has made a request");
+    createNotification(celebuid, fanuid, "user has made a request");
 
-    updateFanClusterIdAndTotalSpent(celebUid, fanUid, price);
+    updateFanClusterIdAndTotalSpent(celebuid, fanuid, price);
 
     res.status(201).send("succesfully added a request");
   } catch (error) {
     res.status(401).json(error);
-    console.log("/request", error.message);
+    console.log("/requestxxx", error);
   }
 });
 

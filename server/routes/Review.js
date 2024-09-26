@@ -57,6 +57,33 @@ router.post("/", async (req, res) => {
   }
 });
 
+
+router.put("/:id", async (req, res) => {
+
+  console.log("reivew params: ", req.params)
+  console.log("review body: ", req.body)
+  const {id} = req.params
+  const {review, rating} = req.body
+
+  try {
+    
+    const response = await prisma.review.update({
+      where:{
+        reviewid:id
+      },
+      data:{
+        message:review,
+        rating:rating
+
+      }
+    })
+
+    res.status(201).send()
+  } catch (error) {
+    
+  }
+})
+
 router.put("/", async (req, res) => {
   console.log("herexxx", req.body);
   const { requestid, uid } = req.body;
@@ -109,17 +136,22 @@ router.get("/", async (req, res) => {
 router.get("/:requestId", async (req, res) => {
 
   const {requestId} = req.params
-  console.log("id: ", req.params)
+  console.log("id:x ", requestId)
   try {
     const response = await prisma.review.findUnique({
       where:{
         requestId:requestId
       },
       select:{
-        Date:true
+        message:true,
+        rating:true,
+
       }
 
     })
+
+    console.log("response:@ ", response)
+    res.status(201).json(response)
   } catch (error) {
     console.error(error)
   }

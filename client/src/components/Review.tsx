@@ -19,7 +19,7 @@ function Review({ message, rating, date, event, name }: ReviewProps) {
 
   return (
     <>
-      <div className="bg-[#201E23] min-h-[250px] h-auto   rounded-xl px-5 py-5 pb-8 w-full my-2">
+      <div className="bg-[#201E23] min-h-[250px] h-auto   rounded-xl px-5 py-5 pb-8 w-[350px] my-2 ">
         <div className="text-left relative ">
           <h1 className="text-lg">
             {name}

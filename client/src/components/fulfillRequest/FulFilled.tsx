@@ -1,4 +1,4 @@
-import {  redirect, useLocation } from "react-router-dom";
+import { redirect, useLocation } from "react-router-dom";
 import Modal from "../Modal";
 import { useEffect, useState } from "react";
 import ReviewInput from "../ReviewInput";
@@ -8,25 +8,33 @@ import axios from "@/api/axios";
 
 function FulFilled() {
   const [openModal, setOpenModal] = useState(false);
+  const [reviewMessage, setReviewMessage] = useState<string>("");
+  const [rated, setRated] = useState<number>();
 
   const location = useLocation();
   const { state } = location || {};
   let request: RequestType, celeb;
 
   useEffect(() => {
-
+    console.log("effect: ");
     const getReview = async () => {
-
-      if(!request.isReviewed) return
+      console.log("!:", request.isReviewed);
+      if (!request.isReviewed) return;
+      console.log("QQ");
       try {
-        axios.get(`${apiUrl}/reviews/:${request.requestid}`)
+        const response: { data: { message: string; rating: number } } =
+          await axios.get(`${apiUrl}/reviews/${request.requestid}`);
+
+        console.log("resp: ", response);
+        setReviewMessage(response.data.message);
+        setRated(response.data.rating);
       } catch (error) {
-        console.error(error)
+        console.error(error);
       }
-    }
+    };
 
     getReview();
-  },[])
+  }, []);
 
   if (state) {
     // `state` exists, you can safely destructure it
@@ -50,9 +58,7 @@ function FulFilled() {
     link.click();
   }
 
-
-
-  console.log("isREV: ", request)
+  console.log("isREV: ", request);
 
   return (
     <div className="w-full  py-10 gap-5  flex justify-center items-start bg-black">
@@ -75,7 +81,10 @@ function FulFilled() {
               date={request.timestamp1}
               event={request.reqaction}
               isReviewed={request.isReviewed}
-
+              reviewMessage={reviewMessage}
+              setReviewMessage={setReviewMessage}
+              rated={rated}
+              setRated={setRated}
             />
           </Modal>
           <div className="border border-gray-600  h-4/6 md:w-2/4 w-full rounded-lg p-5   ">
@@ -104,15 +113,11 @@ function FulFilled() {
         </button>
         {
           <button
-          onClick={() => setOpenModal(true)}
-          className=" border border-gray-600 w-2/4 py-4 rounded-lg hover:bg-[#37313d] "
+            onClick={() => setOpenModal(true)}
+            className=" border border-gray-600 w-2/4 py-4 rounded-lg hover:bg-[#37313d] "
           >
-            {
-          !request.isReviewed ?
-         "Leave a Review" : "Edit Review"
-
-            }
-        </button>
+            {!request.isReviewed ? "Leave a Review" : "Edit Review"}
+          </button>
         }
       </div>
     </div>

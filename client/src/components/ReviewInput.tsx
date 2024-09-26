@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { Dispatch, SetStateAction, useState } from "react";
 import { useGlobalAxios } from "../hooks/useGlobalAxios";
 import { useAuth } from "../context/AuthContext";
 import { start } from "repl";
 import { IoClose } from "react-icons/io5";
 import { apiUrl } from "../utilities/fetchPath";
+import axios from "@/api/axios";
 
 type ReviewInputProp = {
   setOpenModal: (state: boolean) => void;
@@ -12,7 +13,11 @@ type ReviewInputProp = {
   celebuid: string;
   date: string;
   event: string;
-  isReviewed: boolean
+  isReviewed: boolean;
+  reviewMessage: string;
+  setReviewMessage: Dispatch<SetStateAction<string>>; // more flexible than (review:string) => voild because it takes a function as well as a string val.
+  setRated: Dispatch<SetStateAction<number | undefined>>; // more flexible than (review:string) => voild because it takes a function as well as a string val.
+  rated: number | undefined;
 };
 function ReviewInput({
   setOpenModal,
@@ -21,19 +26,26 @@ function ReviewInput({
   date,
   event,
   requestid,
+  isReviewed,
+  reviewMessage,
+  setReviewMessage,
+  rated,
+  setRated,
 }: ReviewInputProp) {
+  console.log("celebuid: ", isReviewed);
   const [review, setReview] = useState<string>("");
   const { userInfo }: any = useAuth();
 
-  const [loading, setLoading] = useState<boolean>(false)
+  const [loading, setLoading] = useState<boolean>(false);
 
-  const [hoveredStars, setHoveredStars] = useState<number>(3);
+  console.log("rated: ", rated);
+  const [hoveredStars, setHoveredStars] = useState<number>(rated || 5);
   const totalStars = 5;
 
   const { data: sendPostRequest, error } = useGlobalAxios("post");
 
   async function submitReview() {
-    setLoading(true)
+    setLoading(true);
     try {
       await sendPostRequest(`${apiUrl}/reviews`, {
         review,
@@ -45,14 +57,25 @@ function ReviewInput({
         rating: hoveredStars,
         name: userInfo.displayname,
       });
-
     } catch (error) {
       console.error(error);
-    }finally{
-
-      setLoading(false)
+    } finally {
+      setLoading(false);
     }
+  }
 
+  async function editReview() {
+    setLoading(true);
+    try {
+      await axios.put(`${apiUrl}/reviews/${isReviewed}`, {
+        review: reviewMessage,
+        rating: hoveredStars,
+      });
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -80,7 +103,10 @@ function ReviewInput({
               return (
                 <>
                   <svg
-                    onMouseOver={() => setHoveredStars(starValue)}
+                    onMouseOver={() => {
+                      setHoveredStars(starValue);
+                      setRated(starValue);
+                    }}
                     style={{ color: isYellow ? "yellow" : "grey" }}
                     className="w-12 h-12 text-yellow-500 review-star"
                     xmlns="http://www.w3.org/2000/svg"
@@ -95,24 +121,49 @@ function ReviewInput({
           </div>
         </div>
         <div className="w-3/4 flex flex-col">
-          <textarea
-            value={review}
-            onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
-              setReview(e.target.value)
-            }
-            name="message"
-            className=" block min-h-[auto] w-full rounded border my-2 bg-transparent bg-white
+          {isReviewed ? (
+            <>
+              <textarea
+                value={reviewMessage}
+                onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+                  setReviewMessage(e.target.value)
+                }
+                name="message"
+                className=" block min-h-[auto] w-full rounded border my-2 bg-transparent bg-white
+                 px-2 py-2  h-40 shadow-sm  text-black bg-gray-5 border-gray-300   placeholder-style outline-none relative
+                  "
+                placeholder="Thank you, this was great!"
+              />
+              <button
+                onClick={editReview}
+                disabled={loading}
+                className="py-3 my-8 text-lg bg-gradient-to-r border border-gray-100 bg-gray-800 hover:bg-gray-700  rounded-xl text-white"
+              >
+                {loading ? "Updating..." : "Update"}
+              </button>
+            </>
+          ) : (
+            <>
+              <textarea
+                value={review}
+                onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+                  setReview(e.target.value)
+                }
+                name="message"
+                className=" block min-h-[auto] w-full rounded border my-2 bg-transparent bg-white
              px-2 py-2  h-40 shadow-sm  text-black bg-gray-5 border-gray-300   placeholder-style outline-none relative
               "
-            placeholder="Thank you, this was great!"
-          />
-          <button
-            onClick={submitReview}
-            disabled={loading}
-            className="py-3 my-8 text-lg bg-gradient-to-r border border-gray-100 bg-gray-800 hover:bg-gray-700  rounded-xl text-white"
-          >
-            {loading ? "Reviewing..." : "Review"}
-          </button>
+                placeholder="Thank you, this was great!"
+              />
+              <button
+                onClick={submitReview}
+                disabled={loading}
+                className="py-3 my-8 text-lg bg-gradient-to-r border border-gray-100 bg-gray-800 hover:bg-gray-700  rounded-xl text-white"
+              >
+                {loading ? "Reviewing..." : "Review"}
+              </button>
+            </>
+          )}
         </div>
       </div>
       <div className="h-20 flex items-center justify-center  ">

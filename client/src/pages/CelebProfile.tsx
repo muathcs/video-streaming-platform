@@ -86,7 +86,7 @@ function ReviewSectionPlusReviewModal({
                 reviews.slice(0, 10).map((review, index) => (
                   <CarouselItem
                     key={index}
-                    className="basis-1/1 md:basis-1/2 lg:basis-1/3"
+                    className="basis-1/1 md:basis-1/2 lg:basis-1/3 "
                   >
                     <Review
                       date={review.Date}
@@ -137,8 +137,8 @@ function OrderModal({
 
       <RequestForm
         setOrderModal={setOrderModal}
-        celebUid={celebInfo.uid}
-        fanUid={currentUserUid}
+        celebuid={celebInfo.uid}
+        fanuid={currentUserUid}
         price={celebInfo.price}
       />
     </div>

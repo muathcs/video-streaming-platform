@@ -6,14 +6,14 @@ import { useGlobalAxios } from "../hooks/useGlobalAxios";
 import { apiUrl } from "../utilities/fetchPath";
 import { randomUUID } from "crypto";
 type RequestProps = {
-  celebUid: string;
-  fanUid: string;
+  celebuid: string;
+  fanuid: string;
   price: number;
   setOrderModal: (state: boolean) => void;
 };
 
 // this is coming from the orderModal component in /CelebProfile.tsx
-function RequestForm({ celebUid, fanUid, price, setOrderModal }: RequestProps) {
+function RequestForm({ celebuid, fanuid, price, setOrderModal }: RequestProps) {
   // const {
   //   data: sendUserRequestForm,
   //   loading,
@@ -47,8 +47,8 @@ function RequestForm({ celebUid, fanUid, price, setOrderModal }: RequestProps) {
       ...getValues(),
       reqType: "video",
       requestid: crypto.randomUUID(),
-      celebUid,
-      fanUid,
+      celebuid,
+      fanuid,
       price,
     });
 
@@ -75,7 +75,7 @@ function RequestForm({ celebUid, fanUid, price, setOrderModal }: RequestProps) {
 
   return (
     <>
-      <div className="h-[90%]  w-full  md:w-3/4 lg:w-2/4 rounded-md relative text-white bg-[#222125]  px-2  sm:px-10 py-10 overflow-auto top-10  ">
+      <div className="h-[90%]  w-full  md:w-3/4 lg:w-2/4 rounded-md relative text-white bg-black px-2  sm:px-10 py-10 overflow-auto top-10  ">
         <div
           onClick={() => {
             setOrderModal(false);
