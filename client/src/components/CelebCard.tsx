@@ -33,7 +33,7 @@ function CelebCard({ celeb, size }: { celeb: CelebCardProps; size?: number }) {
   // }
 
   return (
-    <div className="shadow-xl border border-gray-700 rounded-t-xl rounded-md card-zoom w-[18rem] h-[32rem] md:w-full  sm:h-[28rem]  text-white flex justify-center items-center  ">
+    <div className="shadow-xl border border-gray-700 rounded-t-xl rounded-md card-zoom w-[18rem] sm:w-[20rem] h-[32rem] md:w-full  sm:h-[28rem]  text-white flex justify-center items-center  ">
       <div className="h-[85%] w-full overflow-hidden rounded-t-xl ">
         <img
           onClick={handleCardClick}

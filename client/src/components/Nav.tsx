@@ -34,6 +34,8 @@ function classNames(...classes: any) {
 function Nav() {
   const { logout, currentUser, celeb, userInfo }: AuthContextType = useAuth();
 
+  console.log("f: ", apiUrl)
+
   console.log(celeb?.isCeleb);
   const navigate = useNavigate();
   const { requests } = useRequests();
@@ -41,6 +43,8 @@ function Nav() {
   const [searchCelebVal, setSearchCelebVal] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
   const [openNotification, setOpenNotification] = useState(false);
+
+ 
 
   const path = celeb?.isCeleb
     ? "dashboard"
@@ -150,7 +154,7 @@ function Nav() {
 
   return (
     <nav className="bg-black">
-      <div className=" max-w-7xl px-2 sm:px-6 lg:px-8    mx-auto bg-black">
+      <div className=" max-w-7xl px-2 sm:px-6 lg:px-8  mx-auto bg-black">
         <div className="relative flex h-16 items-center justify-between   ">
           <div className="absolute inset-y-0 left-0 flex items-center md:hidden ">
             {/* Mobile menu button */}

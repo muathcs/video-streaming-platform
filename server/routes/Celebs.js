@@ -153,6 +153,7 @@ router.post("/createCelebPartial", async (req, res) => {
 
   const followers = Number(f); // turning followers to a number
   try {
+    //create partial of the celeb, onboarding is completed on phone.
     const response = await prisma.celeb.create({
       data: {
         displayname: displayName,
@@ -166,10 +167,12 @@ router.post("/createCelebPartial", async (req, res) => {
         MessageToUs,
       },
     });
+    res.status(201).send("success")
 
     console.log("response: ", response);
   } catch (error) {
     console.error(error);
+    res.status(401).json({message:error})
   }
 });
 
@@ -179,6 +182,8 @@ router.post(
   upload.single("file"),
   uploadProfileImgToS3,
   async (req, res) => {
+
+    
     const newImg = req.newUrl;
 
     const {

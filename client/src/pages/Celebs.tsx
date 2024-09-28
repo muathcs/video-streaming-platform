@@ -419,7 +419,7 @@ function Celebs() {
               {celebs.map((celeb, index) => (
                 <CarouselItem
                   key={index}
-                  className="basis-1/1 md:basis-1/2 lg:basis-1/5"
+                  className="basis-1/1 sm:basis-1/2 md:basis-1/4 lg:basis-1/5"
                 >
                   <CelebCard celeb={celeb} key={index} />
                 </CarouselItem>

@@ -17,6 +17,7 @@ import { useAuth } from "@/context/AuthContext.tsx";
 
 import { IoClose } from "react-icons/io5";
 import SuccessConfetti from "../assets/successPNG.png";
+import { cn } from "@/lib/utils.ts";
 const firebaseErrorMessages: { [key: string]: string } = {
   "Firebase: Error (auth/email-already-in-use).":
     "Email is already in use. Please use a different email.",
@@ -31,7 +32,7 @@ function SuccessPage() {
         src={SuccessConfetti}
         alt="Success Confetti"
         className="object-contain mb-6"
-        width={500}
+        width={200}
       />
       <h1 className="text-3xl font-bold mb-4">Congratulations!</h1>
       <p className="text-xl mb-4">Your account has been successfully set up.</p>
@@ -45,7 +46,7 @@ function SuccessPage() {
           href="https://play.google.com/store"
           target="_blank"
           rel="noopener noreferrer"
-          className="bg-green-500 text-white px-4 py-2 rounded-lg shadow hover:bg-green-600 transition"
+          className="bg-green-500 text-white px-4 py-2 rounded-lg shadow hover:bg-green-600 hover:text-white transition"
         >
           Google Play Store
         </a>
@@ -53,7 +54,7 @@ function SuccessPage() {
           href="https://www.apple.com/app-store/"
           target="_blank"
           rel="noopener noreferrer"
-          className="bg-blue-500 text-white px-4 py-2 rounded-lg shadow hover:bg-blue-600 transition"
+          className="bg-blue-500 text-white px-4 py-2 rounded-lg shadow hover:bg-blue-600 hover:text-white transition"
         >
           Apple App Store
         </a>
@@ -115,9 +116,9 @@ function SignupCeleb() {
       const password = getValues().password;
       const confirmPassword = getValues().confirmPassword;
 
-      // if (password != confirmPassword) {
-      //   return setError("Passwords do not match");
-      // }
+      if (password != confirmPassword) {
+        return setError("Passwords do not match");
+      }
 
       console.log("email: ", getValues().email);
       console.log("name: ", getValues().password);
@@ -128,7 +129,11 @@ function SignupCeleb() {
         password,
         getValues().displayName
       );
-      // console.log("user: ", userCredential);
+
+      if(!userCredential){
+        console.log("error in user cred")
+      }
+      console.log("user: ", userCredential);
       // const verfiy = await sendEmailVerification(userCredential);
 
       // const user = auth.getUser("QBZRHzOOBjXwjcqLaZeQyrzDTe23");
@@ -145,7 +150,7 @@ function SignupCeleb() {
 
       console.log("response: ", respones);
       setSuccess(true);
-      // reset();
+      reset();
     } catch (error: any) {
       const errorMessage = firebaseErrorMessages[error.message];
       console.error("onSubmitCeleb", errorMessage);
@@ -154,14 +159,31 @@ function SignupCeleb() {
   }
 
   const inputStyle =
-    "block min-h-[auto] w-full  rounded-lg border border-[#3f3b45] bg-transparent px-3 py-2 leading-[2.15] outline-none bg-[#201e23] ";
+    "block min-h-[auto] w-full  rounded-lg border border-[#3f3b45] bg-transparent px-3 py-2 leading-[2.15] outline-none  ";
 
   return (
     <div className="bg-black ">
       <div className=" max-w-2xl mx-auto px-4 flex justify-center items-center flex-col  ">
-        {error && (
+   
+        {success ? (
+          <SuccessPage />
+        ) : (
+          <>
+ 
+            <div className="pt-20 mb-10">
+              <h1 className="text-5xl font-serif relative ">
+                Share Your <span className="text-purple-500">Hikaya</span>{" "}
+                <br />
+                and Get Rewarded
+              </h1>
+              <h2 className="text-gray-300 text-3xl mt-10 mb-5 font-serif">
+                Connect with your audience. <br />
+                Start earning from your passion today.
+              </h2>
+            </div>
+            {error && (
           <div
-            className="bg-red-100 border border-red-400 text-red-700 px-4 py-5 rounded relative mb-5 "
+            className="bg-red-100 border border-red-400 text-red-700 px-10 py-5 max-w-lg  rounded relative mb-5 "
             role="alert"
           >
             <strong className="font-bold">Error: </strong>
@@ -177,28 +199,14 @@ function SignupCeleb() {
           </div>
         )}
 
-        {success ? (
-          <SuccessPage />
-        ) : (
-          <>
-            <div className="pt-20 mb-10">
-              <h1 className="text-7xl font-serif relative ">
-                Share Your <span className="text-purple-500">Hikaya</span>{" "}
-                <br />
-                and Get Rewarded
-              </h1>
-              <h2 className="text-gray-300 text-3xl mt-10 mb-5 font-serif">
-                Connect with your audience. <br />
-                Start earning from your passion today.
-              </h2>
-            </div>
             <form className="max-w-lg " onSubmit={handleSubmit(onSubmit)}>
+              
               {" "}
               {/* <!-- display Name --> */}
               <div className="relative mb-6" data-te-input-wrapper-init>
                 <input
                   type="text"
-                  className={inputStyle}
+                  className={cn(inputStyle, "bg-[#201e23]") }
                   placeholder="display Name"
                   {...register("displayName", {
                     required: "display name is required",
@@ -212,7 +220,7 @@ function SignupCeleb() {
               <div className="relative mb-6" data-te-input-wrapper-init>
                 <input
                   type="text"
-                  className={inputStyle }
+                  className={cn(inputStyle, "bg-[#201e23]") }
                   placeholder="Legal Name"
                   {...register("username", {
                     required: "username is required",
@@ -274,7 +282,7 @@ function SignupCeleb() {
                       },
                     })}
                     type="text" // Keep the type as text
-                    className={inputStyle}
+                    className={cn(inputStyle, "bg-[#201e23]") }
                     placeholder={`How many followers do you have on ${mostPopularSocialMedia}`}
                   />
                   {errors.followers && (
@@ -291,7 +299,7 @@ function SignupCeleb() {
                       required: "input your social media handle?",
                     })}
                     //   onChange={(e) => setEmail(e.target.value)}
-                    className={inputStyle}
+                    className={cn(inputStyle, "bg-[#201e23]") }
                     placeholder={`What is your @ on ${mostPopularSocialMedia}`}
                   />
                   {errors.account && (
@@ -300,10 +308,10 @@ function SignupCeleb() {
                 </div>
               )}
               {/* category */}
-              <div className="relative mb-6 " data-te-input-wrapper-init>
+              {/* <div className="relative mb-6 " data-te-input-wrapper-init>
                 <label className="block text-sm font-medium mb-2 w-full sm:w-4/6 text-white text-left ">
                   What is your largest following
-                </label>
+                </label> */}
                 {/* <select
             {...register("category", {
               required:
@@ -322,7 +330,7 @@ function SignupCeleb() {
             <option value="6">Question</option>
             <option value="7">Other</option>
           </select> */}
-                <div className="z-20">
+                {/* <div className="z-20">
                   <Select
                   
                     name="category"
@@ -378,7 +386,7 @@ function SignupCeleb() {
                 {errors.category && (
                   <p className=" mt-2 text-red-400">{`${errors.category.message}`}</p>
                 )}
-              </div>
+              </div> */}
               {/* price */}
               {/* <div className="mb-6">
           <label className="flex mb-1 text-sm font-medium  w-full sm:w-6/6 text-white text-left">
@@ -407,7 +415,7 @@ function SignupCeleb() {
                       required: "email field is required",
                     })}
                     type="text"
-                    className={inputStyle}
+                    className={cn(inputStyle, "bg-[#201e23]") }
                     placeholder="email address"
                   />
                   {errors.email && (
@@ -426,7 +434,7 @@ function SignupCeleb() {
                       message: "min leng is 6 charecter",
                     },
                   })}
-                  className={inputStyle}
+                  className={cn(inputStyle, "bg-[#201e23]") }
                   placeholder="Password"
                 />
                 {errors.password && (
@@ -442,7 +450,7 @@ function SignupCeleb() {
                     validate: (value) =>
                       value === getValues("password") || "password must match",
                   })}
-                  className={inputStyle}
+                  className={cn(inputStyle, "bg-[#201e23]") }
                   placeholder="confirmPassword"
                 />
                 {errors.confirmPassword && (
@@ -456,10 +464,8 @@ function SignupCeleb() {
                 </div>
                 <textarea
                   {...register("MessageToUs")}
-                  className={inputStyle + "py-2 my-3 h-40"}
-                  // className=" block min-h-[auto] w-full rounded border my-2 bg-transparent
-                  //    px-2 py-2  h-40 shadow-sm shadow-blue-400   outline-none placeholder-style  relative
-                  //     "
+                  className={cn(inputStyle, "bg-[#201e23] py-2 my-3 h-40") }
+
                 />
               </div>
               {/* <!-- Image --> */}
