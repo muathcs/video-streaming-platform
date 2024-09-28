@@ -32,7 +32,7 @@ import {
 
 export function Footer() {
   return (
-    <div className="w-full flex justify-center    bg-black border-t-[0.5px] border-gray-600   ">
+    <div className="w-full flex justify-center    bg-black border-t-[0.5px] border-gray-600 py-5   ">
       <div className="max-w-7xl w-full px-4">
         <div className="text-center">
           {/* Branding */}

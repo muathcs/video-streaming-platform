@@ -40,10 +40,12 @@ function SignupUser({
 
     // reset();
   };
+  const inputStyle =
+    "block min-h-[auto] w-full  rounded-lg border border-[#3f3b45] bg-transparent px-3 py-2 leading-[2.15] outline-none bg-[#201e23] ";
 
   return (
     <>
-      <div>
+      <div className="">
         <form
           onSubmit={handleSubmit(onSubmit)}
           // onSubmit={(e) =>
@@ -57,6 +59,7 @@ function SignupUser({
           //     true
           //   )
           // }
+          
         >
           {/* <!-- username input --> */}
           <div className="relative mb-6" data-te-input-wrapper-init>
@@ -65,9 +68,7 @@ function SignupUser({
               {...register("displayname", {
                 required: "displayname is required",
               })}
-              className="peer block min-h-[auto] w-full rounded border bg-transparent
-                     px-3 py-[0.32rem] leading-[2.15] 
-                      "
+              className={inputStyle}
               placeholder="displayname"
             />
             {errors.displayname && (
@@ -81,9 +82,7 @@ function SignupUser({
               {...register("email", {
                 required: "Email is required",
               })}
-              className="peer block min-h-[auto] w-full rounded border bg-transparent
-                     px-3 py-[0.32rem] leading-[2.15] 
-              "
+              className={inputStyle}
               placeholder="email"
             />
             {errors.email && (
@@ -102,7 +101,7 @@ function SignupUser({
                   message: "password must be at least 10 charecters",
                 },
               })}
-              className="peer block min-h-[auto] w-full rounded border bg-transparent px-3 py-[0.32rem] leading-[2.15]  "
+              className={inputStyle}
               placeholder="Password"
             />
             {errors.password && (
@@ -118,7 +117,7 @@ function SignupUser({
                 validate: (value) =>
                   value === getValues("password") || "password must match",
               })}
-              className="peer block min-h-[auto] w-full rounded border bg-transparent px-3 py-[0.32rem] leading-[2.15]  "
+              className={inputStyle}
               placeholder="confirmPassword"
             />
             {errors.confirmPassword && (
@@ -129,27 +128,28 @@ function SignupUser({
           <div className="relative mb-6" data-te-input-wrapper-init>
             <textarea
               {...register("description")}
-              className="peer block min-h-[auto] w-full rounded border bg-transparent px-3 py-[0.32rem] leading-[2.15]"
+              className={inputStyle}
               placeholder="description (optional)"
             />
           </div>
           {/* <!-- Image --> */}
           <div
-            className="relative mb-2  h-[50px] border"
+            className="relative mb-2  h-[50px] "
             data-te-input-wrapper-init
           >
             <input
               type="file"
               {...register("imgfile")}
               onChange={handleFileChange}
-              className=" block min-h-[auto] w-2/4 rounded 
-                     bg-transparent px-3 py-[0.32rem] leading-[2.15] cursor-pointer
-                      "
+              className={inputStyle}
+              // className=" block min-h-[auto] w-2/4 rounded 
+              //        bg-transparent px-3 py-[0.32rem] leading-[2.15] cursor-pointer
+              //         "
             />
 
             <label
               htmlFor="exampleFormControlInput33"
-              className="absolute right-2 top-3 cursor-pointer"
+              className="absolute right-2 top-3 cursor-pointer hidden md:block"
             >
               Pick a Profile image
             </label>

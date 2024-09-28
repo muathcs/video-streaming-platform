@@ -11,18 +11,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select.tsx";
-import { Input } from "@/components/ui/input.tsx";
-import { Label } from "@/components/ui/label.tsx";
-import AccountSuccess from "@/components/TalentAccountSuccessMessage.tsx";
 import axios from "axios";
 import { apiUrl } from "@/utilities/fetchPath.tsx";
 import { useAuth } from "@/context/AuthContext.tsx";
-import {
-  createUserWithEmailAndPassword,
-  sendEmailVerification,
-  signInWithEmailAndPassword,
-} from "firebase/auth";
-import { auth } from "@/auth/firebase.tsx";
+
 import { IoClose } from "react-icons/io5";
 import SuccessConfetti from "../assets/successPNG.png";
 const firebaseErrorMessages: { [key: string]: string } = {
@@ -70,7 +62,7 @@ function SuccessPage() {
   );
 }
 
-function SignupCeleb({}: {}) {
+function SignupCeleb() {
   const { signup, currentUser }: AuthContextType = useAuth();
 
   console.log("current: ", currentUser);
@@ -162,14 +154,14 @@ function SignupCeleb({}: {}) {
   }
 
   const inputStyle =
-    "peer block min-h-[auto] w-full   rounded border bg-transparent px-3 py-4 leading-[2.15] outline-none transition-all duration-200 ease-linear focus:placeholder:opacity-100 data-[te-input-state-active]:placeholder:opacity-100 motion-reduce:transition-none dark:text-neutral-200 dark:placeholder:text-neutral-200   ";
+    "block min-h-[auto] w-full  rounded-lg border border-[#3f3b45] bg-transparent px-3 py-2 leading-[2.15] outline-none bg-[#201e23] ";
 
   return (
-    <div className="bg-black">
-      <div className=" max-w-7xl mx-auto px-4 ">
+    <div className="bg-black ">
+      <div className=" max-w-2xl mx-auto px-4 flex justify-center items-center flex-col  ">
         {error && (
           <div
-            className="bg-red-100 border border-red-400 text-red-700 px-4 py-5 rounded relative mb-5"
+            className="bg-red-100 border border-red-400 text-red-700 px-4 py-5 rounded relative mb-5 "
             role="alert"
           >
             <strong className="font-bold">Error: </strong>
@@ -189,7 +181,7 @@ function SignupCeleb({}: {}) {
           <SuccessPage />
         ) : (
           <>
-            <div className="pt-20">
+            <div className="pt-20 mb-10">
               <h1 className="text-7xl font-serif relative ">
                 Share Your <span className="text-purple-500">Hikaya</span>{" "}
                 <br />
@@ -200,7 +192,7 @@ function SignupCeleb({}: {}) {
                 Start earning from your passion today.
               </h2>
             </div>
-            <form onSubmit={handleSubmit(onSubmit)}>
+            <form className="max-w-lg " onSubmit={handleSubmit(onSubmit)}>
               {" "}
               {/* <!-- display Name --> */}
               <div className="relative mb-6" data-te-input-wrapper-init>
@@ -220,7 +212,7 @@ function SignupCeleb({}: {}) {
               <div className="relative mb-6" data-te-input-wrapper-init>
                 <input
                   type="text"
-                  className={inputStyle}
+                  className={inputStyle }
                   placeholder="Legal Name"
                   {...register("username", {
                     required: "username is required",
@@ -250,10 +242,10 @@ function SignupCeleb({}: {}) {
                       setValue("MostPopularApp", app.name);
                       setMostPopularSocialMedia(app.name);
                     }}
-                    className="w-28 border-2 border-white py-4"
+                    className="w-28 border border-[#3f3b45] py-4 bg-[#201e23] rounded-lg"
                     style={{
                       background:
-                        mostPopularSocialMedia == app.name ? "grey" : "",
+                        mostPopularSocialMedia == app.name ? "#5a5a5c" : "",
                     }}
                   >
                     {app.name}
@@ -332,13 +324,17 @@ function SignupCeleb({}: {}) {
           </select> */}
                 <div className="z-20">
                   <Select
+                  
                     name="category"
                     onValueChange={(e) => {
                       console.log("E: ", e);
                       setValue("category", e);
                     }}
                   >
-                    <SelectTrigger className=" border-2 border-white w-full z-10 py-6 ">
+                    <SelectTrigger
+                    className=" border border-[#3f3b45] w-full z-10 py-6 bg-[#201e23] focus:border-none outline-none "
+                    
+                    >
                       <SelectValue placeholder="Select a range" />
                     </SelectTrigger>
                     <SelectContent className="z-10">
@@ -446,7 +442,7 @@ function SignupCeleb({}: {}) {
                     validate: (value) =>
                       value === getValues("password") || "password must match",
                   })}
-                  className="peer block min-h-[auto] w-full rounded border bg-transparent px-3 py-[0.32rem] leading-[2.15]  "
+                  className={inputStyle}
                   placeholder="confirmPassword"
                 />
                 {errors.confirmPassword && (
@@ -460,9 +456,10 @@ function SignupCeleb({}: {}) {
                 </div>
                 <textarea
                   {...register("MessageToUs")}
-                  className=" block min-h-[auto] w-full rounded border my-2 bg-transparent
-                     px-2 py-2  h-40 shadow-sm shadow-blue-400   outline-none placeholder-style  relative
-                      "
+                  className={inputStyle + "py-2 my-3 h-40"}
+                  // className=" block min-h-[auto] w-full rounded border my-2 bg-transparent
+                  //    px-2 py-2  h-40 shadow-sm shadow-blue-400   outline-none placeholder-style  relative
+                  //     "
                 />
               </div>
               {/* <!-- Image --> */}

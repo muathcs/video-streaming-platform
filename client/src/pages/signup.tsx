@@ -105,12 +105,14 @@ function SignUp() {
     console.log("ref: ", userChoice.current);
   }
 
+  
+
   return (
-    <div className="">
+    <div className=" bg-black  ">
       {successMessage ? (
         <AccountSuccess />
       ) : (
-        <section className="h-screen bg-[#121114] flex justify-center">
+        <section className=" bg-black flex justify-center">
           <div className="container h-full px-6 py-24 ">
             <div className="g-6 flex h-full flex-wrap sm:items-center items-start justify-center lg:justify-between ">
               {/* <!-- Left column container with background--> */}
@@ -124,7 +126,7 @@ function SignUp() {
 
               {/* <!-- Right column container with form --> */}
               <div className="md:w-8/12 lg:ml-6 lg:w-5/12 w-[90%] relative">
-                <h1 className="text-[30px]  mb-10">Sign Up</h1>
+                <h1 className="text-[30px]  mb-10 text-center font-semibold">Sign Up</h1>
                 {error ? (
                   <p className="bg-red-200 border text-black border-red-600 w-full rounded-lg text-center sm:p-4 p-3 relative mb sm:top-2  left-1/2 transform -translate-x-1/2 -translate-y-1/2 ">
                     {error}

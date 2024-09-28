@@ -23,6 +23,7 @@ function RequestForm({ celebuid, fanuid, price, setOrderModal }: RequestProps) {
   const { data: sendPostRequest } = useGlobalAxios("post");
 
   const { data: postData }: any = useGlobalAxios("post", "request"); //
+  const [messageLength, setMessageLength] = useState(0); // state to track the message length
 
   const navigate = useNavigate();
 
@@ -96,7 +97,7 @@ function RequestForm({ celebuid, fanuid, price, setOrderModal }: RequestProps) {
               })}
               name="requestAction"
               data-te-select-init
-              className="w-full h-10 rounded-md bg-transparent border text-white cursor-pointer"
+              className="w-full h-10 rounded-md bg-transparent border text-white cursor-pointer px-2"
             >
               <option className="text-black" value="">
                 Select
@@ -268,20 +269,34 @@ function RequestForm({ celebuid, fanuid, price, setOrderModal }: RequestProps) {
 
           {/* Message */}
           <div className="mb-6">
-            <div className="text-left mb-2">Step 3: Request details</div>
-            <textarea
-              {...register("message", {
-                required: "Write a message to the celeb",
-                maxLength: 350,
-              })}
-              name="message"
-              className="block min-h-[auto] w-full rounded border my-2 bg-transparent px-2 py-2 h-40 shadow-sm shadow-blue-400 outline-none placeholder-style"
-              placeholder="I'm a huge fan of your incredible work. I have a special occasion coming up, and I was wondering if you could send a personalized shout-out or a few words of encouragement to make it even more memorable."
-            />
-            {errors.message && (
-              <p className="text-red-500">{`${errors.message.message}`}</p>
-            )}
-          </div>
+      <div className="text-left mb-2">Step 3: Request details</div>
+      <textarea
+        {...register("message", {
+          required: "Write a message to the celeb",
+          maxLength: {
+            value: 200,
+            message: "Message must not exceed 200 characters",
+          },
+        })}
+        name="message"
+        maxLength={200} // Enforce character limit in HTML
+        onChange={(e) => setMessageLength(e.target.value.length)} // Update the character count
+        className="block min-h-[auto] w-full rounded border my-2 bg-transparent px-2 py-2 h-40 shadow-sm shadow-blue-400 outline-none placeholder-style"
+        placeholder="Write a personal message explaining your occasion and what you'd like the celebrity to say. Include details for a shout-out, special event, or words of encouragement (200 characters max)."      />
+      <div className="flex justify-between ">
+
+      <div>
+
+        {messageLength == 200 && <p className="text-left text-sm text-gray-500 ">Message must not exceed 200 charecters</p>}
+      </div>
+      <div className="text-right text-sm text-gray-500 ">
+        {200 - messageLength} characters remaining
+      </div>
+      </div>
+      {errors.message && (
+        <p className="text-red-500">{`${errors.message.message}`}</p>
+      )}
+    </div>
 
           {/* Continue */}
           <div className="flex justify-center mb-6">
