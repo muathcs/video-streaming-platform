@@ -1,5 +1,4 @@
 import "./App.css";
-import NavBar from "./components/NavBar";
 import { Route, Routes } from "react-router-dom";
 import CelebProfile from "./pages/CelebProfile";
 import Login from "./pages/Login";
@@ -10,18 +9,17 @@ import FanRequests from "./pages/FanRequests";
 import FulfillRequest from "./components/FulfillRequest";
 import Payment from "./pages/Payment";
 import PaymentStatus from "./pages/PaymentStatus";
-import Success from "./components/Success";
 import Category from "./pages/Category";
 import FulFilled from "./components/fulfillRequest/FulFilled";
 import HowTo from "./pages/HowTo";
 import Settings from "./pages/Settings";
-import Celebs, { Footer } from "./pages/Celebs";
-import PaymentStatusWrapper from "./components/PaymentStatusWrapper";
+import Celebs from "./pages/Celebs";
 import UserProfile from "./components/UserProfile";
 import AccountSuccess from "./components/TalentAccountSuccessMessage";
 import Nav from "./components/Nav";
 import SignupCeleb from "./pages/SignupCeleb";
 import PasswordReset from "./components/PasswordReset";
+import Footer from "./components/Footer";
 
 function App() {
   return (
