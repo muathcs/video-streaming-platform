@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 import { FieldValues, useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
-
+import {passwordValidation} from "@/utilities/passwordValidation";
 function SignupUser({
   createUser,
   handleFileChange,
@@ -32,7 +32,7 @@ function SignupUser({
   // }
 
   const onSubmit = async (data: FieldValues) => {
-    const values = getValues();
+    // const values = getValues();
 
     createUser(data, false);
 
@@ -94,13 +94,9 @@ function SignupUser({
           <div className="relative mb-6" data-te-input-wrapper-init>
             <input
               type="password"
-              {...register("password", {
-                required: "password is required",
-                minLength: {
-                  value: 10,
-                  message: "password must be at least 10 charecters",
-                },
-              })}
+              {...register("password", passwordValidation
+                
+              )}
               className={inputStyle}
               placeholder="Password"
             />

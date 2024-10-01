@@ -1,13 +1,11 @@
 import { useAuth } from "../context/AuthContext";
 import completePic from "../assets/complete.png";
 import { MdOutlinePendingActions } from "react-icons/md";
-import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import {  useNavigate } from "react-router-dom";
 import { BsQuestionCircle } from "react-icons/bs";
 
-import { rejects } from "assert";
-import { useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import Modal from "./Modal";
-import { bool } from "aws-sdk/clients/signer";
 
 interface FanRequestContainerProp {
   request: {
@@ -26,29 +24,45 @@ interface FanRequestContainerProp {
   };
 }
 
-function FulfilledRequest({ request, celeb }: FanRequestContainerProp) {
-  const navigate = useNavigate();
-  return (
-    <>
-      <img
-        src={completePic}
-        width={100}
-        className=" absolute bottom-32 right-5"
-      />
+function RejectedRequestModalMessage({celebName, setOpenModal}:{celebName:string, setOpenModal:Dispatch<SetStateAction<boolean>>}){
 
-      {/* if the request is fullfilled */}
+  return (
+    <div className="flex flex-col p-8  bg-gray-800 w-full  h-full shadow-md hover:shodow-lg rounded-2xl ">
+    <div className="flex items-center justify-between ">
+      <div className="flex items-center">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          className="w-16 h-16 rounded-2xl p-3 border border-gray-800 text-red-400 bg-gray-900"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="2"
+            d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+          ></path>
+        </svg>
+        <div className="flex flex-col ml-3">
+          <div className="font-medium text-lg leading-none text-gray-100">
+            {celebName} has rejected your request
+          </div>
+          <p className="text-md text-gray-500 leading-none mt-1">
+            this may be due to the content of your request, or a personal
+            decision. You have recieved a full refund.
+          </p>
+        </div>
+      </div>
       <button
-        onClick={() =>
-          navigate("/request/fulfilled", {
-            state: { request, celeb },
-          })
-        }
-        className=" absolute bottom-5 right-2 px-10 py-3 bg-blue-500 rounded-lg hover:bg-blue-600"
+        onClick={() => setOpenModal(false)}
+        className="flex-no-shrink bg-red-500 hover:bg-red-600 px-5 ml-4 py-2 rounded-full"
       >
-        View
+        close
       </button>
-    </>
-  );
+    </div>
+  </div>
+  )
 }
 
 //this component has the various requests a user has made to diff celebs, and the status of those requestS(fulfilled, pending  or rejected.)
@@ -76,82 +90,70 @@ function FanRequestContainer({ request, celeb }: FanRequestContainerProp) {
     });
   };
 
+  const renderRequestStatus = () => {
+    if (reqstatus === "fulfilled") {
+      return (
+        <>
+          <img src={completePic} width={100} className="absolute bottom-32 right-5" />
+          <button
+            onClick={() =>
+              navigate("/request/fulfilled", {
+                state: { request, celeb },
+              })
+            }
+            className="absolute bottom-5 right-2 px-10 py-3 bg-blue-500 rounded-lg hover:bg-blue-600"
+          >
+            View
+          </button>
+        </>
+      );
+    }
+
+    if (reqstatus === "pending") {
+      return (
+        <>
+          <span className="absolute bottom-32 right-6 text-[5rem]">
+            <MdOutlinePendingActions />
+          </span>
+          <span className="absolute bottom-5 right-2 px-10 py-3 bg-blue-500 rounded-lg">
+            Expected: {requestDeliveryDate}
+          </span>
+        </>
+      );
+    }
+
+    if (reqstatus === "rejected") {
+      return (
+        <span onClick={() => setOpenModal(true)} className="text-lg flex items-center gap-2  absolute top-5 right-2">
+          Your Request to {celebName} is {reqstatus}
+          <BsQuestionCircle size={24} />
+        </span>
+      );
+    }
+
+    return null;
+  };
+
+
+ 
   return (
-    <div className=" cursor-pointer w-full flex justify-center items-center mt-10   ">
+    <div className="cursor-pointer w-full flex justify-center items-center mt-10">
       <Modal openModal={openModal} setOpenModal={setOpenModal}>
-        <div className="flex flex-col p-8  bg-gray-800 w-full  h-full shadow-md hover:shodow-lg rounded-2xl ">
-          <div className="flex items-center justify-between ">
-            <div className="flex items-center">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="w-16 h-16 rounded-2xl p-3 border border-gray-800 text-red-400 bg-gray-900"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                ></path>
-              </svg>
-              <div className="flex flex-col ml-3">
-                <div className="font-medium text-lg leading-none text-gray-100">
-                  {celebName} has rejected your request
-                </div>
-                <p className="text-md text-gray-500 leading-none mt-1">
-                  this may be due to the content of your request, or a personal
-                  decision. You have recieved a full refund.
-                </p>
-              </div>
-            </div>
-            <button
-              onClick={() => setOpenModal(false)}
-              className="flex-no-shrink bg-red-500 hover:bg-red-600 px-5 ml-4 py-2 rounded-full"
-            >
-              close
-            </button>
-          </div>
-        </div>
+        <RejectedRequestModalMessage celebName={celebName} setOpenModal={setOpenModal} />
       </Modal>
-      <div className="relative flex p-5 flex-col items-center   md:flex-row    md:w-1/2 rounded-lg  shadow-lg shadow-black border border-gray-600 ">
-        <div className=" w-1/3 h-[350px]  ">
+      <div className="relative flex p-5 flex-col items-center md:flex-row md:w-1/2 rounded-lg shadow-lg shadow-black border border-gray-600">
+        <div className="w-1/3 h-[350px]">
           <img
             onClick={handleCardClick}
-            className="rounded-lg border w-full h-full object-cover relative   border-gray-600 "
+            className="rounded-lg border w-full h-full object-cover relative border-gray-600"
             src={currentUser && celebPhoto}
-            alt=""
+            alt={celebName}
           />
         </div>
-        <div>
-          <div className=" h-[250px] ml-5 ">
-            <p className="   text-lg wotfard  flex items-center gap-2  ">
-              Your Request to {celebName} is {reqstatus}
-              {reqstatus == "rejected" ? (
-                <span
-                  onClick={() => setOpenModal(true)}
-                  className="text-[20px] text-white "
-                >
-                  <BsQuestionCircle />{" "}
-                </span>
-              ) : null}
-            </p>
-            <span className=" absolute bottom-0 right-0 w-1/2 h-1/2 ">
-              {reqstatus == "fulfilled" ? (
-                <FulfilledRequest request={request} celeb={celeb} />
-              ) : reqstatus == "pending" ? (
-                <>
-                  <span className="absolute bottom-32 right-6 text-[5rem] ">
-                    <MdOutlinePendingActions width="33" />
-                  </span>
-                  <span className="absolute bottom-5 right-2 px-10 py-3 bg-blue-500 rounded-lg ">
-                    Expected: {requestDeliveryDate}
-                  </span>
-                </>
-              ) : null}
-            </span>
-          </div>
+        <div className="h-[250px] ml-5">
+          <span className="absolute bottom-0 right-0 w-1/2 h-full ">
+            {renderRequestStatus()}
+          </span>
         </div>
       </div>
     </div>

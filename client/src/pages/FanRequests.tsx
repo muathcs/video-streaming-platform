@@ -1,80 +1,73 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import FanRequestContainer from "../components/FanRequestContainer";
-import { RequestType } from "../TsTypes/types";
-import { CelebType } from "../TsTypes/types";
+import { RequestType, CelebType, AuthContextType } from "../TsTypes/types";
 import { apiUrl } from "../utilities/fetchPath";
 import axios from "../api/axios";
 import FanRequestSkeleton from "@/components/loadingSkeletons/FanRequestSkeleton";
 
-//this component has the various requests a user has made to diff celebs, and the status of those requestS(fulfilled or pending.)
-// if a request is fulfilled, the user can click the view button, which will display the FulFilled componenet.
-type fanRequestType = {
+type FanRequestType = {
   celeb: CelebType;
   request: RequestType;
 };
+
 function FanRequests() {
-  const { currentUser }: any = useAuth();
-  const [celebReplies, setCelebReplies] = useState<fanRequestType[]>();
-  const [error, setError] = useState<boolean>(false);
+  const { currentUser }:AuthContextType = useAuth(); // Assume this has a defined type
+  const [fanRequests, setFanRequests] = useState<FanRequestType[]>([]);
+  const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
 
-  useEffect(() => {
+  const getFanRequests = async () => {
     setLoading(true);
-    const getCelebEplies = async () => {
-      try {
-        const response = await axios.get(`${apiUrl}/request/fanrequests`, {
-          params: { uid: currentUser.uid },
-        });
-        setLoading(false);
+    try {
+      const response = await axios.get(`${apiUrl}/request/fanrequests`, {
+        params: { uid: currentUser.uid },
+      });
+      setFanRequests(response.data);
+    } catch (error: any) {
+      console.error(error);
+      setError("Failed to fetch requests. Please try again later.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
-        setCelebReplies(response.data);
-      } catch (error: any) {
-        console.error(error);
-        setError(true);
-      }
-    };
-
-    getCelebEplies();
+  useEffect(() => {
+    getFanRequests();
   }, []);
 
+  if (loading) {
+    return (
+      <div className="overflow-auto flex flex-col gap-2 h-full items-center pt-10 bg-black">
+        <FanRequestSkeleton />
+        <FanRequestSkeleton />
+        <FanRequestSkeleton />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="h-full flex items-center justify-center">
+        <h1>{error}</h1>
+      </div>
+    );
+  }
+
   return (
-    <>
-      {loading ? (
-        <>
-          <div className="overflow-auto flex flex-col gap-2 h-full  items-center pt-10 bg-black">
-            <FanRequestSkeleton />
-            <FanRequestSkeleton />
-            <FanRequestSkeleton />
-          </div>
-        </>
-      ) : error ? (
-        <div className="h-full flex items-center justify-center">
-          <h1>Error.. Something went wrong</h1>
-        </div>
+    <div className="overflow-auto flex flex-col gap-2 h-full bg-black justify-start items-center">
+      {fanRequests.length === 0 ? (
+        <h1 className="top-40 relative">You do not have any requests</h1>
       ) : (
-        <div className="overflow-auto flex flex-col gap-2 h-full  bg-black justify-start items-center  ">
-          <>
-            {celebReplies?.length === 0 ? (
-              <h1 className=" top-40 relative">You do not have any requests</h1>
-            ) : (
-              ""
-            )}
-            {celebReplies &&
-              celebReplies.map((req: fanRequestType) => (
-                <>
-                  {/* each one of these componenets hold a request */}
-                  <FanRequestContainer
-                    request={req.request}
-                    celeb={req.celeb}
-                    key={req.request.requestid}
-                  />
-                </>
-              ))}
-          </>
-        </div>
+        fanRequests.map((req: FanRequestType) => (
+          <FanRequestContainer
+            request={req.request}
+            celeb={req.celeb}
+            key={req.request.requestid}
+          />
+        ))
       )}
-    </>
+    </div>
   );
 }
 

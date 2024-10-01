@@ -2,9 +2,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useLocalStorage } from "../hooks/useLocalStorage";
 import { useNavigate } from "react-router-dom";
-import { useGlobalAxios } from "../hooks/useGlobalAxios";
-import { apiUrl } from "../utilities/fetchPath";
-import { randomUUID } from "crypto";
+
 type RequestProps = {
   celebuid: string;
   fanuid: string;
@@ -14,22 +12,10 @@ type RequestProps = {
 
 // this is coming from the orderModal component in /CelebProfile.tsx
 function RequestForm({ celebuid, fanuid, price, setOrderModal }: RequestProps) {
-  // const {
-  //   data: sendUserRequestForm,
-  //   loading,
-  //   error,
-  // } = useGlobalAxios("post", "yourDataEndpoint");
 
-  const { data: sendPostRequest } = useGlobalAxios("post");
-
-  const { data: postData }: any = useGlobalAxios("post", "request"); //
   const [messageLength, setMessageLength] = useState(0); // state to track the message length
-
   const navigate = useNavigate();
-
-  const [localStorageRequest, setLocalStorageRequest] =
-    useLocalStorage("request");
-
+  const [, setLocalStorageRequest] = useLocalStorage("request");
   const {
     register,
     handleSubmit,
@@ -37,6 +23,8 @@ function RequestForm({ celebuid, fanuid, price, setOrderModal }: RequestProps) {
     reset,
     getValues,
   } = useForm();
+
+  console.log("celebuid: ", celebuid)
 
   const [checkBox, setCheckBox] = useState(false);
   const [toSomeoneElse, setToSomeoneElse] = useState(false);
@@ -52,27 +40,12 @@ function RequestForm({ celebuid, fanuid, price, setOrderModal }: RequestProps) {
       fanuid,
       price,
     });
-
-    const requestInfo = getValues(); // values from form
     await setLocalStorageRequest(getValues());
-
     navigate("/payment");
-    // createNotification();
-    // postData(`${apiUrl}/request`, requestInfo);
     // navigate("/success");
-
     reset();
-
-    //
   }
 
-  // function createNotification() {
-  //   sendPostRequest(`${apiUrl}/notification`, {
-  //     intended_uid: celebUid,
-  //     sender_uid: fanUid,
-  //     message: "user has made a request",
-  //   });
-  // }
 
   return (
     <>

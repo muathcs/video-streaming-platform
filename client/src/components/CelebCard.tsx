@@ -18,7 +18,7 @@ type CelebCardProps = {
   username: string;
 };
 
-function CelebCard({ celeb, size }: { celeb: CelebCardProps; size?: number }) {
+function CelebCard({ celeb }: { celeb: CelebCardProps }) {
   const navigate = useNavigate();
 
   const handleCardClick = () => {

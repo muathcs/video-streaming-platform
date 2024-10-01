@@ -11,6 +11,8 @@ const PaymentStatus = () => {
 
   const [request] = useLocalStorage<RequestType>("request");
 
+  console.log("reqcu: ", request)
+
   const { data: sendPostRequest } = useGlobalAxios("post");
   const [requestProcessed, setRequestProcessed] = useLocalStorage<boolean>(
     "requestProcessed",

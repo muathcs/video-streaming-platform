@@ -1,27 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Button } from "./ui/button";
-import { Check, ChevronsUpDown } from "lucide-react";
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from "@/components/ui/command";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { cn } from "@/lib/utils";
-import { Input } from "./ui/input";
+
 import { useAuth } from "@/context/AuthContext";
 import { useRequests } from "@/context/RequestContext";
 import axios from "@/api/axios";
 import { apiUrl } from "@/utilities/fetchPath";
-import { AuthContextType, CelebType, notification } from "@/TsTypes/types";
+import { AuthContextType, notification } from "@/TsTypes/types";
 import { useGlobalAxios } from "@/hooks/useGlobalAxios";
 import { GiShoppingCart } from "react-icons/gi";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";

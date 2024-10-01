@@ -179,7 +179,7 @@ router.post("/", async (req, res) => {
     console.log("checkUID: ", celebuid)
 
 
-    // update the request_num for the celeb
+    // increment num of reqs a celeb has. 
     const updatedCeleb = await prisma.celeb.update({
       where: {
         uid:celebuid

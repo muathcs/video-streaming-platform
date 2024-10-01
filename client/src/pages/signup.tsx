@@ -39,7 +39,11 @@ function SignUp() {
       setLoading(true);
       const userid = await signup(email, password, displayname);
 
-      const imgUrl: string = await handleUpload(userid.uid); // returns url with selected file name only if file is selected. .
+      let imgUrl: string = "http:test/nothing"
+      if (selectedFile){
+        imgUrl = await handleUpload(userid.uid); // returns url with selected file name only if file is selected. .
+
+      }
 
       const fireBaseUrlLink = AWS_LINK + imgUrl; // this link adds the AWS S3 Storage url, to the img url
 
@@ -49,15 +53,14 @@ function SignUp() {
         ? `${apiUrl}/celebs/createCeleb`
         : `${apiUrl}/fan/createUser`; // if the celeb is being created, create a celeb on the server and vice versa.
 
-      let fd; //formdata
+      const fd = new FormData()
+
+      fd.append("payLoad", JSON.stringify(data));
+      fd.append("uid", userid.uid);
+      fd.append("imgurl", imgUrl);
 
       if (selectedFile) {
-        fd = new FormData();
         fd.append("file", selectedFile);
-        // Append other parameters
-        fd.append("payLoad", JSON.stringify(data));
-        fd.append("uid", userid.uid);
-        fd.append("imgurl", imgUrl);
       }
 
       try {
@@ -120,7 +123,7 @@ function SignUp() {
                 <img
                   src="https://tecdn.b-cdn.net/img/Photos/new-templates/bootstrap-login-form/draw2.svg"
                   className="w-full"
-                  alt="Phone image"
+                  alt="image"
                 />
               </div>
 

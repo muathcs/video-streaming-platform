@@ -22,27 +22,19 @@ type StateType = {
   celeb: CelebType;
   // other properties in the state
 };
-Date: "2024-03-09T19:04:27.771Z";
-celebCelebid: null;
-event: "Pep Talk";
-message: "Wow this was greate, thank you so much for doing this. ";
-reviewed_id: "jt7hAMGak2bQNPLhCkhLbBn3hmQ2";
-reviewer_id: "GftG290txWMsA1ddMVgMcf4WoUs2";
-reviewer_name: "z";
-reviewid: "3594d349-12b3-4670-8ad7-2442d5a00b4e";
 
-type ReviewSectionPlusReviewModalProps = {
+type ReviewSectionProps = {
   openModal: boolean;
   setOpenModal: (state: boolean) => void;
   reviews: ReviewsType[];
 };
 
 // this is the review section shown in the celebprofile
-function ReviewSectionPlusReviewModal({
+function ReviewSection({
   openModal,
   setOpenModal,
   reviews,
-}: ReviewSectionPlusReviewModalProps) {
+}: ReviewSectionProps) {
   return (
     <div className=" flex flex-col justify-center        ">
       <Modal openModal={openModal} setOpenModal={setOpenModal}>
@@ -127,6 +119,8 @@ function OrderModal({
   celebInfo,
   currentUserUid,
 }: OrderModalType) {
+
+  console.log("ordermoda: ", celebInfo)
   return (
     <div className="bg-[#121114]    h-full w-full top-0 fixed  flex justify-center items-center sm:bg-opacity-60 z-10     ">
       {/* <div
@@ -140,6 +134,7 @@ function OrderModal({
         celebuid={celebInfo.uid}
         fanuid={currentUserUid}
         price={celebInfo.price}
+        
       />
     </div>
     // </div>
@@ -182,6 +177,8 @@ function CelebInfoDisplay({
   );
 }
 
+
+// dispalys videos the celeb has fulfilled. 
 function VideoSection() {
   return (
     <Carousel className="w-full max-w-lg ">
@@ -206,15 +203,14 @@ function VideoSection() {
 
 // this shows the celeb profile,
 
-// the componenent above it ReviewSectionPlusReviewModal handles the review section in the celebProfile.
+// the componenent above it ReviewSection handles the review section in the celebProfile.
 function CelebProfile() {
   const { state } = useLocation();
-  if (!state) return null; // return if there is no state
   const [orderModal, setOrderModal] = useState<bool>(false);
-  const { currentUser, celeb }: any = useAuth();
-  const { data: getData, error, loading } = useGlobalAxios("get");
+  const { currentUser }: any = useAuth();
   const [reviews, setReviews] = useState<ReviewsType[]>();
   const [openModal, setOpenModal] = useState(false);
+
 
   const { celeb: celebInfo }: StateType = state;
   const {
@@ -227,6 +223,8 @@ function CelebProfile() {
     ...rest
   }: CelebType = celebInfo;
 
+  console.log("celebInfo: ", celebInfo)
+
   async function getReviews() {
     try {
       const result = await axios.get("/reviews", {
@@ -236,12 +234,17 @@ function CelebProfile() {
       });
 
       setReviews(result.data);
-    } catch (error) {}
+    } catch (error) {
+      console.error(error)
+    }
   }
 
   useEffect(() => {
     getReviews();
   }, [celebInfo]);
+
+  if (!state) return null; // return if there is no state
+
   return (
     <>
       <div className="  w-[99%] flex  flex-col relative   text-white text-lg  bg-black  ">
@@ -264,7 +267,7 @@ function CelebProfile() {
 
         <div className=" h-max py-10  flex justify-center">
           {reviews && reviews?.length > 0 ? (
-            <ReviewSectionPlusReviewModal
+            <ReviewSection
               openModal={openModal}
               setOpenModal={setOpenModal}
               reviews={reviews}

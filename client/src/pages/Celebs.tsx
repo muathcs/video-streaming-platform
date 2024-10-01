@@ -1,12 +1,10 @@
 import CelebCard from "../components/CelebCard";
-import background from "../assets/background.jpg";
-import { useInRouterContext, useNavigate } from "react-router-dom";
+import {  useNavigate } from "react-router-dom";
 import { apiUrl } from "../utilities/fetchPath";
 import { useEffect, useState } from "react";
 import axios from "../api/axios";
 import { AuthContextType, CelebType } from "../TsTypes/types";
 import { useAuth } from "../context/AuthContext";
-import { userInfo } from "os";
 import CelebSpiderImg from "../assets/spider.png";
 import messi from "../assets/messi.png";
 import picks1 from "../assets/picks1.png";
@@ -22,13 +20,13 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
-import { Card, CardContent } from "@/components/ui/card";
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { faqData, HowToUseinstructions } from "@/constants/celebTSXConstants";
 
 export function Footer() {
   return (
@@ -83,14 +81,41 @@ export function Footer() {
     </div>
   );
 }
+
+// 
 function Celebs() {
   // const { data: getData, loading, error } = useGlobalAxios("getnow");
 
   const [celebs, setCelebs] = useState<CelebType[]>([]);
+  const [loading, setLoading] = useState<boolean>(false)
 
-  const { currentUser }: AuthContextType = useAuth();
 
-  console.log("current: ", currentUser);
+
+  // fetch 10 celebs to display on the slider
+  // ps: the server dictates how many celebs to fetch, if it's not mentioned in the payload. Default is 10. 
+  async function getCelebs(){
+    setLoading(true)
+    try {
+      const response = await axios.get(`${apiUrl}/celebs`);
+      setCelebs(response.data);
+    } catch (error:any) {
+            console.error('Error occurredx:', error.message); // Log server error message
+      }finally{
+        setLoading(false)
+      }
+    }
+  
+
+  useEffect(() => {
+    getCelebs();
+  }, []);
+
+  const navigate = useNavigate();
+
+  const [amountOfCategoryToShow, setAmountOfCategoryToShow] =
+    useState<number>(6);
+  const { userInfo }: AuthContextType = useAuth();
+  const [recommendations, setRecommendations] = useState<CelebType[]>();
 
   const shopByCategory = [
     {
@@ -127,101 +152,9 @@ function Celebs() {
     },
   ];
 
-  const instructions = [
-    {
-      instructionTitle: "Find a Celebrity",
-      instruction: "Browse thousands of stars offering  personalized videos.",
-    },
-    {
-      instructionTitle: "Tell them what to say",
-      instruction:
-        "During checkout, you’ll provide the details the celeb will need to make the perfect personalized video.",
-    },
-    {
-      instructionTitle: "Get your video",
-      instruction:
-        "Celebs have up to 7 days to complete your request. When it’s ready, we’ll send it directly to you.",
-    },
-    {
-      instructionTitle: "Share with loved ones",
-      instruction:
-        "Send the video to friends and family and don’t forget to capture their priceless reactions.",
-    },
-  ];
 
-  const faqData = [
-    {
-      question: "What is Cameo?",
-      answer:
-        "Cameo is a platform where you can get personalized video shoutouts from celebrities.",
-    },
-    {
-      question: "How do I request a video?",
-      answer:
-        "Simply browse through the celebrities, choose your favorite, and send a request with the details of your shoutout.",
-    },
-    {
-      question: "How much does it cost?",
-      answer:
-        "Prices vary depending on the celebrity. You can view the price before requesting a shoutout.",
-    },
-    {
-      question: "Is there a refund policy?",
-      answer:
-        "Refunds are available if the celebrity doesn’t complete your request within 7 days.",
-    },
-    {
-      question: "Can I share my video on social media?",
-      answer:
-        "Yes, once you receive your video, it's yours to share across all your social media platforms.",
-    },
-  ];
 
-  // fetches celeb on mount
-  useEffect(() => {
-    const getCelebs = async () => {
-      try {
-        const response = await axios.get(`${apiUrl}/celebs`);
-        setCelebs(response.data);
-      } catch (error:any) {
-            // Handle errors (error.response is the response from the server)
-            if (error.response) {
-              // Server responded with a status other than 200 range
-              console.error('Error occurredx:', error.response.data); // Log server error message
-              // alert(`An error occurred: ${error.response.data.error}`);
-          } else {
-              // Other errors (e.g., network errors)
-              console.error('Error occurredy:', error.message);
-              // alert(`An error occurred: ${error.message}`);
-          }
-      }
-    };
-
-    getCelebs();
-  }, []);
-
-  const navigate = useNavigate();
-
-  const amountOfCelebPerPage = 16;
-  const [currentPage, setCurrentPage] = useState(1);
-  const startIndex = (currentPage - 1) * amountOfCelebPerPage; // 30 is the amount of celebs we want to show per page
-  const endIndex = startIndex + amountOfCelebPerPage;
-  const celebsToShow = celebs.slice(startIndex, endIndex);
-  const [amountOfCategoryToShow, setAmountOfCategoryToShow] =
-    useState<number>(6);
-  const { userInfo }: AuthContextType = useAuth();
-  const [recommendations, setRecommendations] = useState<CelebType[]>();
-
-  const handleNextPage = () => {
-    // window.scrollTo({ top: 10, behavior: "smooth" });
-    // document.querySelector("body")?.scrollTo(0, 0);
-    // window.scrollTo(0, 0);
-    // document
-    //   .getElementById("pagex")
-    //   ?.scrollTo({ top: 880, behavior: "smooth" });
-    setCurrentPage((prevPage) => prevPage + 1);
-  };
-
+  // This uses machine learning/Pytorch on the server. check server/python file for more
   async function getRecommendations() {
     try {
       const response = await axios.get(
@@ -240,27 +173,6 @@ function Celebs() {
     }
   }, []);
 
-  const items = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
-  const [startIndexx, setStartIndex] = useState(0);
-  const itemsPerPage = 5;
-
-  const handleNext = () => {
-    console.log("handle next");
-    if (startIndexx + itemsPerPage < items.length) {
-      console.log("inside next");
-      setStartIndex(startIndexx + 1);
-    }
-  };
-
-  const handlePrevious = () => {
-    if (startIndexx > 0) {
-      setStartIndex(startIndexx - 1);
-    }
-  };
-
-  const visibleItems = items.slice(startIndexx, startIndexx + itemsPerPage);
-
-  console.log("visible: ", visibleItems);
 
   return (
     <>
@@ -298,7 +210,7 @@ function Celebs() {
             <div className=" flex flex-wrap justify-center pl-10  items-center gap-0 px-4 md:mb-5 md:gap-5  ">
               {shopByCategory
                 .splice(0, amountOfCategoryToShow)
-                .map((category, index) => {
+                .map((category) => {
                   return (
                     <div
                       key={category.categoryName}
@@ -322,33 +234,7 @@ function Celebs() {
                   );
                 })}
             </div>
-            {/* <div className=" md:h-4/6 gap-0 grid  grid-cols-3 sm:grid-cols-5 xl:grid-cols-9 justify-items-center just  px-4  justify-center items-center md:mb-5 xl:gap-20 border-2  ">
-              {shopByCategory
-                .splice(0, amountOfCategoryToShow)
-                .map((category, index) => {
-                  return (
-                    <div
-                      key={category.categoryName}
-                      className="flex flex-col  items-center justify-center  hover:cursor-pointer hover:text-gray-400 mb-2    "
-                    >
-                      <div
-                        onClick={() =>
-                          navigate(`/browse/${category.categoryName}`)
-                        }
-                        className="border-2 bg-red-300 rounded-full w-[6.5rem] h-[6.5rem] md:w-[8rem]  md:h-[8rem]  lg:w-[11rem] lg:h-[11rem] xl:w-[12rem] xl:h-[12rem] overflow-hidden relative "
-                      >
-                        <img
-                          src={category.img}
-                          className="h-full w-full object-cover card-zoom-image"
-                        />
-                      </div>
-                      <p className="font-bold text-sm md:text-[24px] w-full flex justify-center hover:text-gray-400  ">
-                        {category.categoryName}
-                      </p>
-                    </div>
-                  );
-                })}
-            </div> */}
+       
             <button
               onClick={() => {
                 setAmountOfCategoryToShow(amountOfCategoryToShow == 8 ? 6 : 8);
@@ -436,7 +322,7 @@ function Celebs() {
                 recommendations
               </p>
               <div className=" md:h-4/6 gap-0 grid  grid-cols-3 sm:grid-cols-5 xl:grid-cols-5 just  px-4  justify-center md:mb-5 xl:gap-20  ">
-                {recommendations?.map((celeb, index) => {
+                {recommendations?.map((celeb) => {
                   return (
                     <div
                       key={celeb.celebid}
@@ -465,7 +351,7 @@ function Celebs() {
                   );
                 })}
               </div>
-              {/* <button
+              <button
                 onClick={() => {
                   setAmountOfCategoryToShow(
                     amountOfCategoryToShow == 8 ? 6 : 8
@@ -474,34 +360,12 @@ function Celebs() {
                 className=" border-2 border-gray-50   mx-4   rounded-full py-3 hover:bg-gray-950 mt-5 lg:mt-32 xl:mt-10"
               >
                 View All
-              </button> */}
+              </button>
             </div>
           </div>
         ) : null}
 
-        {/* celebs */}
-        {/* <p className=" w-full text-left pl-7 text-2xl md:hidden relative top-8 font-bold mt-10">
-          Featured
-        </p>
-        <div className="2xl:w-5/6   relative justify-items-center flex   w-full overflow-scroll xl:overflow-auto   mb-10 pb-2 mt-20  ">
-          <div className="flex flex-row gap-5 pl-5 md:grid md:grid-cols-2  md:w-full  lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5  p-5 ">
-            {0 ? (
-              <h1>Loading</h1>
-            ) : 0 ? (
-              <h1>Error</h1>
-            ) : (
-              [...celebsToShow].map((celeb, index) => (
-                <CelebCard celeb={celeb} key={index} />
-              ))
-            )}
-          </div>
-        </div>
-        <button
-          className="bg-gray-800 px-10 py-5 rounded-md relative bottom-10 lg:block hidden"
-          onClick={handleNextPage}
-        >
-          Next Page
-        </button> */}
+     
 
         <div className="relative mt-60 w-full max-w-7xl flex flex-col justify-center items-center gap-y-4 px-2">
           <p className="text-4xl font-serif mb-10">Featured Picks</p>
@@ -514,7 +378,7 @@ function Celebs() {
         <div className="  px-2 w-full flex flex-col items-center justify-center">
           <p className="font-serif text-2xl text-center">How Cameo Work</p>
           <div className="md:p-10 sm:grid sm:grid-cols-2 gap-4  flex flex-col items-center sm:items-start  ">
-            {instructions.map((instruction, index) => (
+            {HowToUseinstructions.map((instruction, index) => (
               <div className="flex flex-col md:w-[375px] items-center justify-center px-2">
                 <img
                   src={instructionMan}
