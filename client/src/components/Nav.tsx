@@ -18,7 +18,7 @@ function classNames(...classes: any) {
 function Nav() {
   const { logout, currentUser, celeb, userInfo }: AuthContextType = useAuth();
 
-  console.log("f: ", apiUrl)
+  console.log("f: ", apiUrl);
 
   console.log(celeb?.isCeleb);
   const navigate = useNavigate();
@@ -27,8 +27,6 @@ function Nav() {
   const [searchCelebVal, setSearchCelebVal] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
   const [openNotification, setOpenNotification] = useState(false);
-
- 
 
   const path = celeb?.isCeleb
     ? "dashboard"
@@ -129,7 +127,7 @@ function Nav() {
       const response = await axios.get(`${apiUrl}/search`, {
         params: { name: keysSearch },
       });
-
+      console.log("respn");
       setCelebsSuggestion(response.data);
     } catch (error) {
       console.error(error);
@@ -275,7 +273,7 @@ function Nav() {
                       onClick={() => {
                         setSearchCelebVal(""); // Clear the search value to hide the dropdown
 
-                        navigate("/profile", {
+                        navigate(`/profile/${celeb.displayname}/${celeb.uid}`, {
                           state: { celeb },
                         });
                       }}

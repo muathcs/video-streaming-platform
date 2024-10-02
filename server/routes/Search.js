@@ -21,7 +21,7 @@ router.get("/", async (req, res) => {
     //   [name]
     // );
     const searchQuery = await prisma.$queryRaw`
-    SELECT celebid, displayname, username, followers, price, rating, imgurl, 
+    SELECT celebid, displayname, username, followers, price, rating, uid, imgurl, 
       ts_rank(document_with_idx, to_tsquery('simple', ${name} || ':*')) AS rank 
     FROM public."Celeb" 
     WHERE document_with_idx @@ to_tsquery('simple', ${name} || ':*')

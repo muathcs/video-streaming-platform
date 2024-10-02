@@ -19,6 +19,7 @@ function Dashboard() {
   const [openModal, setOpenModal] = useState(false);
   const { data: sendPutRequest, loading, error } = useGlobalAxios("put");
   const [rejectedRequestId, setRejectedRequestId] = useState<string>("");
+  const [rejectionMessage, setRejectionMessage] = useState<string>(""); // celeb message for they have been rejected.
   useEffect(() => {
     const getRequests = async () => {
       try {
@@ -107,15 +108,17 @@ function Dashboard() {
   async function handleRejection() {
     setOpenModal(false);
     const requestid = rejectedRequestId;
+
+    console.log("rejected: ", rejectedRequestId);
     try {
-      const response = await sendPutRequest(`${apiUrl}/reviews`, {
-        requestid: rejectedRequestId,
-        uid: currentUser.uid,
-      });
-
-      const requestsAfterOneRequestHasBeenRejected = response.data;
-
-      setData(requestsAfterOneRequestHasBeenRejected);
+      const response = await sendPutRequest(
+        `${apiUrl}/request/reject/${rejectedRequestId}`,
+        {
+          uid: currentUser.uid,
+          rejectionMessage,
+        }
+      );
+      setData(response.data); // reset data after one request has been rejected.
     } catch (error) {
       console.error(error);
     }
@@ -123,11 +126,11 @@ function Dashboard() {
 
   return (
     <>
-      <div className=" flex justify-center items-center  bg-[#121114]  h-full h-[100vh]">
+      <div className=" flex justify-center items-center  bg-[#121114]   h-[100vh]">
         <div className="container bg-[#26242a] w-full h-[70%]  rounded-lg  border border-gray-200    ">
           <Modal openModal={openModal} setOpenModal={setOpenModal}>
-            <div className="flex flex-col p-8  bg-gray-800 w-full  h-full shadow-md hover:shodow-lg rounded-2xl ">
-              <div className="flex items-center justify-between ">
+            <div className="flex flex-col p-8 bg-gray-800 w-full h-full shadow-md hover:shadow-lg rounded-2xl">
+              <div className="flex items-start justify-between">
                 <div className="flex items-center">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -143,21 +146,31 @@ function Dashboard() {
                       d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
                     ></path>
                   </svg>
-                  <div className="flex flex-col ml-3">
-                    <div className="font-medium leading-none text-gray-100">
-                      Are you sure you want to reject?
+                  <div className="flex flex-col ml-4">
+                    <div className="text-lg font-semibold leading-none text-gray-100">
+                      Are you sure you want to reject this request?
                     </div>
-                    <p className="text-sm text-gray-500 leading-none mt-1">
+                    <p className="text-sm text-gray-400 leading-tight mt-2">
                       By rejecting this request, the fan will be refunded.
                     </p>
+                    <textarea
+                      value={rejectionMessage}
+                      onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
+                        setRejectionMessage(e.target.value);
+                      }}
+                      placeholder="Add a reason for the rejection (optional)"
+                      className="mt-4 rounded-lg bg-gray-700 p-4 h-24 w-full text-gray-100 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-md resize-none"
+                    />
                   </div>
                 </div>
-                <button
-                  onClick={() => handleRejection()}
-                  className="flex-no-shrink bg-red-500 hover:bg-red-600 px-5 ml-4 py-2 rounded-full"
-                >
-                  Yes
-                </button>
+                <div className="flex items-center ml-4">
+                  <button
+                    onClick={() => handleRejection()}
+                    className="bg-red-600 hover:bg-red-700 px-6 py-2 text-white font-semibold rounded-full transition-all duration-200 ease-in-out shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-red-500"
+                  >
+                    Reject
+                  </button>
+                </div>
               </div>
             </div>
           </Modal>

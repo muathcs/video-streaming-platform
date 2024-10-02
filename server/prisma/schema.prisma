@@ -70,23 +70,24 @@ model Fan {
 }
 
 model Request {
-  requestid     String    @id @default(uuid())
-  celebuid      String?   @db.VarChar(50)
-  fanuid        String?   @db.VarChar(50)
-  isReviewed    String?   @db.VarChar(50)
-  price         Int?
-  tosomeoneelse Boolean?
-  reqaction     String?   @db.VarChar(16)
-  fromperson    String?   @db.VarChar(40)
-  toperson      String?   @db.VarChar(40)
-  message       String?   @db.VarChar(500)
-  reqstatus     String?   @db.VarChar(10)
-  reqtype       String?   @db.VarChar(8)
-  timestamp1    DateTime? @db.Timestamp(6)
-  timestamp2    DateTime? @db.Timestamp(6)
-  celebmessage  String?   @db.VarChar(1200)
-  paymentId     String?   @db.VarChar(30)
-  refunded      Boolean   @default(false)
+  requestid        String    @id @default(uuid())
+  celebuid         String?   @db.VarChar(50)
+  fanuid           String?   @db.VarChar(50)
+  isReviewed       String?   @db.VarChar(50)
+  price            Int?
+  tosomeoneelse    Boolean?
+  reqaction        String?   @db.VarChar(16)
+  rejectionMessage String?   @db.VarChar(250)
+  fromperson       String?   @db.VarChar(40)
+  toperson         String?   @db.VarChar(40)
+  message          String?   @db.VarChar(500)
+  reqstatus        String?   @db.VarChar(10)
+  reqtype          String?   @db.VarChar(8)
+  timestamp1       DateTime? @db.Timestamp(6)
+  timestamp2       DateTime? @db.Timestamp(6)
+  celebmessage     String?   @db.VarChar(1200)
+  paymentId        String?   @db.VarChar(30)
+  refunded         Boolean   @default(false)
 }
 
 model Review {

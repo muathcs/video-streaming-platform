@@ -67,6 +67,7 @@ router.get("/fanrequests", async (req, res) => {
             uid: true,
             displayname: true,
             imgurl: true,
+            price:true
           },
           where: {
             uid: req.celebuid,
@@ -300,6 +301,44 @@ router.put("/expired/:id", upload.single("videoFile"), async (req, res) => {
     console.error(error);
   }
 });
+
+router.put("/reject/:requestid", async (req, res) => {
+  console.log("herexxx", req.body);
+  const {  uid, rejectionMessage } = req.body;
+  const {requestid} = req.params
+  console.log("aprams: ", requestid)
+  console.log("aprams: ", req.body)
+
+
+  try {
+    const result = await prisma.request.update({
+      where: {
+        requestid: requestid,
+      },
+      data: {
+        reqstatus: "rejected",
+        rejectionMessage:rejectionMessage
+      },
+      
+    });
+
+    const pendinRequests = await prisma.request.findMany({
+      where: {
+        reqstatus: "pending",
+        celebuid: uid,
+      },
+      orderBy: {
+        requestid: "desc",
+      },
+    });
+
+    res.status(201).send(pendinRequests);
+  } catch (error) {
+    console.log("revewPut: ", error);
+    res.status(500).send({error: "An error occurred while rejecting the request."})
+  }
+});
+
 
 router.put("/fulfill/:id", upload.single("videoFile"), async (req, res) => {
   const itemId = req.params.id; // Parse the id parameter as an integer
