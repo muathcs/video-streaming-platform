@@ -61,6 +61,8 @@ https://vid-stream-cl.onrender.com/
 ![image](https://github.com/user-attachments/assets/8053ad1f-a8a0-4fe6-a5ff-687ef9202879)
 ![image](https://github.com/user-attachments/assets/0ba427e1-7b3e-4742-9fd3-3053f915d858)
 ![image](https://github.com/user-attachments/assets/4f717de3-ccea-47d3-8042-2c5a14ae2371)
+![image](https://github.com/user-attachments/assets/24b4a4f8-4ccd-44c3-9dbe-2c486d25b19c)
+![image](https://github.com/user-attachments/assets/6da2ab66-e884-4165-92ba-67d90ca40227)
 
 
 ## Tech Stack
