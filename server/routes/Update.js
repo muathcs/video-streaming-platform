@@ -3,6 +3,7 @@ import express from "express";
 import multer from "multer";
 import { AWS_LINK, uploadFile, uploadProfileImgToS3 } from "../s3.js";
 import { updateEmail, updatePassword } from "../fireBaseAdmin.js";
+import { indexNewCeleb } from "../services/celebService.js";
 
 const router = express.Router();
 
