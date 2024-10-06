@@ -17,31 +17,21 @@ export async function createNotification(intended_uid, sender_uid, message) {
   }
 }
 
-// notification
+// Create a new notification
 router.post("/", async (req, res) => {
   const { intended_uid, sender_uid, message } = req.body;
 
   try {
-    const response = await prisma.notification.create({
-      data: {
-        intended_uid: intended_uid,
-        sender_uid: sender_uid,
-        message: message,
-      },
-    });
-    // const response = await pool.query(
-    //   'INSERT INTO public."Notification"(intended_uid,sender_uid, message) VALUES ($1, $2, $3)',
-    //   [intended_uid, sender_uid, message]
-    // );
-
-    res.status(200).send({ message: "notification has been made" });
+    await createNotification(intended_uid, sender_uid, message);
+    res.status(201).json({ message: "Notification has been created" });
   } catch (error) {
-    console.log("error/notification: ", error);
+    console.error("Error creating notification:", error);
+    res.status(500).json({ error: "Failed to create notification" });
   }
 });
 
 router.get("/", async (req, res) => {
-  const { data: uid } = req.query;
+  const { uid } = req.query;
   try {
     const response = await prisma.notification.findMany({
       where: {
@@ -50,13 +40,10 @@ router.get("/", async (req, res) => {
       },
     });
 
-    // "Select * from notification WHERE intended_uid = $1 AND is_read = $2",
-    //   [uid, false];
-
-    return res.send(response);
+    return res.status(200).json(response);
   } catch (error) {
-    console.log("get/notification: ", error);
-    res.status(404).send({ message: error.message });
+    console.error("Error fetching notifications:", error);
+    res.status(500).json({ error: "Failed to fetch notifications" });
   }
 });
 
@@ -74,12 +61,15 @@ router.put("/", async (req, res) => {
         is_read: true,
       },
     });
-    // const response = pool.query(
-    //   "UPDATE notification SET is_read = true WHERE intended_uid = $1 ",
-    //   [uid]
-    // );
+
+    if (response.count > 0) {
+      res.status(200).json({ message: "Notifications updated successfully", updatedCount: response.count });
+    } else {
+      res.status(404).json({ message: "No notifications found for the given uid" });
+    }
   } catch (error) {
-    res.status(401).send({ message: "could not update notification table" });
+    console.error("Error updating notifications:", error);
+    res.status(500).json({ message: "Could not update notification table", error: error.message });
   }
 });
 

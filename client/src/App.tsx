@@ -20,6 +20,7 @@ import Nav from "./components/Nav";
 import SignupCeleb from "./pages/SignupCeleb";
 import PasswordReset from "./components/PasswordReset";
 import Footer from "./components/Footer";
+import Featured from "./pages/Featured";
 
 function App() {
   return (
@@ -50,6 +51,7 @@ function App() {
         <Route path="/user/profile" element={<UserProfile />} />
         <Route path="/*" element={<PrivateRoute />} />
         <Route path="/reset/password" element={<PasswordReset />} />
+        <Route path="/featured/:category" element={<Featured />} />
       </Routes>
       <Footer />
     </>

@@ -12,7 +12,7 @@ type FanRequestType = {
 };
 
 function FanRequests() {
-  const { currentUser }:AuthContextType = useAuth(); // Assume this has a defined type
+  const { currentUser }: AuthContextType = useAuth(); // Assume this has a defined type
   const [fanRequests, setFanRequests] = useState<FanRequestType[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
@@ -55,7 +55,7 @@ function FanRequests() {
   }
 
   return (
-    <div className="overflow-auto flex flex-col gap-2 h-full bg-black justify-start items-center">
+    <div className="overflow-auto flex flex-col gap-2 h-full bg-black justify-start items-center pb-20">
       {fanRequests.length === 0 ? (
         <h1 className="top-40 relative">You do not have any requests</h1>
       ) : (

@@ -124,7 +124,9 @@ async function uploadVerficationToS3(req, res, next) {
     console.error(error.message);
   }
 }
-//
+
+
+// Route to handle celebrity onboarding process
 router.put(
   "/celeb/onboard",
   upload.fields([
@@ -133,44 +135,29 @@ router.put(
     { name: "documentPicWithFace", maxCount: 1 },
   ]),
   uploadVerficationToS3,
-  // uploadProfileImgToS3,
   async (req, res) => {
-    const check = req.files;
-    const body = req.body;
-    const withFace = req.documentPicWithFace;
-    const { bio, category, price, profession, uid } = JSON.parse(
-      req.body.onBoardData
-    );
-
-    console.log("uid: : ", category);
-    console.log("check: ", req.body.onBoardData);
-    console.log("info: ", req.body.info);
-
-    console.log("DocFace: ", withFace);
-
-    // console.log("FirstOne ", check.documentPicWithFace);
-    // console.log("FirstTwo ", check.profileImg);
-    // console.log("FirstThree ", check.profileImg);
-    // console.log("body: ", body.info);
-    const profileImg = req.profileImg;
     try {
-      const response = await prisma.celeb.update({
-        where: {
-          uid: uid,
-        },
+      const { bio, category, price, profession, uid } = JSON.parse(req.body.onBoardData);
+      const profileImg = req.profileImg;
+
+      const updatedCeleb = await prisma.celeb.update({
+        where: { uid },
         data: {
           description: bio,
-          category: category,
-          price: price,
+          category,
+          price: parseInt(price),
           completed_onboarding: true,
           imgurl: profileImg,
+          // profession,
         },
       });
-      res.status(201).send("great");
-      // console.log(first)
+
+      await indexNewCeleb(uid);
+
+      res.status(200).json({ message: "Celebrity onboarding completed successfully", celeb: updatedCeleb });
     } catch (error) {
-      console.error(error.message);
-      res.status(401).send("fail");
+      console.error("Error during celebrity onboarding:", error);
+      res.status(500).json({ error: "An error occurred during onboarding" });
     }
   }
 );

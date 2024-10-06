@@ -5,6 +5,7 @@ import crypto from "crypto";
 import { uploadFile } from "../s3.js";
 import { PayCeleb, refundFan } from "../actions/actions.js";
 import { createNotification } from "./Notification.js";
+import { updateFanClusterIdAndTotalSpent } from "../services/requestService.js";
 
 const router = express.Router();
 
@@ -100,20 +101,6 @@ router.get("/fanrequests", async (req, res) => {
     console.log("/fanrequests: ", error);
   }
 });
-
-async function sendRequest(intended_uid, sender_uid, message) {
-  try {
-    const response = await prisma.notification.create({
-      data: {
-        intended_uid: intended_uid,
-        sender_uid: sender_uid,
-        message: message,
-      },
-    });
-  } catch (error) {
-    console.log("error/notification: ", error);
-  }
-}
 
 // create the request.
 router.post("/", async (req, res) => {
@@ -231,49 +218,6 @@ router.get("/status/:id", async (req, res) => {
   }
 });
 
-async function updateFanClusterIdAndTotalSpent(celebUid, fanUid, price) {
-  try {
-    //get the cluster id of the celeb that was just reqeusted
-    const getCelebCluster = await prisma.celeb.findFirst({
-      where: {
-        uid: celebUid,
-      },
-      select: {
-        cluster_id: true,
-      },
-    });
-
-    //destruct cluster id
-    const { cluster_id } = getCelebCluster;
-
-    //update the fan who made the request table fav_categories column, with the cluster of the id
-    // const addUserFavCat = await prisma.fan.update({
-    //   where: {
-    //     uid: fanUid,
-    //   },
-    //   data: {
-    //     fav_categories: cluster_id,
-    //   },
-    // });
-
-    //update total spent for a specific Fan.
-    // const updateTotalSpent = await prisma.fan.update({
-    //   data: {
-    //     total_spent: {
-    //       increment: price,
-    //     },
-    //     num_of_requests: {
-    //       increment: 1,
-    //     },
-    //   },
-    //   where: {
-    //     uid: fanUid,
-    //   },
-    // });
-  } catch (error) {
-    console.error(error);
-  }
-}
 
 router.put("/expired/:id", upload.single("videoFile"), async (req, res) => {
   const requestid = req.params.id;
@@ -347,14 +291,6 @@ router.put("/fulfill/:id", upload.single("videoFile"), async (req, res) => {
   console.log("\nreqFul: ", req.file);
   const file = req.body;
 
-  // if (!file) {
-  //   return res.status(400).send("No file uploaded.");
-  // } else {
-  //   return res.status(301).send("No file uploaded.");
-  // }
-
-  // return;
-  // resize image
   // const buffer = await sharp(req.file.buffer)
   //   .resize({ height: 1920, width: 1080, fit: "contained" })
   //   .toBuffer();

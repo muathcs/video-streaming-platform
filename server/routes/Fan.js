@@ -40,36 +40,25 @@ router.post(
   upload.single("file"),
   uploadProfileImgToS3,
   async (req, res) => {
-    console.log("file: ", req.file);
-    console.log("payloadxx: ", req.body);
-    const { uid, payLoad } = req.body;
-    const payLoadParsed = JSON.parse(payLoad);
-    const { displayname, email, description } = payLoadParsed;
-    console.log("creating a fan jhere: ", req.newUrl);
-
-    const newurl = req.newUrl;
-
     try {
+      const { uid, payLoad } = req.body;
+      const { displayname, email, description } = JSON.parse(payLoad);
+      const newurl = req.newUrl;
+
       const user = await prisma.fan.create({
         data: {
-          displayname: displayname,
-          email: email,
-          uid: uid,
+          displayname,
+          email,
+          uid,
           imgurl: newurl,
-          description: description,
+          description,
         },
       });
-      // const result = await pool.query(
-      //   "INSERT INTO fan(displayname, email, uid, imgurl, description) VALUES ($1, $2, $3, $4, $5)",
-      //   [displayname, email, uid, newurl, description]
-      // );
-      res.send("Sucess crated user");
+
+      res.status(201).json({ message: "User created successfully", user });
     } catch (error) {
-      console.log("error/cr/user: ", error);
-    }
-    try {
-    } catch (error) {
-      console.log("error/createUser: ", error);
+      console.error("Error creating user:", error);
+      res.status(500).json({ error: "Failed to create user" });
     }
   }
 );

@@ -63,9 +63,8 @@ export const HowToUseinstructions = [
 
 export const faqData = [
   {
-    question: "What is Cameo?",
-    answer:
-      "Cameo is a platform where you can get personalized video shoutouts from celebrities.",
+    question: "What is this app?",
+    answer:"this is a platform where you can get personalized video shoutouts from celebrities.",
   },
   {
     question: "How do I request a video?",
