@@ -10,75 +10,60 @@ const router = express.Router();
 const storage = multer.memoryStorage();
 export const upload = multer({ storage: storage });
 
+
+// update user info including profile picture
 router.put(
   "/:id",
   upload.single("file"),
   uploadProfileImgToS3,
   async (req, res) => {
-    console.log("response: ", req.body);
-    const { id } = req.params;
-    const payLoadParsed = JSON.parse(req.body.payLoad);
+    try {
+      const { id } = req.params;
+      const { status } = req.body;
+      const payLoadParsed = JSON.parse(req.body.payLoad);
 
-    console.log("payload: ", payLoadParsed);
-    console.log("uid: ", req.params);
-    console.log("file: ", req.file);
+      const {
+        displayName,
+        followers,
+        price,
+        email,
+        category,
+        description,
+        imgurl,
+      } = payLoadParsed;
 
-    const {
-      displayName,
-      followers,
-      price,
-      email,
-      category,
-      description,
-      imgurl,
-    } = payLoadParsed;
+      const newImgUrl = req.newUrl || imgurl;
 
-    const test = req.newUrl;
+      const updateData = {
+        displayname: displayName,
+        description,
+        imgurl: newImgUrl,
+      };
 
-    const newImgUrl = req.newUrl ? req.newUrl : imgurl;
-
-    console.log("newURL: ", newImgUrl);
-
-    const { status } = req.body;
-
-    if (status == "celeb") {
-      try {
-        const updateCeleb = await prisma.celeb.update({
-          where: {
-            uid: id,
-          },
-          data: {
-            displayname: displayName,
-            followers: followers,
-            price: price,
-            category: category,
-            description: description,
-            imgurl: newImgUrl,
-          },
+      if (status === "celeb") {
+        Object.assign(updateData, {
+          followers,
+          price,
+          category,
         });
 
-        res.status(201).send({ message: "account updated" });
-      } catch (error) {
-        console.log("/update:id: ", error);
-      }
-    } else {
-      try {
-        const update = await prisma.fan.update({
-          where: {
-            uid: id,
-          },
-          data: {
-            displayname: displayName,
-            email: email,
-            description: description,
-            imgurl: newImgUrl,
-          },
+        await prisma.celeb.update({
+          where: { uid: id },
+          data: updateData,
         });
+      } else {
+        Object.assign(updateData, { email });
 
-        res.status(201).send({ message: "account updated" });
-      } catch (error) {
-        console.log("/update: ", error);
+        await prisma.fan.update({
+          where: { uid: id },
+          data: updateData,
+        });
       }
+
+      res.status(200).json({ message: "Profile updated successfully" });
+    } catch (error) {
+      console.error(`Error updating profile for user ${req.params.id}:`, error);
+      res.status(500).json({ error: "An error occurred while updating the profile" });
     }
   }
 );
@@ -155,6 +140,21 @@ router.put(
 
       await indexNewCeleb(uid);
 
+      const stripeAccount = await createStripeCustomAccount(updatedCeleb.email, uid, updatedCeleb.displayname);
+
+      // update stripe account id in database
+
+      if (stripeAccount) {
+        await prisma.celeb.update({
+          where: {
+            uid: result.uid,
+          },
+          data: {
+            stripe_account_id: stripeAccount.id,
+          },
+        });
+      }
+
       res.status(200).json({ message: "Celebrity onboarding completed successfully", celeb: updatedCeleb });
     } catch (error) {
       console.error("Error during celebrity onboarding:", error);
@@ -163,61 +163,41 @@ router.put(
   }
 );
 
+
+// update email
 router.put("/login/email/:id", async (req, res) => {
-  console.log("emailS:: ", req.body);
   const { id } = req.params;
-  const { email, status } = req.body;
+  const { email: oldEmail, status } = req.body;
+  const { email: newEmail, displayName } = req.body.data;
 
-  // let newEmail;
+  try {
+    const updateResult = await updateEmail(oldEmail, newEmail);
+    console.log("updateResult: ", updateResult);
+    if (!updateResult.success) {
+      console.log("updateResult: ", updateResult);
+      return res.status(400).json({ message: updateResult.message });
+    }
 
-  const { email: newEmail, password, displayName } = req.body.data;
 
-  updateEmail(email, newEmail);
-
-  if (status == "celeb") {
-    try {
-      const updateCeleb = await prisma.celeb.update({
-        where: {
-          uid: id,
-        },
+    if (status === "celeb") {
+      await prisma.celeb.update({
+        where: { uid: id },
         data: {
           email: newEmail,
           displayname: displayName,
         },
       });
-
-      // const response = await pool.query(
-      //   "UPDATE celeb SET email=$1 WHERE uid=$2",
-      //   [newEmail, id]
-      // );
-      res
-        .status(201)
-        .send({ message: "your email has been updated successfully" });
-    } catch (error) {
-      console.log("erorr/login/email/:id: ", error);
-      res.send(error);
-    }
-  } else {
-    try {
-      const updateCeleb = await prisma.fan.update({
-        where: {
-          uid: id,
-        },
-        data: {
-          email: newEmail,
-        },
+    } else {
+      await prisma.fan.update({
+        where: { uid: id },
+        data: { email: newEmail },
       });
-      // const response = await pool.query(
-      //   "UPDATE fan SET email=$1 WHERE uid=$2",
-      //   [newEmail, id]
-      // );
-      res
-        .status(201)
-        .send({ message: "your email has been updated successfully" });
-    } catch (error) {
-      console.log("erorr/login/email/:id: ", error);
-      res.send(error);
     }
+
+    res.status(201).json({ message: updateResult.message });
+  } catch (error) {
+    console.error(`Error updating email for ${status} with id ${id}:`, error);
+    res.status(500).json({ error: "An error occurred while updating the email" });
   }
 });
 

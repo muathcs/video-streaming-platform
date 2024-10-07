@@ -296,6 +296,7 @@ function LoginSettings({ userInfo, currentUser, celeb, notify }: any) {
         "You're attempting to change your email!, please input your password aswell"
       );
     } else if (email != data.email && data.password) {
+      
       const updateCreds = await reauthenticateUser(data.password);
 
       if (updateCreds && !updateCreds.state) {
@@ -303,19 +304,34 @@ function LoginSettings({ userInfo, currentUser, celeb, notify }: any) {
         return;
       }
 
-      const response = await sendPutRequest(
-        `${apiUrl}/update/login/email/${currentUser.uid}`,
-        {
-          email,
-          data,
-          status,
+      try {
+        
+        const response = await sendPutRequest(
+          `${apiUrl}/update/login/email/${currentUser.uid}`,
+          {
+            email,
+            data,
+            status,
+          }
+        );
+  
+        console.log("responsex: ", response);  
+  
+        if (response.status == 201) {
+          await reauthenticateUser(data.password);
+          notify(response.data.message);
+        } else {
+          notify(response.data.message, "error");
         }
-      );
-
-      if (response.status == 201) {
-        await reauthenticateUser(data.password);
-        notify(response.data.message);
+      } catch (error: any) {
+        console.log("Error response: ", error.response);
+        if (error.response) {
+          notify(error.response.data.message, "error");
+        } else {
+          notify("An error occurred while updating the email", "error");
+        }
       }
+
     }
 
     //change password

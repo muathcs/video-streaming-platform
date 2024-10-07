@@ -14,6 +14,7 @@ import { RequestContext } from "./RequestContext";
 import { User as FirebaseUser } from "firebase/auth";
 import { apiUrl } from "../utilities/fetchPath";
 import { AuthContextType, UserInfoType } from "../TsTypes/types";
+import { useNavigate } from "react-router-dom";
 
 const AuthContext = React.createContext<AuthContextType | any>("");
 
@@ -26,6 +27,8 @@ export function AuthProvider({ children }: { children: any }) {
   const [token, setToken] = useState<string>("");
   const [loading, setLoading] = useState(true);
   const [userInfo, setUserInfo] = useState<UserInfoType>();
+  const navigate = useNavigate();
+
 
   const [celeb, setCeleb] = useState<
     { isCeleb: boolean | undefined } | undefined
@@ -115,61 +118,45 @@ export function AuthProvider({ children }: { children: any }) {
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(
-      async (
-        user: any //this works
-      ) => {
+      async (user: any) => {
         setCurrentUser(user);
-
+        
         if (user) {
           try {
-            const response: { data: { isCeleb: boolean } } = await axios.get(
-              `${apiUrl}/user/status`,
-              {
-                params: { uid: user.uid },
-              }
-            );
-
-            let req;
-
-            let fullUserInfo;
-
-            if (response.data.isCeleb) {
-              req = await axios.get(`${apiUrl}/request/dashboard`, {
-                params: { data: user.uid },
-              });
-
-              fullUserInfo = await axios.get(`${apiUrl}/celebs/${user.uid}`);
-            } else {
-              req = await axios.get(`${apiUrl}/request/fanrequests`, {
-                params: { data: user.uid },
-              });
-
-              // const userInfo = await axios.get(`${apiUrl}/fan`, {
-              //   params: { uid: user.uid },
-              // });
-
-              fullUserInfo = await axios.get(`${apiUrl}/fan/${user.uid}`);
-            }
+            setLoading(true);
+            const statusResponse = await axios.get(`${apiUrl}/user/status`, { params: { uid: user.uid } });
+            const isCeleb = statusResponse.data.isCeleb;
+            
+            const [req, fullUserInfo] = await Promise.all([
+              axios.get(`${apiUrl}/request/${isCeleb ? 'dashboard' : 'fanrequests'}`, { params: { data: user.uid } }),
+              axios.get(`${apiUrl}/${isCeleb ? 'celebs' : 'fan'}/${user.uid}`)
+            ]);
 
             setRequests(req.data);
-            setCeleb(response.data);
+            setCeleb(statusResponse.data);
             setUserInfo(fullUserInfo.data);
-            console.log("fullUser: ", fullUserInfo.data);
+
+            const token = await user.getIdToken();
+            setToken(token);
+
+
+            navigate('/');
           } catch (error) {
             console.error(error);
           }
-          user.getIdToken().then((token: any) => {
-            // 'token' contains the session token
-            setToken(token);
-          });
+        } else {
+          // User is logged out
+          setRequests(undefined);
+          setCeleb(undefined);
+          setUserInfo(undefined);
+          setToken('');
         }
-
+        
         setLoading(false);
       }
     );
-
     return unsubscribe;
-  }, []);
+  }, [navigate]);
 
   const value: AuthContextType = {
     currentUser,

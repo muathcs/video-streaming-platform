@@ -12,15 +12,13 @@ admin.initializeApp({
 
 export async function updateEmail(email, newEmail) {
   try {
-    console.log("email: ", email, "newEmail: ", newEmail);
     const user = await admin.auth().getUserByEmail(email);
-    await admin.auth().updateUser(user.uid, {
-      email: newEmail,
-    });
-
-    console.log("email succefully updated");
+    await admin.auth().updateUser(user.uid, { email: newEmail });
+    console.log(`Email successfully updated from ${email} to ${newEmail}`);
+    return { success: true, message: "Email updated successfully" };
   } catch (error) {
-    console.log("could not update email from updateEmailFunction: ", error);
+    console.error("Error updating email:", error);
+    return { success: false, message: error.message };
   }
 }
 

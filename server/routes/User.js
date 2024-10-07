@@ -48,7 +48,7 @@ router.get("/status", async (req, res) => {
     //   [uid]
     // );
     if (result) {
-      console.log("true");
+      console.log("true: ", result);
       res.status(200).send({
         isCeleb: true,
         completed_onboarding: result.completed_onboarding,

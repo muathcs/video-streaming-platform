@@ -18,33 +18,30 @@ function Login() {
   const navigate = useNavigate();
 
   //login function
-  async function handleSubmit(e: any) {
+    async function handleSubmit(e: any) {
     e.preventDefault();
 
     try {
       setError("");
-
       setLoading(true);
+
       const userObj = await login(
         emailRef.current.value,
         passwordRef.current.value
       );
-      setSuccessfull("signed in succefully");
-
+      
       await isACeleb(userObj.user.uid); //checking if the user is a celeb or a fan(to render different UIs);
+      setSuccessfull("signed in successfully");
 
-      navigate("/");
-      console.log("cureent: ");
-      await location.reload();
-      // handleUpload()
     } catch (error) {
       setSuccessfull("");
       setError("Wrong email or password");
       console.error("failed to sign in", error);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
-    // setSuccessfull(false);
   }
+  
 
   async function isACeleb(uid: number) {
     try {
@@ -79,7 +76,7 @@ function Login() {
             {/* <!-- Left column container with background--> */}
             <div className="mb-12 md:mb-0 md:w-8/12 lg:w-6/12">
               <img
-                // src="https://tecdn.b-cdn.net/img/Photos/new-templates/bootstrap-login-form/draw2.svg"
+                src="https://tecdn.b-cdn.net/img/Photos/new-templates/bootstrap-login-form/draw2.svg"
                 className="w-full"
                 alt="Phone image"
               />

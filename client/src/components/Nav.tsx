@@ -18,6 +18,8 @@ function classNames(...classes: any) {
 function Nav() {
   const { logout, currentUser, celeb, userInfo }: AuthContextType = useAuth();
 
+  console.log("userInfo: ", userInfo);
+
   console.log("f: ", apiUrl);
 
   console.log(celeb?.isCeleb);
@@ -111,16 +113,14 @@ function Nav() {
   }
 
   // logout
-  async function handleLogout() {
+  async function handleLogout(e: any) {
+    e.preventDefault();
     try {
       await logout();
-
-      navigate("/login");
-      // location.reload();
     } catch (error) {
       console.log(error);
     }
-  }
+  } 
 
   async function searchCeleb(keysSearch: string) {
     try {

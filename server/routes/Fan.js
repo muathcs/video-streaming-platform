@@ -11,6 +11,7 @@ export const upload = multer({
   limits: { fileSize: 10 * 1024 * 1024 }, // 10MB limit
 });
 router.get("/:uid", async (req, res) => {
+  console.log("uidx: ", req.params);
   const { uid } = req.params;
 
   try {

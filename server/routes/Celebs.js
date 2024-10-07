@@ -41,7 +41,7 @@ router.get("/", async (req, res) => {
 });
 
 
-router.get("/:category", async (req, res) => {
+router.get("/category/:category", async (req, res) => {
   const page = parseInt(req.query.page) || 1;
   const pageSize = parseInt(req.query.pageSize) || 10;
   const offset = (page - 1) * pageSize;
@@ -59,8 +59,12 @@ router.get("/:category", async (req, res) => {
 });
 
 
+
+
 router.get("/:id", async (req, res) => {
+
   const { id } = req.params;
+
 
   try {
     const response = await prisma.celeb.findUnique({
@@ -68,6 +72,8 @@ router.get("/:id", async (req, res) => {
         uid: id,
       },
     });
+
+    console.log("responseC: ", response);
 
     res.status(201).send(response);
   } catch (error) {

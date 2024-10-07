@@ -167,7 +167,7 @@ function Category() {
             },
           });
         } else {
-          response = await axios.get(`${apiUrl}/celebs/${category}`, {
+          response = await axios.get(`${apiUrl}/celebs/category/${category}`, {
             params: {
               page: page,
               pageSize: 10,

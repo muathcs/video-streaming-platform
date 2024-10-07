@@ -32,7 +32,7 @@ function Celebs() {
   // const { data: getData, loading, error } = useGlobalAxios("getnow");
 
   const [celebs, setCelebs] = useState<CelebType[]>([]);
-  const [loading, setLoading] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(true);
 
   useState<number>(6);
   const { userInfo }: AuthContextType = useAuth();
@@ -70,7 +70,10 @@ function Celebs() {
     fetchRecommendations();
   }, [userInfo]);
 
-  if (loading) return <div className="loading">Loading...</div>; // Placeholder loading state
+
+  console.log("loading::", loading);
+
+  if (loading) return <div className="loading h-full w-full justify-center items-center flex">Loading...</div>; // Placeholder loading state
 
   return (
     <div className=" flex flex-col w-full items-center gap-10  gradiant-page">
