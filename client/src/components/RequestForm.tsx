@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useForm } from "react-hook-form";
+import React, { useState } from "react";
+import { useForm, SubmitHandler } from "react-hook-form";
 import { useLocalStorage } from "../hooks/useLocalStorage";
 import { useNavigate } from "react-router-dom";
 
@@ -10,10 +10,18 @@ type RequestProps = {
   setOrderModal: (state: boolean) => void;
 };
 
-// this is coming from the orderModal component in /CelebProfile.tsx
-function RequestForm({ celebuid, fanuid, price, setOrderModal }: RequestProps) {
+type FormData = {
+  requestAction: string;
+  toSomeOneElse: string;
+  fromPerson?: string;
+  toPerson: string;
+  message: string;
+};
 
-  const [messageLength, setMessageLength] = useState(0); // state to track the message length
+const MAX_MESSAGE_LENGTH = 200;
+
+function RequestForm({ celebuid, fanuid, price, setOrderModal }: RequestProps) {
+  const [messageLength, setMessageLength] = useState(0);
   const navigate = useNavigate();
   const [, setLocalStorageRequest] = useLocalStorage("request");
   const {
@@ -22,284 +30,209 @@ function RequestForm({ celebuid, fanuid, price, setOrderModal }: RequestProps) {
     formState: { errors, isSubmitting },
     reset,
     getValues,
-  } = useForm();
+    watch,
+  } = useForm<FormData>();
 
-  console.log("celebuid: ", celebuid)
+  const toSomeoneElse = watch("toSomeOneElse") === "true";
+  const [hideVideo, setHideVideo] = useState(false);
 
-  const [checkBox, setCheckBox] = useState(false);
-  const [toSomeoneElse, setToSomeoneElse] = useState(false);
-
-  async function onSubmit() {
-    // await new Promise((resolve) => setTimeout(resolve, 2000));
-
-    reset({
-      ...getValues(),
+  const onSubmit: SubmitHandler<FormData> = async (data) => {
+    const requestData = {
+      ...data,
       reqType: "video",
       requestid: crypto.randomUUID(),
       celebuid,
       fanuid,
       price,
-    });
-    await setLocalStorageRequest(getValues());
-    navigate("/payment");
-    // navigate("/success");
-    reset();
-  }
+      hideVideo,
+    };
 
+    await setLocalStorageRequest(requestData);
+    navigate("/payment");
+    reset();
+  };
 
   return (
-    <>
-      <div className="h-[90%]  w-full  md:w-3/4 lg:w-2/4 rounded-md relative text-white bg-black px-2  sm:px-10 py-10 overflow-auto top-10  ">
-        <div
-          onClick={() => {
-            setOrderModal(false);
-          }}
-          className="absolute  right-2 sm:right-5 top-0 sm:top-2 rounded-full  w-8 h-8 flex justify-center text-lg font-bold bg-red-500 cursor-pointer hover:bg-red-700 border-2"
-        >
-          x
+    <div className="h-[90%] w-full md:w-3/4 lg:w-2/3 xl:w-1/2 rounded-lg relative text-white bg-gray-900 px-6 sm:px-10 py-8 overflow-auto top-10 shadow-xl">
+      <button
+        onClick={() => setOrderModal(false)}
+        className="absolute right-4 top-4 rounded-full w-8 h-8 flex justify-center items-center text-lg font-bold bg-red-500 hover:bg-red-600 transition-colors duration-200"
+        aria-label="Close"
+      >
+        ×
+      </button>
+      <h2 className="text-2xl font-bold mb-6 text-center">Request a Video</h2>
+      <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
+        {/* Step 1: Request Type */}
+        <div>
+          <label className="block text-sm font-medium mb-2 text-gray-300">
+            Step 1: Type of video request
+          </label>
+          <select
+            {...register("requestAction", {
+              required: "Please choose a request type",
+            })}
+            className="w-full rounded-md border border-gray-700 bg-gray-800 px-3 py-2 text-white focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+          >
+            <option value="">Select</option>
+            {[
+              "Holiday",
+              "Birthday",
+              "Pep Talk",
+              "Roast",
+              "Advice",
+              "Question",
+              "Other",
+            ].map((option) => (
+              <option key={option} value={option}>
+                {option}
+              </option>
+            ))}
+          </select>
+          {errors.requestAction && (
+            <p className="mt-1 text-sm text-red-500">
+              {errors.requestAction.message}
+            </p>
+          )}
         </div>
-        <form className="relative top-2 p-1 " onSubmit={handleSubmit(onSubmit)}>
-          {/* Step 1 */}
-          <div className="relative mb-6" data-te-input-wrapper-init>
-            <label className="block text-sm font-medium mb-2 w-full sm:w-4/6 text-white text-left">
-              Step 1: Type of video request
-            </label>
-            <select
-              {...register("requestAction", {
-                required: "choose a request event",
-              })}
-              name="requestAction"
-              data-te-select-init
-              className="w-full h-10 rounded-md bg-transparent border text-white cursor-pointer px-2"
-            >
-              <option className="text-black" value="">
-                Select
-              </option>
-              <option className="text-black" value="Holiday">
-                Holiday
-              </option>
-              <option className="text-black" value="Birthday">
-                Birthday
-              </option>
-              <option className="text-black" value="Pep Talk">
-                Pep Talk
-              </option>
-              <option className="text-black" value="Roast">
-                Roast
-              </option>
-              <option className="text-black" value="Advice">
-                Advice
-              </option>
-              <option className="text-black" value="Question">
-                Question
-              </option>
-              <option className="text-black" value="Other">
-                Other
-              </option>
-            </select>
-            {errors.requestAction && (
-              <p className="text-red-500">{`${errors.requestAction.message}`}</p>
-            )}
-          </div>
 
-          {/* Step 2 */}
-          <div className="mb-6">
-            <p className="text-left mb-2">Step 2: Who's this video for?</p>
-            <div className="gap-4 text-center sm:grid-cols-3 flex justify-center items-center flex-wrap">
-              <div className="w-full sm:w-auto mb-2 sm:mb-0">
+        {/* Step 2: Recipient */}
+        <div>
+          <p className="text-sm font-medium mb-2 text-gray-300">
+            Step 2: Who's this video for?
+          </p>
+          <div className="flex space-x-4">
+            {["Someone else", "Myself"].map((option, index) => (
+              <div key={option} className="flex-1">
                 <input
                   {...register("toSomeOneElse")}
-                  className="peer sr-only"
-                  id="option1"
+                  className="sr-only peer"
+                  id={`option${index + 1}`}
                   type="radio"
-                  name="toSomeOneElse"
-                  onClick={() => setToSomeoneElse(true)}
-                  value="true"
+                  value={index === 0 ? "true" : "false"}
                 />
                 <label
-                  htmlFor="option1"
-                  className="block w-full rounded-lg border border-gray-200 py-3 px-8 cursor-pointer hover:bg-blue-700 peer-checked:border-black peer-checked:shadow-lg peer-checked:shadow-blue-400 peer-checked:bg-blue-800 peer-checked:text-white bg-blue-600 text-white"
+                  htmlFor={`option${index + 1}`}
+                  className="flex justify-center items-center w-full py-2 text-sm font-medium rounded-md border border-gray-700 cursor-pointer bg-gray-800 hover:bg-gray-700 peer-checked:border-blue-500 peer-checked:bg-blue-600 transition-colors duration-200"
                 >
-                  Someone else
+                  {option}
                 </label>
               </div>
-              <div className="w-full sm:w-auto">
-                <input
-                  className="peer sr-only"
-                  id="option2"
-                  type="radio"
-                  value="false"
-                  onClick={() => setToSomeoneElse(false)}
-                  {...register("toSomeOneElse")}
-                />
-                <label
-                  htmlFor="option2"
-                  className="block w-full rounded-lg border border-gray-200 py-3 px-8 cursor-pointer hover:bg-blue-700 peer-checked:border-black peer-checked:shadow-lg peer-checked:shadow-blue-400 peer-checked:bg-blue-800 peer-checked:text-white bg-blue-600 text-white"
-                >
-                  Myself
-                </label>
-              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Personal Info */}
+        <div className="space-y-4">
+          {toSomeoneElse && (
+            <div>
+              <label
+                htmlFor="fromPerson"
+                className="block text-sm font-medium mb-1 text-gray-300"
+              >
+                From (first name)
+              </label>
+              <input
+                {...register("fromPerson", {
+                  required: "Please enter your name",
+                })}
+                id="fromPerson"
+                className="w-full rounded-md border border-gray-700 bg-gray-800 px-3 py-2 text-white focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+                placeholder="Your first name"
+              />
+              {errors.fromPerson && (
+                <p className="mt-1 text-sm text-red-500">
+                  {errors.fromPerson.message}
+                </p>
+              )}
             </div>
-          </div>
-
-          {/* Personal Info */}
-          <div className="relative mb-6" data-te-input-wrapper-init>
-            {toSomeoneElse && (
-              <>
-                <p className="text-left">From (first name): </p>
-                <input
-                  {...register("fromPerson", {
-                    required: "input name",
-                  })}
-                  name="fromPerson"
-                  type="text"
-                  className="block min-h-[auto] w-full rounded border my-2 bg-transparent px-3 py-[0.32rem] leading-[2.5] outline-none"
-                  placeholder="first name"
-                />
-                {errors.fromPerson && (
-                  <p className="text-red-500">{`${errors.fromPerson.message}`}</p>
-                )}
-              </>
-            )}
-            <p className="text-left">To (first name): </p>
+          )}
+          <div>
+            <label
+              htmlFor="toPerson"
+              className="block text-sm font-medium mb-1 text-gray-300"
+            >
+              To (first name)
+            </label>
             <input
               {...register("toPerson", {
-                required: "Input name",
+                required: "Please enter recipient's name",
               })}
-              name="toPerson"
-              type="text"
-              className="block min-h-[auto] w-full rounded border my-2 bg-transparent px-3 py-[0.32rem] leading-[2.5] outline-none"
-              placeholder="first name"
+              id="toPerson"
+              className="w-full rounded-md border border-gray-700 bg-gray-800 px-3 py-2 text-white focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+              placeholder="Recipient's first name"
             />
             {errors.toPerson && (
-              <p className="text-red-500">{`${errors.toPerson.message}`}</p>
+              <p className="mt-1 text-sm text-red-500">
+                {errors.toPerson.message}
+              </p>
             )}
           </div>
+        </div>
 
-          {/* Step 3 */}
-          {/* <div className="mb-6">
-            <p className="text-left mb-2">Step 3: Request Type</p>
-            <div className="gap-4 text-center sm:grid-cols-3 flex justify-center items-center flex-wrap"> */}
-          {/* <div className="w-full sm:w-auto mb-2 sm:mb-0">
-                <input
-                  className="peer sr-only"
-                  id="option3"
-                  type="radio"
-                  {...register("reqType", {
-                    required: "choose request: Message, Audio or Video",
-                  })}
-                  name="reqType"
-                  value="message"
-                />
-                <label
-                  htmlFor="option3"
-                  className="block w-full rounded-lg border border-gray-200 py-3 px-8 cursor-pointer hover:bg-blue-700 peer-checked:border-black peer-checked:shadow-lg peer-checked:shadow-blue-400 peer-checked:bg-blue-800 peer-checked:text-white bg-blue-600 text-white"
-                >
-                  Message
-                </label>
-              </div> */}
-          {/* <div className="w-full sm:w-auto mb-2 sm:mb-0">
-                <input
-                  className="peer sr-only"
-                  id="option4"
-                  type="radio"
-                  {...register("reqType", {
-                    required: "choose request: Message, Audio or Video",
-                  })}
-                  name="reqType"
-                  value="audio"
-                />
-                <label
-                  htmlFor="option4"
-                  className="block w-full rounded-lg border border-gray-200 py-3 px-8 cursor-pointer hover:bg-blue-700 peer-checked:border-black peer-checked:shadow-lg peer-checked:shadow-blue-400 peer-checked:bg-blue-800 peer-checked:text-white bg-blue-600 text-white"
-                >
-                  Audio
-                </label>
-              </div> */}
-          {/* <div className="w-full sm:w-auto">
-                <input
-                  className="peer sr-only"
-                  id="option5"
-                  type="radio"
-                  {...register("reqType", {
-                    required: "choose request: Message, Audio or Video",
-                  })}
-                  name="reqType"
-                  value="video"
-                />
-                <label
-                  htmlFor="option5"
-                  className="block w-full rounded-lg border border-gray-200 py-3 px-8 cursor-pointer  peer-checked:border-black peer-checked:shadow-lg bg-gray-800 peer-checked:text-white  text-white"
-                >
-                  Video
-                </label>
-              </div> */}
-          {/* </div>
-            {errors.reqType && (
-              <p className="text-red-500">{`${errors.reqType.message}`}</p>
-            )}
-          </div> */}
+        {/* Message */}
+        <div>
+          <label
+            htmlFor="message"
+            className="block text-sm font-medium mb-1 text-gray-300"
+          >
+            Step 3: Request details
+          </label>
+          <textarea
+            {...register("message", {
+              required: "Please write a message to the celebrity",
+              maxLength: {
+                value: MAX_MESSAGE_LENGTH,
+                message: `Message must not exceed ${MAX_MESSAGE_LENGTH} characters`,
+              },
+            })}
+            id="message"
+            maxLength={MAX_MESSAGE_LENGTH}
+            onChange={(e) => setMessageLength(e.target.value.length)}
+            className="w-full rounded-md border border-gray-700 bg-gray-800 px-3 py-2 text-white focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 h-32"
+            placeholder={`Write a personal message explaining your occasion and what you'd like the celebrity to say. Include details for a shout-out, special event, or words of encouragement (${MAX_MESSAGE_LENGTH} characters max).`}
+          />
+          <div className="flex justify-between text-xs text-gray-400 mt-1">
+            <p>
+              {messageLength === MAX_MESSAGE_LENGTH
+                ? `Message must not exceed ${MAX_MESSAGE_LENGTH} characters`
+                : ""}
+            </p>
+            <p>{MAX_MESSAGE_LENGTH - messageLength} characters remaining</p>
+          </div>
+          {errors.message && (
+            <p className="mt-1 text-sm text-red-500">
+              {errors.message.message}
+            </p>
+          )}
+        </div>
 
-          {/* Message */}
-          <div className="mb-6">
-      <div className="text-left mb-2">Step 3: Request details</div>
-      <textarea
-        {...register("message", {
-          required: "Write a message to the celeb",
-          maxLength: {
-            value: 200,
-            message: "Message must not exceed 200 characters",
-          },
-        })}
-        name="message"
-        maxLength={200} // Enforce character limit in HTML
-        onChange={(e) => setMessageLength(e.target.value.length)} // Update the character count
-        className="block min-h-[auto] w-full rounded border my-2 bg-transparent px-2 py-2 h-40 shadow-sm shadow-blue-400 outline-none placeholder-style"
-        placeholder="Write a personal message explaining your occasion and what you'd like the celebrity to say. Include details for a shout-out, special event, or words of encouragement (200 characters max)."      />
-      <div className="flex justify-between ">
+        {/* Hide Video Option */}
+        <div className="flex items-center">
+          <input
+            type="checkbox"
+            id="hideVideo"
+            checked={hideVideo}
+            onChange={() => setHideVideo(!hideVideo)}
+            className="rounded border-gray-700 text-blue-600 focus:ring-blue-500 h-4 w-4 mr-2"
+          />
+          <label htmlFor="hideVideo" className="text-sm text-gray-300">
+            Hide this video from David Howard Thornton's profile
+          </label>
+        </div>
 
-      <div>
-
-        {messageLength == 200 && <p className="text-left text-sm text-gray-500 ">Message must not exceed 200 charecters</p>}
-      </div>
-      <div className="text-right text-sm text-gray-500 ">
-        {200 - messageLength} characters remaining
-      </div>
-      </div>
-      {errors.message && (
-        <p className="text-red-500">{`${errors.message.message}`}</p>
-      )}
+        {/* Submit Button */}
+        <div>
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors duration-200"
+          >
+            {isSubmitting ? "Submitting..." : "Continue"}
+          </button>
+        </div>
+      </form>
     </div>
-
-          {/* Continue */}
-          <div className="flex justify-center mb-6">
-            <button
-              disabled={isSubmitting}
-              className="disabled:bg-red-500 block w-full sm:w-1/2 rounded-full my-8 border border-gray-200 py-3 px-8 cursor-pointer hover:bg-blue-700 bg-blue-600 text-white"
-            >
-              Continue
-            </button>
-          </div>
-
-          {/* show vide */}
-          <div className=" relative flex items-center text-sm ">
-            <div className=" absolute flex">
-              <p
-                onClick={() => setCheckBox(!checkBox)}
-                className="block w-[20px] bg-white rounded  mr-2 
-                outline-none text-red-400 cursor-pointer  select-none h-[20px]
-                "
-              >
-                {checkBox ? "✔️" : ""}
-              </p>
-              <p className="text-left sm:text-sm text-[12px]">
-                Hide this video from David Howard Thornton's profile
-              </p>
-            </div>
-          </div>
-        </form>
-      </div>
-    </>
   );
 }
 
