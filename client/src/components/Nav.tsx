@@ -117,6 +117,7 @@ function Nav() {
     e.preventDefault();
     try {
       await logout();
+      navigate('/login', { replace: true });
     } catch (error) {
       console.log(error);
     }

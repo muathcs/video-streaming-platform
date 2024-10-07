@@ -32,7 +32,7 @@ function Login() {
       
       await isACeleb(userObj.user.uid); //checking if the user is a celeb or a fan(to render different UIs);
       setSuccessfull("signed in successfully");
-
+      navigate('/', { replace: true });
     } catch (error) {
       setSuccessfull("");
       setError("Wrong email or password");

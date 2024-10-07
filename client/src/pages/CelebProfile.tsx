@@ -287,11 +287,17 @@ function CelebProfile() {
         </div>
         {orderModal && (
           <>
-            <OrderModal
-              celebInfo={celebInfo}
-              currentUserUid={currentUser.uid}
-              setOrderModal={setOrderModal}
-            />
+              <div className="bg-[#121114]    h-full w-full top-0 fixed  flex justify-center items-center sm:bg-opacity-60 ">
+
+      <RequestForm
+        setOrderModal={setOrderModal}
+        celebuid={celebInfo.uid}
+        fanuid={currentUser.uid}
+        price={celebInfo.price}
+        
+      />
+      </div>
+   
           </>
         )}
       </div>

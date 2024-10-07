@@ -1,56 +1,28 @@
 import React, { useEffect, useReducer, useState } from "react";
 import { useLocation } from "react-router-dom";
 import FulfillVideo from "./fulfillRequest/FulfillVideo";
-import FulfillAudio from "./fulfillRequest/FulfillAudio";
-import FulfillMessage from "./fulfillRequest/FulfillMessage";
 import { useGlobalAxios } from "../hooks/useGlobalAxios";
 import { ToastContainer, toast } from "react-toastify";
 import { apiUrl } from "../utilities/fetchPath";
 
 function FulfillRequest() {
-  // prettier-ignore
   const [celebReply, setCelebReply] = useState<FormData | string>("");
-
-  //this reducer forces the fullfillVideo componenet to rerender when I press the record video button again.
   const [reRecord, forceUpdate] = useReducer((x) => x + 1, 0);
   const { data: sendPutRequest, error } = useGlobalAxios("put");
   const { data: sendPostRequest } = useGlobalAxios("post");
-
-  // const { requestId } = useParams();
-
-  //Coming from Dashboard.tsx navigate("/fulfill")
-  // the useLocation returns a state with an object holding the information for the user request.
   const { state } = useLocation();
-
-  console.log("statex: ", state);
+  const [recordOption, setRecordOption] = useState("");
 
   async function handleFulfill(e: React.MouseEvent<HTMLElement>) {
-    console.log("here");
     e.preventDefault();
-
-    // set the state to the formData, in the server, the req.file will hold the first state
-    // we set to our fd, the req.body will hold everything else in the fd, in this case that'll only be the state.
-    celebReply instanceof FormData &&
+    if (celebReply instanceof FormData) {
       celebReply.append("state", JSON.stringify(state));
+    }
 
-    // Now formDataEntries is an array of key-value pairs
+    sendPutRequest(`${apiUrl}/request/fulfill/${state.requestid}`, celebReply);
 
-    if (state.reqtype == "message") {
-      sendPutRequest(`${apiUrl}/request/fulfill/${state.requestid}`, {
-        celebReply,
-      });
-      if (!error) {
-        notify(); //pop up notification
-      }
-    } else {
-      sendPutRequest(
-        `${apiUrl}/request/fulfill/${state.requestid}`,
-        celebReply
-      );
-
-      if (!error) {
-        notify(); //pop up notification
-      }
+    if (!error) {
+      notify();
     }
 
     sendPostRequest(`${apiUrl}/notification`, {
@@ -59,24 +31,22 @@ function FulfillRequest() {
       message: "Your request has been fulfilled",
     });
 
-    // Delete the "state" entry to reset the FormData object
-    celebReply instanceof FormData && celebReply.delete("state");
+    if (celebReply instanceof FormData) {
+      celebReply.delete("state");
+    }
   }
 
-  let [recordOption, setRecordOption] = useState("");
-  const toggleRecordOption = (type: any) => {
+  const toggleRecordOption = () => {
     forceUpdate();
-    setRecordOption(type);
+    setRecordOption("video");
   };
 
   useEffect(() => {
-    // Ensure that recordOption is reset when the component mounts
     setRecordOption("");
   }, []);
 
-  // for pop notification
   const notify = () => {
-    toast.success("Success, request sent but you can still re-record it", {
+    toast.success("Success! Request sent, but you can still re-record if needed.", {
       position: "top-right",
       autoClose: 5000,
       hideProgressBar: false,
@@ -84,111 +54,73 @@ function FulfillRequest() {
       pauseOnHover: true,
       draggable: true,
       progress: undefined,
-      theme: "light",
+      theme: "dark",
     });
   };
+
   return (
-    <>
+    <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-white">
       <ToastContainer
-        position="top-center"
-        autoClose={false}
+        position="top-right"
+        autoClose={5000}
         hideProgressBar={false}
-        newestOnTop={false}
+        newestOnTop
         closeOnClick
         rtl={false}
         pauseOnFocusLoss
         draggable
         pauseOnHover
-        theme="light"
-        style={{ width: "500px", height: "5100px", marginTop: 100 }}
+        theme="dark"
       />
       {state && (
-        <div className=" flex flex-col items-center gap-5 text-[20px] wotfard  pt-20 bg-black">
-          <div className="w-1/2 ">
-            <p className="border border-red-200 w-full  p-10 mt-2  ">
-              From: Mimo{state.fromperson}
-            </p>
-          </div>
-          <div className="w-1/2">
-            <p className="border border-red-200 w-full  p-10 mt-2 ">
-              To: {state.toperson}
-            </p>
-          </div>
-          <div className="w-1/2">
-            <p className="border border-red-200 w-full  p-10 mt-2 ">
-              Message: {state.message}
-            </p>
-          </div>
-          <div className="w-1/2">
-            <p className="border border-red-200 w-full  p-10 mt-2 ">
-              Message: {state.reqtype}
-            </p>
-          </div>
-
-          <div className=" h-full  w-1/2 items-center flex justify-center flex-col">
-            <p>FulFill Fan's Request</p>
-            <div className="button-flex w-full ">
-              {state.reqtype === "video" ? (
+        <div className="container mx-auto px-4 py-8">
+          <h1 className="text-3xl font-bold mb-8 text-center">Fulfill Fan's Request</h1>
+          <div className="grid md:grid-cols-2 gap-8">
+            <div className="space-y-6">
+              <div className="bg-gray-800 rounded-lg p-6 shadow-lg">
+                <h2 className="text-xl font-semibold mb-4">Request Details</h2>
+                <p className="mb-2"><span className="font-medium">From:</span> {state.fromperson}</p>
+                <p className="mb-2"><span className="font-medium">To:</span> {state.toperson}</p>
+                <p className="mb-2"><span className="font-medium">Message:</span> {state.message}</p>
+                <p><span className="font-medium">Request Type:</span> {state.reqtype}</p>
+              </div>
+            </div>
+            <div className="space-y-6">
+              <div className="bg-gray-800 rounded-lg p-6 shadow-lg">
+                <h2 className="text-xl font-semibold mb-4">Record Your Response</h2>
                 <button
-                  className="w-full py-4 my-2 bg-red-800 rounded-md hover:bg-red-900"
+                  className="w-full py-3 bg-red-600 text-white rounded-md hover:bg-red-700 transition duration-300 ease-in-out"
                   onClick={() => {
                     forceUpdate();
-
-                    toggleRecordOption("video");
+                    toggleRecordOption();
                   }}
                 >
-                  Record Video
+                  {recordOption === "video" ? "Re-Record Video" : "Record Video"}
                 </button>
-              ) : state.reqtype === "audio" ? (
-                <button
-                  className=" py-4 w-1/4 m-2 bg-red-800 rounded-md hover:bg-red-900"
-                  onClick={() => {
-                    toggleRecordOption("audio");
-                  }}
-                >
-                  Record Audio
-                </button>
-              ) : state.reqtype === "message" ? (
-                <button
-                  className="py-4 w-1/3 m-2 bg-red-800 rounded-md hover:bg-red-900"
-                  onClick={() => {
-                    toggleRecordOption("message");
-                  }}
-                >
-                  Reply with a message
-                </button>
-              ) : null}
-            </div>
-            <div>
-              {recordOption === "video" ? (
-                <FulfillVideo
-                  reRecord={reRecord}
-                  setCelebReply={setCelebReply}
-                />
-              ) : recordOption === "audio" ? (
-                <FulfillAudio
-                  reRecord={reRecord}
-                  setCelebReply={setCelebReply}
-                />
-              ) : recordOption === "message" ? (
-                <FulfillMessage setCelebReply={setCelebReply} />
-              ) : null}
-            </div>
-
-            {celebReply && (
-              <div className="w-full ">
-                <button
-                  onClick={handleFulfill}
-                  className=" py-4 m-2 bg-red-800 rounded-md hover:bg-red-900 w-full"
-                >
-                  Fulfill
-                </button>
+                {recordOption === "video" && (
+                  <div className="mt-4">
+                    <FulfillVideo
+                      reRecord={reRecord}
+                      setCelebReply={setCelebReply}
+                    />
+                  </div>
+                )}
               </div>
-            )}
+              {celebReply && (
+                <div className="bg-gray-800 rounded-lg p-6 shadow-lg">
+                  <button
+                    onClick={handleFulfill}
+                    className="w-full py-3 bg-green-600 text-white rounded-md hover:bg-green-700 transition duration-300 ease-in-out"
+                  >
+                    Send Fulfillment
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       )}
-    </>
+    </div>
   );
 }
 

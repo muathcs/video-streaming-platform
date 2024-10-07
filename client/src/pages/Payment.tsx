@@ -23,102 +23,72 @@ function Payment() {
 
   return (
     <>
-      <div className="w-full flex justify-center pt-10 bg-black  ">
-        {/* <!-- Payment method --> */}
-        <div className="relative w-1/3     " data-te-input-wrapper-init>
-          <p className="text-left text-lg font-bold font-serif   ">
-            Payment method
-          </p>
-          <div className="gap-4 flex flex-col text-center my-2  relative ">
-            {/* <StripePaymentIntent /> */}
-            <div className=" w-full">
-              <input
-                className="peer sr-only  w-full"
-                id="option3"
-                type="radio"
-                name="remote"
-                onClick={() => setPaymentChoice("card")}
-                // onClick={(e) => setToSomeOneElse(true)}
-
-                //   onClick={(e) =>
-                //     setFormData({ ...formData, toSomeOneElse: true })
-                //   }
-              />
-
-              <label htmlFor="option3" className={divStyle}>
-                <p className="ml-5">Pay by Card</p>
-              </label>
-            </div>
-
-            <div className="w-full">
-              <input
-                className="peer sr-only"
-                id="option4"
-                type="radio"
-                name="remote"
-                onClick={() => setPaymentChoice("PayPal")}
-              />
-
-              <label htmlFor="option4" className={divStyle}>
-                <p className="text-left ml-5">Pay Pal</p>
-              </label>
-            </div>
-            <div className="w-full">
-              <input
-                className="peer sr-only"
-                id="option5"
-                type="radio"
-                name="remote"
-              />
-
-              <label htmlFor="option5" className={divStyle}>
-                <p className="text-left ml-5">Google</p>
-              </label>
-            </div>
-
-            {/* Reciept */}
-            <div className=" text-left flex flex-col border-t mt-10 text-lg gap-2 border-gray-600">
-              <p>Order detail</p>
-              <div className=" flex justify-between px-3">
-                <p>Personalised Video</p>
-                <p>{formatter.format(state.price)}</p>
-              </div>
-
-              <span className="border-b  border-gray-600"></span>
-              <div className=" flex justify-between px-3">
-                <p>Service Fee </p>
-                <p>{formatter.format(state.price * 0.1)}</p>
-              </div>
-              <div className=" flex justify-between px-3">
-                <p>Sales Tax </p>
-                <p>free</p>
-              </div>
-              <span className="border-b  border-gray-600"></span>
-              {/* <div className=" flex justify-between px-3">
-                  <a className="text-white underline hover:text-white cursor-pointer">
-                    Add Promo Code
-                  </a>
-                </div> */}
-              <span className="border-b  border-gray-600"></span>
-              <div className=" flex justify-between px-3">
-                <p>Total</p>
-                <p>{formatter.format(state.price + state.price * 0.1)}</p>
-              </div>
-            </div>
-
-            <div className="  ">
-              {paymentChoice == "card" ? (
-                <div>
-                  <StripePaymentIntent
-                    requestPrice={state.price}
-                    celebUid={state.celebUid}
-                    fanUid={state.fanUid}
-                    email={currentUser.email}
+      <div className="w-full min-h-screen bg-black text-white py-10 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-3xl mx-auto">
+          <h1 className="text-3xl font-bold mb-8">Payment</h1>
+          
+          {/* Payment method selection */}
+          <div className="mb-8">
+            <h2 className="text-xl font-semibold mb-4">Payment method</h2>
+            <div className="space-y-4">
+              {['card', 'PayPal', 'Google'].map((method) => (
+                <div key={method} className="relative">
+                  <input
+                    id={`payment-${method}`}
+                    type="radio"
+                    name="payment"
+                    value={method}
+                    className="peer sr-only"
+                    onChange={() => setPaymentChoice(method)}
                   />
+                  <label
+                    htmlFor={`payment-${method}`}
+                    className="flex items-center p-4 border border-gray-800 rounded-lg cursor-pointer transition-all duration-200 ease-in-out hover:bg-gray-800 peer-checked:border peer-checked:border-[#3f3b45] peer-checked:bg-[#201e23]"
+                  >
+                    <span className="ml-3 font-medium">
+                      Pay with {method.charAt(0).toUpperCase() + method.slice(1)}
+                    </span>
+                  </label>
                 </div>
-              ) : null}
+              ))}
             </div>
           </div>
+
+          {/* Order details */}
+          <div className="border border-gray-800 rounded-lg p-6 mb-8">
+            <h2 className="text-xl font-semibold mb-4">Order details</h2>
+            <div className="space-y-2">
+              <div className="flex justify-between">
+                <span>Personalised Video</span>
+                <span>{formatter.format(state.price)}</span>
+              </div>
+              <div className="flex justify-between">
+                <span>Service Fee</span>
+                <span>{formatter.format(state.price * 0.1)}</span>
+              </div>
+              <div className="flex justify-between">
+                <span>Sales Tax</span>
+                <span>Free</span>
+              </div>
+              <div className="border-t border-gray-700 my-2"></div>
+              <div className="flex justify-between font-semibold">
+                <span>Total</span>
+                <span>{formatter.format(state.price + state.price * 0.1)}</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Payment form */}
+          {paymentChoice === "card" && (
+            <div className="border border-gray-800 rounded-lg p-6">
+              <StripePaymentIntent
+                requestPrice={state.price}
+                celebUid={state.celebUid}
+                fanUid={state.fanUid}
+                email={currentUser.email}
+              />
+            </div>
+          )}
         </div>
       </div>
     </>

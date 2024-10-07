@@ -2,8 +2,7 @@ import { useAuth } from "../context/AuthContext";
 import completePic from "../assets/complete.png";
 import { MdOutlinePendingActions } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
-import { BsQuestionCircle } from "react-icons/bs";
-
+import { BsQuestionCircle, BsChevronDown, BsChevronUp } from "react-icons/bs";
 import { Dispatch, SetStateAction, useState } from "react";
 import Modal from "./Modal";
 
@@ -32,141 +31,132 @@ function RejectedRequestModalMessage({
   setOpenModal: Dispatch<SetStateAction<boolean>>;
 }) {
   return (
-    <div className="flex flex-col p-8  bg-gray-800 w-full  h-full shadow-md hover:shodow-lg rounded-2xl ">
-      <div className="flex items-center justify-between ">
-        <div className="flex items-center">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="w-16 h-16 rounded-2xl p-3 border border-gray-800 text-red-400 bg-gray-900"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-            ></path>
+    <div className="bg-gray-800 rounded-lg p-6 max-w-md w-full">
+      <div className="flex items-start mb-4">
+        <div className="flex-shrink-0 mr-4">
+          <svg className="w-12 h-12 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
           </svg>
-          <div className="flex flex-col ml-3">
-            <div className="font-medium text-lg leading-none text-gray-100">
-              {celebName} has rejected your request
-            </div>
-            <p className="text-md text-gray-500 leading-none mt-1">
-              this may be due to the content of your request, or a personal
-              decision. You have recieved a full refund.
-            </p>
-          </div>
         </div>
+        <div>
+          <h3 className="text-xl font-semibold text-white mb-2">Request Rejected</h3>
+          <p className="text-gray-300 mb-4">
+            {celebName} has rejected your request. This may be due to the content of your request or a personal decision. You have received a full refund.
+          </p>
+        </div>
+      </div>
+      <div className="flex justify-end">
         <button
           onClick={() => setOpenModal(false)}
-          className="flex-no-shrink bg-red-500 hover:bg-red-600 px-5 ml-4 py-2 rounded-full"
+          className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors"
         >
-          close
+          Close
         </button>
       </div>
     </div>
   );
 }
 
-//this component has the various requests a user has made to diff celebs, and the status of those requestS(fulfilled, pending  or rejected.)
-// if a request is fulfilled, the user can click the view button, which will display the FulFilled componenet.
 function FanRequestContainer({ request, celeb }: FanRequestContainerProp) {
   const [openModal, setOpenModal] = useState<boolean>(false);
+  const [expanded, setExpanded] = useState<boolean>(false);
   const { reqstatus } = request;
-
   const { displayname: celebName, imgurl: celebPhoto } = celeb ?? {};
   const navigate = useNavigate();
-
   const { currentUser }: any = useAuth();
 
   const timestamp = request.timestamp1;
   const date = new Date(timestamp);
-  // Add 7 days to the date
   date.setDate(date.getDate() + 7);
-  // Format the new date as a string
   const requestDeliveryDate = date.toISOString().split("T")[0];
 
   const handleCardClick = () => {
-    // Pass information about the clicked celeb as state
-    navigate(`/profile/${celeb.displayname}/${celeb.uid}`, {
-      state: { celeb },
-    });
+    navigate(`/profile/${celeb.displayname}/${celeb.uid}`, { state: { celeb } });
   };
 
   const renderRequestStatus = () => {
-    if (reqstatus === "fulfilled") {
-      return (
-        <>
-          <img
-            src={completePic}
-            width={100}
-            className="absolute bottom-32 right-5"
-          />
+    switch (reqstatus) {
+      case "fulfilled":
+        return (
+          <div className="flex flex-col items-center">
+            <img src={completePic} alt="Completed" className="w-16 h-16 mb-2" />
+            <button
+              onClick={() => navigate("/request/fulfilled", { state: { request, celeb } })}
+              className="px-6 py-2 bg-green-500 text-white rounded-full hover:bg-green-600 transition-colors"
+            >
+              View Response
+            </button>
+          </div>
+        );
+      case "pending":
+        return (
+          <div className="flex flex-col items-center">
+            <MdOutlinePendingActions className="text-5xl text-yellow-500 mb-2" />
+            <span className="text-sm text-gray-300">Expected: {requestDeliveryDate}</span>
+          </div>
+        );
+      case "rejected":
+        return (
           <button
-            onClick={() =>
-              navigate("/request/fulfilled", {
-                state: { request, celeb },
-              })
-            }
-            className="absolute bottom-5 right-2 px-10 py-3 bg-blue-500 rounded-lg hover:bg-blue-600"
+            onClick={() => setOpenModal(true)}
+            className="flex items-center text-red-500 hover:text-red-400"
           >
-            View
+            <span className="mr-2">Request Rejected</span>
+            <BsQuestionCircle size={20} />
           </button>
-        </>
-      );
+        );
+      default:
+        return null;
     }
-
-    if (reqstatus === "pending") {
-      return (
-        <>
-          <span className="absolute bottom-32 right-6 text-[5rem]">
-            <MdOutlinePendingActions />
-          </span>
-          <span className="absolute bottom-5 right-2 px-10 py-3 bg-blue-500 rounded-lg">
-            Expected: {requestDeliveryDate}
-          </span>
-        </>
-      );
-    }
-
-    if (reqstatus === "rejected") {
-      return (
-        <span
-          onClick={() => setOpenModal(true)}
-          className="text-lg flex items-center gap-2  absolute top-5 right-2"
-        >
-          Your Request to {celebName} is {reqstatus}
-          <BsQuestionCircle size={24} />
-        </span>
-      );
-    }
-
-    return null;
   };
 
   return (
-    <div className="cursor-pointer w-full flex justify-center items-center mt-10 ">
+    <div className="w-full max-w-2xl mx-auto mt-8">
       <Modal openModal={openModal} setOpenModal={setOpenModal}>
-        <RejectedRequestModalMessage
-          celebName={celebName}
-          setOpenModal={setOpenModal}
-        />
+        <RejectedRequestModalMessage celebName={celebName} setOpenModal={setOpenModal} />
       </Modal>
-      <div className="relative flex p-5 flex-col items-center md:flex-row lg:w-1/2 sm:w-2/3 w-full  rounded-lg shadow-lg shadow-black border border-gray-600">
-        <div className="md:w-1/3 w-2/3 h-[350px]">
-          <img
-            onClick={handleCardClick}
-            className="rounded-lg border w-full h-full object-cover relative border-gray-600"
-            src={currentUser && celebPhoto}
-            alt={celebName}
-          />
+      <div className="bg-gray-900 rounded-lg overflow-hidden shadow-lg border border-gray-700">
+        <div className="flex flex-col md:flex-row">
+          <div className="md:w-1/3 p-4">
+            <img
+              onClick={handleCardClick}
+              className="w-full h-48 object-cover rounded-lg cursor-pointer"
+              src={currentUser && celebPhoto}
+              alt={celebName}
+            />
+          </div>
+          <div className="md:w-2/3 p-4 flex flex-col justify-between">
+            <div>
+              <h2 className="text-2xl font-bold text-white mb-2">{celebName}</h2>
+              <p className="text-gray-400 mb-2">Request Type: {request.reqtype}</p>
+              <p className="text-gray-400 mb-4">Action: {request.reqaction}</p>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="text-sm text-gray-500">Requested on: {new Date(request.timestamp1).toLocaleDateString()}</span>
+              {renderRequestStatus()}
+            </div>
+          </div>
         </div>
-        <div className="h-[250px] ml-5">
-          <span className="absolute bottom-0 right-0 w-1/2 h-full ">
-            {renderRequestStatus()}
-          </span>
+        <div className="border-t border-gray-700 p-4">
+          <button
+            onClick={() => setExpanded(!expanded)}
+            className="flex items-center justify-between w-full text-gray-300 hover:text-white"
+          >
+            <span>View Request Details</span>
+            {expanded ? <BsChevronUp /> : <BsChevronDown />}
+          </button>
+          {expanded && (
+            <div className="mt-4 text-gray-300">
+              <h3 className="font-semibold mb-2">Your Message:</h3>
+              <p className="bg-gray-800 p-3 rounded-lg">{request.message}</p>
+              {request.celebmessage && (
+                <>
+                  <h3 className="font-semibold mt-4 mb-2">Celebrity's Response:</h3>
+                  <p className="bg-gray-700 p-3 rounded-lg">{request.celebmessage}</p>
+                </>
+              )}
+            </div>
+          )}
         </div>
       </div>
     </div>

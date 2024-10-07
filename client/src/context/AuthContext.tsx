@@ -118,7 +118,7 @@ export function AuthProvider({ children }: { children: any }) {
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(
-      async (user: any) => {
+      async (user: any, ) => {
         setCurrentUser(user);
         
         if (user) {
@@ -140,7 +140,6 @@ export function AuthProvider({ children }: { children: any }) {
             setToken(token);
 
 
-            navigate('/');
           } catch (error) {
             console.error(error);
           }
@@ -156,7 +155,7 @@ export function AuthProvider({ children }: { children: any }) {
       }
     );
     return unsubscribe;
-  }, [navigate]);
+  }, []);
 
   const value: AuthContextType = {
     currentUser,

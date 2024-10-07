@@ -53,7 +53,7 @@ function RequestForm({ celebuid, fanuid, price, setOrderModal }: RequestProps) {
   };
 
   return (
-    <div className="h-[90%] w-full md:w-3/4 lg:w-2/3 xl:w-1/2 rounded-lg relative text-white bg-gray-900 px-6 sm:px-10 py-8 overflow-auto top-10 shadow-xl">
+    <div className="h-[90%] w-full md:w-3/4 lg:w-2/3 xl:w-1/2 rounded-lg relative text-white bg-gray-900 px-6 sm:px-10 py-8 overflow-auto  shadow-xl">
       <button
         onClick={() => setOrderModal(false)}
         className="absolute right-4 top-4 rounded-full w-8 h-8 flex justify-center items-center text-lg font-bold bg-red-500 hover:bg-red-600 transition-colors duration-200"
