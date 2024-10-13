@@ -60,6 +60,9 @@ function FulFilled() {
   }
 
   function downloadVideo() {
+    if (!request || !celeb) {
+      return;
+    }
     const link = document.createElement("a");
     link.href = request.celebmessage;
     link.download = `${celeb.displayname}_video_${request.requestid}.mp4`;
@@ -71,17 +74,27 @@ function FulFilled() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-white py-10">
       <div className="container mx-auto px-4">
-        <h1 className="text-3xl font-bold mb-8 text-center">Your Fulfilled Request</h1>
+        <h1 className="text-3xl font-bold mb-8 text-center">
+          Your Fulfilled Request
+        </h1>
         <div className="max-w-3xl mx-auto space-y-6">
           <div className="bg-gray-800 rounded-lg p-6 shadow-lg">
             <h2 className="text-xl font-semibold mb-4">Request Details</h2>
-            <p className="mb-2">You requested a {request.reqtype} from {celeb.displayname} on {new Date(request.timestamp1).toLocaleDateString()}.</p>
+            <p className="mb-2">
+              You requested a {request.reqtype} from {celeb.displayname} on{" "}
+              {new Date(request.timestamp1).toLocaleDateString()}.
+            </p>
             <p className="mb-2">Request ID: {request.requestid}</p>
-            <p className="text-sm text-gray-400">If there's an issue with your request, please contact our customer support.</p>
+            <p className="text-sm text-gray-400">
+              If there's an issue with your request, please contact our customer
+              support.
+            </p>
           </div>
 
           <div className="bg-gray-800 rounded-lg p-6 shadow-lg">
-            <h2 className="text-xl font-semibold mb-4">Your {request.reqtype}</h2>
+            <h2 className="text-xl font-semibold mb-4">
+              Your {request.reqtype}
+            </h2>
             {request.reqtype === "video" ? (
               <video
                 className="w-full rounded-lg"
@@ -107,7 +120,8 @@ function FulFilled() {
               onClick={() => setOpenModal(true)}
               className="flex-1 py-3 bg-yellow-600 hover:bg-yellow-700 rounded-md transition duration-300 ease-in-out flex items-center justify-center"
             >
-              <FaStar className="mr-2" /> {!request.isReviewed ? "Leave a Review" : "Edit Review"}
+              <FaStar className="mr-2" />{" "}
+              {!request.isReviewed ? "Leave a Review" : "Edit Review"}
             </button>
           </div>
 
