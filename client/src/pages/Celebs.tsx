@@ -26,7 +26,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { faqData, HowToUseinstructions } from "@/constants/celebTSXConstants";
+import { celebrityReviews, faqData, HowToUseinstructions } from "@/constants/celebTSXConstants";
 
 function Celebs() {
   // const { data: getData, loading, error } = useGlobalAxios("getnow");
@@ -437,28 +437,25 @@ function Reviews() {
     <div className="max-w-7xl  w-full flex flex-col  relative px-2">
       <Carousel className=" mb-20 ">
         <div className="w-full  h-10 relative  mb-5 flex items-center ">
-          <p className="text-xl font-semibold ">Today's Top Picks</p>
+          <p className="text-xl font-semibold ">Reviews from Delighted Fans</p>
           <div className="absolute right-16 top-5 ">
             <CarouselPrevious className="  bg-[#1C1C1F] w-10 h-10 border-gray-600  " />
             <CarouselNext className="bg-[#1C1C1F]  w-10 h-10  border-gray-600" />
           </div>
         </div>
         <CarouselContent>
-          {[...Array(10)].map((review, index) => (
+          {celebrityReviews.map((review, index) => (
             <CarouselItem key={index} className=" sm:basis-1/2 lg:basis-1/3">
               <div className="bg-[#201E23] min-h-[250px] h-auto   rounded-xl px-5 py-5  w-full my-2">
                 <div className="text-left relative ">
-                  <h1 className="text-lg">Birthday message from Ronaldo</h1>
+                  <h1 className="text-lg">{`${review.messageType} From ${review.celebrity}`}</h1>
                   <p className="flex ">
-                    <h1 className="text-lg text-gray-400">Muath</h1>
+                    <h1 className="text-lg text-gray-400">{review.customerName} </h1>
                     <span className="left-3 relative ">{"⭐".repeat(5)}</span>
                   </p>
                 </div>
                 <div className="relative top-2 text-gray-400 text-left  italic font-serif ">
-                  Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-                  Facilis corrupti maiores, voluptatem nesciunt repudiandae
-                  eligendi praesentium voluptatum, dolor officia eius nihil
-                  rerum quos error fugit!
+                  {review.review}
                 </div>
               </div>
             </CarouselItem>

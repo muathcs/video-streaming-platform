@@ -274,7 +274,7 @@ function Nav() {
                       onClick={() => {
                         setSearchCelebVal(""); // Clear the search value to hide the dropdown
 
-                        navigate(`/profile/${celeb.displayname}/${celeb.uid}`, {
+                        navigate(`/profile/${celeb.uid}`, {
                           state: { celeb },
                         });
                       }}

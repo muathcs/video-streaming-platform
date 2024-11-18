@@ -145,13 +145,13 @@ function Category() {
 
   const [selectedFilters, setSelectedFilters] = useState<any[]>([]);
 
-  function removeFilter(filterName: string) {
-    const newFilter = selectedFilters.filter(
-      (filter) => filter.filterName != filterName
-    );
+  // function removeFilter(filterName: string) {
+  //   const newFilter = selectedFilters.filter(
+  //     (filter) => filter.filterName != filterName
+  //   );
 
-    setSelectedFilters(newFilter);
-  }
+  //   setSelectedFilters(newFilter);
+  // }
 
   // get all the celebs that match the param
   useEffect(() => {
@@ -280,7 +280,7 @@ function Category() {
           disabled={!hasMoreCelebs} // Disable button if no more celebs
         >
           {hasMoreCelebs ? "Next" : "No More Celebs"}
-        </button>{" "}
+        </button>
       </div>
     </div>
   );

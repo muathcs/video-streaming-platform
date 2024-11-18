@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { bool } from "aws-sdk/clients/signer";
 import RequestForm from "../components/RequestForm";
 import { useAuth } from "../context/AuthContext";
@@ -210,6 +210,7 @@ function CelebProfile() {
   const { currentUser }: any = useAuth();
   const [reviews, setReviews] = useState<ReviewsType[]>();
   const [openModal, setOpenModal] = useState(false);
+  const navigate = useNavigate();
 
 
   const { celeb: celebInfo }: StateType = state;
@@ -279,7 +280,8 @@ function CelebProfile() {
 
         <div className="relative py-10 flex justify-center  ">
           <button
-            onClick={() => setOrderModal(true)}
+            // onClick={() => setOrderModal(true)}
+            onClick={() => navigate(`/${celebInfo.uid}/booking`, { state: { celebuid: celebInfo.uid, fanuid: currentUser.uid, price: celebInfo.price } })}
             className=" relative  w-1/2 md:w-1/5 rounded-md hover:bg-slate-700 py-5 bg-slate-500  text-white hover:border-none outline-none focus:outline-none border-none "
           >
             Book A Shoutouta

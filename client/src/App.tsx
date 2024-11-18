@@ -21,6 +21,7 @@ import SignupCeleb from "./pages/SignupCeleb";
 import PasswordReset from "./components/PasswordReset";
 import Footer from "./components/Footer";
 import Featured from "./pages/Featured";
+import Booking from "./pages/Booking";
 
 function App() {
   return (
@@ -36,7 +37,7 @@ function App() {
           <Route element={<Celebs />} path="/" />
           <Route path="/requests" element={<FanRequests />} />
           <Route path="/profile" element={<CelebProfile />} />
-          <Route path="/profile/:name/:id" element={<CelebProfile />} />
+          <Route path="/profile/:id" element={<CelebProfile />} />
           <Route path="/fulfill/:requestId" element={<FulfillRequest />} />
           <Route path="/request/fulfilled" element={<FulFilled />} />
           <Route path="/dashboard" element={<Dashboard />} />
@@ -45,6 +46,7 @@ function App() {
           {/* <Route path="/success" element={<Success />} /> */}
         </Route>
         <Route path="/about" element={<HowTo />} />
+        <Route path="/:uid/booking" element={<Booking />} />
         <Route path="/signup/talent" element={<SignupCeleb />} />
         <Route path="/account" element={<AccountSuccess />} />
         <Route path="/browse/:category" element={<Category />} />

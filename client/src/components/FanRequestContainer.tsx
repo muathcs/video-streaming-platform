@@ -71,7 +71,7 @@ function FanRequestContainer({ request, celeb }: FanRequestContainerProp) {
   const requestDeliveryDate = date.toISOString().split("T")[0];
 
   const handleCardClick = () => {
-    navigate(`/profile/${celeb.displayname}/${celeb.uid}`, { state: { celeb } });
+    navigate(`/profile/${celeb.uid}`, { state: { celeb } });
   };
 
   const renderRequestStatus = () => {

@@ -5,7 +5,7 @@ import ReviewInput from "../ReviewInput";
 import { RequestType } from "@/TsTypes/types";
 import { apiUrl } from "@/utilities/fetchPath";
 import axios from "@/api/axios";
-import { FaDownload, FaStar } from "react-icons/fa";
+import { FaDownload, FaSpinner, FaStar } from "react-icons/fa";
 
 function FulFilled() {
   const [openModal, setOpenModal] = useState(false);
@@ -14,6 +14,7 @@ function FulFilled() {
   const [loading, setLoading] = useState(true);
   const [request, setRequest] = useState<RequestType | null>(null);
   const [celeb, setCeleb] = useState<any>(null);
+  const [videoIsDownloading, setVideoIsDownloading] = useState<boolean>(false)
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -59,42 +60,53 @@ function FulFilled() {
     return null;
   }
 
-  function downloadVideo() {
-    if (!request || !celeb) {
-      return;
+
+  async function downloadVideo() {
+    // Check if the request object exists, if not, exit the function
+    if (!request) return;
+    // Set the downloading state to true to show a loading indicator
+    setVideoIsDownloading(true)
+    try {
+      // Fetch the video content from the URL stored in request.celebmessage
+      const response = await fetch(request.celebmessage);
+      // Convert the response to a Blob object
+      const blob = await response.blob();
+      // Create a URL for the Blob object
+      const url = window.URL.createObjectURL(blob);
+      // Create an anchor element for downloading
+      const link = document.createElement("a");
+      // Set the href of the anchor to the Blob URL
+      link.href = url;
+      // Set the download attribute with a filename
+      link.download = `${celeb.displayname}_video_${request.requestid}.mp4`;
+      // Append the link to the document body
+      document.body.appendChild(link);
+      // Programmatically click the link to start the download
+      link.click();
+      // Remove the link from the document body
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error("Error downloading video:", error);
+    } finally {
+      setVideoIsDownloading(false)
     }
-    const link = document.createElement("a");
-    link.href = request.celebmessage;
-    link.download = `${celeb.displayname}_video_${request.requestid}.mp4`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
   }
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-white py-10">
       <div className="container mx-auto px-4">
-        <h1 className="text-3xl font-bold mb-8 text-center">
-          Your Fulfilled Request
-        </h1>
+        <h1 className="text-3xl font-bold mb-8 text-center">Your Fulfilled Request</h1>
         <div className="max-w-3xl mx-auto space-y-6">
           <div className="bg-gray-800 rounded-lg p-6 shadow-lg">
             <h2 className="text-xl font-semibold mb-4">Request Details</h2>
-            <p className="mb-2">
-              You requested a {request.reqtype} from {celeb.displayname} on{" "}
-              {new Date(request.timestamp1).toLocaleDateString()}.
-            </p>
+            <p className="mb-2">You requested a {request.reqtype} from {celeb.displayname} on {new Date(request.timestamp1).toLocaleDateString()}.</p>
             <p className="mb-2">Request ID: {request.requestid}</p>
-            <p className="text-sm text-gray-400">
-              If there's an issue with your request, please contact our customer
-              support.
-            </p>
+            <p className="text-sm text-gray-400">If there's an issue with your request, please contact our customer support.</p>
           </div>
 
           <div className="bg-gray-800 rounded-lg p-6 shadow-lg">
-            <h2 className="text-xl font-semibold mb-4">
-              Your {request.reqtype}
-            </h2>
+            <h2 className="text-xl font-semibold mb-4">Your {request.reqtype}</h2>
             {request.reqtype === "video" ? (
               <video
                 className="w-full rounded-lg"
@@ -110,18 +122,32 @@ function FulFilled() {
           </div>
 
           <div className="flex gap-4">
-            <button
-              onClick={downloadVideo}
-              className="flex-1 py-3 bg-blue-600 hover:bg-blue-700 rounded-md transition duration-300 ease-in-out flex items-center justify-center"
-            >
-              <FaDownload className="mr-2" /> Download Video
-            </button>
+          <div className="flex gap-4">
+      <button
+        onClick={() => downloadVideo().catch(console.error)}
+        disabled={videoIsDownloading}
+        className={`flex-1 py-3 ${
+          videoIsDownloading ? 'bg-blue-400' : 'bg-blue-600 hover:bg-blue-700'
+        } rounded-md transition duration-300 ease-in-out flex items-center justify-center`}
+      >
+        {videoIsDownloading ? (
+          <>
+            <FaSpinner className="mr-2 animate-spin" /> Downloading...
+          </>
+        ) : (
+
+          <>
+            <FaDownload className="mr-2" /> Download Video
+          </>
+        )}
+      </button>
+      {/* ... existing Review button ... */}
+    </div>
             <button
               onClick={() => setOpenModal(true)}
               className="flex-1 py-3 bg-yellow-600 hover:bg-yellow-700 rounded-md transition duration-300 ease-in-out flex items-center justify-center"
             >
-              <FaStar className="mr-2" />{" "}
-              {!request.isReviewed ? "Leave a Review" : "Edit Review"}
+              <FaStar className="mr-2" /> {!request.isReviewed ? "Leave a Review" : "Edit Review"}
             </button>
           </div>
 

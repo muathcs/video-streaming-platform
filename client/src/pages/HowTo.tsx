@@ -125,7 +125,7 @@ function HowTo() {
               </div>
             </div>
 
-            <div className="flex">
+            <div className="flex ">
               <div className="flex flex-col items-center mr-4">
                 <div>
                   <div className="flex items-center justify-center w-20 h-20 border rounded-full">
@@ -141,6 +141,7 @@ function HowTo() {
                         strokeLinejoin="round"
                         strokeMiterlimit="10"
                         points="6,12 10,16 18,8"
+                        className="bg-green-500"
                       />
                     </svg>
                   </div>
@@ -156,7 +157,7 @@ function HowTo() {
             <img
               className="inset-0 object-cover object-bottom w-full rounded shadow-lg h-96 lg:absolute lg:h-full"
               src={funky}
-              alt=""
+              alt="art image"
             />
           </div>
         </div>

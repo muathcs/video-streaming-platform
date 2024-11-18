@@ -23,7 +23,7 @@ function CelebCard({ celeb }: { celeb: CelebCardProps }) {
 
   const handleCardClick = () => {
     // Pass information about the clicked celeb as state
-    navigate(`/profile/${celeb.displayname}/${celeb.uid}`, {
+    navigate(`/profile/${celeb.uid}`, {
       state: { celeb },
     });
   };

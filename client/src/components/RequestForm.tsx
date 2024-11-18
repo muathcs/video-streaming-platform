@@ -53,7 +53,7 @@ function RequestForm({ celebuid, fanuid, price, setOrderModal }: RequestProps) {
   };
 
   return (
-    <div className="h-[90%] w-full md:w-3/4 lg:w-2/3 xl:w-1/2 rounded-lg relative text-white bg-gray-900 px-6 sm:px-10 py-8 overflow-auto  shadow-xl">
+    <div className="w-full h-full rounded-lg relative text-white bg-black px-6 overflow-auto shadow-xl">
       <button
         onClick={() => setOrderModal(false)}
         className="absolute right-4 top-4 rounded-full w-8 h-8 flex justify-center items-center text-lg font-bold bg-red-500 hover:bg-red-600 transition-colors duration-200"
@@ -62,7 +62,7 @@ function RequestForm({ celebuid, fanuid, price, setOrderModal }: RequestProps) {
         ×
       </button>
       <h2 className="text-2xl font-bold mb-6 text-center">Request a Video</h2>
-      <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
+      <form className="space-y-6 max-w-md mx-auto" onSubmit={handleSubmit(onSubmit)}>
         {/* Step 1: Request Type */}
         <div>
           <label className="block text-sm font-medium mb-2 text-gray-300">
@@ -72,7 +72,7 @@ function RequestForm({ celebuid, fanuid, price, setOrderModal }: RequestProps) {
             {...register("requestAction", {
               required: "Please choose a request type",
             })}
-            className="w-full rounded-md border border-gray-700 bg-gray-800 px-3 py-2 text-white focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+            className="w-full rounded-md border border-[#3f3b45] bg-[#201e23] px-3 py-2 text-white focus:outline-none"
           >
             <option value="">Select</option>
             {[
@@ -113,7 +113,7 @@ function RequestForm({ celebuid, fanuid, price, setOrderModal }: RequestProps) {
                 />
                 <label
                   htmlFor={`option${index + 1}`}
-                  className="flex justify-center items-center w-full py-2 text-sm font-medium rounded-md border border-gray-700 cursor-pointer bg-gray-800 hover:bg-gray-700 peer-checked:border-blue-500 peer-checked:bg-blue-600 transition-colors duration-200"
+                  className="flex justify-center items-center w-full py-2 text-sm font-medium rounded-md border cursor-pointer border-[#3f3b45] bg-[#201e23]  hover:bg-gray-700 peer-checked:border-blue-500 peer-checked:bg-blue-600 transition-colors duration-200"
                 >
                   {option}
                 </label>
@@ -137,7 +137,7 @@ function RequestForm({ celebuid, fanuid, price, setOrderModal }: RequestProps) {
                   required: "Please enter your name",
                 })}
                 id="fromPerson"
-                className="w-full rounded-md border border-gray-700 bg-gray-800 px-3 py-2 text-white focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+                className="w-full rounded-md border border-[#3f3b45] bg-[#201e23]  px-3 py-2 text-white focus:border-blue-200 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
                 placeholder="Your first name"
               />
               {errors.fromPerson && (
@@ -159,7 +159,7 @@ function RequestForm({ celebuid, fanuid, price, setOrderModal }: RequestProps) {
                 required: "Please enter recipient's name",
               })}
               id="toPerson"
-              className="w-full rounded-md border border-gray-700 bg-gray-800 px-3 py-2 text-white focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+              className="w-full rounded-md border border-[#3f3b45] bg-[#201e23]  px-3 py-2 text-white focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
               placeholder="Recipient's first name"
             />
             {errors.toPerson && (
@@ -189,7 +189,7 @@ function RequestForm({ celebuid, fanuid, price, setOrderModal }: RequestProps) {
             id="message"
             maxLength={MAX_MESSAGE_LENGTH}
             onChange={(e) => setMessageLength(e.target.value.length)}
-            className="w-full rounded-md border border-gray-700 bg-gray-800 px-3 py-2 text-white focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 h-32"
+            className="w-full rounded-md border border-[#3f3b45] bg-[#201e23]  px-3 py-2 text-white focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 h-32"
             placeholder={`Write a personal message explaining your occasion and what you'd like the celebrity to say. Include details for a shout-out, special event, or words of encouragement (${MAX_MESSAGE_LENGTH} characters max).`}
           />
           <div className="flex justify-between text-xs text-gray-400 mt-1">
@@ -214,7 +214,7 @@ function RequestForm({ celebuid, fanuid, price, setOrderModal }: RequestProps) {
             id="hideVideo"
             checked={hideVideo}
             onChange={() => setHideVideo(!hideVideo)}
-            className="rounded border-gray-700 text-blue-600 focus:ring-blue-500 h-4 w-4 mr-2"
+            className="rounded border-[#3f3b45] bg-[#201e23]  text-blue-600 focus:ring-blue-200 h-4 w-4 mr-2"
           />
           <label htmlFor="hideVideo" className="text-sm text-gray-300">
             Hide this video from David Howard Thornton's profile
