@@ -105,7 +105,7 @@ router.get("/fanrequests", async (req, res) => {
 // create the request.
 router.post("/", async (req, res) => {
 
-  console.log("onside post requ: ", req.body)
+  // console.log("onside post requ: ", req.body)
   
   let {
     celebuid,

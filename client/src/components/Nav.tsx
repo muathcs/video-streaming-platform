@@ -55,9 +55,14 @@ function Nav() {
   useEffect(() => {
     setLoading(true);
     const getNotification = async () => {
+
+      // if there is no user logged, don't get notifications. 
       if (!currentUser) {
+        
         return;
       }
+
+      console.log("current: ", currentUser.uid)
       try {
         const response = await axios.get(`${apiUrl}/notification`, {
           params: { data: currentUser.uid },

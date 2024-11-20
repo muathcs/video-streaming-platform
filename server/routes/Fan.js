@@ -22,7 +22,7 @@ router.get("/:uid", async (req, res) => {
     });
 
     console.log("response: ", response);
-    console.log("uidxx:: ", uid);
+    // console.log("uidxx:: ", uid);
     // const response = await pool.query(
     //   'Select * from public."Fan" where uid = $1',
     //   [uid]

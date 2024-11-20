@@ -31,14 +31,24 @@ router.post("/", async (req, res) => {
 });
 
 router.get("/", async (req, res) => {
-  const { uid } = req.query;
+  const { data:uid } = req.query;
+
+
+
+
+  if (!uid) {
+    console.log("returning ...")
+    return res.status(400).json({ error: "Missing required parameter: uid" });
+  }
+
   try {
     const response = await prisma.notification.findMany({
       where: {
         intended_uid: uid,
-        is_read: false,
+        // is_read: false,
       },
     });
+
 
     return res.status(200).json(response);
   } catch (error) {

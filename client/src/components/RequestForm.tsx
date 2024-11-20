@@ -7,7 +7,7 @@ type RequestProps = {
   celebuid: string;
   fanuid: string;
   price: number;
-  setOrderModal: (state: boolean) => void;
+  setOrderModal?: (state: boolean) => void;
 };
 
 type FormData = {
