@@ -54,13 +54,13 @@ function RequestForm({ celebuid, fanuid, price, setOrderModal }: RequestProps) {
 
   return (
     <div className="w-full h-full rounded-lg relative text-white bg-black px-6 overflow-auto shadow-xl">
-      <button
-        onClick={() => setOrderModal(false)}
+      {/* <button
+        // onClick={() => setOrderModal(false)}
         className="absolute right-4 top-4 rounded-full w-8 h-8 flex justify-center items-center text-lg font-bold bg-red-500 hover:bg-red-600 transition-colors duration-200"
         aria-label="Close"
       >
         ×
-      </button>
+      </button> */}
       <h2 className="text-2xl font-bold mb-6 text-center">Request a Video</h2>
       <form className="space-y-6 max-w-md mx-auto" onSubmit={handleSubmit(onSubmit)}>
         {/* Step 1: Request Type */}
