@@ -5,6 +5,7 @@ import Celebs from "./Celebs";
 function PrivateRoute() {
   const { currentUser }: any = useAuth();
 
+  // outlet is the componenet am on. 
   return currentUser ? <Outlet /> : <Navigate to={"/login"} replace />;
 }
 
